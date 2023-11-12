@@ -1,4 +1,4 @@
-package dsa;
+package dsa.supplyment;
 
 import org.junit.Assert;
 import org.junit.Test;
