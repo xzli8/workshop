@@ -1,4 +1,4 @@
-package pack;
+package dsa.pack;
 
 import org.junit.Test;
 

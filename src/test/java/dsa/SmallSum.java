@@ -1,3 +1,5 @@
+package dsa;
+
 import org.junit.Test;
 
 public class SmallSum {
