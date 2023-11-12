@@ -1,4 +1,4 @@
-package leetcode;
+package dsa.leetcode;
 
 public class _875minEatingSpeed {
 
