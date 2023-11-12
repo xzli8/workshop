@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ArabicChineseConvert {
-
     /**
      * Notes:
      *  1. units and digits
