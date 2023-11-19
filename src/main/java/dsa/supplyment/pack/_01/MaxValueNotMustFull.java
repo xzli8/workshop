@@ -14,18 +14,23 @@ public class MaxValueNotMustFull {
         int[] weights = new int[] {2, 2, 4, 6, 3};
         int[] values = new int[] {3, 4, 8, 9, 6};
         int capacity = 16;
-        System.out.println(maxValueNotMustFullBacktrace(weights, values, capacity));
+        System.out.println(maxValueNotMustFull0(weights, values, capacity));
+        System.out.println(maxValueNotMustFull1(weights, values, capacity));
         System.out.println(maxValueNotMustFull(weights, values, capacity));
         System.out.println(maxValueNotMustFullV2(weights, values, capacity));
     }
+
 
 
     /**
      * 回溯（分别考察每个物品，每个物品都有两个选择，装或者不装）
      *      也可以使用备忘录（用i和weight作为key，value作为value，用map存储，相同key取较大的value）
      *      但使用备忘录不一定快（因为不能保证每次都先遍历到value最大的路径）
+     *
+     *      时间复杂度：指数
+     *      空间复杂度：O(N)
      */
-    public int maxValueNotMustFullBacktrace(int[] weights, int[] values, int capacity) {
+    public int maxValueNotMustFull0(int[] weights, int[] values, int capacity) {
         maxValue = Integer.MIN_VALUE;
         backtrace(weights, values, capacity, 0, 0, 0);
         return maxValue;
@@ -45,6 +50,43 @@ public class MaxValueNotMustFull {
         if (weight + weights[i] <= capacity) {
             backtrace(weights, values, capacity, i + 1, weight + weights[i], value + values[i]);
         }
+    }
+
+
+
+    /**
+     *  动态规划
+     *      定义状态：dp[i][j]表示第i个物品决策后，背包重量为j时的最大价值
+     *      状态转移：如果第i个物品不能放入背包，只能选择第i-1个物品的结果；如果能放入，需要选择放或者不放的最大值
+     *          if (第i个物品不能放入) dp[i][j] = dp[i-1][j]
+     *          else dp[i][j] = max(dp[i-1][j], dp[i-1][j-weight[i]] + values[i]
+     *      初始状态：dp[0][0] = 0, dp[0][weights[0]] = weights[0] <= capacity ? values[0] : 0;
+     */
+    public int maxValueNotMustFull1(int[] weights, int[] values, int capacity) {
+        // 定义状态
+        int n = weights.length;
+        int[][] dp = new int[n][capacity + 1];
+
+        // 初始状态
+        dp[0][0] = 0;
+        if (weights[0] <= capacity) {
+            dp[0][weights[0]] = values[0];
+        }
+
+        // 状态转移
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j <= capacity; j++) {
+                // 第i个物品能放下，选择放或者不放的最大值
+                if (j - weights[i] >= 0) {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - weights[i]] + values[i]);
+                }
+                // 第i个物品不能放下，只能取第i-1个物品的结果
+                else {
+                    dp[i][j] = dp[i - 1][j];
+                }
+            }
+        }
+        return dp[n-1][capacity];
     }
 
     /**

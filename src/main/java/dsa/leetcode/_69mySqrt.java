@@ -1,25 +1,27 @@
 package dsa.leetcode;
 
+import org.junit.Test;
+
 public class _69mySqrt {
 
     /**
      牛顿迭代法
      */
-//    public int mySqrt(int x) {
-//        if (x == 0) {
-//            return 0;
-//        }
-//
-//        double x0 = x;
-//        while (true) {
-//            double x1 = 0.5 * (x0 + x / x0);
-//            if (Math.abs(x1 - x0) < 1e-6) {
-//                break;
-//            }
-//            x0 = x1;
-//        }
-//        return (int) x0;
-//    }
+    public int mySqrt0(int x) {
+        if (x == 0) {
+            return 0;
+        }
+
+        double x0 = x;
+        while (true) {
+            double x1 = 0.5 * (x0 + x / x0);
+            if (Math.abs(x1 - x0) < 1e-6) {
+                break;
+            }
+            x0 = x1;
+        }
+        return (int) x0;
+    }
 
     /**
      二分查找：找最后一个值小于等于目标值的元素
@@ -68,7 +70,7 @@ public class _69mySqrt {
             } else {
                 left = mid + step;
 
-                // 这里的if为啥一直进不来？
+                // 因为step精度的问题，这里的if可能进不来
 //                if ((mid + step) > x / (mid + step)) {
 //                    return mid;
 //                } else {
@@ -77,6 +79,12 @@ public class _69mySqrt {
             }
         }
         return left;
+    }
+
+    @Test
+    public void test() {
+        System.out.println(mySqrt(2, 3));
+        System.out.println(mySqrt(3, 3));
     }
 
 }

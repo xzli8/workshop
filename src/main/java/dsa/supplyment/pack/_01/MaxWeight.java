@@ -9,15 +9,12 @@ public class MaxWeight {
      */
     @Test
     public void test() {
-//        int[] weights = new int[] {2, 2, 4, 6, 3};
-//        int capacity = 16;
+        int[] weights = new int[] {2, 2, 4, 6, 3};
+        int capacity = 16;
 
-        int[] weights = new int[] {2, 2, 5, 9, 13};
-        int capacity = 19;
-
+        System.out.println(maxWeight0(weights, capacity));
         System.out.println(maxWeight1(weights, capacity));
         System.out.println(maxWeight2(weights, capacity));
-        System.out.println(maxWeight3(weights, capacity));
     }
 
     /**
@@ -25,7 +22,7 @@ public class MaxWeight {
      *      时间复杂度：O(N)
      *      空间复杂度：O(N)
      */
-    public int maxWeight1(int[] weights, int capacity) {
+    public int maxWeight0(int[] weights, int capacity) {
         visited = new boolean[weights.length][capacity + 1];
         backtrace(weights, capacity, 0, 0);
         return maxWeight;
@@ -64,7 +61,7 @@ public class MaxWeight {
      *      时间复杂度：O(N*M)
      *      空间复杂度：O(N*M)
      */
-    public int maxWeight2(int[] weights, int capacity) {
+    public int maxWeight1(int[] weights, int capacity) {
         // 定义状态
         int n = weights.length;
         boolean[][] dp = new boolean[n][capacity + 1];
@@ -117,7 +114,7 @@ public class MaxWeight {
      *      时间复杂度：O(N*M)
      *      空间复杂度：O(M)
      */
-    public int maxWeight3(int[] weights, int capacity) {
+    public int maxWeight2(int[] weights, int capacity) {
         // 定义状态
         int n = weights.length;
         boolean[] dp = new boolean[capacity + 1];
