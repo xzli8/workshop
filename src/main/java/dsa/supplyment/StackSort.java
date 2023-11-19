@@ -1,9 +1,21 @@
 package dsa.supplyment;
 
+import org.junit.Test;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 
 public class StackSort {
+
+    @Test
+    public void test() {
+        Deque<Integer> s = new ArrayDeque<>();
+        s.push(4);
+        s.push(2);
+        s.push(1);
+        s.push(3);
+        System.out.println(stackSort(s));
+    }
 
     /**
      * 双栈排序：用一个辅助栈来倒腾，保证倒腾的时候辅助栈中的元素单调递增

@@ -1,7 +1,16 @@
 package dsa.supplyment;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 public class SubStrings {
 
+    @Test
+    public void test() {
+        Assert.assertEquals("1607", subStrings("9999", "8392"));
+        Assert.assertEquals("-1607", subStrings("8392", "9999"));
+        Assert.assertEquals("0", subStrings("8392", "8392"));
+    }
 
     /**
      *  题目描述：

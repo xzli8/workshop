@@ -1,10 +1,10 @@
-package dsa.supplyment.pack;
+package dsa.supplyment.pack._01;
 
 import org.junit.Test;
 
 import java.util.Arrays;
 
-public class ZeroOnePackMaxValueNotMustFull {
+public class MaxValueNotMustFull {
 
     /**
      * 有一组物品，重量是weights，价值是values，现有一容量为capacity的背包，计算出背包能装下的物品的最大价值，不要求背包必须装满

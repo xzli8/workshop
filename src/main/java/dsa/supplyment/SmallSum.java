@@ -1,6 +1,14 @@
 package dsa.supplyment;
 
+import org.junit.Test;
+
 public class SmallSum {
+
+    @Test
+    public void test() {
+        int[] nums = new int[] {1, 3, 5, 2, 4, 6};
+        System.out.println(smallSum(nums, 0, nums.length - 1));
+    }
 
     private long smallSum(int[] nums, int l, int r) {
         if (l >= r) return 0;

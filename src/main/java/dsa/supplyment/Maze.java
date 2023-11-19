@@ -1,10 +1,17 @@
 package dsa.supplyment;
 
+import org.junit.Test;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class Maze {
 
+    @Test
+    public void test() {
+        char[][] maps = new char[][] {{'S', '.'}, {'#', 'T'}};
+        System.out.println(theMazeIV(maps));
+    }
 
     /**
      BFS

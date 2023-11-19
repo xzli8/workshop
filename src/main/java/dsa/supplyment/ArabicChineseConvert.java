@@ -1,9 +1,41 @@
 package dsa.supplyment;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class ArabicChineseConvert {
+
+    @Test
+    public void testArabicToChinese() {
+        Assert.assertEquals("零", arabicToChinese("0"));
+        Assert.assertEquals("一", arabicToChinese("1"));
+        Assert.assertEquals("十", arabicToChinese("10"));
+        Assert.assertEquals("十五", arabicToChinese("15"));
+        Assert.assertEquals("二十", arabicToChinese("20"));
+        Assert.assertEquals("二十五", arabicToChinese("25"));
+        Assert.assertEquals("一百", arabicToChinese("100"));
+        Assert.assertEquals("一百一十五", arabicToChinese("115"));
+        Assert.assertEquals("二百三十四", arabicToChinese("234"));
+        Assert.assertEquals("九百九十九", arabicToChinese("999"));
+        Assert.assertEquals("一千零六", arabicToChinese("1006"));
+        Assert.assertEquals("一千五百零一", arabicToChinese("1501"));
+        Assert.assertEquals("九千九百零五", arabicToChinese("9905"));
+        Assert.assertEquals("二万零三百九十四", arabicToChinese("20394"));
+        Assert.assertEquals("十万", arabicToChinese("100000"));
+        Assert.assertEquals("十万零一", arabicToChinese("100001"));
+        Assert.assertEquals("一亿零一十万零一千八百二十二", arabicToChinese("100101822"));
+        Assert.assertEquals("一百亿", arabicToChinese("10000000000"));
+        Assert.assertEquals("一千二百三十四亿一千二百三十四万一千二百三十四", arabicToChinese("123412341234"));
+    }
+
+    @Test
+    public void debugArabicToChinese() {
+        System.out.println(arabicToChinese("10000000000"));
+    }
+
     /**
      * Notes:
      *  1. units and digits
@@ -45,6 +77,37 @@ public class ArabicChineseConvert {
             return chinese.substring(1);
         }
         return chinese.toString();
+    }
+
+    @Test
+    public void testChineseToArabic() {
+        Assert.assertEquals("0", chineseToArabic("零"));
+        Assert.assertEquals("1", chineseToArabic("一"));
+        Assert.assertEquals("10", chineseToArabic("十"));
+        Assert.assertEquals("11", chineseToArabic("十一"));
+        Assert.assertEquals("20", chineseToArabic("二十"));
+        Assert.assertEquals("21", chineseToArabic("二十一"));
+        Assert.assertEquals("100", chineseToArabic("一百"));
+        Assert.assertEquals("101", chineseToArabic("一百零一"));
+        Assert.assertEquals("110", chineseToArabic("一百一十"));
+        Assert.assertEquals("111", chineseToArabic("一百一十一"));
+        Assert.assertEquals("1000", chineseToArabic("一千"));
+        Assert.assertEquals("1001", chineseToArabic("一千零一"));
+        Assert.assertEquals("1010", chineseToArabic("一千零一十"));
+        Assert.assertEquals("1111", chineseToArabic("一千一百一十一"));
+        Assert.assertEquals("10000", chineseToArabic("一万"));
+        Assert.assertEquals("10001", chineseToArabic("一万零一"));
+        Assert.assertEquals("100000", chineseToArabic("十万"));
+        Assert.assertEquals("100100", chineseToArabic("十万零一百"));
+        Assert.assertEquals("12341234", chineseToArabic("一千二百三十四万一千二百三十四"));
+        Assert.assertEquals("123412341234", chineseToArabic("一千二百三十四亿一千二百三十四万一千二百三十四"));
+        Assert.assertEquals("2055014010", chineseToArabic("二十亿零五千五百零一万四千零一十"));
+        Assert.assertEquals("10000000000", chineseToArabic("一百亿"));
+    }
+
+    @Test
+    public void debugChineseToArabic() {
+        System.out.println(chineseToArabic("二十亿零五千五百零一万四千零一十"));
     }
 
     private String chineseToArabic(String chinese) {
