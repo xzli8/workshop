@@ -43,7 +43,7 @@ public class HeapSort {
         return (i << 1) + 1;
     }
 
-    // 调整堆。堆大小为n，待调整的元素下标为i
+    // 调整堆(下滤)。堆大小为n，待调整的元素下标为i
     private void adjust(int[] nums, int n, int i) {
         int tmp = nums[i];
         while (leftChild(i) < n) {
