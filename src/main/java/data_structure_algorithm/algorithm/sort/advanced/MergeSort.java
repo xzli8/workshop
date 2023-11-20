@@ -1,4 +1,4 @@
-package data_structure_algorithm.sort.advanced;
+package data_structure_algorithm.algorithm.sort.advanced;
 
 public class MergeSort {
 

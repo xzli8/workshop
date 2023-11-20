@@ -1,4 +1,4 @@
-package data_structure_algorithm.sort.simple;
+package data_structure_algorithm.algorithm.sort.simple;
 
 public class BubbleSort {
 

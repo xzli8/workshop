@@ -1,4 +1,4 @@
-package data_structure_algorithm.sort.linear;
+package data_structure_algorithm.algorithm.sort.linear;
 
 public class CountingSort {
 
