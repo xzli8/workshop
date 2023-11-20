@@ -68,7 +68,9 @@ public class MaxWeight {
 
         // 初始状态
         dp[0][0] = true;
-        dp[0][weights[0]] = weights[0] <= capacity;
+        if (weights[0] <= capacity) {
+            dp[0][weights[0]] = true;
+        }
 
         // 状态转移
         for (int i = 1; i < n; i++) {
@@ -121,7 +123,9 @@ public class MaxWeight {
 
         // 初始状态
         dp[0] = true;
-        dp[weights[0]] = weights[0] <= capacity;
+        if (weights[0] <= capacity) {
+            dp[weights[0]] = true;
+        }
 
         // 状态转移
         for (int i = 1; i < n; i++) {
