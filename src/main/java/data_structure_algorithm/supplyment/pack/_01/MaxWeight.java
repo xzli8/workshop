@@ -86,12 +86,23 @@ public class MaxWeight {
 //                }
 //            }
 
-            // 当第i个物品能放下时，可以选择不放或者放第i个物品；当第i个物品放不下时，只能不放
+//            // 当第i个物品能放下时，可以选择不放或者放第i个物品；当第i个物品放不下时，只能不放
+//            for (int j = 0; j <= capacity; j++) {
+//                if (j - weights[i] >= 0) {
+//                    dp[i][j] = dp[i-1][j] || dp[i-1][j-weights[i]];
+//                } else {
+//                    dp[i][j] = dp[i-1][j];
+//                }
+//            }
+
+            // 先不放第i个物品，也就是先把i-1的状态copy一份过来；然后考虑是否放第i个物品，当能放下时放
             for (int j = 0; j <= capacity; j++) {
-                if (j - weights[i] >= 0) {
-                    dp[i][j] = dp[i-1][j] || dp[i-1][j-weights[i]];
-                } else {
-                    dp[i][j] = dp[i-1][j];
+                // 第i个物品不放
+                dp[i][j] = dp[i - 1][j];
+
+                // 第i个物品放
+                if (j - weights[i] >= 0 && dp[i - 1][j - weights[i]]) {
+                    dp[i][j] = true;
                 }
             }
         }
@@ -132,8 +143,16 @@ public class MaxWeight {
             // 这里不能从前往后遍历，因为上层的临时结果还未被访问就被覆盖。
             // 这里因为是要用dp[j-weights[i]]计算dp[j]，即用前面的结果计算后面的结果
             for (int j = capacity; j >= 0; j--) {
-                if (j - weights[i] >= 0) {
-                    dp[j] = dp[j - weights[i]];
+                // 第i个物品不放，dp[j] = dp[j]，省略
+
+                // 第i个物品放
+//                if (j - weights[i] >= 0) {
+//                    dp[j] = dp[j - weights[i]];
+//                }
+
+                // 第i个物品放
+                if (j - weights[i] >= 0 && dp[j - weights[i]]) {
+                    dp[j] = true;
                 }
             }
         }

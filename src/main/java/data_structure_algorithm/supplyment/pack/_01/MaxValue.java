@@ -11,9 +11,9 @@ public class MaxValue {
      */
     @Test
     public void test() {
-        int[] weights = new int[] {2, 2, 4, 6, 3};
-        int[] values = new int[] {3, 4, 8, 9, 6};
-        int capacity = 16;
+        int[] weights = new int[] {2, 2, 3, 1, 5, 2};
+        int[] values = new int[] {2, 3, 1, 5, 4, 3};
+        int capacity = 1;
         System.out.println(maxValue0(weights, values, capacity));
         System.out.println(maxValue1(weights, values, capacity));
         System.out.println(maxValue2(weights, values, capacity));
@@ -84,13 +84,27 @@ public class MaxValue {
 
         // 状态转移
         for (int i = 1; i < n; i++) {
+
+//            // 当第i个物品能放下时，可以选择不放或者放第i个物品两种选择中价值最大的那个；当第i个物品放不下时，只能不放
+//            for (int j = 0; j <= capacity; j++) {
+//                if (j - weights[i] >= 0 && dp[i - 1][j - weights[i]] >= 0) {
+//                    dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - weights[i]] + values[i]);
+//                } else {
+//                    dp[i][j] = dp[i - 1][j];
+//                }
+//            }
+
+            // 先不放第i个物品，也就是先把i-1的状态copy一份过来；然后考虑是否放第i个物品，当能放下时，选择放或者不放的最大值
             for (int j = 0; j <= capacity; j++) {
+                // 第i个物品不放
+                dp[i][j] = dp[i - 1][j];
+
+                // 第i个物品能放下时，选择放或者不放的最大值
                 if (j - weights[i] >= 0 && dp[i - 1][j - weights[i]] >= 0) {
                     dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - weights[i]] + values[i]);
-                } else {
-                    dp[i][j] = dp[i - 1][j];
                 }
             }
+
         }
 
         // 返回最大价值(背包不必装满)

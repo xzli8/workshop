@@ -1,8 +1,7 @@
 package data_structure_algorithm.leetcode;
 
-import org.junit.Test;
-
 public class _410splitArray {
+
     /**
      二分(和1011题一模一样)
      分析：挖掘单调性(如果数组分段越多，那么各自和的最大值越小；如果分段越少，那么各自和的最大值越大)
