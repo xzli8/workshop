@@ -18,7 +18,7 @@ public class _322coinChange {
         Arrays.fill(dp, max);
         dp[0] = 0;
 
-        // 状态转移
+        // 状态转移(这里内外层循环顺序可以交换)
         for (int i = 1; i <= amount; i++) {
             for (int j = 0; j < coins.length; j++) {
                 if (i - coins[j] >= 0) {
