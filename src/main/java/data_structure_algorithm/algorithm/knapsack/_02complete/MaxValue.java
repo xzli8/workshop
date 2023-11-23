@@ -120,6 +120,9 @@ public class MaxValue {
 
         // 状态转移
         for (int i = 0; i < n; i++) {
+            // 注意：不同与01背包j一定要从大到小遍历，这里j一定要从小到大遍历
+            // 01背包因为物品只有一件，是用上一层的状态计算这一层，
+            // 完全背包因为物品数量无限，是用本层前面的状态计算本层后面的状态
             for (int j = 0; j <= capacity; j++) {
                 if (j - weights[i] >= 0 && dp[j - weights[i]] >= 0) {
                     dp[j] = Math.max(dp[j], dp[j - weights[i]] + values[i]);
