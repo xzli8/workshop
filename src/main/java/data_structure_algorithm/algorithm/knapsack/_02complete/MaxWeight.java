@@ -1,4 +1,4 @@
-package data_structure_algorithm.supplyment.pack._02complete;
+package data_structure_algorithm.algorithm.knapsack._02complete;
 
 import org.junit.Test;
 
@@ -10,6 +10,7 @@ public class MaxWeight {
         int capacity = 11;
         System.out.println(maxWeight1(weights, capacity));
         System.out.println(maxWeight2(weights, capacity));
+        System.out.println(maxWeight3(weights, capacity));
     }
 
     /**
@@ -80,6 +81,51 @@ public class MaxWeight {
                 }
             }
         }
+
+        // 返回最大重量
+        for (int j = capacity; j >= 0; j--) {
+            if (dp[j]) {
+                return j;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     *  时间复杂度优化：O(M * N)
+     */
+    public int maxWeight3(int[] weights, int capacity) {
+        // 定义状态
+        int n = weights.length;
+        boolean[] dp = new boolean[capacity + 1];
+
+        // 初始状态
+        dp[0] = true;
+
+        // 状态转移
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j <= capacity; j++) {
+                if (j - weights[i] >= 0 && dp[j - weights[i]]) {
+                    dp[j] = true;
+                }
+            }
+        }
+
+
+//        // 初始状态
+//        for (int k = 0; k * weights[0] <= capacity; k++) {
+//            dp[k * weights[0]] = true;
+//        }
+//
+//        // 状态转移
+//        for (int i = 1; i < n; i++) {
+//            for (int j = 0; j <= capacity; j++) {
+//                if (j - weights[i] >= 0 && dp[j - weights[i]]) {
+//                    dp[j] = true;
+//                }
+//            }
+//        }
+
 
         // 返回最大重量
         for (int j = capacity; j >= 0; j--) {

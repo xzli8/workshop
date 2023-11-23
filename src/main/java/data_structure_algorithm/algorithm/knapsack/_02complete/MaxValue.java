@@ -1,4 +1,4 @@
-package data_structure_algorithm.supplyment.pack._02complete;
+package data_structure_algorithm.algorithm.knapsack._02complete;
 
 import org.junit.Test;
 
@@ -13,6 +13,7 @@ public class MaxValue {
         int capacity = 5;
         System.out.println(maxValue1(weights, values, capacity));
         System.out.println(maxValue2(weights, values, capacity));
+        System.out.println(maxValue3(weights, values, capacity));
     }
 
 
@@ -101,6 +102,52 @@ public class MaxValue {
 
         // 返回最大价值（背包必须装满）
 //        return dp[capacity];
+    }
+
+
+
+    /**
+     *  时间复杂度优化：O(M * N)
+     */
+    public int maxValue3(int[] weights, int[] values, int capacity) {
+        // 定义状态
+        int n = weights.length;
+        int[] dp = new int[capacity + 1];
+
+        // 初始状态
+        Arrays.fill(dp, -1);
+        dp[0] = 0;
+
+        // 状态转移
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j <= capacity; j++) {
+                if (j - weights[i] >= 0 && dp[j - weights[i]] >= 0) {
+                    dp[j] = Math.max(dp[j], dp[j - weights[i]] + values[i]);
+                }
+            }
+        }
+
+//        // 初始状态
+//        Arrays.fill(dp, -1);
+//        for (int k = 0; k * weights[0] <= capacity; k++) {
+//            dp[k * weights[0]] = k * values[0];
+//        }
+//
+//        // 状态转移
+//        for (int i = 1; i < n; i++) {
+//            for (int j = 0; j <= capacity; j++) {
+//                if (j - weights[i] >= 0 && dp[j - weights[i]] >= 0) {
+//                    dp[j] = Math.max(dp[j], dp[j - weights[i]] + values[i]);
+//                }
+//            }
+//        }
+
+        // 返回最大价值
+        int maxValue = 0;
+        for (int j = 0; j <= capacity; j++) {
+            maxValue = Math.max(maxValue, dp[j]);
+        }
+        return maxValue;
     }
 
 }

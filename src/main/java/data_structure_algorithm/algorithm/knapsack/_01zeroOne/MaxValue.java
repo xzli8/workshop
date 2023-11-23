@@ -1,4 +1,4 @@
-package data_structure_algorithm.supplyment.pack._01;
+package data_structure_algorithm.algorithm.knapsack._01zeroOne;
 
 import org.junit.Test;
 
