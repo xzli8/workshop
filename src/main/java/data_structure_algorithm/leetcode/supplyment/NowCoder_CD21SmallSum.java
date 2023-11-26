@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import java.util.Scanner;
 
-public class CD21SmallSum {
+public class NowCoder_CD21SmallSum {
 
     /**
      *  题目：https://www.nowcoder.com/practice/edfe05a1d45c4ea89101d936cac32469?tpId=101&tqId=33089&tPage=1&rp=1&ru=%2Fta%2Fprogrammer-code-interview-guide

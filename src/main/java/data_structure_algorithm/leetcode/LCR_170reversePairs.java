@@ -1,6 +1,6 @@
 package data_structure_algorithm.leetcode;
 
-public class LCR170reversePairs {
+public class LCR_170reversePairs {
 
     /**
      归并排序(merge过程就是还原逆序对的过程)
