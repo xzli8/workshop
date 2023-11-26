@@ -32,6 +32,7 @@ public class BubbleSort {
             // 用于判断内循环是否有数据交换，如果没有数据交换，说明已经有序，可以提前退出
             boolean exchange = false;
             for (int j = 0; j < i; j++) {
+//                if (nums[j] >= nums[j + 1])   // 这样写就是不稳定排序
                 if (nums[j] > nums[j + 1]) {
                     swap(nums, j, j + 1);
                     exchange = true;

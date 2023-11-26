@@ -24,6 +24,7 @@ public class InsertionSort {
         int n = nums.length;
         for (int i = 1; i < n; i++) {
             int tmp = nums[i], j = i - 1;
+//            while (j >= 0 && nums[j] >= tmp)    // 这样写就是不稳定排序
             while (j >= 0 && nums[j] > tmp) {
                 nums[j + 1] = nums[j];
                 j--;
