@@ -1,4 +1,4 @@
-package data_structure_algorithm.leetcode.supplyment;
+package data_structure_algorithm.leetcode;
 
 import org.junit.Test;
 
@@ -10,6 +10,7 @@ public class NowCoder_CD21SmallSum {
      *  题目：https://www.nowcoder.com/practice/edfe05a1d45c4ea89101d936cac32469?tpId=101&tqId=33089&tPage=1&rp=1&ru=%2Fta%2Fprogrammer-code-interview-guide
      *      题解：https://mp.weixin.qq.com/s/rMsbcUf9ZPhvfRoyZGW6HA
      *      分析：与“数组中的逆序对”类似，有多种解法。从i的角度考虑比较简单，从j的角度考虑要复杂一些。
+     *      注意：NowCoder上的用例要用long类型跑才能通过，否则会溢出
      */
 
     // 返回值 + i后面比i大的数

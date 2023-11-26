@@ -1,4 +1,4 @@
-package data_structure_algorithm.leetcode.supplyment;
+package data_structure_algorithm.leetcode;
 
 import org.junit.Test;
 
