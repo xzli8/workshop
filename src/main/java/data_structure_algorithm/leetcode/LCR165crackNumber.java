@@ -1,6 +1,6 @@
 package data_structure_algorithm.leetcode;
 
-public class _LCR165crackNumber {
+public class LCR165crackNumber {
 
     /**
      相同题：https://leetcode.cn/problems/decode-ways

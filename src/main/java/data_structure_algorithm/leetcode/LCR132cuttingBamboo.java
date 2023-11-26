@@ -1,6 +1,6 @@
 package data_structure_algorithm.leetcode;
 
-public class _LCR132cuttingBamboo {
+public class LCR132cuttingBamboo {
 
     /**
      贪心

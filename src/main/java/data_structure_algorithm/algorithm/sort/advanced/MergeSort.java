@@ -76,6 +76,13 @@ public class MergeSort {
             } else {
                 nums[k] = tmp[j++];
             }
+
+            // 这样写就是不稳定排序
+//            else if (tmp[j] >= tmp[i]) {
+//                nums[k] = tmp[j++];
+//            } else {
+//                nums[k] = tmp[i++];
+//            }
         }
     }
 
