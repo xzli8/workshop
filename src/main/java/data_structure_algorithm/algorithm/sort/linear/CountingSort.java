@@ -20,7 +20,7 @@ public class CountingSort {
      *          同时在前缀和数组中找该数组对应的值，这个值减1即为该元素排序后对应的下标
      *
      *          时间复杂度：O(N)
-     *          空间复杂度：O(N * M)，N为数据数量，M为数据范围
+     *          空间复杂度：O(N + M)，N为数据数量，M为数据范围
      *          稳定性：稳定（倒序遍历稳定，正序遍历不稳定）
      */
     public void countingSort(int[] nums) {
