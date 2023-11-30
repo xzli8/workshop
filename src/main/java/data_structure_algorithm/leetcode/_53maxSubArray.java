@@ -57,6 +57,27 @@ public class _53maxSubArray {
 
     public static class Solution3 {
 
+        /**
+         贪心
+         局部最优：当前“连续和”为负数的时候立刻放弃，从下一个元素重新计算“连续和”。
+         因为负数加上下一个元素 “连续和”只会越来越小。
+         全局最优：选取最大“连续和”。
+
+         时间复杂度：O(N)
+         空间复杂度：O(1)
+         */
+        public int maxSubArray(int[] nums) {
+            int max = Integer.MIN_VALUE, sum = 0;
+            for (int num : nums) {
+                sum += num;
+                max = Math.max(max, sum);
+                if (sum < 0) {
+                    sum = 0;
+                }
+            }
+            return max;
+        }
+
     }
 
 
