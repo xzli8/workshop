@@ -48,7 +48,7 @@ public class _870advantageCount {
 
         /**
          贪心：思路和上面一样，实现上用数组代替优先队列
-         时间复杂度：O(N)
+         时间复杂度：O(NlogN)
          空间复杂度：O(N)
          */
         public int[] advantageCount(int[] nums1, int[] nums2) {
