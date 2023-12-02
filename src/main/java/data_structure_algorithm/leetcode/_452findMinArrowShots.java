@@ -8,7 +8,8 @@ public class _452findMinArrowShots {
     public static class Solution1 {
 
         /**
-         排序 + 贪心（类似435，找无重叠区间的数量，重叠的区间只需要一箭）
+         贪心(类似题："435.无重叠区间")
+         思路：找无重叠区间的数量，重叠的区间只需要一箭
          时间复杂度：O(NlogN)
          空间复杂度：O(logN)
          */

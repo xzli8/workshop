@@ -9,6 +9,7 @@ public class _435eraseOverlapIntervals {
 
         /**
          贪心(相当于会议室预定，需要找最先结束的会议)
+         贪心思路：当区间有重叠时，需要把终点更大的区间移除，这样后面区间不重叠的概率才更大，需要移除的数量才最小
          时间复杂度：O(N)
          空间复杂度：O(1)
          */
@@ -41,7 +42,8 @@ public class _435eraseOverlapIntervals {
     public static class Solution2 {
 
         /**
-         贪心(从区间终点考虑，找最多无重叠的区间)
+         贪心(类似题："452.用最少数量的箭引爆气球")
+         思路：从区间终点考虑，找最多无重叠的区间
          */
         public int eraseOverlapIntervals(int[][] intervals) {
             // 根据区间终点大小排序

@@ -6,9 +6,11 @@ public class _763partitionLabels {
 
     public static class Solution1 {
 
-         /**
-             合并区间（56）
-          */
+        /**
+         合并区间(类似题："56.合并区间")
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
          public List<Integer> partitionLabels(String s) {
              // 遍历字符串，计算每个字符最先出现的位置和最后出现的位置，形成一个区间数组
              Map<Character, int[]> intervalMap = new HashMap<>();
@@ -45,7 +47,6 @@ public class _763partitionLabels {
              }
              return res;
          }
-
 
     }
 
