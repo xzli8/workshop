@@ -5,6 +5,50 @@ public class _5longestPalindrome {
     public static class Solution1 {
 
         /**
+         动态规划(类似题："647.回文子串")
+         定义状态：dp[i][j]表示s[i, j]是否是回文子串
+         状态转移：
+         当 j - i = 1时，dp[i][j] = s[i] == s[j]
+         当 j - i > 1时，dp[i][j] = s[i] == s[j] && dp[i + 1][j - 1]
+         初始状态：dp[i][i] = true
+
+         时间复杂度：O(N^2)
+         空间复杂度：O(N^2)
+         */
+        public String longestPalindrome(String s) {
+            // 定义状态
+            int n = s.length();
+            boolean[][] dp = new boolean[n][n];
+
+            // 初始状态
+            for (int i = 0; i < n; i++) {
+                dp[i][i] = true;
+            }
+
+            // 状态转移
+            int start = 0, maxLen = 1;
+            for (int i = n - 1; i >= 0; i--) {
+                for (int j = i + 1; j < n; j++) {
+                    if (j - i == 1) {
+                        dp[i][j] = s.charAt(i) == s.charAt(j);
+                    } else {
+                        dp[i][j] = s.charAt(i) == s.charAt(j) && dp[i + 1][j - 1];
+                    }
+
+                    if (dp[i][j] && j - i + 1 > maxLen) {
+                        maxLen = j - i + 1;
+                        start = i;
+                    }
+                }
+            }
+            return s.substring(start, start + maxLen);
+        }
+
+    }
+
+    public static class Solution2 {
+
+        /**
          动态规划
          定义状态：dp[i][j]表示s[i,...,j]是否是回文串
          状态转移：len表示子串长度
@@ -65,7 +109,7 @@ public class _5longestPalindrome {
 
 
 
-    public static class Solution2 {
+    public static class Solution3 {
 
         /**
          双指针：中心扩展
@@ -95,6 +139,14 @@ public class _5longestPalindrome {
              }
              return s.substring(left + 1, right);
          }
+
+    }
+
+
+
+    public static class Solution4 {
+
+        // 马拉车算法
 
     }
 
