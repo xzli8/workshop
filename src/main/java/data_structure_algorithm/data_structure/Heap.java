@@ -31,7 +31,7 @@ public class Heap {
 
         // 从下往上调整堆
         int i = count, tmp = nums[i];
-        while ((i >> 1) > 0 && nums[i] > nums[i >> 1]) {
+        while ((i >> 1) > 0 && tmp > nums[i >> 1]) {
             nums[i] = nums[i >> 1];
             i = i >> 1;
         }
@@ -57,7 +57,7 @@ public class Heap {
                 child++;
             }
 
-            if (nums[child] <= nums[i]) {
+            if (nums[child] <= tmp) {
                 break;
             }
 
