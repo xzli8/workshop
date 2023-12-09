@@ -1,19 +1,13 @@
 package data_structure_algorithm.leetcode;
 
+import data_structure_algorithm.leetcode.domain.ListNode;
+
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
 public class _23mergeKLists {
 
     public static class Solution1 {
-
-        public class ListNode {
-            int val;
-            ListNode next;
-            ListNode() {}
-            ListNode(int val) { this.val = val; }
-            ListNode(int val, ListNode next) { this.val = val; this.next = next; }
-        }
 
         /**
          优先队列

@@ -1,17 +1,10 @@
 package data_structure_algorithm.leetcode;
 
+import data_structure_algorithm.leetcode.domain.ListNode;
+
 public class _21mergeTwoLists {
 
     public static class Solution1 {
-
-        public class ListNode {
-            int val;
-            ListNode next;
-            ListNode() {}
-            ListNode(int val) { this.val = val; }
-            ListNode(int val, ListNode next) { this.val = val; this.next = next; }
-        }
-
 
 
         /**

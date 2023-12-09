@@ -1,18 +1,10 @@
 package data_structure_algorithm.leetcode;
 
+import data_structure_algorithm.leetcode.domain.ListNode;
+
 public class _147insertionSortList {
 
     public static class Solution1 {
-
-        public class ListNode {
-            int val;
-            ListNode next;
-            ListNode() {}
-            ListNode(int val) { this.val = val; }
-            ListNode(int val, ListNode next) { this.val = val; this.next = next; }
-        }
-
-
 
         /**
          new一个dummy节点表示新的排序好的链表，对待排序链表中的每个节点，从排序好的链表头开始遍历寻找插入位置
