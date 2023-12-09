@@ -46,9 +46,9 @@ public class _264nthUglyNumber {
 
         /**
          动态规划
-         思路：
+         思路：https://leetcode.cn/problems/ugly-number-ii/solutions/110653/san-zhi-zhen-fang-fa-de-li-jie-fang-shi-by-zzxn
          1.定义状态：dp[i]表示第i个丑数
-         2.状态转移：dp[i] = min(dp[p2]*2, dp[p3]*3, dp[p5]*5)
+         2.状态转移：dp[i] = min(dp[p2]*2, dp[p3]*3, dp[p5]*5)，pi表示有资格与i相乘的最小丑数的位置
          分别比较dp[i]与dp[p2]*2, dp[p3]*3, dp[p5]*5是否相等，如果相等，那么相应指针++
          时间复杂度：O(N)
          空间复杂度：O(N)
