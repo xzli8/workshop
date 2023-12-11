@@ -40,16 +40,6 @@ public class _23mergeKLists {
 
     public static class Solution2 {
 
-        public class ListNode {
-            int val;
-            ListNode next;
-            ListNode() {}
-            ListNode(int val) { this.val = val; }
-            ListNode(int val, ListNode next) { this.val = val; this.next = next; }
-        }
-
-
-
         /**
          合并两个有序链表(leetcode.21)
          */
@@ -79,8 +69,6 @@ public class _23mergeKLists {
             return dummy.next;
         }
 
-
-
         /**
          两两合并（分治）
          时间复杂度：O(kn * logk)
@@ -104,14 +92,6 @@ public class _23mergeKLists {
 
 
     public static class Solution3 {
-
-        public class ListNode {
-            int val;
-            ListNode next;
-            ListNode() {}
-            ListNode(int val) { this.val = val; }
-            ListNode(int val, ListNode next) { this.val = val; this.next = next; }
-        }
 
         /**
          合并两个有序链表(leetcode.21)
