@@ -1,5 +1,7 @@
 package data_structure_algorithm.leetcode;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +13,7 @@ public class _18fourSum {
         /**
          排序 + 枚举 + 双指针：枚举前两个数，然后用双指针寻找后两个数
          时间复杂度：O(n^3)
-         空间复杂度：O(logn)，排序空间
+         空间复杂度：O(1)
          */
         public List<List<Integer>> fourSum(int[] nums, int target) {
             List<List<Integer>> res = new ArrayList<>();
@@ -73,6 +75,78 @@ public class _18fourSum {
                         } else {
                             right--;
                         }
+                    }
+                }
+            }
+            return res;
+        }
+
+    }
+
+
+
+    public static class Solution2 {
+
+        /**
+         双指针：(类似题："15.三数之和")
+         时间复杂度：O(N^3)，排序O(NlogN) + 双指针O(N^3)
+         空间复杂度：O(1)
+         */
+        public List<List<Integer>> fourSum(int[] nums, int target) {
+            // 排序
+            Arrays.sort(nums);
+
+            // 递归
+            return nSum(nums, 4, target, 0);
+        }
+
+        // 求nSum，target定义为long防止越界
+        private List<List<Integer>> nSum(int[] nums, int n, long target, int start) {
+
+            List<List<Integer>> res = new ArrayList<>();
+
+            // base case
+            if (n == 2) {
+                int left = start, right = nums.length - 1;
+                while (left < right) {
+                    long sum = nums[left] + nums[right];
+                    if (sum == target) {
+                        // 找到一个解
+                        List<Integer> sub = new ArrayList();
+                        sub.add(nums[left]);
+                        sub.add(nums[right]);
+                        res.add(sub);
+
+                        // 去重
+                        while (left < right && nums[left + 1] == nums[left]) left++;
+                        while (left < right && nums[right - 1] == nums[right]) right--;
+
+                        // 移动指针
+                        left++;
+                        right--;
+                    }
+                    else if (sum < target) {
+                        left++;
+                    }
+                    else {
+                        right--;
+                    }
+                }
+            }
+            // 递归
+            else {
+                // 枚举
+                for (int i = start; i < nums.length; i++) {
+                    // 去重
+                    if (i > start && nums[i] == nums[i - 1]) continue;
+
+                    // 递归下一层
+                    List<List<Integer>> subs = nSum(nums, n - 1, target - nums[i], i + 1);
+
+                    // 返回本层
+                    for (List<Integer> sub : subs) {
+                        sub.add(nums[i]);
+                        res.add(sub);
                     }
                 }
             }
