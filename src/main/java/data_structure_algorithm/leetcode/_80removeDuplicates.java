@@ -5,20 +5,22 @@ public class _80removeDuplicates {
     public static class Solution1 {
 
         /**
-         双指针（参考26）
+         双指针：(类似题："26.删除有序数组中的重复项")
+         时间复杂度：O(N)
+         空间复杂度：O(1)
          */
         public int removeDuplicates(int[] nums) {
             int n = nums.length;
-            if (n == 1 || n == 2) return n;
+            if (n <= 2) return n;
 
-            int i = 2;
-            for (int j = 2; j < n; j++) {
-                if (nums[j] != nums[i-2]) {
-                    nums[i] = nums[j];
-                    i++;
+            int slow = 2, fast = 2;
+            while (fast < n) {
+                if (nums[fast] != nums[slow - 2]) {
+                    nums[slow++] = nums[fast];
                 }
+                fast++;
             }
-            return i;
+            return slow;
         }
 
     }

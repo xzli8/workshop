@@ -16,8 +16,7 @@ public class _383canConstruct {
                 counts[c - 'a']++;
             }
             for (char c : ransomNote.toCharArray()) {
-                counts[c - 'a']--;
-                if (counts[c - 'a'] < 0) return false;
+                if (--counts[c - 'a'] < 0) return false;
             }
             return true;
         }
