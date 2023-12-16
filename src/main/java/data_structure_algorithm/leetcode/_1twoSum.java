@@ -1,5 +1,7 @@
 package data_structure_algorithm.leetcode;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 
 public class _1twoSum {
@@ -39,8 +41,9 @@ public class _1twoSum {
                  num2Index.put(nums[i], i);
              }
              for (int i = 0; i < nums.length; i++) {
-                 if (num2Index.containsKey(target - nums[i]) && num2Index.get(target - nums[i]) != i) {
-                     return new int[] {i, num2Index.get(target - nums[i])};
+                 int remain = target - nums[i];
+                 if (num2Index.containsKey(remain) && num2Index.get(remain) != i) {
+                     return new int[] {i, num2Index.get(remain)};
                  }
              }
              return new int[] {};
@@ -60,8 +63,9 @@ public class _1twoSum {
          public int[] twoSum(int[] nums, int target) {
              HashMap<Integer, Integer> num2Index = new HashMap<>();
              for (int i = 0; i < nums.length; i++) {
-                 if (num2Index.containsKey(target - nums[i])) {
-                     return new int[] {i, num2Index.get(target - nums[i])};
+                 int remain = target - nums[i];
+                 if (num2Index.containsKey(remain)) {
+                     return new int[] {i, num2Index.get(remain)};
                  }
                  num2Index.put(nums[i], i);
              }
