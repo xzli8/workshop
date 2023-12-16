@@ -1,4 +1,4 @@
-package data_structure_algorithm.leetcode.domain;
+package data_structure_algorithm.domain;
 
 
 /**

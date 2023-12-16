@@ -1,6 +1,6 @@
 package data_structure_algorithm.leetcode;
 
-import data_structure_algorithm.leetcode.domain.ListNode;
+import data_structure_algorithm.domain.ListNode;
 
 public class _148sortList {
 
