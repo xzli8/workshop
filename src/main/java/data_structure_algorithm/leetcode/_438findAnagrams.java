@@ -41,17 +41,23 @@ public class _438findAnagrams {
                         res.add(left);
                     }
 
-                    char lc = s.charAt(left++);
-                    if (needs.containsKey(lc)) {
-                        if (window.get(lc).equals(needs.get(lc))) {
+                    char cl = s.charAt(left++);
+                    if (needs.containsKey(cl)) {
+                        if (window.get(cl).equals(needs.get(cl))) {
                             match--;
                         }
-                        window.put(lc, window.getOrDefault(lc, 0) - 1);
+                        window.put(cl, window.getOrDefault(cl, 0) - 1);
                     }
                 }
             }
             return res;
         }
+
+    }
+
+
+
+    public static class Solution2 {
 
     }
 
