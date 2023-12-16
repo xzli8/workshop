@@ -1,5 +1,6 @@
 package data_structure_algorithm.leetcode;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -15,7 +16,7 @@ public class _1099twoSumLessThanK {
 
         @Test
         public void test() {
-            System.out.println(twoSumLessThanK(new int[] {34,23,1,24,75,33,54,8}, 60));
+            Assert.assertEquals(58, twoSumLessThanK(new int[] {34,23,1,24,75,33,54,8}, 60));
         }
 
         /**
