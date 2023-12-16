@@ -8,11 +8,24 @@ import java.util.Map;
 
 public class _170twoSum {
 
+    /**
+     * 题目描述：设计一个接收整数流的数据结构，该数据结构支持检查是否存在两数之和等于特定值。
+     *
+     * 实现 TwoSum 类：
+     * TwoSum() 使用空数组初始化 TwoSum 对象
+     * void add(int number) 向数据结构添加一个数 number
+     * boolean find(int value) 寻找数据结构中是否存在一对整数，使得两数之和与给定的值相等。如果存在，返回 true ；否则，返回 false 。
+     */
+
     public static class Solution1 {
 
         public class TwoSum {
 
-            private final Map<Integer, Integer> num2Count = new HashMap<>();
+            private final Map<Integer, Integer> num2Count;
+
+            public TwoSum() {
+                num2Count = new HashMap<>();
+            }
 
             /**
              * 时间复杂度：O(1)
