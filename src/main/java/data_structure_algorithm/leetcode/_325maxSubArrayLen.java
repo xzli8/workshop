@@ -57,6 +57,42 @@ public class _325maxSubArrayLen {
         }
 
         /**
+         *  暴力搜索-改进：在枚举右边界的同时计算区间和，有点前缀和的意思
+         *      分析：因为有负数，所以不能用滑动窗口(无法满足单向性)，可以先尝试暴力求解。
+         *      时间复杂度：O(N^2)
+         *      空间复杂度：O(1)
+         */
+        public int maxSubArrayLen(int[] nums, int k) {
+            int n = nums.length, maxLen = 0;
+
+            // 枚举左右边界
+            for (int i = 0; i < n; i++) {
+                int sum = 0;
+                for (int j = i; j < n; j++) {
+                    sum += nums[j];
+
+                    // 更新最大子数组长度
+                    if (sum == k && j - i + 1 > maxLen) {
+                        maxLen = j - i + 1;
+                    }
+                }
+            }
+            return maxLen;
+        }
+
+    }
+
+
+
+    public static class Solution3 {
+
+        @Test
+        public void test() {
+            Assert.assertEquals(4, maxSubArrayLen(new int[] {1, -1, 5, -2, 3}, 3));
+            Assert.assertEquals(2, maxSubArrayLen(new int[] {-2, -1, 2, 1}, 1));
+        }
+
+        /**
          *  前缀和
          *      分析：因为有负数，所以不能用滑动窗口(无法满足单向性)，可以暴力求解，但时间复杂度较高。前缀和相当于用空间换时间，省去了遍历区间元素计算区间和的过程。
          *      时间复杂度：O(N^2)
@@ -86,7 +122,7 @@ public class _325maxSubArrayLen {
 
 
 
-    public static class Solution3 {
+    public static class Solution4 {
 
         @Test
         public void test() {
