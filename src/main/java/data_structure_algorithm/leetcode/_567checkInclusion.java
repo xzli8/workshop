@@ -58,6 +58,54 @@ public class _567checkInclusion {
 
     public static class Solution2 {
 
+        /**
+         滑动窗口：因为s1,s2仅包含小写字母，所以可以用哈希数组代替哈希表
+         */
+        public boolean checkInclusion(String s1, String s2) {
+            // 统计s1中所有字符的出现次数
+            int[] needs = new int[26];
+            for (char c : s1.toCharArray()) {
+                needs[c - 'a']++;
+            }
+
+            // 统计s1中不同字符的数量
+            int size = 0;
+            for (int count : needs) {
+                if (count > 0) {
+                    size++;
+                }
+            }
+
+            // 滑动窗口
+            int left = 0, right = 0, match = 0;
+            int[] window = new int[26];
+            while (right < s2.length()) {
+                // 右指针右移，扩大窗口，找可行解
+                int ir = s2.charAt(right++) - 'a';
+                if (needs[ir] > 0) {
+                    if (++window[ir] == needs[ir]) {
+                        match++;
+                    }
+                }
+
+                // 当窗口长度等于s1的长度时，判断是否有可行解
+                while (right - left == s1.length()) {
+                    if (match == size) {
+                        return true;
+                    }
+
+                    // 左指针右移，为下一次循环做准备
+                    int il = s2.charAt(left++) - 'a';
+                    if (needs[il] > 0) {
+                        if (window[il]-- == needs[il]) {
+                            match--;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
     }
 
 

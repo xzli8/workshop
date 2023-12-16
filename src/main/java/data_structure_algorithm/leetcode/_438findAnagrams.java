@@ -59,6 +59,55 @@ public class _438findAnagrams {
 
     public static class Solution2 {
 
+        /**
+         滑动窗口：因为s和p仅包含小写字母，所以可以用哈希数组代替哈希map
+         */
+        public List<Integer> findAnagrams(String s, String p) {
+            // 统计p中所有字符的出现数量
+            int[] needs = new int[26];
+            for (char c : p.toCharArray()) {
+                needs[c - 'a']++;
+            }
+
+            // 统计p中不同的字符数量
+            int size = 0;
+            for (int count : needs) {
+                if (count > 0) {
+                    size++;
+                }
+            }
+
+            // 滑动窗口
+            List<Integer> res = new ArrayList<>();
+            int left = 0, right = 0, match = 0;
+            int[] window = new int[26];
+            while (right < s.length()) {
+                // 右指针右移，扩大窗口，找可行解
+                int ir = s.charAt(right++) - 'a';
+                if (needs[ir] > 0) {
+                    if (++window[ir] == needs[ir]) {
+                        match++;
+                    }
+                }
+
+                // 窗口大小刚好等于p的长度时，判断是否有可行解
+                while (right - left == p.length()) {
+                    if (match == size) {
+                        res.add(left);
+                    }
+
+                    // 左指针右移，缩小窗口，为下一次循环做准备
+                    int il = s.charAt(left++) - 'a';
+                    if (needs[il] > 0) {
+                        if (window[il]-- == needs[il]) {
+                            match--;
+                        }
+                    }
+                }
+            }
+            return res;
+        }
+
     }
 
 }
