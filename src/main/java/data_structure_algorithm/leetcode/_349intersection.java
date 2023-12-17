@@ -1,7 +1,6 @@
 package data_structure_algorithm.leetcode;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class _349intersection {
 
@@ -12,36 +11,59 @@ public class _349intersection {
          时间复杂度：O(M+N)
          空间复杂度：O(M+N)
          */
+         public int[] intersection(int[] nums1, int[] nums2) {
+             // 将nums1中的元素都加入集合
+             Set<Integer> s1 = new HashSet<>();
+             for (int num : nums1) {
+                 s1.add(num);
+             }
+
+             // 遍历nums2中的元素，如果该元素在集合中出现，则加入新集合(新集合去重)
+             Set<Integer> s2 = new HashSet<>();
+             for (int num : nums2) {
+                 if (s1.contains(num)) {
+                     s2.add(num);
+                 }
+             }
+
+             // 将新集合转换成数组返回
+             return s2.stream().mapToInt(Integer::intValue).toArray();
+         }
+
+    }
+
+    public static class Solution2 {
+
+        /**
+         排序 + 双指针
+         时间复杂度：O(MlogM + NlogN)，排序
+         空间复杂度：O(logM + logN)，排序
+         */
         public int[] intersection(int[] nums1, int[] nums2) {
-            Set<Integer> set1 = new HashSet<>();
-            for (int num : nums1) {
-                set1.add(num);
-            }
-            Set<Integer> set2 = new HashSet<>();
-            for (int num : nums2) {
-                set2.add(num);
-            }
-            return getIntersection(set1, set2);
-        }
+            // 排序
+            Arrays.sort(nums1);
+            Arrays.sort(nums2);
 
-        private int[] getIntersection(Set<Integer> s1, Set<Integer> s2) {
-            if (s1.size() > s2.size()) {
-                return getIntersection(s2, s1);
-            }
-
-            Set<Integer> intersectionSet = new HashSet<>();
-            for (int num : s1) {
-                if (s2.contains(num)) {
-                    intersectionSet.add(num);
+            // 双指针
+            List<Integer> res = new ArrayList<>();
+            int idx1 = 0, idx2 = 0;
+            while (idx1 < nums1.length && idx2 < nums2.length) {
+                int num1 = nums1[idx1], num2 = nums2[idx2];
+                if (num1 == num2) {
+                    if (res.size() == 0 || res.get(res.size() - 1) != num1) {
+                        res.add(num1);
+                    }
+                    idx1++;
+                    idx2++;
+                } else if (num1 < num2) {
+                    idx1++;
+                } else {
+                    idx2++;
                 }
             }
 
-            int[] res = new int[intersectionSet.size()];
-            int idx = 0;
-            for (int num : intersectionSet) {
-                res[idx++] = num;
-            }
-            return res;
+            // 结果转换成int[]返回
+            return res.stream().mapToInt(Integer::intValue).toArray();
         }
 
     }
