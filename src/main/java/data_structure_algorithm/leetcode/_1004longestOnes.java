@@ -10,8 +10,7 @@ public class _1004longestOnes {
          空间复杂度：O(1)
          */
         public int longestOnes(int[] nums, int k) {
-            int n = nums.length;
-            int left = 0, right = 0, maxCount = 0;
+            int n = nums.length, left = 0, right = 0, maxCount = 0;
             while (right < n) {
                 if (nums[right++] == 0) k--;
                 while (k < 0) {
