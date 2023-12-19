@@ -25,6 +25,12 @@ public class _727minWindow {
      * T 长度的范围为 [1, 100]。
      */
 
+    /**
+     *  参考题解：
+     *      https://www.cnblogs.com/grandyang/p/8684817.html
+     *      https://codeleading.com/article/60763896256/
+     */
+
     public static class Solution1 {
 
         /**
