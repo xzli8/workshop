@@ -169,4 +169,42 @@ public class _325maxSubArrayLen {
 
 
 
+    public static class Solution5 {
+
+        @Test
+        public void test() {
+            Assert.assertEquals(4, maxSubArrayLen(new int[] {1, -1, 5, -2, 3}, 3));
+            Assert.assertEquals(2, maxSubArrayLen(new int[] {-2, -1, 2, 1}, 1));
+        }
+
+        /**
+         *  前缀和 + 哈希表：(类似题："1.两数之和"，求两数之和和用哈希表代替枚举，这里求前缀和的两数之差，也可以用哈希表代替枚举)
+         *      分析：哈希表进一步用空间换时间。一边遍历一边求前缀和，以及前缀和到下标的映射
+         *      时间复杂度：O(N)
+         *      空间复杂度：O(N)
+         */
+        public int maxSubArrayLen(int[] nums, int k) {
+            int n = nums.length, preSum = 0, maxLen = 0;
+            Map<Integer, Integer> preSum2Idx = new HashMap<>();
+            preSum2Idx.put(0, -1);
+            for (int i = 0; i < n; i++) {
+                preSum += nums[i];
+                int remain = preSum - k;
+                if (preSum2Idx.containsKey(remain)) {
+                    maxLen = Math.max(maxLen, i - preSum2Idx.get(remain));
+                } else {
+                    if (!preSum2Idx.containsKey(preSum)) {
+                        preSum2Idx.put(preSum, i);
+                    }
+                }
+            }
+            return maxLen;
+        }
+
+    }
+
+
+
+
+
 }
