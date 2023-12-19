@@ -3,7 +3,7 @@ package data_structure_algorithm.leetcode;
 import java.util.PriorityQueue;
 import java.util.Random;
 
-public class Mianshiti17_14smallestK {
+public class Mianshiti_17_14smallestK {
 
     public static class Solution1 {
 

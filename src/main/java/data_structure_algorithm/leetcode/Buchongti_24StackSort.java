@@ -1,11 +1,15 @@
-package data_structure_algorithm.leetcode.supplyment;
+package data_structure_algorithm.leetcode;
 
 import org.junit.Test;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public class StackSort {
+public class Buchongti_24StackSort {
+
+    /**
+     * 题目链接：https://mp.weixin.qq.com/s/g_AqwsSEUwlRSevnStPkEA
+     */
 
     @Test
     public void test() {
