@@ -1,5 +1,12 @@
 package data_structure_algorithm.leetcode;
 
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 public class _1213arraysIntersection {
 
     /**
@@ -28,6 +35,46 @@ public class _1213arraysIntersection {
 
     public static class Solution1 {
 
+        /**
+         *  三指针
+         *      时间复杂度：O(N1 + N2 + N3)
+         *      空间复杂度：O(1)
+         */
+        public List<Integer> arraysIntersection(int[] arr1, int[] arr2, int[] arr3) {
+            List<Integer> res = new ArrayList<>();
+            int i = 0, j = 0, k = 0;
+            while (i < arr1.length && j < arr2.length && k < arr3.length) {
+                // 找到相同元素则加入交集
+                if (arr1[i] == arr2[j] && arr2[j] == arr3[k]) {
+                    res.add(arr1[i]);
+                    i++;
+                    j++;
+                    k++;
+                } else {
+                    // 将最小元素对应的指针往后移一位
+                    int min = Math.min(arr1[i], Math.min(arr2[j], arr3[k]));
+                    if (arr1[i] == min) {
+                        i++;
+                    }
+                    if (arr2[j] == min) {
+                        j++;
+                    }
+                    if (arr3[k] == min) {
+                        k++;
+                    }
+                }
+            }
+            return res;
+        }
+
+        @Test
+        public void test() {
+            int[] expected = new int[] {1,5};
+            List<Integer> res = arraysIntersection(new int[] {1,2,3,4,5}, new int[] {1,2,5,7,9}, new int[] {1,3,4,5,8});
+            for (int i = 0; i < res.size(); i++) {
+                Assert.assertEquals(expected[i], res.get(i).intValue());
+            }
+        }
 
     }
 
