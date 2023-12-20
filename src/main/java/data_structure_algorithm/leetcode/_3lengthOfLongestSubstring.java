@@ -16,11 +16,11 @@ public class _3lengthOfLongestSubstring {
             int left = 0, right = 0, maxLen = 0;
             Set<Character> set = new HashSet<>();
             while (right < s.length()) {
-                char in = s.charAt(right++);
-                while (set.contains(in)) {
+                char cr = s.charAt(right++);
+                while (set.contains(cr)) {
                     set.remove(s.charAt(left++));
                 }
-                set.add(in);
+                set.add(cr);
                 maxLen = Math.max(maxLen, right - left);
             }
             return maxLen;
