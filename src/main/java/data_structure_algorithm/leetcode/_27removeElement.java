@@ -48,4 +48,35 @@ public class _27removeElement {
 
 
 
+    public static class Solution3 {
+
+        /**
+         双指针：左指针从左往右移，找第一个等于val的元素；右指针从右往左移，找第一个不等于val的元素，交换
+         时间复杂度：O(N)
+         空间复杂度：O(1)
+         */
+        public int removeElement(int[] nums, int val) {
+            int left = 0, right = nums.length - 1;
+            while (left <= right) {
+                while (left <= right && nums[left] != val) {
+                    left++;
+                }
+                while (left <= right && nums[right] == val) {
+                    right--;
+                }
+                if (left <= right) swap(nums, left++, right--);
+            }
+            return left;
+        }
+
+        private void swap(int[] nums, int i, int j) {
+            int tmp = nums[i];
+            nums[i] = nums[j];
+            nums[j] = tmp;
+        }
+
+    }
+
+
+
 }
