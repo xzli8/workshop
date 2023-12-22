@@ -1,43 +1,104 @@
 package data_structure_algorithm.leetcode;
 
-import java.util.Deque;
-import java.util.LinkedList;
+import java.util.*;
 
 public class _239maxSlidingWindow {
 
     public static class Solution1 {
 
         /**
-         双端队列（参考“面试题59” https://leetcode.cn/problems/dui-lie-de-zui-da-zhi-lcof/）
+         TreeMap：因为数字可能重复，所以用map不用set
+         时间复杂度：O(NlogK)
+         空间复杂度：O(K)
          */
         public int[] maxSlidingWindow(int[] nums, int k) {
-
+            // 初始化
             int n = nums.length;
             int[] res = new int[n - k + 1];
+            TreeMap<Integer, Integer> num2Count = new TreeMap<>();
 
-            // 初始化deque
-            Deque<Integer> dq = new LinkedList<>();
+            // 处理前k个数
             for (int i = 0; i < k; i++) {
-                push(dq, nums[i]);
+                num2Count.put(nums[i], num2Count.getOrDefault(nums[i], 0) + 1);
             }
-            res[0] = dq.peekFirst();
+            res[0] = num2Count.lastKey();
 
-            // 遍历数组
+            // 处理后面的数
             for (int i = k; i < n; i++) {
-                if (nums[i - k] == dq.peekFirst()) dq.pollFirst();  // 出队(这里不太妥当，单调队列中放下标更好)
-                push(dq, nums[i]); // 入队
-                res[i - k + 1] = dq.peekFirst();
+                int nl = nums[i - k];
+                num2Count.put(nl, num2Count.get(nl) - 1);
+                if (num2Count.get(nl) == 0)  {
+                    num2Count.remove(nl);
+                }
+
+                int nr = nums[i];
+                num2Count.put(nr, num2Count.getOrDefault(nr, 0) + 1);
+                res[i - k + 1] = num2Count.lastKey();
             }
             return res;
         }
 
-        private void push(Deque<Integer> dq, Integer num) {
-            while (!dq.isEmpty() && dq.peekLast() < num) {
-                dq.pollLast();
+    }
+
+    public static class Solution2 {
+
+        /**
+         单调队列
+         时间复杂度：O(N)
+         空间复杂度：O(K)
+         */
+        public int[] maxSlidingWindow(int[] nums, int k) {
+
+            // 初始化
+            int n = nums.length;
+            int[] res = new int[n - k + 1];
+            MaxQueue maxQueue = new MaxQueue();
+
+            // 前k个元素加入单调队列
+            for (int i = 0; i < k; i++) {
+                maxQueue.offer(nums[i]);
             }
-            dq.offerLast(num);
+
+            // 遍历后续元素
+            res[0] = maxQueue.max();
+            for (int i = k; i < n; i++) {
+                maxQueue.poll();
+                maxQueue.offer(nums[i]);
+                res[i - k + 1] = maxQueue.max();
+            }
+            return res;
         }
 
+        /**
+         最大队列(参考：https://leetcode.cn/problems/dui-lie-de-zui-da-zhi-lcof/description/)
+         */
+        public class MaxQueue {
+
+            private Queue<Integer> main = new ArrayDeque<>();
+
+            private Deque<Integer> help = new ArrayDeque<>();
+
+            public void offer(int val) {
+                main.offer(val);
+                while (!help.isEmpty() && help.peekLast() < val) {
+                    help.pollLast();
+                }
+                help.offerLast(val);
+            }
+
+            public int poll() {
+                int res = main.poll();
+                if (res == help.peekFirst()) {
+                    help.pollFirst();
+                }
+                return res;
+            }
+
+            public int max() {
+                return help.peek();
+            }
+
+        }
     }
 
 }

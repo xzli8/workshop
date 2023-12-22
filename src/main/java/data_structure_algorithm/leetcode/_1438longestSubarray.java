@@ -44,35 +44,35 @@ public class _1438longestSubarray {
 
         /**
          滑动窗口 + 单调队列
-         时间复杂度：O(n)
-         空间复杂度：O(n)
+         时间复杂度：O(N)
+         空间复杂度：O(N)
          */
         public int longestSubarray(int[] nums, int limit) {
             int left = 0, right = 0, maxLen = 0;
             Deque<Integer> minQueue = new LinkedList<>();
             Deque<Integer> maxQueue = new LinkedList<>();
             while (right < nums.length) {
-                while (!minQueue.isEmpty() && minQueue.peekLast() > nums[right]) {
+                int nr = nums[right++];
+                while (!minQueue.isEmpty() && minQueue.peekLast() > nr) {
                     minQueue.pollLast();
                 }
-                minQueue.offerLast(nums[right]);
-                while (!maxQueue.isEmpty() && maxQueue.peekLast() < nums[right]) {
+                minQueue.offerLast(nr);
+                while (!maxQueue.isEmpty() && maxQueue.peekLast() < nr) {
                     maxQueue.pollLast();
                 }
-                maxQueue.offerLast(nums[right]);
+                maxQueue.offerLast(nr);
 
                 while (!minQueue.isEmpty() && !maxQueue.isEmpty()
                         && maxQueue.peekFirst() - minQueue.peekFirst() > limit) {
-                    if (minQueue.peekFirst() == nums[left]) {
+                    int nl = nums[left++];
+                    if (minQueue.peekFirst() == nl) {
                         minQueue.pollFirst();
                     }
-                    if (maxQueue.peekFirst() == nums[left]) {
+                    if (maxQueue.peekFirst() == nl) {
                         maxQueue.pollFirst();
                     }
-                    left++;
                 }
-                maxLen = Math.max(maxLen, right - left + 1);
-                right++;
+                maxLen = Math.max(maxLen, right - left);
             }
             return maxLen;
         }
