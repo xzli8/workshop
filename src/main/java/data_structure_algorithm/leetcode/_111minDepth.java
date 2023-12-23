@@ -1,37 +1,17 @@
 package data_structure_algorithm.leetcode;
 
+import data_structure_algorithm.domain.TreeNode;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class _111minDepth {
 
-    //Definition for a binary tree node.
-    public class TreeNode {
-        int val;
-        TreeNode left;
-        TreeNode right;
-
-        TreeNode() {
-        }
-
-        TreeNode(int val) {
-            this.val = val;
-        }
-
-        TreeNode(int val,TreeNode left, TreeNode right) {
-            this.val = val;
-            this.left = left;
-            this.right = right;
-        }
-    }
-
-
-
     public static class Solution1 {
 
 
         /**
-         递归（深度优先搜索）
+         DFS
          递推：
          当节点的左子节点为null，右子节点不为null时，返回右子节点的最小深度+1；
          当节点的右子节点为null，左子节点不为null时，返回左子节点的最小深度+1；
@@ -39,8 +19,9 @@ public class _111minDepth {
          终止：
          节点为null时，其深度为0
          节点为叶子结点(左右子节点均为null的节点为叶子结点)时，其深度为1
-         时间复杂度：O(n)
-         空间复杂度：平均O(logn),最坏O(n)
+
+         时间复杂度：O(N)
+         空间复杂度：O(N)
          */
          public int minDepth(TreeNode root) {
              if (null == root) return 0;
@@ -57,7 +38,9 @@ public class _111minDepth {
     public static class Solution2 {
 
         /**
-         层序遍历（广度优先搜索）
+         BFS
+         时间复杂度：O(N)
+         空间复杂度：O(N)
          */
         public int minDepth(TreeNode root) {
             if (null == root) return 0;
@@ -77,7 +60,6 @@ public class _111minDepth {
             }
             return depth;
         }
-
 
     }
 
