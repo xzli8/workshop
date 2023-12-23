@@ -14,7 +14,7 @@ public class _94inorderTraversal {
         /**
          递归
          时间复杂度：O(N)
-         空间复杂度：O(logN)
+         空间复杂度：O(N)
          */
          public List<Integer> inorderTraversal(TreeNode root) {
              List<Integer> res = new ArrayList<>();
@@ -38,7 +38,7 @@ public class _94inorderTraversal {
         /**
          迭代
          时间复杂度：O(N)
-         空间复杂度：O(logN
+         空间复杂度：O(N)
          */
         public List<Integer> inorderTraversal(TreeNode root) {
             List<Integer> res = new ArrayList<>();

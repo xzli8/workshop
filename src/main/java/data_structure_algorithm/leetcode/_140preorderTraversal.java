@@ -14,7 +14,7 @@ public class _140preorderTraversal {
         /**
          递归
          时间复杂度：O(N)
-         空间复杂度：O(logN)
+         空间复杂度：O(N)
          */
          public List<Integer> preorderTraversal(TreeNode root) {
              List<Integer> res = new ArrayList<>();
@@ -39,7 +39,7 @@ public class _140preorderTraversal {
         /**
          迭代
          时间复杂度：O(N)
-         空间复杂度：O(logN)
+         空间复杂度：O(N)
          */
         public List<Integer> preorderTraversal(TreeNode root) {
             List<Integer> res = new ArrayList<>();

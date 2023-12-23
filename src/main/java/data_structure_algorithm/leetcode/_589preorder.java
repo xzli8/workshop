@@ -1,10 +1,13 @@
 package data_structure_algorithm.leetcode;
 
-import data_structure_algorithm.domain.TreeNode;
+import data_structure_algorithm.domain.Node;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
 
-public class _145postorderTraversal {
+public class _589preorder {
 
     public static class Solution1 {
 
@@ -13,18 +16,19 @@ public class _145postorderTraversal {
          时间复杂度：O(N)
          空间复杂度：O(N)
          */
-         public List<Integer> postorderTraversal(TreeNode root) {
+         public List<Integer> preorder(Node root) {
              List<Integer> res = new ArrayList<>();
              traversal(root, res);
              return res;
          }
 
-         private void traversal(TreeNode root, List<Integer> res) {
+         private void traversal(Node root, List<Integer> res) {
              if (root == null) return;
 
-             traversal(root.left, res);
-             traversal(root.right, res);
              res.add(root.val);
+             for (Node child : root.children) {
+                 traversal(child, res);
+             }
          }
 
     }
@@ -35,28 +39,28 @@ public class _145postorderTraversal {
 
         /**
          迭代
-         思路：前序"根左右"，后续"左右根"，在前序遍历过程中交换左右子节点的处理顺序，最后将结果反转
          时间复杂度：O(N)
          空间复杂度：O(N)
          */
-        public List<Integer> postorderTraversal(TreeNode root) {
+        public List<Integer> preorder(Node root) {
             List<Integer> res = new ArrayList<>();
             if (root == null) return res;
 
-            Deque<TreeNode> s = new ArrayDeque<>();
+            Deque<Node> s = new ArrayDeque<>();
             s.push(root);
             while (!s.isEmpty()) {
-                TreeNode cur = s.pop();
+                Node cur = s.pop();
                 res.add(cur.val);
-                if (cur.left != null) s.push(cur.left);
-                if (cur.right != null) s.push(cur.right);
+                for (int i = cur.children.size() - 1; i >= 0; i--) {
+                    Node child = cur.children.get(i);
+                    if (child != null) s.push(child);
+                }
             }
-            Collections.reverse(res);
             return res;
         }
 
-
     }
+
 
 
 }
