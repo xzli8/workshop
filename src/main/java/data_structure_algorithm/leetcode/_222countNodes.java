@@ -1,56 +1,68 @@
 package data_structure_algorithm.leetcode;
 
+import data_structure_algorithm.domain.TreeNode;
+
 public class _222countNodes {
 
-    public class TreeNode {
-        int val;
-        TreeNode left;
-        TreeNode right;
+    public class Solution1 {
 
-        TreeNode() {
-        }
+        /**
+         DFS：普通二叉树也可以这样
+         时间复杂度：O(N)
+         空间复杂度：O(logN)
+         */
+         public int countNodes(TreeNode root) {
+             if (root == null) return 0;
+             return countNodes(root.left) + countNodes(root.right) + 1;
+         }
 
-        TreeNode(int val) {
-            this.val = val;
-        }
-
-        TreeNode(int val, TreeNode left, TreeNode right) {
-            this.val = val;
-            this.left = left;
-            this.right = right;
-        }
     }
 
 
 
-    public static class Solution1 {
+    public class Solution2 {
+
+         /**
+             BFS：普通二叉树也可以这样
+          */
+         public int countNodes(TreeNode root) {
+             return 0;
+         }
+
+    }
+
+
+
+    public class Solution3 {
 
         /**
-         普通二叉树 + 满二叉树
+         完全二叉树 = 左子树是满二叉树 + 右子树是完全二叉树
          时间复杂度：O(logN * logN)
-         空间复杂度：O(logN) 树的高度
+         空间复杂度：O(logN)
          */
         public int countNodes(TreeNode root) {
             if (root == null) return 0;
-            int leftLevel = countLevel(root.left);
-            int rightLevel = countLevel(root.right);
-            if (leftLevel == rightLevel) {  // 左子树是满二叉树
-                return (1 << leftLevel) + countNodes(root.right);
-            } else {    // 左子树不是满二叉树
-                return (1 << rightLevel) + countNodes(root.left);
-            }
-        }
 
-        // 计算某个节点的层数
-        private int countLevel(TreeNode root) {
-            int level = 0;
-            while (root != null) {
-                level++;
-                root = root.left;
+            // 计算左右子树深度
+            int leftDepth = 0, rightDepth = 0;
+            TreeNode left = root.left, right = root.right;
+            while (left != null) {
+                left = left.left;
+                leftDepth++;
             }
-            return level;
-        }
+            while (right != null) {
+                right = right.right;
+                rightDepth++;
+            }
 
+            // 左右子树深度相等，是满二叉树，计算满二叉树的节点个数
+            if (leftDepth == rightDepth) {
+                return (2 << leftDepth) - 1;
+            }
+
+            // 左右子树深度不相等，分别计算左右子树的节点数(左右子树两个分支只有一个能走下去)
+            return countNodes(root.left) + countNodes(root.right) + 1;
+        }
 
     }
 
