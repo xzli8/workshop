@@ -7,33 +7,28 @@ public class _112hasPathSum {
     public class Solution1 {
 
         /**
-         DFS-v1
+         DFS-v1：进入下一层前不判断当前节点是否为空，在进入下一层后再判断
          时间复杂度：O(N)
          空间复杂度：O(N)
          */
-         public boolean hasPathSum(TreeNode root, int targetSum) {
-             dfs(root, 0, targetSum);
-             return flag;
-         }
+        public boolean hasPathSum(TreeNode root, int targetSum) {
+            dfs(root, targetSum);
+            return has;
+        }
 
-         private boolean flag = false;
-         private void dfs(TreeNode cur, int sum, int targetSum) {
-             // 当前节点为空，返回
-             if (cur == null) return;
-
-             // 计算从根节点到当前节点的和
-             sum += cur.val;
-
-             // 如果当前节点是叶子结点，并且sum等于targetSum，flag为true返回
-             if (cur.left == null && cur.right == null && sum == targetSum) {
-                 flag = true;
-                 return;
-             }
-
-             // 继续遍历当前节点的左右子节点
-             dfs(cur.left, sum, targetSum);
-             dfs(cur.right, sum, targetSum);
-         }
+        private boolean has = false;
+        private void dfs(TreeNode cur, int targetSum) {
+            if (cur == null) return;
+            targetSum -= cur.val;
+            if (cur.left == null && cur.right == null) {
+                if (targetSum == 0) {
+                    has = true;
+                }
+                return;     // 这里有没有return都可以，后面再次进入递归函数时会判断，加上后避免多一层递归
+            }
+            dfs(cur.left, targetSum);
+            dfs(cur.right, targetSum);
+        }
 
     }
 
@@ -42,7 +37,7 @@ public class _112hasPathSum {
     public class Solution2 {
 
         /**
-         DFS-v2
+         DFS-v2：进入下一层前判断当前节点是否为空，进入下一层后不判断
          时间复杂度：O(N)
          空间复杂度：O(N)
          */
@@ -55,13 +50,14 @@ public class _112hasPathSum {
          private boolean has = false;
          private void dfs(TreeNode cur, int targetSum) {
              targetSum -= cur.val;
-             if (cur.left == null && cur.right == null && targetSum == 0) {
-                 has = true;
-                 return;
+             if (cur.left == null && cur.right == null) {
+                 if (targetSum == 0) {
+                     has = true;
+                 }
+                 return;     // 这里有没有return都可以，后面也会判空，加上return避免重复判空
              }
-
-             if (!has && cur.left != null) dfs(cur.left, targetSum);
-             if (!has && cur.right != null) dfs(cur.right, targetSum);
+             if (cur.left != null) dfs(cur.left, targetSum);
+             if (cur.right != null) dfs(cur.right, targetSum);
          }
 
     }
@@ -71,27 +67,81 @@ public class _112hasPathSum {
     public class Solution3 {
 
         /**
-         DFS-v3
+         DFS-v3：将v1中递归函数的返回值类型从void改成boolean，以代替全局变量has
          时间复杂度：O(N)
          空间复杂度：O(N)
          */
-        public boolean hasPathSum(TreeNode root, int targetSum) {
-            if (root == null) return false;
-            return dfs(root, targetSum);
-        }
+         public boolean hasPathSum(TreeNode root, int targetSum) {
+             return dfs(root, targetSum);
+         }
 
-        private boolean dfs(TreeNode cur, int targetSum) {
-            targetSum -= cur.val;
-            if (cur.left == null && cur.right == null && targetSum == 0) {
-                return true;
-            }
-
-            if (cur.left != null && dfs(cur.left, targetSum)) return true;
-            if (cur.right != null && dfs(cur.right, targetSum)) return true;
-            return false;
-        }
+         private boolean dfs(TreeNode cur, int targetSum) {
+             if (cur == null) return false;
+             targetSum -= cur.val;
+             if (cur.left == null && cur.right == null) {
+                 if (targetSum == 0) {
+                     return true;
+                 }
+                 return false;   // 这里不加"return false"也可以，后面再次进入递归函数时会判断，加上后避免多一层递归
+             }
+             return dfs(cur.left, targetSum) || dfs(cur.right, targetSum);
+         }
 
     }
+
+
+
+    public class Solution4 {
+
+        /**
+         DFS-v4：将v2中递归函数的返回值类型从void改成boolean，以代替全局变量has
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
+         public boolean hasPathSum(TreeNode root, int targetSum) {
+             if (root == null) return false;
+             return dfs(root, targetSum);
+         }
+
+         private boolean dfs(TreeNode cur, int targetSum) {
+             targetSum -= cur.val;
+             if (cur.left == null && cur.right == null) {
+                 if (targetSum == 0) {
+                     return true;
+                 }
+                 return false;   // 这里不加"return false"也可以，后面再次进入递归函数时会判断，加上后避免多一层递归
+             }
+             if (cur.left != null && dfs(cur.left, targetSum)) return true;
+             if (cur.right != null && dfs(cur.right, targetSum)) return true;
+             return false;
+         }
+
+    }
+
+
+
+    public class Solution5 {
+
+        /**
+         DFS-v5：在v3的基础上，利用函数签名本身，不再定义递归函数，进一步简化编码
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
+         public boolean hasPathSum(TreeNode root, int targetSum) {
+             if (root == null) return false;
+             targetSum -= root.val;
+             if (root.left == null && root.right == null) {
+                 if (targetSum == 0) {
+                     return true;
+                 }
+                 return false;
+             }
+             return hasPathSum(root.left, targetSum) || hasPathSum(root.right, targetSum);
+         }
+
+    }
+
+
 
 
 

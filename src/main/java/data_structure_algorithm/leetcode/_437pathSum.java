@@ -52,9 +52,7 @@ public class _437pathSum {
         // 计算当前节点的前缀和及其对应数量
         private int dfs(TreeNode cur, long preSum, int targetSum, Map<Long, Integer> preSum2Count) {
             // 递归终止条件
-            if (cur == null) {
-                return 0;
-            }
+            if (cur == null) return 0;
 
             // 计算当前节点的前缀和
             preSum += cur.val;
