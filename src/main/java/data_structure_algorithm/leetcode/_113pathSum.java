@@ -3,8 +3,6 @@ package data_structure_algorithm.leetcode;
 import data_structure_algorithm.domain.TreeNode;
 
 import java.util.ArrayList;
-import java.util.Deque;
-import java.util.LinkedList;
 import java.util.List;
 
 public class _113pathSum {
