@@ -8,8 +8,8 @@ public class _700searchBST {
 
         /**
          递归
-         时间复杂度：O(logN)
-         空间复杂度：O(logN)
+         时间复杂度：O(N)
+         空间复杂度：O(N)
          */
         public TreeNode searchBST(TreeNode root, int val) {
             if (root == null) return null;
@@ -26,7 +26,7 @@ public class _700searchBST {
 
         /**
          迭代
-         时间复杂度：O(logN)
+         时间复杂度：O(N)
          空间复杂度：O(1)
          */
          public TreeNode searchBST(TreeNode root, int val) {
