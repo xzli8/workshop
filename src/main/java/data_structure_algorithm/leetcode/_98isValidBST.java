@@ -71,18 +71,28 @@ public class _98isValidBST {
     public static class Solution3 {
 
         /**
-         递归：遍历过程中，判断当前节点的上下限
+         递归：遍历过程中，比较当前节点的值与其中序遍历结果中前一个节点的值，如果小于，则不符合
          时间复杂度：O(N)
          空间复杂度：O(N)
          */
          public boolean isValidBST(TreeNode root) {
-             return dfs(root, Long.MIN_VALUE, Long.MAX_VALUE);
+             dfs(root);
+             return valid;
          }
 
-         private boolean dfs(TreeNode node, long lower, long upper) {
-             if (null == node) return true;
-             if (node.val <= lower || node.val >= upper) return false;
-             return dfs(node.left, lower, node.val) && dfs(node.right, node.val, upper);
+         private TreeNode pre = null;
+         private boolean valid = true;
+         private void dfs(TreeNode cur) {
+             if (!valid || cur == null) return;
+             dfs(cur.left);
+             if (pre != null) {
+                 if (cur.val <= pre.val) {
+                     valid = false;
+                     return;
+                 }
+             }
+             pre = cur;
+             dfs(cur.right);
          }
 
     }
@@ -111,6 +121,27 @@ public class _98isValidBST {
                 }
             }
             return true;
+        }
+
+    }
+
+
+
+    public static class Solution5 {
+
+        /**
+         递归：遍历过程中，判断当前节点的上下限
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
+        public boolean isValidBST(TreeNode root) {
+            return dfs(root, Long.MIN_VALUE, Long.MAX_VALUE);
+        }
+
+        private boolean dfs(TreeNode node, long lower, long upper) {
+            if (null == node) return true;
+            if (node.val <= lower || node.val >= upper) return false;
+            return dfs(node.left, lower, node.val) && dfs(node.right, node.val, upper);
         }
 
     }
