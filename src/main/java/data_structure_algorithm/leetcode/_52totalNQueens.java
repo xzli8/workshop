@@ -1,8 +1,55 @@
 package data_structure_algorithm.leetcode;
 
+import java.util.Arrays;
+
 public class _52totalNQueens {
 
-    public static class Solution1 {
+    public class Solution1 {
+
+        /**
+         回溯
+         时间复杂度：O(N!)
+         空间复杂度：O(N^2)
+         */
+        public int totalNQueens(int n) {
+            char[][] board = new char[n][n];
+            for (int i = 0; i < n; i++) Arrays.fill(board[i], '.');
+            backtrace(n, 0, board);
+            return count;
+        }
+
+        private int count = 0;
+        private void backtrace(int n, int row, char[][] board) {
+            if (row == n) {
+                count++;
+                return;
+            }
+
+            for (int col = 0; col < n; col++) {
+                if (isValid(n, row, col, board)) {
+                    board[row][col] = 'Q';
+                    backtrace(n, row + 1, board);
+                    board[row][col] = '.';
+                }
+            }
+        }
+
+        private boolean isValid(int n, int row, int col, char[][] board) {
+            for (int i = 0; i < row; i++) {
+                if (board[i][col] == 'Q') return false;
+            }
+            for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {
+                if (board[i][j] == 'Q') return false;
+            }
+            for (int i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++) {
+                if (board[i][j] == 'Q') return false;
+            }
+            return true;
+        }
+
+    }
+
+    public static class Solution2 {
 
         // 回溯
 
