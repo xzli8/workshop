@@ -9,6 +9,16 @@ import java.util.Queue;
 
 public class _297serialize {
 
+    /**
+     * Definition for a binary tree node.
+     * public class TreeNode {
+     *     int val;
+     *     TreeNode left;
+     *     TreeNode right;
+     *     TreeNode(int x) { val = x; }
+     * }
+     */
+
     // Your Codec object will be instantiated and called as such:
     // Codec ser = new Codec();
     // Codec deser = new Codec();
@@ -17,38 +27,30 @@ public class _297serialize {
     public static class Solution1 {
 
         /**
-         * Definition for a binary tree node.
-         * public class TreeNode {
-         *     int val;
-         *     TreeNode left;
-         *     TreeNode right;
-         *     TreeNode(int x) { val = x; }
-         * }
+         BFS层序遍历：当节点为空时，仍然要加入队列，但空节点的子节点不会再加入队列。空节点会被特殊标记(为"x")
+         时间复杂度：O(N)
+         空间复杂度：O(N
          */
         public class Codec {
 
-            /**
-             BFS：当节点为空时，仍然要加入队列，但空节点的子节点不会再加入队列。空节点会被特殊标记(为"x")
-             时间复杂度：O(N)
-             空间复杂度：O(N)
-             */
             // Encodes a tree to a single string.
             public String serialize(TreeNode root) {
                 List<String> res = new ArrayList<>();
-                Queue<TreeNode> q = new LinkedList<>();
+                Queue<TreeNode> q = new LinkedList<>(); // 这里不能用ArrayDeque，因为ArrayDeque中不能有null
                 q.offer(root);
                 while (!q.isEmpty()) {
-                    int size = q.size();
-                    for (int i = 0; i < size; i++) {
-                        TreeNode node = q.poll();
-                        if (node != null) {
-                            res.add(node.val + "");
-                            q.offer(node.left);
-                            q.offer(node.right);
-                        } else {
-                            res.add("x");
-                        }
+                    // 内层for循环不要也可以，因为和深度无关
+                    // int size = q.size();
+                    // for (int i = 0; i < size; i++) {
+                    TreeNode cur = q.poll();
+                    if (cur == null) {
+                        res.add("x");
+                    } else {
+                        res.add(String.valueOf(cur.val));
+                        q.offer(cur.left);
+                        q.offer(cur.right);
                     }
+                    // }
                 }
                 return String.join(",", res);
             }
@@ -68,24 +70,33 @@ public class _297serialize {
                 q.offer(root);
                 int index = 1;
                 while (index < res.length) {
-                    TreeNode node = q.poll();
-                    String leftVal = res[index];
-                    String rightVal = res[index + 1];
+                    TreeNode cur = q.poll();
+                    String leftVal = res[index++], rightVal = res[index++];
                     if (!leftVal.equals("x")) {
-                        TreeNode leftNode = new TreeNode(Integer.valueOf(leftVal));
-                        node.left = leftNode;
-                        q.offer(leftNode);
+                        cur.left = new TreeNode(Integer.valueOf(leftVal));
+                        q.offer(cur.left);
                     }
                     if (!rightVal.equals("x")) {
-                        TreeNode rightNode = new TreeNode(Integer.valueOf(rightVal));
-                        node.right = rightNode;
-                        q.offer(rightNode);
+                        cur.right = new TreeNode(Integer.valueOf(rightVal));
+                        q.offer(cur.right);
                     }
-                    index += 2;
                 }
                 return root;
             }
+
         }
+
+    }
+
+
+
+    public static class Solution2 {
+
+        /**
+         序列化：遍历得到前/后序遍历序列 + 遍历得到中序遍历序列 => 组合形成String
+         反序列化：由前/后序遍历序列 + 中序遍历序列 => recontruct
+         */
+
 
     }
 
