@@ -12,17 +12,13 @@ public class _11maxArea {
          空间复杂度：O(1)
          */
         public int maxArea(int[] height) {
-            int maxArea = 0;
-            int left = 0, right = height.length - 1;
-            int leftMax = 0, rightMax = 0;
+            int maxArea = 0, left = 0, right = height.length - 1;
             while (left < right) {
-                leftMax = Math.max(leftMax, height[left]);
-                rightMax = Math.max(rightMax, height[right]);
-                if (leftMax < rightMax) {
-                    maxArea = Math.max(maxArea, leftMax * (right - left));
+                if (height[left] < height[right]) {
+                    maxArea = Math.max(maxArea, height[left] * (right - left));
                     left++;
                 } else {
-                    maxArea = Math.max(maxArea, rightMax * (right - left));
+                    maxArea = Math.max(maxArea, height[right] * (right - left));
                     right--;
                 }
             }
