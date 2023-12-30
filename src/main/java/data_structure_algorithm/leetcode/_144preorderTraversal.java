@@ -2,9 +2,12 @@ package data_structure_algorithm.leetcode;
 
 import data_structure_algorithm.domain.TreeNode;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
 
-public class _145postorderTraversal {
+public class _144preorderTraversal {
 
     public static class Solution1 {
 
@@ -13,7 +16,7 @@ public class _145postorderTraversal {
          时间复杂度：O(N)
          空间复杂度：O(N)
          */
-         public List<Integer> postorderTraversal(TreeNode root) {
+         public List<Integer> preorderTraversal(TreeNode root) {
              List<Integer> res = new ArrayList<>();
              traversal(root, res);
              return res;
@@ -22,9 +25,9 @@ public class _145postorderTraversal {
          private void traversal(TreeNode root, List<Integer> res) {
              if (root == null) return;
 
+             res.add(root.val);
              traversal(root.left, res);
              traversal(root.right, res);
-             res.add(root.val);
          }
 
     }
@@ -35,11 +38,10 @@ public class _145postorderTraversal {
 
         /**
          迭代
-         思路：前序"根左右"，后续"左右根"，在前序遍历过程中交换左右子节点的处理顺序，最后将结果反转
          时间复杂度：O(N)
          空间复杂度：O(N)
          */
-        public List<Integer> postorderTraversal(TreeNode root) {
+        public List<Integer> preorderTraversal(TreeNode root) {
             List<Integer> res = new ArrayList<>();
             if (root == null) return res;
 
@@ -48,10 +50,9 @@ public class _145postorderTraversal {
             while (!s.isEmpty()) {
                 TreeNode cur = s.pop();
                 res.add(cur.val);
-                if (cur.left != null) s.push(cur.left);
                 if (cur.right != null) s.push(cur.right);
+                if (cur.left != null) s.push(cur.left);
             }
-            Collections.reverse(res);
             return res;
         }
 
@@ -66,7 +67,7 @@ public class _145postorderTraversal {
          时间复杂度：O(N)
          空间复杂度：O(1)
          */
-        public List<Integer> postorderTraversal(TreeNode root) {
+        public List<Integer> preorderTraversal(TreeNode root) {
             List<Integer> res = new ArrayList<>();
             TreeNode cur = root;
             while (cur != null) {
@@ -77,43 +78,20 @@ public class _145postorderTraversal {
                     }
                     if (mostRight.right == null) {
                         mostRight.right = cur;
+                        res.add(cur.val);
                         cur = cur.left;
                     } else {
                         mostRight.right = null;
-                        addRes(cur.left, res);
                         cur = cur.right;
                     }
                 } else {
+                    res.add(cur.val);
                     cur = cur.right;
                 }
             }
-            addRes(root, res);
             return res;
         }
 
-        private void addRes(TreeNode node, List<Integer> res) {
-            TreeNode head = reverse(node);
-            TreeNode cur = head;
-            while (cur != null) {
-                res.add(cur.val);
-                cur = cur.right;
-            }
-            reverse(head);
-        }
-
-        // 单链表反转(将right指针看作是next指针)
-        private TreeNode reverse(TreeNode cur) {
-            TreeNode prev = null;
-            while (cur != null) {
-                TreeNode next = cur.right;
-                cur.right = prev;
-                prev = cur;
-                cur = next;
-            }
-            return prev;
-        }
-
     }
-
 
 }
