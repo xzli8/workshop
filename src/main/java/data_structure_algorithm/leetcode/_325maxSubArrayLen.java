@@ -8,6 +8,10 @@ import java.util.Map;
 
 public class _325maxSubArrayLen {
 
+    /**
+     * 题目链接：https://blog.csdn.net/qq_29051413/article/details/108659861
+     */
+
     public static class Solution1 {
 
         @Test
@@ -142,7 +146,6 @@ public class _325maxSubArrayLen {
             int[] preSum = new int[n + 1];
             for (int i = 1; i <= n; i++) {
                 preSum[i] = preSum[i - 1] + nums[i - 1];
-
             }
 
             // 构建前缀和到下标的映射
