@@ -20,8 +20,7 @@ public class _875minEatingSpeed {
             }
             // 耗时小于等于h，看mid能否再小点：如果不能，说明mid就是最小的，返回；如果可以，继续减小mid
             else {
-                // 这里需要注意加上"mid - 1 > 0"的边界约束条件
-                if (mid - 1 > 0 && costHours(piles, mid - 1) > h) {
+                if (mid == left || costHours(piles, mid - 1) > h) {
                     return mid;
                 } else {
                     right = mid - 1;
