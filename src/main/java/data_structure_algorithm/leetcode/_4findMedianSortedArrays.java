@@ -41,8 +41,43 @@ public class _4findMedianSortedArrays {
     public static class Solution2 {
 
         /**
-         二分
-         思路：https://leetcode.cn/problems/median-of-two-sorted-arrays/solutions/8999/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by-w-2/
+         二分：递归
+         时间复杂度：O(log(M + N))
+         空间复杂度：O(1)，虽然有递归，但是尾递归，不会一直压栈
+         */
+        public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+            int n1 = nums1.length, n2 = nums2.length, n = n1 + n2;
+            if ((n & 1) == 0) {
+                return (getKth(nums1, 0, n1 - 1, nums2, 0, n2 - 1, n / 2) + getKth(nums1, 0, n1 - 1, nums2, 0, n2 - 1, n / 2 + 1)) * 0.5;
+            } else {
+                return getKth(nums1, 0, n1 - 1, nums2, 0, n2 - 1, n / 2 + 1);
+            }
+        }
+
+        private int getKth(int[] nums1, int start1, int end1, int[] nums2, int start2, int end2, int k) {
+            int len1 = end1 - start1 + 1, len2 = end2 - start2 + 1;
+            if (len1 == 0) return nums2[start2 + k - 1];
+            if (len2 == 0) return nums1[start1 + k - 1];
+            if (k == 1) return Math.min(nums1[start1], nums2[start2]);
+
+            int i = start1 + Math.min(len1, k / 2) - 1, j = start2 + Math.min(len2, k / 2) - 1;
+            if (nums1[i] > nums2[j]) {
+                return getKth(nums1, start1, end1, nums2, j + 1, end2, k - (j - start2 + 1));
+            } else {
+                return getKth(nums1, i + 1, end1, nums2, start2, end2, k - (i - start1 + 1));
+            }
+        }
+
+    }
+
+
+
+    public static class Solution3 {
+
+        /**
+         二分：迭代
+         时间复杂度：O(log(M + N))
+         空间复杂度：O(1)
          */
         public double findMedianSortedArrays(int[] nums1, int[] nums2) {
             int m = nums1.length;

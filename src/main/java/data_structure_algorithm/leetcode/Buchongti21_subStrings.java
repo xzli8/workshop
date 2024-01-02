@@ -1,9 +1,9 @@
-package data_structure_algorithm.leetcode.supplyment;
+package data_structure_algorithm.leetcode;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-public class SubStrings {
+public class Buchongti21_subStrings {
 
     @Test
     public void test() {
