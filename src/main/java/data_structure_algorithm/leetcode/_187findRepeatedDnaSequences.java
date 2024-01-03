@@ -7,6 +7,10 @@ import java.util.Set;
 
 public class _187findRepeatedDnaSequences {
 
+    /**
+     * ref:https://blog.csdn.net/fdl123456/article/details/125551205
+     */
+
     public static class Solution1 {
 
         /**
