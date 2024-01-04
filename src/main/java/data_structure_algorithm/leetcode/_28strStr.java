@@ -2,7 +2,10 @@ package data_structure_algorithm.leetcode;
 
 public class _28strStr {
 
-    // 字符串匹配算法：BF、BM、KMP、RabinKarp...
+    /**
+     *  字符串匹配算法：BF、BM、KMP、RabinKarp...
+     *      RabinKarp:https://blog.csdn.net/fdl123456/article/details/125551205
+     */
 
     public static class Solution1 {
 
@@ -21,12 +24,50 @@ public class _28strStr {
              return -1;
          }
 
-
     }
 
 
 
     public static class Solution2 {
+
+        /**
+         RabinKarp(滑动哈希)
+         NOTE：这里没有显示取余，因为溢出相当于对long范围进行取余，所以是一种隐式取余。
+         取余会导致哈希冲突，所以在哈希值相等时，还需要判断字符串是否相等。
+
+         时间复杂度：O(N)，与子串长度无关
+         空间复杂度：O(1)
+         */
+        public int strStr(String s, String p) {
+            // 计算pow
+            int n = s.length(), m = p.length(), radix = 26;
+            long pow = 1;
+            for (int i = 1; i < m; i++) pow *= radix;
+            // 计算模式串哈希值
+            long  patternHash = 0;
+            for (int i = 0; i < m; i++) {
+                patternHash = patternHash * radix + p.charAt(i) - 'a';
+            }
+            // 滑动哈希
+            int left = 0, right = 0;
+            long windowHash = 0;
+            while (right < n) {
+                windowHash = windowHash * radix + s.charAt(right++) - 'a';
+                if (right - left == m) {
+                    if (windowHash == patternHash && s.substring(left, right).equals(p)) {
+                        return left;
+                    }
+                    windowHash -= (s.charAt(left++) - 'a') * pow;
+                }
+            }
+            return -1;
+        }
+
+    }
+
+
+
+    public static class Solution3 {
 
         /**
          RabinKarp(滑动哈希)
