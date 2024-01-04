@@ -1,7 +1,5 @@
 package data_structure_algorithm.leetcode;
 
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,39 +8,56 @@ public class _986intervalIntersection {
     public static class Solution1 {
 
         /**
-         双指针：先将两个有序列表合并成一个有序列表，然后再找重叠区间
-         (类似题："435.无重叠区间/452.用最少数量的箭引爆气球")
+         双指针 + 贪心(类似题："56.合并区间", "88.合并两个有序数组")
+         时间复杂度：O(M + N)
+         空间复杂度：O(1)
          */
         public int[][] intervalIntersection(int[][] firstList, int[][] secondList) {
-
-            // 开辟新数组用于合并
-            int m = firstList.length, n = secondList.length;
-            int[][] mergeList = new int[m + n][2];
-
-            // 双指针合并
-            int i = 0, j = 0, k = 0;
-            while (i < m && j < n) {
-                if (firstList[i][0] < secondList[j][0]) mergeList[k++] = firstList[i++];
-                else mergeList[k++] = secondList[j++];
-            }
-            while (i < m) mergeList[k++] = firstList[i++];
-            while (j < n) mergeList[k++] = secondList[j++];
-
-            // 找重叠区间
             List<int[]> res = new ArrayList<>();
-            for (i = 1; i < m + n; i++) {
-                if (mergeList[i][0] <= mergeList[i - 1][1]) {
-                    res.add(new int[] {mergeList[i][0], mergeList[i - 1][1]});
+            int i = 0, j = 0;
+            while (i < firstList.length && j < secondList.length) {
+                if (firstList[i][1] < secondList[j][0]) {
+                    i++;
+                } else if (secondList[j][1] < firstList[i][0]) {
+                    j++;
+                } else {
+                    res.add(new int[] {Math.max(firstList[i][0], secondList[j][0]), Math.min(firstList[i][1], secondList[j][1])});
+                    if (firstList[i][1] < secondList[j][1]) {
+                        i++;
+                    }
+                    else if (secondList[j][1] < firstList[i][1]) {
+                        j++;
+                    }
+                    else {
+                        i++;
+                        j++;
+                    }
                 }
             }
             return res.toArray(new int[res.size()][]);
         }
 
-        @Test
-        public void test() {
-            int[][] firstList = new int[][] {{3, 5}, {9, 20}};
-            int[][] secondList = new int[][] {{4, 5}, {7, 10}, {11, 12}, {14, 15}, {16, 20}};
-            System.out.println(intervalIntersection(firstList, secondList));
+    }
+
+
+
+    public static class Solution2 {
+
+        /**
+         双指针：更简洁的写法，原理相同
+         时间复杂度：O(M + N)
+         空间复杂度：O(1)
+         */
+        public int[][] intervalIntersection(int[][] firstList, int[][] secondList) {
+            List<int[]> res = new ArrayList<>();
+            int i = 0, j = 0;
+            while (i < firstList.length && j < secondList.length) {
+                int start = Math.max(firstList[i][0], secondList[j][0]), end = Math.min(firstList[i][1], secondList[j][1]);
+                if (start <= end) res.add(new int[] {start, end});
+                if (firstList[i][1] < secondList[j][1]) i++;
+                else j++;
+            }
+            return res.toArray(new int[res.size()][]);
         }
 
     }
