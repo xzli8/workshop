@@ -39,9 +39,9 @@ public class _1044longestDupSubstring {
         private String dupSubstring(String s, int len) {
             // 计算pow
             // radix这里取一个比字符集大小26大的质数效果比较好(如果取26的话会有hash冲突导致出错)
-            // 但即使这样仍有冲突的可能，更好的做法是用map代替set来处理哈希冲突
+            // 但即使这样仍有冲突的可能，更好的做法是用map代替set来处理哈希冲突，参考RabinKarp字符串匹配算法
             // 哈希冲突产生的来源：long范围不够会溢出，一旦溢出相当于对long的范围求余了，余数相同时有冲突
-            long pow = 1, radix = 31, hash = 0;
+            long pow = 1, radix = 27, hash = 0;
             for (int i = 1; i < len; i++) {
                 pow *= radix;
             }
@@ -69,7 +69,7 @@ public class _1044longestDupSubstring {
         // private String dupSubstring(String s, int len) {
         //     // 计算pow
         //     // radix这里取一个比字符集大小26大的质数效果比较好(如果取26的话会有hash冲突导致出错)
-        //     // 但即使这样仍有冲突的可能，更好的做法是用map代替set来处理哈希冲突
+        //     // 但即使这样仍有冲突的可能，更好的做法是用map代替set来处理哈希冲突，参考RabinKarp字符串匹配算法
         //     // 哈希冲突产生的来源：long范围不够会溢出，一旦溢出相当于对long的范围求余了，余数相同时有冲突
         //     long pow = 1, radix = 26, hash = 0;
         //     for (int i = 1; i < len; i++) {
