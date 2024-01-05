@@ -1,4 +1,4 @@
-package data_structure_algorithm.leetcode.supplyment;
+package data_structure_algorithm.leetcode;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ArabicChineseConvert {
+public class Buchongti14_ArabicChineseConvert {
 
     @Test
     public void testArabicToChinese() {
