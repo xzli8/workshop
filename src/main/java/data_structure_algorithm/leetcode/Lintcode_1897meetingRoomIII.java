@@ -2,6 +2,10 @@ package data_structure_algorithm.leetcode;
 
 public class Lintcode_1897meetingRoomIII {
 
+    /**
+     * 题目链接：https://www.lintcode.com/problem/1897/description
+     */
+
     public static class Solution1 {
 
         public boolean[] meetingRoomIII(int[][] intervals, int rooms, int[][] ask) {

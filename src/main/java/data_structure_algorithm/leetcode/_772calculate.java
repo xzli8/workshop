@@ -7,7 +7,6 @@ public class _772calculate {
 
     /**
      * 题目链接：https://www.lintcode.com/problem/849/
-     * 参考题解：
      */
 
     public static class Solution1 {

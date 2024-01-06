@@ -9,6 +9,7 @@ public class Buchongti_24StackSort {
 
     /**
      * 题目链接：https://mp.weixin.qq.com/s/g_AqwsSEUwlRSevnStPkEA
+     * 类似题：https://leetcode.cn/problems/sort-of-stacks-lcci/
      */
 
     @Test

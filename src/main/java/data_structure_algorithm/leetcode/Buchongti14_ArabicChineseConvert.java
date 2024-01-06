@@ -8,6 +8,10 @@ import java.util.Map;
 
 public class Buchongti14_ArabicChineseConvert {
 
+    /**
+     * 题目链接：https://www.nowcoder.com/practice/6eec992558164276a51d86d71678b300
+     */
+
     @Test
     public void testArabicToChinese() {
         Assert.assertEquals("零", arabicToChinese("0"));

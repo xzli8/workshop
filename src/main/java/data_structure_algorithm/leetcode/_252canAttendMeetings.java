@@ -6,7 +6,7 @@ import java.util.List;
 public class _252canAttendMeetings {
 
     /**
-     * Leetcode会员题，Lintcode题目链接：https://www.lintcode.com/problem/920/
+     * 题目链接：https://www.lintcode.com/problem/920/
      */
 
     /**

@@ -7,7 +7,7 @@ import java.util.PriorityQueue;
 public class _253minMeetingRooms {
 
     /**
-     * Leetcode会员题，Lintcode题目链接：https://www.lintcode.com/problem/919/
+     * 题目链接：https://www.lintcode.com/problem/919/
      */
 
     /**

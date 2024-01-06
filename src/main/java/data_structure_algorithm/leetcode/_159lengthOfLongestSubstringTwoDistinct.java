@@ -9,6 +9,10 @@ import java.util.Map;
 public class _159lengthOfLongestSubstringTwoDistinct {
 
     /**
+     * lintcode:https://www.lintcode.com/problem/928/
+     */
+
+    /**
      * 题目描述:给定一个字符串s，找出至多包含两个不同字符的最长子串t，并返回该子串的长度。
      *
      * 示例：
