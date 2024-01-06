@@ -1,17 +1,9 @@
-package data_structure_algorithm.leetcode.supplyment;
-
-import org.junit.Test;
+package data_structure_algorithm.leetcode;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class Maze {
-
-    @Test
-    public void test() {
-        char[][] maps = new char[][] {{'S', '.'}, {'#', 'T'}};
-        System.out.println(theMazeIV(maps));
-    }
+public class Lintcode1685_theMazeIV {
 
     /**
      BFS
