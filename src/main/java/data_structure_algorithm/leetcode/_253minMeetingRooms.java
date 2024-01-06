@@ -1,13 +1,17 @@
 package data_structure_algorithm.leetcode;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 
 public class _253minMeetingRooms {
 
     /**
-     * 题目链接：https://www.lintcode.com/problem/919/
+     *  题目链接：
+     *      Leetcode252.会议室I：https://www.lintcode.com/problem/920/
+     *      Leetcode253.会议室II：https://www.lintcode.com/problem/919/
+     *      Lintcode1897.会议室III：https://www.lintcode.com/problem/1897
      */
 
     /**
@@ -25,6 +29,11 @@ public class _253minMeetingRooms {
 
     public static class Solution1 {
 
+        /**
+         优先队列
+         时间复杂度：O(NlogN)
+         空间复杂度：O(logN)
+         */
         public int minMeetingRooms(List<Interval> intervals) {
             // 处理边界
             if(null == intervals || intervals.size() == 0) {
@@ -32,7 +41,7 @@ public class _253minMeetingRooms {
             }
 
             // 按照开始时间排序
-            Collections.sort(intervals, (i1, i2) -> (i1.start - i2.start));
+            Collections.sort(intervals, Comparator.comparingInt(i -> i.start));
 
             // 优先队列（小顶堆）记录会议结束时间
             PriorityQueue<Integer> pq = new PriorityQueue<>();

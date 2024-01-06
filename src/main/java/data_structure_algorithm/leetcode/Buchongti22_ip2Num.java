@@ -6,6 +6,7 @@ public class Buchongti22_ip2Num {
 
     /**
      * 题目链接：https://www.nowcoder.com/questionTerminal/66ca0e28f90c42a196afd78cc9c496ea
+     * ref：https://mp.weixin.qq.com/s/UWCuEtNS2kuAuDY-eIbghg
      */
 
     // 注意类名必须为 Main, 不要有任何 package xxx 信息
