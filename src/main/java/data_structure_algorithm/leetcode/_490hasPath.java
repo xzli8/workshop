@@ -7,10 +7,10 @@ public class _490hasPath {
 
     /**
      *  题目链接：
-     *      迷宫：https://www.lintcode.com/problem/787
-     *      迷宫II：https://www.lintcode.com/problem/788
-     *      迷宫III：https://blog.csdn.net/itcodexy/article/details/122532153
-     *      迷宫IV：https://www.lintcode.com/problem/1685
+     *      Leetcode490迷宫：https://www.lintcode.com/problem/787
+     *      Leetcode505迷宫II：https://www.lintcode.com/problem/788
+     *      Leetcode499迷宫III：https://zhuanlan.zhihu.com/p/141580934, https://www.cnblogs.com/lightwindy/p/9854182.html
+     *      Lintcode1685迷宫IV：https://www.lintcode.com/problem/1685
      */
 
     public static class Solution1 {
