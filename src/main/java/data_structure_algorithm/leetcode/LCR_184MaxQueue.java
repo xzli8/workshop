@@ -19,33 +19,33 @@ public class LCR_184MaxQueue {
         class MaxQueue {
 
             // 主队列
-            private Queue<Integer> q;
+            private Queue<Integer> main;
             // 辅助队列，单调递减。每次插入value时，从辅助队列中依次取出所有比value小的元素，然后将value放入辅助队列尾
-            private Deque<Integer> d;
+            private Deque<Integer> help;
 
             public MaxQueue() {
-                q = new LinkedList<>();
-                d = new LinkedList<>();
+                main = new LinkedList<>();
+                help = new LinkedList<>();
             }
 
             public int max_value() {
-                if (d.isEmpty()) return -1;
-                return d.peekFirst();
+                if (help.isEmpty()) return -1;
+                return help.peekFirst();
             }
 
             public void push_back(int value) {
-                while (!d.isEmpty() && d.peekLast() < value) {
-                    d.pollLast();
+                while (!help.isEmpty() && help.peekLast() < value) {
+                    help.pollLast();
                 }
-                d.offerLast(value);
-                q.offer(value);
+                help.offerLast(value);
+                main.offer(value);
             }
 
             public int pop_front() {
-                if (q.isEmpty()) return -1;
-                int res = q.poll();
-                if (res == d.peekFirst()) {
-                    d.pollFirst();
+                if (main.isEmpty()) return -1;
+                int res = main.poll();
+                if (res == help.peekFirst()) {
+                    help.pollFirst();
                 }
                 return res;
             }

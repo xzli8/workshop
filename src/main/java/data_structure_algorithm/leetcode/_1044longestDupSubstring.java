@@ -15,7 +15,7 @@ public class _1044longestDupSubstring {
         public String longestDupSubstring(String s) {
             // 找最长长度的重复子串 -> 找最后一个满足条件的解
             int n = s.length();
-            int left = 1, right = n;
+            int left = 1, right = n - 1;
             while (left <= right) {
                 int mid = left + ((right - left) >> 1);
                 String substr = dupSubstring(s, mid);

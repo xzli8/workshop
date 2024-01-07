@@ -44,7 +44,7 @@ public class _28strStr {
             long pow = 1;
             for (int i = 1; i < m; i++) pow *= radix;
             // 计算模式串哈希值
-            long  patternHash = 0;
+            long patternHash = 0;
             for (int i = 0; i < m; i++) {
                 patternHash = patternHash * radix + p.charAt(i) - 'a';
             }
