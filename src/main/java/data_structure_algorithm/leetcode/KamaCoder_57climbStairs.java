@@ -2,7 +2,7 @@ package data_structure_algorithm.leetcode;
 
 import org.junit.Test;
 
-public class KamaCoder_57ClimbStairs {
+public class KamaCoder_57climbStairs {
 
     /**
      *  爬楼梯进阶：有n阶楼梯，每次最多能爬m阶（这里也可以不给m，给一个数组表示每次能爬的阶数，原理一样），问有多少种爬到楼顶的方法

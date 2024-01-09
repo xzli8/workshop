@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public class Buchongti_24StackSort {
+public class Buchongti_24stackSort {
 
     /**
      * 题目链接：https://mp.weixin.qq.com/s/g_AqwsSEUwlRSevnStPkEA
