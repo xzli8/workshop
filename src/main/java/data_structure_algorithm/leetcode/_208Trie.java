@@ -18,28 +18,28 @@ public class _208Trie {
          */
         class Trie {
 
-            class TrieNode {
+            class Node {
                 public char data;
-                public TrieNode[] children = new TrieNode[26];
+                public Node[] children = new Node[26];
                 public boolean isEndingChar = false;
 
-                public TrieNode(char data) {
+                public Node(char data) {
                     this.data = data;
                 }
             }
 
-            private TrieNode root;
+            private Node root;
 
             public Trie() {
-                root = new TrieNode('/');
+                root = new Node('/');
             }
 
             public void insert(String word) {
-                TrieNode p = root;
+                Node p = root;
                 for (char c : word.toCharArray()) {
                     int index = c - 'a';
                     if (p.children[index] == null) {
-                        p.children[index] = new TrieNode(c);
+                        p.children[index] = new Node(c);
                     }
                     p = p.children[index];
                 }
@@ -47,7 +47,7 @@ public class _208Trie {
             }
 
             public boolean search(String word) {
-                TrieNode p = root;
+                Node p = root;
                 for (char c : word.toCharArray()) {
                     int index = c - 'a';
                     if (p.children[index] == null) {
@@ -59,7 +59,7 @@ public class _208Trie {
             }
 
             public boolean startsWith(String prefix) {
-                TrieNode p = root;
+                Node p = root;
                 for (char c : prefix.toCharArray()) {
                     int index = c - 'a';
                     if (p.children[index] == null) {
@@ -69,7 +69,6 @@ public class _208Trie {
                 }
                 return true;
             }
-
         }
 
     }
