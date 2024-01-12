@@ -20,70 +20,68 @@ public class _146LRUCache {
          */
         class LRUCache {
 
-            class ListNode {
-                int key;
-                int val;
-                ListNode prev;
-                ListNode next;
+            // 双链表节点定义
+            class Node {
+                int key, val;
+                Node prev, next;
 
-                ListNode() {}
-                ListNode(int key, int val) {this.key = key; this.val = val;}
+                public Node() {}
+
+                public Node(int key, int val) {
+                    this.key = key;
+                    this.val = val;
+                }
             }
 
-            private int size;
             private int capacity;
-            private ListNode head, tail;
-            private Map<Integer, ListNode> cache = new HashMap<>();
+            private Node head, tail;
+            private Map<Integer, Node> key2Node = new HashMap<>();
 
             public LRUCache(int capacity) {
-                this.size = 0;
                 this.capacity = capacity;
-                head = new ListNode();
-                tail = new ListNode();
+                this.head = new Node();
+                this.tail = new Node();
                 head.next = tail;
                 tail.prev = head;
             }
 
             public int get(int key) {
-                ListNode node = cache.get(key);
-                if (null == node) {
-                    return -1;
-                }
+                Node node = key2Node.get(key);
+                if (node == null) return -1;
                 moveToHead(node);
                 return node.val;
             }
 
             public void put(int key, int value) {
-                ListNode node = cache.get(key);
-                if (null == node) {
-                    node = new ListNode(key, value);
-                    cache.put(key, node);
-                    addToHead(node);
-                    if (++size > capacity) {
-                        ListNode eldest = removeNode(tail.prev);
-                        cache.remove(eldest.key);
-                        size--;
-                    }
-                } else {
+                Node node = key2Node.get(key);
+                if (node != null) {
                     node.val = value;
                     moveToHead(node);
+                } else {
+                    node = new Node(key, value);
+                    key2Node.put(key, node);
+                    addToHead(node);
+                    if (key2Node.size() > capacity) {
+                        Node eldest = removeNode(tail.prev);
+                        key2Node.remove(eldest.key);
+                    }
                 }
             }
 
-            private ListNode removeNode(ListNode node) {
-                node.prev.next = node.next;
-                node.next.prev = node.prev;
-                return node;
-            }
-
-            private void addToHead(ListNode node) {
+            private void addToHead(Node node) {
                 head.next.prev = node;
                 node.next = head.next;
                 head.next = node;
                 node.prev = head;
             }
 
-            private void moveToHead(ListNode node) {
+            private Node removeNode(Node node) {
+                node.next.prev = node.prev;
+                node.prev.next = node.next;
+                return node;
+            }
+
+            private void moveToHead(Node node) {
                 removeNode(node);
                 addToHead(node);
             }
