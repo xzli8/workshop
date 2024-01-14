@@ -1,13 +1,66 @@
 package data_structure_algorithm.leetcode;
 
-import org.junit.Test;
-
 public class _980uniquePathsIII {
+
+    public static class Solution2 {
+
+        /**
+         DFS(回溯)
+         */
+        public int uniquePathsIII(int[][] grid) {
+            // 初始化
+            this.m = grid.length; this.n = grid[0].length; this.grid = grid;
+            this.visited = new boolean[m][n];
+            int x = 0, y = 0, remain = 0;
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (grid[i][j] == 1) {
+                        x = i; y = j; remain++; visited[i][j] = true;
+                    } else if (grid[i][j] == 0) {
+                        remain++;
+                    } else if (grid[i][j] == -1) {
+                        visited[i][j] = true;
+                    }
+                }
+            }
+
+            // 回溯
+            backtrace(x, y, remain);
+            return res;
+        }
+
+        private int m, n;
+        private int[][] grid;
+        private boolean[][] visited;
+        private int[][] dirs = new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        private int res = 0;
+
+        private void backtrace(int x, int y, int remain) {
+            if (grid[x][y] == 2) {
+                if (remain == 0) res++;
+                return;
+            }
+
+            for (int[] dir : dirs) {
+                int xx = x + dir[0], yy = y + dir[1];
+                if (inArea(xx, yy) && !visited[xx][yy]) {
+                    visited[xx][yy] = true;
+                    backtrace(xx, yy, remain - 1);
+                    visited[xx][yy] = false;
+                }
+            }
+        }
+
+        private boolean inArea(int x, int y) {
+            return 0 <= x && x < m && 0 <= y && y < n;
+        }
+
+    }
 
     public static class Solution1 {
 
         /**
-         回溯
+         DFS(回溯)
          */
         public int uniquePathsIII(int[][] grid) {
             // 初始化

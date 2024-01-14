@@ -92,4 +92,54 @@ public class _79exist {
 
     }
 
+
+
+    public static class Solution3 {
+
+        /**
+         DFS(回溯)
+         */
+        public boolean exist(char[][] board, String word) {
+            // 初始化
+            this.m = board.length; this.n = board[0].length; this.word = word;
+            this.board = board; this.visited = new boolean[m][n];
+
+            // 回溯
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (board[i][j] == word.charAt(0)) {
+                        visited[i][j] = true;
+                        if (backtrace(i, j, 1)) return true;
+                        visited[i][j] = false;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private int m, n;
+        private String word;
+        private char[][] board;
+        private boolean[][] visited;
+        private int[][] dirs = new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+
+        private boolean backtrace(int x, int y, int index) {
+            if (index == word.length()) return true;
+            for (int[] dir : dirs) {
+                int xx = x + dir[0], yy = y + dir[1];
+                if (inArea(xx, yy) && !visited[xx][yy] && board[xx][yy] == word.charAt(index)) {
+                    visited[xx][yy] = true;
+                    if (backtrace(xx, yy, index + 1)) return true;
+                    visited[xx][yy] = false;
+                }
+            }
+            return false;
+        }
+
+        private boolean inArea(int x, int y) {
+            return 0 <= x && x < m && 0 <= y && y < n;
+        }
+
+    }
+
 }
