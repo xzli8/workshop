@@ -16,92 +16,64 @@ public class _460LFUCache {
     public static class Solution1 {
 
         /**
-         哈希表+平衡二叉树
+         HashMap + TreeSet
          */
         class LFUCache {
 
-            class Node implements Comparable<Node> {
-                int cnt, time, key, value;
-
-                Node(int cnt, int time, int key, int value) {
+            // 节点定义
+            class Node {
+                int key, val, cnt, time;
+                public Node(int key, int val, int cnt, int time) {
+                    this.key = key;
+                    this.val = val;
                     this.cnt = cnt;
                     this.time = time;
-                    this.key = key;
-                    this.value = value;
                 }
-
-                public int compareTo(Node rhs) {
-                    return this.cnt == rhs.cnt ? this.time - rhs.time : this.cnt - rhs.cnt;
-                }
-
-                // // 不重写hashCode和equals也可以，因为TreeMap底层是红黑树，其查询元素只通过compareTo方法
-                // public int hashCode() {
-                //     return cnt * 1000000007 + time;
-                // }
-
-                // public boolean equals(Object obj) {
-                //     if (this == obj) {
-                //         return true;
-                //     }
-                //     if (obj instanceof Node) {
-                //         Node rhs = (Node) obj;
-                //         return this.cnt == rhs.cnt && this.time == rhs.time;
-                //     }
-                //     return false;
-                // }
             }
 
-            int capacity, time;
-            Map<Integer, Node> cache;
-            TreeSet<Node> set;
+            private int capacity, time = 0;
+            private Map<Integer, Node> key2Node = new HashMap<>();
+            private TreeSet<Node> set = new TreeSet<>((node1, node2) -> node1.cnt == node2.cnt ? node1.time - node2.time : node1.cnt - node2.cnt);
 
             public LFUCache(int capacity) {
                 this.capacity = capacity;
-                this.time = 0;
-                cache = new HashMap<>();
-                set = new TreeSet<>();
             }
 
             public int get(int key) {
-                Node node = cache.get(key);
-                if (node == null) {
-                    return -1;
-                }
-
-                // 更新集合
+                Node node = key2Node.get(key);
+                if (node == null) return -1;
                 set.remove(node);
                 node.cnt += 1;
-                node.time = ++time;
+                node.time = time++;
                 set.add(node);
-                // 更新缓存(这一步必须得有？因为val, time的变化会引起hashCode的变化？)
-                // cache.put(key, node);
-                return node.value;
+                key2Node.put(key, node);    // 这里可以更新也可以不更新(因为val无变化)
+                return node.val;
             }
 
             public void put(int key, int value) {
-                Node node = cache.get(key);
+                Node node = key2Node.get(key);
                 if (node == null) {
-                    // 如果缓存达到上限，从集合和哈希表中删除最近最久未使用的节点
-                    // 这里用cache.size()代替set.size()也可以
                     if (set.size() == capacity) {
-                        cache.remove(set.first().key);
+                        // 这里要注意一下remove的顺序，一定是先remove Map中的再remove Set中的
+                        key2Node.remove(set.first().key);
                         set.remove(set.first());
                     }
-                    node = new Node(1, ++time, key, value);
-                    cache.put(key, node);
+                    node = new Node(key, value, 0, time++);
                     set.add(node);
-                } else {
-                    // 这里与get()类似
+                    key2Node.put(key, node);
+                }
+                else {
                     set.remove(node);
+                    node.val = value;
                     node.cnt += 1;
-                    node.time = ++time;
-                    node.value = value;
+                    node.time = time++;
                     set.add(node);
-                    cache.put(key, node);
+                    key2Node.put(key, node);    // 这里一定要更新(因为val有变化)
                 }
             }
         }
 
     }
+
 
 }
