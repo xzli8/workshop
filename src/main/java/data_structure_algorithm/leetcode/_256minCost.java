@@ -3,7 +3,8 @@ package data_structure_algorithm.leetcode;
 public class _256minCost {
 
     /**
-     * ref:https://leetcode.cn/problems/JEj789/description/
+     * leetcode:https://leetcode.cn/problems/JEj789/description/
+     * lintcode:https://www.lintcode.com/problem/515
      */
 
     public static class Solution1 {
@@ -54,6 +55,36 @@ public class _256minCost {
                 dp2 = tmp2;
             }
             return Math.min(Math.min(dp0, dp1), dp2);
+        }
+
+    }
+
+
+
+    public static class Solution3 {
+
+        // 动态规划：优化空间复杂度到O(1)
+        public int minCost(int[][] costs) {
+            // 边界情况
+            int n = costs.length;
+            if (n == 0) return 0;
+
+            // 定义状态
+            int[] dp = new int[3], tmp = new int[3];
+
+            // 初始状态
+            for (int i = 0; i < 3; i++) dp[i] = costs[0][i];
+
+            // 状态转移
+            for (int i = 1; i < n; i++) {
+                tmp[0] = Math.min(dp[1], dp[2]) + costs[i][0];
+                tmp[1] = Math.min(dp[0], dp[2]) + costs[i][1];
+                tmp[2] = Math.min(dp[0], dp[1]) + costs[i][2];
+                dp[0] = tmp[0];
+                dp[1] = tmp[1];
+                dp[2] = tmp[2];
+            }
+            return Math.min(Math.min(dp[0], dp[1]), dp[2]);
         }
 
     }

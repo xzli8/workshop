@@ -1,23 +1,13 @@
 package data_structure_algorithm.leetcode;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 public class _265minCostII {
 
     /**
-     * ref:
-     *      https://zhuanlan.zhihu.com/p/593492075
-     *      https://www.cnblogs.com/grandyang/p/5322870.html
-     *      https://www.cnblogs.com/lightwindy/p/8476983.html
+     * lintcode:https://www.lintcode.com/problem/534
+     * ref:https://zhuanlan.zhihu.com/p/593492075
      */
 
     public static class Solution1 {
-
-        @Test
-        public void test() {
-            Assert.assertEquals(5, minCostII(new int[][] {{1,5,3}, {2,9,4}}));
-        }
 
         /**
          动态规划
@@ -34,7 +24,7 @@ public class _265minCostII {
             int[][] dp = new int[n][k];
 
             // 初始状态
-            dp[0] = costs[0];
+            for (int i = 0; i < k; i++) dp[0][i] = costs[0][i];
 
             // 状态转移
             for (int i = 1; i < n; i++) {
@@ -59,6 +49,41 @@ public class _265minCostII {
 
 
     public static class Solution2 {
+
+        /**
+         动态规划：优化空间复杂度为O(K)
+         */
+        public int minCostII(int[][] costs) {
+            int n = costs.length;
+            if (n == 0) return 0;
+
+            int k = costs[0].length;
+            int[] dp = new int[k], tmp = new int[k];
+            for (int i = 0; i < k; i++) dp[i] = costs[0][i];
+
+            for (int i = 1; i < n; i++) {
+                for (int j = 0; j < k; j++) {
+                    int min = Integer.MAX_VALUE;
+                    for (int l = 0; l < k; l++) {
+                        if (l == j) continue;
+                        min = Math.min(min, dp[l]);
+                    }
+                    tmp[j] = min + costs[i][j];
+                }
+                for (int j = 0; j < k; j++) dp[j] = tmp[j];
+            }
+
+            int res = dp[0];
+            for (int i = 1; i < k; i++) res = Math.min(res, dp[i]);
+            return res;
+        }
+
+    }
+
+
+
+    public static class Solution3 {
+        // 时间复杂度为O(N * K)的做法
 
     }
 

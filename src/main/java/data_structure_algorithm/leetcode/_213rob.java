@@ -39,6 +39,39 @@ public class _213rob {
             return max;
         }
 
+    }
+
+
+
+    public static class Solution2 {
+
+        /**
+         动态规划：优化空间复杂度为O(1)
+         */
+        public int rob(int[] nums) {
+            // 边界情况
+            int n = nums.length;
+            if (n == 0) return 0;
+            if (n == 1) return nums[0];
+
+            // 打劫第1间，则不能打劫最后一间
+            int dp0 = nums[0], dp1 = nums[0];
+            for (int i = 2; i < n - 1; i++) {
+                int dp2 = Math.max(dp1, dp0 + nums[i]);
+                dp0 = dp1;
+                dp1 = dp2;
+            }
+            int res = dp1;
+
+            // 不打劫第一间，则可以打劫最后一间
+            dp0 = 0; dp1 = nums[1];
+            for (int i = 2; i < n; i++) {
+                int dp2 = Math.max(dp1, dp0 + nums[i]);
+                dp0 = dp1;
+                dp1 = dp2;
+            }
+            return Math.max(res, dp1);
+        }
 
     }
 
