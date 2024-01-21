@@ -7,37 +7,31 @@ public class _2addTwoNumbers {
     public static class Solution1 {
 
         /**
-         模拟（由于链表数字是逆序存储的，所以不需要反转链表）
-         1.每次加法会产生进位值和当前位值
-         2.用哑节点简化编程
-
-         时间复杂度：O(max(len1, len2))
+         模拟
+         时间复杂度：O(N)
          空间复杂度：O(1)
          */
         public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-            ListNode dummy = new ListNode();
-            ListNode l3 = dummy;
-            int add = 0;
-            while (l1 != null || l2 != null || add != 0) {
-                int val = getVal(l1) + getVal(l2) + add;
-                add = val / 10;
-                val %= 10;
-
-                ListNode tmp = new ListNode(val, l3.next);
-                l3.next = tmp;
-                l3 = l3.next;
-                l1 = getNext(l1);
-                l2 = getNext(l2);
+            ListNode dummy = new ListNode(), p = dummy, p1 = l1, p2 = l2;
+            int carry = 0;
+            while (p1 != null || p2 != null || carry != 0) {
+                int val = getVal(p1) + getVal(p2) + carry;
+                ListNode newNode = new ListNode(val % 10);
+                p.next = newNode;
+                p = p.next;
+                carry = val / 10;
+                p1 = getNext(p1);
+                p2 = getNext(p2);
             }
             return dummy.next;
         }
 
-        private int getVal(ListNode l) {
-            return l == null ? 0 : l.val;
+        private int getVal(ListNode p) {
+            return p == null ? 0 : p.val;
         }
 
-        private ListNode getNext(ListNode l) {
-            return l == null ? null : l.next;
+        private ListNode getNext(ListNode p) {
+            return p == null ? null : p.next;
         }
 
     }

@@ -1,6 +1,7 @@
 package data_structure_algorithm.leetcode;
 
 import data_structure_algorithm.domain.ListNode;
+import org.junit.Test;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -10,51 +11,41 @@ public class _445addTwoNumbers {
     public static class Solution1 {
 
         /**
-         反转链表后模拟
-         时间复杂度：O(len1 + len2)
+         模拟：先反转链表，然后模拟整数加法
+         时间复杂度：O(N1 + N2)
          空间复杂度：O(1)
          */
         public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-            // 反转链表
-            l1 = reverseList(l1);
-            l2 = reverseList(l2);
-
-            ListNode dummy = new ListNode();
-            ListNode p = dummy;
-            int add = 0;
-            while (l1 != null || l2 != null || add != 0) {
-                int val = getVal(l1) + getVal(l2) + add;
-                add = val / 10;
-                val %= 10;
-
-                ListNode tmp = new ListNode(val);
-                tmp.next = p.next;
-                p.next = tmp;
+            int carry = 0;
+            ListNode p1 = reverse(l1), p2 = reverse(l2), dummy = new ListNode(), p = dummy;
+            while (p1 != null || p2 != null || carry != 0) {
+                int val = getVal(p1) + getVal(p2) + carry;
+                p.next = new ListNode(val % 10);
                 p = p.next;
-
-                l1 = getNext(l1);
-                l2 = getNext(l2);
+                carry = val / 10;
+                p1 = getNext(p1);
+                p2 = getNext(p2);
             }
-            return reverseList(dummy.next);
+            return reverse(dummy.next);
         }
 
-        private ListNode reverseList(ListNode head) {
-            ListNode prev = null;
-            while (head != null) {
-                ListNode next = head.next;
-                head.next = prev;
-                prev = head;
-                head = next;
+        private int getVal(ListNode p) {
+            return p == null ? 0 : p.val;
+        }
+
+        private ListNode getNext(ListNode p) {
+            return p == null ? null : p.next;
+        }
+
+        private ListNode reverse(ListNode head) {
+            ListNode prev = null, cur = head;
+            while (cur != null) {
+                ListNode next = cur.next;
+                cur.next = prev;
+                prev = cur;
+                cur = next;
             }
             return prev;
-        }
-
-        private int getVal(ListNode l) {
-            return l == null ? 0 : l.val;
-        }
-
-        private ListNode getNext(ListNode l) {
-            return l == null ? null : l.next;
         }
 
     }
