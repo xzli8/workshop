@@ -5,10 +5,9 @@ public class _670maximumSwap {
     public static class Solution1 {
 
         /**
-         尽可能靠前的小数 与 尽可能靠后的大数 交换
-
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         (?)直接遍历：尽可能靠前的小数与尽可能靠后的大数交换
+         时间复杂度：O(log^3N)
+         空间复杂度：O(log^3N)
          */
         public int maximumSwap(int num) {
             char[] nums = String.valueOf(num).toCharArray();
@@ -32,6 +31,39 @@ public class _670maximumSwap {
                 }
             }
             return Integer.valueOf(new String(nums));
+        }
+
+    }
+
+
+
+    public static class Solution2 {
+
+        /**
+         贪心：将后面较小的数字(数字相同选择尽可能靠后的数字)与前面较大的数字交换(数字相同选择尽可能靠前的数字)
+         ref:https://leetcode.cn/problems/maximum-swap/solutions/2614470/yi-ci-bian-li-jian-ji-xie-fa-pythonjavac-c9b1/?envType=daily-question&envId=2024-01-22
+         时间复杂度：O(logN)
+         空间复杂度：O(logN)
+         */
+        public int maximumSwap(int num) {
+            char[] nums = String.valueOf(num).toCharArray();
+            int n = nums.length, maxIdx = n - 1, p = -1, q = 0;
+
+            // 逆序遍历
+            for (int i = n - 2; i >= 0; i--) {
+                if (nums[i] > nums[maxIdx]) maxIdx = i; // 找目前为止最大的数字
+                else if (nums[i] < nums[maxIdx]) {  // 更新待交换的下标p和q
+                    p = i;
+                    q = maxIdx;
+                }
+            }
+            if (p == -1) return num;    // p没有更新，意味着num是降序的，直接返回
+
+            // 交换p和q
+            char tmp = nums[p];
+            nums[p] = nums[q];
+            nums[q] = tmp;
+            return Integer.parseInt(new String(nums));
         }
 
     }
