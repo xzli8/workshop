@@ -4,6 +4,11 @@ public class _707MyLinkedList {
 
     public static class Solution1 {
 
+        /**
+         单链表
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
         class MyLinkedList {
 
             public class ListNode {
