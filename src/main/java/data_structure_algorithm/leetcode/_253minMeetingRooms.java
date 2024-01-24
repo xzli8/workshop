@@ -30,7 +30,7 @@ public class _253minMeetingRooms {
     public static class Solution1 {
 
         /**
-         优先队列
+         贪心 + 优先队列
          时间复杂度：O(NlogN)
          空间复杂度：O(logN)
          */
