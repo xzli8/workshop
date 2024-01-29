@@ -4,6 +4,23 @@ import data_structure_algorithm.domain.TreeNode;
 
 public class _112hasPathSum {
 
+    public static class Solution0 {
+
+        /**
+         DFS-v0：如果是向下的任意路径，可以这样写
+         */
+         public boolean hasPathSum(TreeNode root, int targetSum) {
+             return dfs(root, targetSum);
+         }
+
+         private boolean dfs(TreeNode cur, int targetSum) {
+             if (cur == null) return false;
+             targetSum -= cur.val;
+             return targetSum == 0 || dfs(cur.left, targetSum) || dfs(cur.right, targetSum);
+         }
+
+    }
+
     public class Solution1 {
 
         /**
@@ -143,6 +160,21 @@ public class _112hasPathSum {
 
 
 
+    public static class Solution6 {
+
+        /**
+         DFS-v6：在v5的基础上，继续简化编码
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
+        public boolean hasPathSum(TreeNode root, int targetSum) {
+            if (root == null) return false;
+            targetSum -= root.val;
+            if (root.left == null && root.right == null) return targetSum == 0;
+            return hasPathSum(root.left, targetSum) || hasPathSum(root.right, targetSum);
+        }
+
+    }
 
 
 }
