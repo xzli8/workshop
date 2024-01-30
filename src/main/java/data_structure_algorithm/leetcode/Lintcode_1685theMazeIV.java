@@ -3,7 +3,7 @@ package data_structure_algorithm.leetcode;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class Lintcode1685_theMazeIV {
+public class Lintcode_1685theMazeIV {
 
     /**
      *  题目链接：
