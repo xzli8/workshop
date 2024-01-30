@@ -3,7 +3,7 @@ package data_structure_algorithm.leetcode;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class Buchongti21_subStrings {
+public class Buchongti_21subStrings {
 
     @Test
     public void test() {

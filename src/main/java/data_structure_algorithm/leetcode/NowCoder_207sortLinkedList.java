@@ -2,7 +2,7 @@ package data_structure_algorithm.leetcode;
 
 import data_structure_algorithm.domain.ListNode;
 
-public class NC_207sortLinkedList {
+public class NowCoder_207sortLinkedList {
 
     /**
      * nowcoder:https://www.nowcoder.com/practice/3a188e9c06ce4844b031713b82784a2a?tpId=117&tqId=39396&rp=1&ru=/exam/oj&qru=/exam/oj&sourceUrl=%2Fexam%2Foj%3Fpage%3D1%26pageSize%3D50%26search%3D207%26tab%3D%25E7%25AE%2597%25E6%25B3%2595%25E7%25AF%2587%26topicId%3D117&difficulty=undefined&judgeStatus=undefined

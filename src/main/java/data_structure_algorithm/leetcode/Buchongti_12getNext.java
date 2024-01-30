@@ -1,6 +1,6 @@
 package data_structure_algorithm.leetcode;
 
-public class Buchongti12_getNext {
+public class Buchongti_12getNext {
 
     /**
      * 题目链接：https://www.nowcoder.com/questionTerminal/9023a0c988684a53960365b889ceaf5e

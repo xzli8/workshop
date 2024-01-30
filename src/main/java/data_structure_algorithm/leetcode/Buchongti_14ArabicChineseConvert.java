@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Buchongti14_ArabicChineseConvert {
+public class Buchongti_14ArabicChineseConvert {
 
     /**
      * 题目链接：https://www.nowcoder.com/practice/6eec992558164276a51d86d71678b300

@@ -1,6 +1,6 @@
 package data_structure_algorithm.leetcode;
 
-public class Buchongti18_reverseDLL {
+public class Buchongti_18reverseDLL {
 
     /**
      * ref:https://www.geeksforgeeks.org/problems/reverse-a-doubly-linked-list/1

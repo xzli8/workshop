@@ -2,7 +2,7 @@ package data_structure_algorithm.leetcode;
 
 import java.util.Scanner;
 
-public class Buchongti22_ip2Num {
+public class Buchongti_22ip2Num {
 
     /**
      * 题目链接：https://www.nowcoder.com/questionTerminal/66ca0e28f90c42a196afd78cc9c496ea
