@@ -2,10 +2,10 @@ package data_structure_algorithm.leetcode;
 
 import java.util.*;
 
-public class Lintcode_3663undirectedTreeDiameter {
+public class _1245undirectedTreeDiameter {
 
     /**
-     * ref:https://www.lintcode.com/problem/3663/description
+     * lintcode:https://www.lintcode.com/problem/3663/description
      */
 
     public static class Solution1 {
