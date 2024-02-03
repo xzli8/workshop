@@ -8,22 +8,20 @@ public class WeightedRandom {
 
     private final Random random = new Random();
 
-    private int[] weights;
-
-    private int n;
-
-    private int[] preSums;
+    private int[] weights, preSums;
 
     public WeightedRandom(int[] weights) {
         this.weights = weights;
+        initPreSums();
     }
 
     public void reset(int[] weights) {
         this.weights = weights;
+        initPreSums();
     }
 
-    public void init() {
-        this.n = weights.length;
+    private void initPreSums() {
+        int n = weights.length;
         this.preSums = new int[n + 1];
         preSums[0] = 0;
         for (int i = 1; i <= n; i++) {
@@ -32,6 +30,7 @@ public class WeightedRandom {
     }
 
     public int route() {
+        int n = weights.length;
         int target = random.nextInt(preSums[n]);
         int left = 0, right = n;
         while (left <= right) {
@@ -50,7 +49,6 @@ public class WeightedRandom {
 
     public static void main(String[] args) {
         WeightedRandom weightedRandom = new WeightedRandom(new int[] {1, 2, 3});
-        weightedRandom.init();
         Map<Integer, Integer> server2Num = new HashMap<>();
         for (int i = 0; i < 600; i++) {
             int server = weightedRandom.route();

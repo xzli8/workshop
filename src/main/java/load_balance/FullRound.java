@@ -2,31 +2,35 @@ package load_balance;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
-public class FullRandom {
-
-    private final Random random = new Random();
+public class FullRound {
 
     private int serverNum;
 
-    public FullRandom(int serverNum) {
+    private volatile int index;
+
+    public FullRound(int serverNum) {
+        this.index = 0;
         this.serverNum = serverNum;
     }
 
-    public void reset(int n) {
-        this.serverNum = n;
+    public void reset(int serverNum) {
+        this.index = 0;
+        this.serverNum = serverNum;
     }
 
     public int route() {
-        return random.nextInt(serverNum);
+        if (index == serverNum) index = 0;
+        return index++;
     }
 
+
+
     public static void main(String[] args) {
-        FullRandom fullRandom = new FullRandom(3);
+        FullRound fullRound = new FullRound(3);
         Map<Integer, Integer> server2Num = new HashMap<>();
         for (int i = 0; i < 600; i++) {
-            int server = fullRandom.route();
+            int server = fullRound.route();
             server2Num.put(server, server2Num.getOrDefault(server, 0) + 1);
         }
         System.out.println(server2Num);
