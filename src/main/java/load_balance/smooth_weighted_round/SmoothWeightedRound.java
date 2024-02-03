@@ -1,4 +1,4 @@
-package load_balance.smoothWeightedRound;
+package load_balance.smooth_weighted_round;
 
 import java.util.Arrays;
 import java.util.HashMap;

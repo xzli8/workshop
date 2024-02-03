@@ -1,4 +1,4 @@
-package load_balance.consistentHash;
+package load_balance.consistent_hash;
 
 public class Server {
 

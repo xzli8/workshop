@@ -1,6 +1,4 @@
-package load_balance.consistentHash;
-
-import org.junit.Test;
+package load_balance.consistent_hash;
 
 import java.util.*;
 
