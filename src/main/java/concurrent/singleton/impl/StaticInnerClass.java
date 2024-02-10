@@ -1,6 +1,6 @@
-package java.concurrent.singleton.impl;
+package concurrent.singleton.impl;
 
-import java.concurrent.singleton.Singleton;
+import concurrent.singleton.Singleton;
 
 public class StaticInnerClass implements Singleton {
 

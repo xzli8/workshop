@@ -1,4 +1,4 @@
-package java.concurrent.singleton;
+package concurrent.singleton;
 
 public interface Singleton {
 
