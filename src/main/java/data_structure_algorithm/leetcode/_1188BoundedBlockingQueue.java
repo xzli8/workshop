@@ -11,6 +11,9 @@ public class _1188BoundedBlockingQueue {
      */
     public static class Solution1 {
 
+        /**
+         * 循环数组 + 锁/wait-notify
+         */
         class BoundedBlockingQueue {
 
             private int[] items;

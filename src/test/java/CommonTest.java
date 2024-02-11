@@ -8,6 +8,9 @@ public class CommonTest {
 
     @Test
     public void test() {
+        int MOD = (int) 1e9 + 7;
+        System.out.println(MOD);
+
         List<String> path = new ArrayList<>();
         path.add(1 + "");
         path.add(2 + "");
