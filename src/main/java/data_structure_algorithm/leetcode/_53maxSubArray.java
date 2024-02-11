@@ -71,9 +71,7 @@ public class _53maxSubArray {
             for (int num : nums) {
                 sum += num;
                 max = Math.max(max, sum);
-                if (sum < 0) {
-                    sum = 0;
-                }
+                if (sum < 0) sum = 0;
             }
             return max;
         }
