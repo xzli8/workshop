@@ -6,6 +6,9 @@ import java.util.Arrays;
 
 public class MaxValue {
 
+    /**
+     * 问题定义：有一组物品，每个物品的数量为无限个，第i个物品的重量为weights[i]，价值为values[i]，有一个容量为capacity的背包，求背包能装下的最大价值
+     */
     @Test
     public void testMaxValue() {
         int[] weights = new int[] {1, 2, 3, 4};
@@ -19,13 +22,12 @@ public class MaxValue {
 
 
     /**
-     *  问题定义：有一组物品，每个物品的数量为无限个，第i个物品的重量为weights[i]，价值为values[i]，有一个容量为capacity的背包，求背包能装下的最大价值
-     *      定义状态：dp[i][j]表示决策第i个物品后，背包的重量为j时的最大价值
-     *      状态转移：dp[i][j] = dp[i-1][j] || dp[i-1][j - k * weights[i]] + k * values[i], k = [0, capacity / weights[i]]
-     *      初始状态：dp[0][k * weights[0]] = k * values[0], k = [0, capacity / weights[0]]
+     *  定义状态：dp[i][j]表示决策第i个物品后，背包的重量为j时的最大价值
+     *  状态转移：dp[i][j] = max(dp[i][j], dp[i-1][j - k * weights[i]] + k * values[i]) k = [0, capacity / weights[i]]
+     *  初始状态：dp[0][k * weights[0]] = k * values[0], k = [0, capacity / weights[0]]
      *
-     *      时间复杂度：O(N * M * K)
-     *      空间复杂度：O(N * M)
+     *  时间复杂度：O(N * M * K)
+     *  空间复杂度：O(N * M)
      */
     public int maxValue1(int[] weights, int[] values, int capacity) {
         // 定义状态
@@ -40,16 +42,14 @@ public class MaxValue {
 
         // 状态转移
         for (int i = 1; i < n; i++) {
-
-            // 先不放第i个物品，也就是先把i-1的状态copy一份过来；然后考虑是否放第i个物品，当能放下时，选择放或者不放的最大值
             for (int j = 0; j <= capacity; j++) {
-                // 第i个物品不放
+                // 将上一层的结果copy过来
                 dp[i][j] = dp[i - 1][j];
 
-                // 第i个物品能放下时，选择放或者不放的最大值
-                for (int k = 0; j - k * weights[i] >= 0; k++) {
+                // 放入k个第i个物品
+                for (int k = 0; k * weights[i] <= j; k++) {
                     if (dp[i - 1][j - k * weights[i]] >= 0) {
-                        dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - k * weights[i]] + k * values[i]);
+                        dp[i][j] = Math.max(dp[i][j], dp[i - 1][j - k * weights[i]] + k * values[i]);
                     }
                 }
             }
@@ -84,8 +84,8 @@ public class MaxValue {
 
         // 状态转移
         for (int i = 1; i < n; i++) {
-            for (int j = 0; j <= capacity; j++) {
-                for (int k = 0; j - k * weights[i] >= 0; k++) {
+            for (int j = 0; j <= capacity; j++) {   // 内循环正序/逆序遍历都可以
+                for (int k = 0; k * weights[i] <= j; k++) {
                     if (dp[j - k * weights[i]] >= 0) {
                         dp[j] = Math.max(dp[j], dp[j - k * weights[i]] + k * values[i]);
                     }

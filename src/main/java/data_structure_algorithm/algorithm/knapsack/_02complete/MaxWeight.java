@@ -4,6 +4,9 @@ import org.junit.Test;
 
 public class MaxWeight {
 
+    /**
+     * 问题定义：有一组物品，每个物品的数量为无限个，第i个物品的重量为weights[i]，有一个容量为capacity的背包，求背包能装下的最大重量
+     */
     @Test
     public void testMaxWeight() {
         int[] weights = new int[] {4, 5};
@@ -14,13 +17,12 @@ public class MaxWeight {
     }
 
     /**
-     *  问题定义：有一组物品，每个物品的数量为无限个，第i个物品的重量为weights[i]，有一个容量为capacity的背包，求背包能装下的最大重量
-     *      定义状态：dp[i][j]表示决策第i个物品后，背包的重量是否为j
-     *      状态转移：dp[i][j] = dp[i-1][j] || dp[i-1][j - k * weights[i]], k = [0, capacity / weights[i]]
-     *      初始状态：dp[0][k * weights[0]] = true, k = [0, capacity / weights[0]]
+     *  定义状态：dp[i][j]表示决策第i个物品后，背包的重量是否为j
+     *  状态转移：dp[i][j] = dp[i-1][j] || dp[i-1][j - k * weights[i]], k = [0, capacity / weights[i]]
+     *  初始状态：dp[0][k * weights[0]] = true, k = [0, capacity / weights[0]]
      *
-     *      时间复杂度：O(N * M * K)
-     *      空间复杂度：O(N * M)
+     *  时间复杂度：O(N * M * K)
+     *  空间复杂度：O(N * M)
      */
     public int maxWeight1(int[] weights, int capacity) {
         // 定义状态
@@ -35,11 +37,11 @@ public class MaxWeight {
         // 状态转移
         for (int i = 1; i < n; i++) {
             for (int j = 0; j <= capacity; j++) {
-                // 第i个物品不放
-                dp[i][j] = dp[i - 1][j];
+                // 第i个物品不放（下面k=0的情况已经包含了，可以不写）
+//                dp[i][j] = dp[i - 1][j];
 
                 // 第i个物品放
-                for (int k = 0; j - k * weights[i] >= 0; k++) {
+                for (int k = 0; k * weights[i] <= j; k++) {
                     if (dp[i - 1][j - k * weights[i]]) {
                         dp[i][j] = true;
                     }
@@ -73,8 +75,9 @@ public class MaxWeight {
         // 状态转移
         for (int i = 1; i < n; i++) {
             // 注意：不同与01背包j一定要从大到小遍历，这里j从小到大还是从大到小都可以
+            // 因为01背包中物品数量只有一个，只能由上一层推当前层；而完全背包中物品数量无限，可以由当前层推当前层（小重量 -> 大重量）
             for (int j = 0; j <= capacity; j++) {
-                for (int k = 0; j - k * weights[i] >= 0; k++) {
+                for (int k = 0; k * weights[i] <= j; k++) {
                     if (dp[j - k * weights[i]]) {
                         dp[j] = true;
                     }

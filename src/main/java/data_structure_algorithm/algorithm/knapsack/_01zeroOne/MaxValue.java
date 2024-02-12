@@ -17,6 +17,7 @@ public class MaxValue {
         System.out.println(maxValue0(weights, values, capacity));
         System.out.println(maxValue1(weights, values, capacity));
         System.out.println(maxValue2(weights, values, capacity));
+        System.out.println(maxValue3(weights, values, capacity));
     }
 
 
@@ -66,7 +67,7 @@ public class MaxValue {
      *  动态规划
      *      定义状态：dp[i][j]表示第i个物品决策后，背包重量为j时的最大价值
      *      状态转移：如果第i个物品能放入背包，且第i-1个物品对应的状态合法，选择放入第i个物品或者不放第i个物品的最大值；否则，选择第i-1个物品的结果
-     *          if (第i个物品能放入 && 第i-1个物品对应的状态合法) dp[i][j] = max(dp[i-1][j], dp[i-1][j-weight[i]] + values[i]
+     *          if (第i个物品能放入 && 第i-1个物品对应的状态合法) dp[i][j] = max(dp[i-1][j], dp[i-1][j-weight[i]] + values[i])
      *          else dp[i][j] = dp[i-1][j]
      *      初始状态：dp[0] = -1, dp[0][0] = 0, dp[0][weights[0]] = weights[0] <= capacity ? values[0] : 0;
      */
@@ -101,7 +102,7 @@ public class MaxValue {
 
                 // 第i个物品能放下时，选择放或者不放的最大值
                 if (j - weights[i] >= 0 && dp[i - 1][j - weights[i]] >= 0) {
-                    dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - weights[i]] + values[i]);
+                    dp[i][j] = Math.max(dp[i][j], dp[i - 1][j - weights[i]] + values[i]);
                 }
             }
 
@@ -152,8 +153,42 @@ public class MaxValue {
         }
         return maxValue;
 
-        // 返回最大值(背包不必装满)
+        // 返回最大值(背包必须装满)
 //        return dp[capacity];
     }
+
+
+
+    public int maxValue3(int[] weights, int[] values, int capacity) {
+        // 定义状态
+        int n = weights.length;
+        int[] dp = new int[capacity + 1];
+
+        // 初始状态
+        Arrays.fill(dp, -1);
+        dp[0] = 0;
+
+        // 状态转移
+        for (int i = 0; i < n; i++) {
+            // 这里j要从大到小遍历，因为状态转移用dp[j - weight[i]]计算dp[j]，也就是用前面的计算后面的
+            // 如果从小到大遍历，后面的还没被计算，前面的就已经被覆盖了，不可行
+            for (int j = capacity; j >= 0; j--) {
+                if (j - weights[i] >= 0 && dp[j - weights[i]] >= 0) {
+                    dp[j] = Math.max(dp[j], dp[j - weights[i]] + values[i]);
+                }
+            }
+        }
+
+        // 返回最大值(背包不必装满)
+        int maxValue = -1;
+        for (int j = 0; j <= capacity; j++) {
+            maxValue = Math.max(maxValue, dp[j]);
+        }
+        return maxValue;
+
+        // 返回最大值(背包必须装满)
+//        return dp[capacity];
+    }
+
 
 }
