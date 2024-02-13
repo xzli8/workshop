@@ -31,6 +31,31 @@ public class _28strStr {
     public static class Solution2 {
 
         /**
+         BF(暴力匹配)，双指针手动实现
+         时间复杂度：O(N * M)
+         空间复杂度：O(1)
+         */
+        public int strStr(String haystack, String needle) {
+            int n = haystack.length(), m = needle.length();
+            for (int start = 0; start < n; start++) {
+                int i = start, j = 0;
+                while (i < n && j < m) {
+                    if (haystack.charAt(i) != needle.charAt(j)) break;
+                    i++;
+                    j++;
+                }
+                if (j == m) return start;
+            }
+            return -1;
+        }
+
+    }
+
+
+
+    public static class Solution3 {
+
+        /**
          RabinKarp(滑动哈希)
          NOTE：这里没有显示取余，因为溢出相当于对long范围进行取余，所以是一种隐式取余。
          取余会导致哈希冲突，所以在哈希值相等时，还需要判断字符串是否相等。
@@ -67,7 +92,7 @@ public class _28strStr {
 
 
 
-    public static class Solution3 {
+    public static class Solution4 {
 
         /**
          RabinKarp(滑动哈希)
