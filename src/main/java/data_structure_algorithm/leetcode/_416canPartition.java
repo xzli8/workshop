@@ -84,4 +84,39 @@ public class _416canPartition {
 
     }
 
+
+
+    public static class Solution3 {
+
+        /**
+         动态规划：01背包问题(另一种写法)
+         时间复杂度：O(N * M)
+         空间复杂度：O(N)
+         */
+        public boolean canPartition(int[] nums) {
+            // 前置判断
+            int n = nums.length, sum = 0;
+            for (int num : nums) sum += num;
+            if (sum % 2 != 0) return false;
+            int target = sum / 2;
+
+            // 定义状态
+            boolean[] dp = new boolean[target + 1];
+
+            // 初始状态
+            dp[0] = true;
+
+            // 状态转移
+            for (int i = 0; i < n; i++) {
+                for (int j = target; j >= 0; j--) {
+                    if (j - nums[i] >= 0 && dp[j - nums[i]]) {
+                        dp[j] = true;
+                    }
+                }
+            }
+            return dp[target];
+        }
+
+    }
+
 }
