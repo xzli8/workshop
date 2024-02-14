@@ -5,7 +5,7 @@ public class _10isMatch {
     public static class Solution1 {
 
         /**
-         动态规划
+         动态规划：https://leetcode.cn/problems/regular-expression-matching/solutions/296114/shou-hui-tu-jie-wo-tai-nan-liao-by-hyj8/
          定义状态：dp[i][j]表示s的前i个字符与p的前j个字符是否匹配（注意这里的i表示个数，从1开始，不是从0开始的下标）
          状态转移：
          如果能s[i]和p[j]相等，或者p[j]是万能字符'.'，那么其匹配结果取决于s[0...i-1]和p[0...j-1]的匹配结果

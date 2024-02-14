@@ -5,7 +5,8 @@ public class _498findDiagonalOrder {
     public static class Solution1 {
 
         /**
-         找下标的规律，并模拟(参考题解)
+         模拟遍历
+         ref:https://leetcode.cn/problems/diagonal-traverse/solutions/11440/dui-jiao-xian-bian-li-fen-xi-ti-mu-zhao-zhun-gui-l/
          时间复杂度：O(N)
          空间复杂度：O(1)
          */

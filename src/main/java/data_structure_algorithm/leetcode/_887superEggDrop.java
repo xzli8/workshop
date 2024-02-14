@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 public class _887superEggDrop {
 
+    // ref:https://leetcode.cn/problems/super-egg-drop/solutions/44427/ji-ben-dong-tai-gui-hua-jie-fa-by-labuladong/
+
     public static class Solution1 {
 
         /**
