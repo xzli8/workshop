@@ -9,33 +9,27 @@ public class _20isValid {
 
     public static class Solution1 {
 
+        /**
+         栈
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
         public boolean isValid(String s) {
-            Deque<Character> stack = new ArrayDeque<Character>();
-            for (int i = 0; i < s.length(); i++) {
-                Character c = s.charAt(i);
-                if (stack.isEmpty()) {
+            Deque<Character> stack = new ArrayDeque<>();
+            for (char c : s.toCharArray()) {
+                if (c == '(' || c == '[' || c == '{') {
                     stack.push(c);
                 } else {
-                    Character top = stack.peek();
-                    if (matched(top, c)) {
-                        stack.pop();
-                    } else {
-                        stack.push(c);
-                    }
+                    if (stack.isEmpty()) return false;
+                    if (match(stack.peek(), c)) stack.pop();
+                    else stack.push(c);
                 }
             }
             return stack.isEmpty();
         }
 
-        public static final Map<Character, Character> paris = new HashMap<Character, Character>();
-        static {
-            paris.put('(', ')');
-            paris.put('[', ']');
-            paris.put('{', '}');
-        }
-
-        public static boolean matched(Character right, Character left) {
-            return left.equals(paris.get(right));
+        private boolean match(char lc, char rc) {
+            return (lc == '(' && rc == ')') || (lc == '[' && rc == ']') || (lc == '{' && rc == '}');
         }
 
     }

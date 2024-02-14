@@ -1,5 +1,6 @@
 package data_structure_algorithm.leetcode;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.LinkedList;
 
@@ -14,7 +15,74 @@ public class _155MinStack {
      * int param_4 = obj.getMin();
      */
 
+
+    public static class Solution0 {
+
+        class MinStack {
+
+            private Deque<Integer> main = new ArrayDeque<>(), help = new ArrayDeque<>();
+
+            public MinStack() {
+            }
+
+            public void push(int val) {
+                main.push(val);
+                if (help.isEmpty() || val <= help.peek()) help.push(val);
+            }
+
+            public void pop() {
+                int val = main.pop();
+                if (val == help.peek()) help.pop();
+            }
+
+            public int top() {
+                return main.peek();
+            }
+
+            public int getMin() {
+                return help.peek();
+            }
+
+        }
+
+    }
+
+
+
     public static class Solution1 {
+
+        class MinStack {
+
+            private Deque<Integer> main = new ArrayDeque<>(), help = new ArrayDeque<>();
+
+            public MinStack() {
+
+            }
+
+            public void push(int val) {
+                main.push(val);
+                help.push(help.isEmpty() ? val : Math.min(val, help.peek()));
+            }
+
+            public void pop() {
+                main.pop();
+                help.pop();
+            }
+
+            public int top() {
+                return main.peek();
+            }
+
+            public int getMin() {
+                return help.peek();
+            }
+        }
+
+    }
+
+
+
+    public static class Solution2 {
 
         class MinStack {
 
@@ -47,5 +115,6 @@ public class _155MinStack {
         }
 
     }
+
 
 }

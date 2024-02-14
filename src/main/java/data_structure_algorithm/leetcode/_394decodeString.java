@@ -6,6 +6,52 @@ import java.util.LinkedList;
 
 public class _394decodeString {
 
+    public static class Solution0 {
+
+        /**
+         双栈：数字栈 + 字符栈
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
+        public String decodeString(String s) {
+            Deque<Integer> numStack = new ArrayDeque<>();
+            Deque<Character> strStack = new ArrayDeque<>();
+            int num = 0;
+            for (char c : s.toCharArray()) {
+                if (c >= '0' && c <= '9') {
+                    num = num * 10 + c - '0';
+                } else if (c == '[') {
+                    strStack.push(c);
+                    numStack.push(num);
+                    num = 0;
+                } else if (c == ']') {
+                    StringBuilder sb = new StringBuilder();
+                    while (!strStack.isEmpty() && strStack.peek() != '[') {
+                        sb.append(strStack.pop());
+                    }
+                    sb = sb.reverse();
+                    strStack.pop();
+
+                    StringBuilder res = new StringBuilder();
+                    int count = numStack.pop();
+                    for (int i = 0; i < count; i++) {
+                        res.append(sb);
+                    }
+                    for (char ch : res.toString().toCharArray()) {
+                        strStack.push(ch);
+                    }
+                } else {
+                    strStack.push(c);
+                }
+            }
+
+            StringBuilder res = new StringBuilder();
+            while (!strStack.isEmpty()) res.append(strStack.pop());
+            return res.reverse().toString();
+        }
+
+    }
+
     public static class Solution1 {
 
         /**
