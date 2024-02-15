@@ -1,11 +1,31 @@
 package data_structure_algorithm.leetcode;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.util.Arrays;
 
 public class _724pivotIndex {
+
+    public static class Solution0 {
+
+        /**
+         前缀和
+         思路：
+         已知：
+         (1)左侧所有元素和(sumLeft) + 中心下标处的数(nums[mid]) + 右侧所有元素和(sumRight) = 总和(sumTotal)
+         (2)sumLeft = sumRight
+         可得：2 * sumLeft + nums[mid] = sumTotal
+         时间复杂度：O(N)
+         空间复杂度：O(1)
+         */
+        public int pivotIndex(int[] nums) {
+            int total = Arrays.stream(nums).sum(), sum = 0;
+            for (int i = 0; i < nums.length; i++) {
+                if (2 * sum + nums[i] == total) return i;
+                sum += nums[i];
+            }
+            return -1;
+        }
+
+    }
 
     public static class Solution1 {
 

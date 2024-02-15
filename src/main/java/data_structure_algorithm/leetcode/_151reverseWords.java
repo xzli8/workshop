@@ -6,6 +6,53 @@ import java.util.List;
 
 public class _151reverseWords {
 
+    public static class Solution0 {
+
+        /**
+         去除多余空格 + 整体反转 + 逐词反转
+         时间复杂度：O(N)
+         空间复杂度：O(N)，如果输入是char[]，那么可以实现O(1)空间复杂度的原地算法
+         */
+        public String reverseWords(String s) {
+            // 去除多余空格
+            char[] cs = s.toCharArray();
+            int n = cs.length, i = 0, j = 0, end = 0;
+            while (j < n) {
+                while (j < n && cs[j] == ' ') j++;
+                while (j < n && cs[j] != ' ') {
+                    cs[i++] = cs[j++];
+                    end = i;
+                }
+                if (i < n) cs[i++] = ' ';
+            }
+
+            // 整体反转
+            reverse(cs, 0, end - 1);
+
+            // 逐词反转
+            int left = 0, right = 0;
+            while (right < end) {
+                while (right < end && cs[right] != ' ') right++;
+                reverse(cs, left, right - 1);
+                left = ++right;
+            }
+            return String.valueOf(cs, 0, end);
+        }
+
+        private void reverse(char[] cs, int left, int right) {
+            while (left < right) {
+                char c = cs[left];
+                cs[left] = cs[right];
+                cs[right] = c;
+                left++;
+                right--;
+            }
+        }
+
+    }
+
+
+
     public static class Solution1 {
 
         /**

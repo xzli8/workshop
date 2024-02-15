@@ -2,6 +2,37 @@ package data_structure_algorithm.leetcode;
 
 public class _8myAtoi {
 
+    public static class Solution0 {
+
+        /**
+         /**
+         模拟 + 遍历
+         时间复杂度：O(N)
+         空间复杂度：O(1)
+         */
+        public int myAtoi(String s) {
+            // 去除前导空格
+            int n = s.length(), i = 0;
+            while (i < n && s.charAt(i) == ' ') i++;
+            if (i == n) return 0;
+
+            // 处理符号位
+            boolean negative = false;
+            if (s.charAt(i) == '+' || s.charAt(i) == '-') negative = s.charAt(i++) == '-';
+
+            // 处理剩下的字符
+            int res = 0;
+            while (i < n && s.charAt(i) >= '0' && s.charAt(i) <= '9') {
+                int num = s.charAt(i++) - '0';
+                if (!negative && (res > Integer.MAX_VALUE / 10 || (res == Integer.MAX_VALUE / 10 && num >= 7))) return Integer.MAX_VALUE;
+                if (negative && (-res < Integer.MIN_VALUE / 10 || (-res == Integer.MIN_VALUE / 10 && num >= 8))) return Integer.MIN_VALUE;
+                res = res * 10 + num;
+            }
+            return negative ? -res : res;
+        }
+
+    }
+
     public static class Solution1 {
 
         /**

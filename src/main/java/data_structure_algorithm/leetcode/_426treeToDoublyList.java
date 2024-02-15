@@ -2,6 +2,10 @@ package data_structure_algorithm.leetcode;
 
 public class _426treeToDoublyList {
 
+    /**
+     * ref:https://leetcode.cn/problems/er-cha-sou-suo-shu-yu-shuang-xiang-lian-biao-lcof/description/
+     */
+
     public static class Solution1 {
 
         // Definition for a Node.
@@ -31,19 +35,19 @@ public class _426treeToDoublyList {
         public Node treeToDoublyList(Node root) {
             if (root == null) return null;
             dfs(root);
-            head.left = pre;
-            pre.right = head;
+            head.left = prev;
+            prev.right = head;
             return head;
         }
 
-        private Node pre = null, head = null;
+        private Node prev = null, head = null;
         private void dfs(Node cur) {
             if (cur == null) return;
             dfs(cur.left);
-            if (pre == null) head = cur;
-            else pre.right = cur;
-            cur.left = pre;
-            pre = cur;
+            if (prev == null) head = cur;
+            else prev.right = cur;
+            cur.left = prev;
+            prev = cur;
             dfs(cur.right);
         }
 

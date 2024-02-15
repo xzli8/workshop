@@ -2,6 +2,58 @@ package data_structure_algorithm.leetcode;
 
 public class _287findDuplicate {
 
+    public static class Solution00 {
+
+        /**
+         快慢指针(类似:"141.环形链表")
+         时间复杂度：O(N)
+         空间复杂度：O(1)
+         */
+        public int findDuplicate(int[] nums) {
+            int slow = 0, fast = 0;
+            do {
+                slow = nums[slow];
+                fast = nums[nums[fast]];
+            } while (slow != fast);
+            slow = 0;
+            while (slow != fast) {
+                slow = nums[slow];
+                fast = nums[fast];
+            }
+            return slow;
+        }
+
+    }
+
+
+
+    public static class Solution0 {
+
+        /**
+         原地哈希(会修改数组)
+         时间复杂度：O(N)
+         空间复杂度：O(1)
+         */
+        public int findDuplicate(int[] nums) {
+            int n = nums.length;
+            for (int i = 0; i < n; i++) {
+                while (i != nums[i] - 1) {
+                    if (nums[i] == nums[nums[i] - 1]) return nums[i];
+                    swap(nums, i, nums[i] - 1);
+                }
+            }
+            return -1;
+        }
+
+        private void swap(int[] nums, int i, int j) {
+            int tmp = nums[i];
+            nums[i] = nums[j];
+            nums[j] = tmp;
+        }
+
+    }
+
+
     public static class Solution1 {
 
          /**
@@ -82,6 +134,7 @@ public class _287findDuplicate {
 
         /**
          类似：环形链表
+         ref:https://leetcode.cn/problems/find-the-duplicate-number/solutions/58841/287xun-zhao-zhong-fu-shu-by-kirsche/?envType=study-plan-v2&envId=selected-coding-interview
          思路：建立从下标i到nums[i]的映射
          时间复杂度：O(N)
          空间复杂度：O(1)

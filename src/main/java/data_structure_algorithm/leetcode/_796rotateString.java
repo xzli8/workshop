@@ -2,6 +2,46 @@ package data_structure_algorithm.leetcode;
 
 public class _796rotateString {
 
+    public static class Solution0 {
+
+        /**
+         模拟 + RK匹配
+         时间复杂度：O(N^2)
+         空间复杂度：O(N)
+         */
+        public boolean rotateString(String s, String goal) {
+            int m = s.length(), n = goal.length();
+            if (m != n) return false;
+            for (int i = 0; i < m; i++) {
+                String main = s.substring(i, m) + s.substring(0, i);
+                if (rk(main, goal)) return true;
+            }
+            return false;
+        }
+
+        private boolean rk(String main, String pattern) {
+            int n = main.length(), m = pattern.length(), radix = 26;
+            long pow = 1;
+            for (int i = 1; i < m; i++) pow *= radix;
+
+            long patternHash = 0;
+            for (char c : pattern.toCharArray()) patternHash = patternHash * radix + c - 'a';
+
+            int left = 0, right = 0;
+            long windowHash = 0;
+            while (right < n) {
+                windowHash = windowHash * radix + main.charAt(right++) - 'a';
+                if (right - left == m) {
+                    if (windowHash == patternHash && pattern.equals(main.substring(left, right))) return true;
+                    windowHash -= (main.charAt(left++) - 'a') * pow;
+                }
+            }
+            return false;
+        }
+
+    }
+
+
     public static class Solution1 {
 
         /**
@@ -63,7 +103,7 @@ public class _796rotateString {
             int m = s.length(), n = goal.length();
             if (m != n) return false;
             for (int start = 0; start < m; start++) {
-                String main = s.substring(start, m) + s.substring(0, m);
+                String main = s.substring(start, m) + s.substring(0, start);
                 if (rk(main, goal)) return true;
             }
             return false;
@@ -77,7 +117,7 @@ public class _796rotateString {
 
             // 计算模式串的哈希值
             long patternHash = 0;
-            for (int i = 0; i < m; i++) patternHash = patternHash * 26 + pattern.charAt(i) - 'a';
+            for (int i = 0; i < m; i++) patternHash = patternHash * radix + pattern.charAt(i) - 'a';
 
             // 滑动哈希
             int left = 0, right = 0;

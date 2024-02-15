@@ -7,6 +7,38 @@ import java.util.List;
 
 public class _113pathSum {
 
+    public static class Solution0 {
+
+        /**
+         DFS
+         时间复杂度：O(N^2)
+         空间复杂度：O(N)
+         */
+        public List<List<Integer>> pathSum(TreeNode root, int targetSum) {
+            dfs(root, new ArrayList<>(), targetSum);
+            return res;
+        }
+
+        private List<List<Integer>> res = new ArrayList<>();
+        private void dfs(TreeNode cur, List<Integer> path, int targetSum) {
+            if (cur == null) return;
+            if (cur.left == null && cur.right == null && targetSum == cur.val) {
+                path.add(cur.val);
+                res.add(new ArrayList<>(path));
+                path.remove(path.size() - 1);
+                return;
+            }
+
+            path.add(cur.val);
+            dfs(cur.left, path, targetSum - cur.val);
+            dfs(cur.right, path, targetSum - cur.val);
+            path.remove(path.size() - 1);
+        }
+
+    }
+
+
+
     public class Solution1 {
 
         /**

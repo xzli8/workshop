@@ -4,6 +4,52 @@ import java.util.*;
 
 public class _239maxSlidingWindow {
 
+    public static class Solution0 {
+
+        /**
+         单调队列
+         时间复杂度：O(N)
+         空间复杂度：O(K)
+         */
+        public int[] maxSlidingWindow(int[] nums, int k) {
+            int n = nums.length;
+            int[] res = new int[n - k + 1];
+            MaxQueue q = new MaxQueue();
+            for (int i = 0; i < k; i++) q.offer(nums[i]);
+            for (int i = k; i < n; i++) {
+                res[i - k] = q.max();
+                q.poll();
+                q.offer(nums[i]);
+            }
+            res[n - k] = q.max();
+            return res;
+        }
+
+        class MaxQueue {
+            private Queue<Integer> main = new ArrayDeque<>();
+            private Deque<Integer> help = new ArrayDeque<>();
+
+            public void offer(int val) {
+                main.offer(val);
+                while (!help.isEmpty() && help.peekLast() < val) help.pollLast();
+                help.offerLast(val);
+            }
+
+            public int poll() {
+                int val = main.poll();
+                if (help.peekFirst() == val) help.pollFirst();
+                return val;
+            }
+
+            public int max() {
+                return help.peek();
+            }
+
+        }
+
+    }
+
+
     public static class Solution1 {
 
         /**

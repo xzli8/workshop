@@ -4,6 +4,42 @@ import java.util.*;
 
 public class _207canFinish {
 
+    public static class Solution0 {
+
+        /**
+         拓扑排序(DAG)
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
+        public boolean canFinish(int numCourses, int[][] prerequisites) {
+            int[] indeg = new int[numCourses];
+            List<Integer>[] g = new List[numCourses];
+            for (int i = 0; i < numCourses; i++) g[i] = new ArrayList<>();
+            for (int[] prerequisit : prerequisites) {
+                g[prerequisit[1]].add(prerequisit[0]);
+                indeg[prerequisit[0]]++;
+            }
+
+            Queue<Integer> q = new ArrayDeque<>();
+            for (int i = 0; i < numCourses; i++) {
+                if (indeg[i] == 0) q.offer(i);
+            }
+
+            int visited = 0;
+            while (!q.isEmpty()) {
+                visited++;
+                int cur = q.poll();
+                for (int adj : g[cur]) {
+                    if (--indeg[adj] == 0) q.offer(adj);
+                }
+            }
+            return visited == numCourses;
+        }
+
+    }
+
+
+
     public static class Solution1 {
 
         /**

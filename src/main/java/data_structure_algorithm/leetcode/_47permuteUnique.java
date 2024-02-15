@@ -30,8 +30,8 @@ public class _47permuteUnique {
 
             for (int i = 0; i < nums.length; i++) {
                 if (visited[i]) continue;
-                if (i > 0 && nums[i] == nums[i - 1] && !visited[i - 1]) continue;  // 去重
-                // if (i > 0 && nums[i] == nums[i - 1] && visited[i - 1]) continue;  // 也能去重，但效率更低
+                if (i > 0 && nums[i] == nums[i - 1] && !visited[i - 1]) continue;  // 去重(使相同元素的相对位置保持不变)
+                // if (i > 0 && nums[i] == nums[i - 1] && visited[i - 1]) continue;  // 也能去重，但效率更低，因为剪枝不够多(使相同元素的相对位置保持不变)
                 visited[i] = true;
                 path.addLast(nums[i]);
                 backtrace(nums, visited, path);

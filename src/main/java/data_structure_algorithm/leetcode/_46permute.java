@@ -6,6 +6,40 @@ import java.util.List;
 
 public class _46permute {
 
+    public static class Solution0 {
+
+        /**
+         DFS
+         时间复杂度：O(N! * N)
+         空间复杂度：O(N)
+         */
+        public List<List<Integer>> permute(int[] nums) {
+            dfs(nums, new boolean[nums.length], new ArrayList<>());
+            return res;
+        }
+
+        private List<List<Integer>> res = new ArrayList<>();
+        private void dfs(int[] nums, boolean[] visited, List<Integer> path) {
+            int n = nums.length;
+            if (path.size() == n) {
+                res.add(new ArrayList<>(path));
+                return;
+            }
+
+            for (int i = 0; i < n; i++) {
+                if (visited[i]) continue;
+                visited[i] = true;
+                path.add(nums[i]);
+                dfs(nums, visited, path);
+                path.remove(path.size() - 1);
+                visited[i] = false;
+            }
+        }
+
+    }
+
+
+
     public static class Solution1 {
 
         /**

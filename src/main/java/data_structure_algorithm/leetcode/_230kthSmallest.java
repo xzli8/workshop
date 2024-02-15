@@ -7,6 +7,31 @@ import java.util.Deque;
 
 public class _230kthSmallest {
 
+    public static class Solution0 {
+
+        /**
+         DFS
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
+        public int kthSmallest(TreeNode root, int k) {
+            this.k = k;
+            dfs(root);
+            return res;
+        }
+
+        private int k, res;
+        private void dfs(TreeNode cur) {
+            if (cur == null || k == 0) return;  // 终止条件"k == 0"可以要也可以不要：要的话相当于剪枝，不要的话会遍历整棵树
+            dfs(cur.left);
+            if (--k == 0) res = cur.val;
+            dfs(cur.right);
+        }
+
+    }
+
+
+
     public static class Solution1 {
 
         /**

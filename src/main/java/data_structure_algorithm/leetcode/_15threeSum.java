@@ -86,6 +86,8 @@ public class _15threeSum {
                         sub.add(nums[right]);
                         res.add(sub);
 
+                        // res.add(Arrays.asList(nums[left], nums[right])); // 这样写得到的是不可变数组，后面不能再add元素了
+
                         // 去重
                         while (left < right && nums[left + 1] == nums[left]) left++;
                         while (left < right && nums[right - 1] == nums[right]) right--;
