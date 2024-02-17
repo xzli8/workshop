@@ -7,6 +7,26 @@ import java.util.Queue;
 
 public class _101isSymmetric {
 
+    public static class Solution0 {
+
+        /**
+         DFS
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
+        public boolean isSymmetric(TreeNode root) {
+            return isSymmetric(root, root);
+        }
+
+        private boolean isSymmetric(TreeNode left, TreeNode right) {
+            if (left == null && right == null) return true;
+            if (left == null || right == null) return false;
+            return left.val == right.val && isSymmetric(left.left, right.right) && isSymmetric(left.right, right.left);
+        }
+
+    }
+
+
 
     public static class Solution1 {
 

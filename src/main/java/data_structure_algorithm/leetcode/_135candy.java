@@ -4,6 +4,39 @@ import java.util.Arrays;
 
 public class _135candy {
 
+    public static class Solution0 {
+
+        /**
+         贪心：先满足从右往左，再满足从左往右，然后取较小值
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
+        public int candy(int[] ratings) {
+            int n = ratings.length;
+
+            // 从左往右
+            int[] left = new int[n];
+            Arrays.fill(left, 1);
+            for (int i = 1; i < n; i++) {
+                if (ratings[i] > ratings[i - 1]) left[i] = left[i - 1] + 1;
+            }
+
+            // 从右往左
+            int[] right = new int[n];
+            Arrays.fill(right, 1);
+            for (int i = n - 2; i >= 0; i--) {
+                if (ratings[i] > ratings[i + 1]) right[i] = right[i + 1] + 1;
+            }
+
+            // 取left和right的较大值分配
+            int sum = 0;
+            for (int i = 0; i < n; i++) sum += Math.max(left[i], right[i]);
+            return sum;
+        }
+
+    }
+
+
     public static class Solution1 {
 
         /**

@@ -7,7 +7,72 @@ import java.util.Map;
 
 public class _110isBalanced {
 
+    public static class Solution0 {
+
+        /**
+         DFS
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
+        public boolean isBalanced(TreeNode root) {
+            if (root == null) return true;
+            return isBalanced(root.left) && isBalanced(root.right) && Math.abs(depth(root.left) - depth(root.right)) <= 1;
+        }
+
+        private Map<TreeNode, Integer> node2Depth = new HashMap<>();
+        private int depth(TreeNode cur) {
+            if (cur == null) return 0;
+            return node2Depth.computeIfAbsent(cur, node -> Math.max(depth(node.left), depth(node.right))) + 1;
+        }
+
+    }
+
+
+
     public static class Solution1 {
+
+        /**
+         DFS
+         时间复杂度：O(N^2)
+         空间复杂度：O(N)
+         */
+        public boolean isBalanced(TreeNode root) {
+            if (root == null) return true;
+            return isBalanced(root.left) && isBalanced(root.right) && Math.abs(depth(root.left) - depth(root.right)) <= 1;
+        }
+
+        private int depth(TreeNode cur) {
+            if (cur == null) return 0;
+            return Math.max(depth(cur.left), depth(cur.right)) + 1;
+        }
+
+    }
+
+
+
+    public static class Solution2 {
+
+        /**
+         DFS
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
+        public boolean isBalanced(TreeNode root) {
+            if (root == null) return true;
+            return isBalanced(root.left) && isBalanced(root.right) && Math.abs(depth(root.left) - depth(root.right)) <= 1;
+        }
+
+        private Map<TreeNode, Integer> node2Depth = new HashMap<>();
+        private int depth(TreeNode cur) {
+            if (cur == null) return 0;
+            return node2Depth.computeIfAbsent(cur, node -> Math.max(depth(node.left), depth(node.right))) + 1;
+        }
+
+    }
+
+
+
+    public static class Solution3 {
 
         /**
          DFS
@@ -44,8 +109,6 @@ public class _110isBalanced {
 
             return map.computeIfAbsent(root, node -> Math.max(depth(node.left), depth(node.right)) + 1);
         }
-
-
 
     }
 

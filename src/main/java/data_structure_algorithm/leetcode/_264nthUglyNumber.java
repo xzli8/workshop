@@ -6,6 +6,37 @@ import java.util.Set;
 
 public class _264nthUglyNumber {
 
+
+    public static class Solution0 {
+
+        /**
+         动态规划
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
+        public int nthUglyNumber(int n) {
+            // 定义状态：dp[i]表示第i个丑数
+            int[] dp = new int[n];
+
+            // 初始状态
+            dp[0] = 1;
+
+            // 状态转移
+            int i2 = 0, i3 = 0, i5 = 0;
+            for (int i = 1; i < n; i++) {
+                int n2 = 2 * dp[i2], n3 = 3 * dp[i3], n5 = 5 * dp[i5];
+                dp[i] = Math.min(Math.min(n2, n3), n5);
+                if (dp[i] == n2) i2++;
+                if (dp[i] == n3) i3++;
+                if (dp[i] == n5) i5++;
+            }
+            return dp[n - 1];
+        }
+
+    }
+
+
+
     public static class Solution1 {
 
         /**

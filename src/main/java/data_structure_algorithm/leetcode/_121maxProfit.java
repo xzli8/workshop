@@ -6,6 +6,34 @@ public class _121maxProfit {
      * ref:https://labuladong.gitee.io/algo/di-ling-zh-bfe1b/yi-ge-fang-3b01b/
      */
 
+    public static class Solution0 {
+
+        /**
+         动态规划
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
+        public int maxProfit(int[] prices) {
+            // 定义状态：dp[i]表示第i天能获取的最大利润
+            int n = prices.length;
+            int[] dp = new int[n];
+
+            // 初始状态
+            dp[0] = 0;
+
+            // 状态转移
+            int minPrice = prices[0];
+            for (int i = 1; i < n; i++) {
+                minPrice = Math.min(minPrice, prices[i]);
+                dp[i] = Math.max(dp[i - 1], prices[i] - minPrice);
+            }
+            return dp[n - 1];
+        }
+
+    }
+
+
+
     public static class Solution1 {
 
         /**

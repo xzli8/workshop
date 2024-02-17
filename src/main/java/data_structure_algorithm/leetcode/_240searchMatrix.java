@@ -2,6 +2,28 @@ package data_structure_algorithm.leetcode;
 
 public class _240searchMatrix {
 
+    public static class Solution0 {
+
+        /**
+         遍历查找：从左下/右上开始，每次排除一行或者一列
+         时间复杂度：O(M + N)
+         空间复杂度：O(1)
+         */
+        public boolean searchMatrix(int[][] matrix, int target) {
+            int m = matrix.length, n = matrix[0].length;
+            int i = 0, j = n - 1;
+            while (i < m && j >= 0) {
+                if (matrix[i][j] == target) return true;
+                else if (matrix[i][j] < target) i++;
+                else j--;
+            }
+            return false;
+        }
+
+    }
+
+
+
     public static class Solution1 {
 
         /**

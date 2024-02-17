@@ -2,6 +2,27 @@ package data_structure_algorithm.leetcode;
 
 public class _11maxArea {
 
+    public static class Solution0 {
+
+        /**
+         双指针：左右指针分别指向首尾，然后每次将较小的指针向中间移动
+         时间复杂度：O(N)
+         空间复杂度：O(1)
+         */
+        public int maxArea(int[] height) {
+            int left = 0, right = height.length - 1, max = 0;
+            while (left < right) {
+                max = Math.max(max, Math.min(height[left], height[right]) * (right - left));
+                if (height[left] < height[right]) left++;
+                else right--;
+            }
+            return max;
+        }
+
+    }
+
+
+
     public static class Solution1 {
 
         /**

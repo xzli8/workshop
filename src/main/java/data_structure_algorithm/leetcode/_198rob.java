@@ -2,6 +2,34 @@ package data_structure_algorithm.leetcode;
 
 public class _198rob {
 
+    public static class Solution0 {
+
+        /**
+         动态规划
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
+        public int rob(int[] nums) {
+            // 定义状态：dp[i][j]表示第i间房屋偷(j = 1)和不偷(j = 0)时的最高金额
+            int n = nums.length;
+            int[][] dp = new int[n][2];
+
+            // 初始状态
+            dp[0][0] = 0;
+            dp[0][1] = nums[0];
+
+            // 状态转移
+            for (int i = 1; i < n; i++) {
+                dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1]);
+                dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] + nums[i]);
+            }
+            return Math.max(dp[n - 1][0], dp[n - 1][1]);
+        }
+
+    }
+
+
+
     public static class Solution1 {
 
         /**

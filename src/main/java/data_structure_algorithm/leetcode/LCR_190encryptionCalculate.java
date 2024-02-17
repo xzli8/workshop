@@ -6,7 +6,7 @@ public class LCR_190encryptionCalculate {
 
         /**
          位运算：首先计算不进位和，然后计算进位，最后将前两步结果相加(不断重复前两步直到进位结果为0)
-         类似问题：不用新变量交换两个变量的值
+         类似问题：不用新变量交换两个整数的值
          时间复杂度：O(logN)
          空间复杂度：O(1)
          */
@@ -18,6 +18,20 @@ public class LCR_190encryptionCalculate {
                 dataB = carry;
             } while (dataB != 0);
             return dataA;
+        }
+
+        // 基于异或运算交换
+        private void swap1(int a, int b) {
+            a = a ^ b;
+            b = a ^ b;
+            a = a ^ b;
+        }
+
+        // 基于加减法交换
+        private void swap2(int a, int b) {
+            a = a + b;
+            b = a - b;
+            a = a - b;
         }
 
     }

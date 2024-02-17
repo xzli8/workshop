@@ -2,6 +2,47 @@ package data_structure_algorithm.leetcode;
 
 public class _10isMatch {
 
+    public static class Solution0 {
+
+        /**
+         动态规划
+         时间复杂度：O(M * N)
+         空间复杂度：O(M * N)
+         */
+        public boolean isMatch(String s, String p) {
+            // 定义状态：dp[i][j]表示s[i-1]和p[i-1]是否匹配
+            int m = s.length(), n = p.length();
+            boolean[][] dp = new boolean[m + 1][n + 1];
+
+            // 初始状态
+            dp[0][0] = true;    // 空s和空p是匹配的
+            for (int j = 1; j <= n; j++) if (p.charAt(j - 1) == '*') dp[0][j] = dp[0][j - 2];   // 空s和p可能匹配
+            // 空p和s不可能匹配，用默认值false初始化即可
+
+            // 状态转移
+            for (int i = 1; i <= m; i++) {
+                for (int j = 1; j <= n; j++) {
+                    if (s.charAt(i - 1) == p.charAt(j - 1) || p.charAt(j - 1) == '.') {
+                        dp[i][j] = dp[i - 1][j - 1];
+                    }
+                    if (p.charAt(j - 1) == '*') {
+                        if (p.charAt(j - 2) != s.charAt(i - 1)) {
+                            // '*'匹配0次
+                            dp[i][j] = dp[i][j - 2];
+                        }
+                        if (p.charAt(j - 2) == s.charAt(i - 1) || p.charAt(j - 2) == '.') {
+                            // '*'匹配0次/1次/多次
+                            dp[i][j] = dp[i][j - 2] || dp[i - 1][j - 2] || dp[i - 1][j];
+                        }
+                    }
+                }
+            }
+            return dp[m][n];
+        }
+
+    }
+
+
     public static class Solution1 {
 
         /**

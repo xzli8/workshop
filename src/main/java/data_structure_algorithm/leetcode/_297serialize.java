@@ -9,20 +9,66 @@ import java.util.Queue;
 
 public class _297serialize {
 
-    /**
-     * Definition for a binary tree node.
-     * public class TreeNode {
-     *     int val;
-     *     TreeNode left;
-     *     TreeNode right;
-     *     TreeNode(int x) { val = x; }
-     * }
-     */
-
     // Your Codec object will be instantiated and called as such:
     // Codec ser = new Codec();
     // Codec deser = new Codec();
     // TreeNode ans = deser.deserialize(ser.serialize(root));
+
+    public static class Solution0 {
+
+        public class Codec {
+
+            // Encodes a tree to a single string.
+            public String serialize(TreeNode root) {
+                if (root == null) return null;
+                StringBuilder sb = new StringBuilder();
+                Queue<TreeNode> q = new LinkedList<>();
+                q.offer(root);
+                while (!q.isEmpty()) {
+                    int size = q.size();
+                    for (int i = 0; i < size; i++) {
+                        TreeNode cur = q.poll();
+                        if (cur == null) {
+                            sb.append('x').append(',');
+                        } else {
+                            sb.append(cur.val).append(',');
+                            q.offer(cur.left);
+                            q.offer(cur.right);
+                        }
+                    }
+                }
+                return sb.toString();
+            }
+
+            // Decodes your encoded data to tree.
+            public TreeNode deserialize(String data) {
+                if (data == null) return null;
+                String[] vals = data.split(",");
+
+                int idx = 1;
+                TreeNode root = new TreeNode(Integer.valueOf(vals[0]));
+                Queue<TreeNode> q = new LinkedList<>();
+                q.offer(root);
+                while (!q.isEmpty()) {
+                    int size = q.size();
+                    for (int i = 0; i < size; i++) {
+                        TreeNode cur = q.poll();
+                        String leftVal = vals[idx++], rightVal = vals[idx++];
+                        if (!leftVal.equals("x")) {
+                            cur.left = new TreeNode(Integer.valueOf(leftVal));
+                            q.offer(cur.left);
+                        }
+                        if (!rightVal.equals("x")) {
+                            cur.right = new TreeNode(Integer.valueOf(rightVal));
+                            q.offer(cur.right);
+                        }
+                    }
+                }
+                return root;
+            }
+        }
+
+    }
 
     public static class Solution1 {
 

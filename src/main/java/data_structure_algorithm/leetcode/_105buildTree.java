@@ -7,6 +7,35 @@ import java.util.Map;
 
 public class _105buildTree {
 
+    public static class Solution0 {
+
+        /**
+         DFS
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
+        public TreeNode buildTree(int[] preorder, int[] inorder) {
+            int n = preorder.length;
+            this.preorder = preorder;
+            for (int i = 0; i < n; i++) inorderVal2Idx.put(inorder[i], i);
+            return build(0, n - 1, 0, n - 1);
+        }
+
+        private int[] preorder;
+        private Map<Integer, Integer> inorderVal2Idx = new HashMap<>();
+        private TreeNode build(int preorderLeft, int preorderRight, int inorderLeft, int inorderRight) {
+            if (preorderLeft > preorderRight) return null;
+            TreeNode root = new TreeNode(preorder[preorderLeft]);
+            int inorderRoot = inorderVal2Idx.get(root.val), leftLen = inorderRoot - inorderLeft;
+            root.left = build(preorderLeft + 1, preorderLeft + leftLen, inorderLeft, inorderRoot - 1);
+            root.right = build(preorderLeft + leftLen + 1, preorderRight, inorderRoot + 1, inorderRight);
+            return root;
+        }
+
+    }
+
+
+
     public static class Solution1 {
 
         /**
