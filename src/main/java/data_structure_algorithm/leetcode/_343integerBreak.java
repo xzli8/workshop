@@ -2,6 +2,25 @@ package data_structure_algorithm.leetcode;
 
 public class _343integerBreak {
 
+    public static class Solution0 {
+
+        /**
+         贪心：每次尽量拆分成尽量多的3
+         时间复杂度：O(1)
+         空间复杂度：O(1)
+         */
+        public int integerBreak(int n) {
+            if (n <= 3) return n - 1;
+            int mod = n % 3, multi = n / 3;
+            if (mod == 0) return (int) Math.pow(3, multi);
+            else if (mod == 1) return (int) Math.pow(3, multi - 1) * 4;
+            else return (int) Math.pow(3, multi) * 2;
+        }
+
+    }
+
+
+
     public static class Solution1 {
 
         /**
