@@ -2,6 +2,29 @@ package data_structure_algorithm.leetcode;
 
 public class _125isPalindrome {
 
+    public static class Solution0 {
+
+        /**
+         双指针：在原字符串上直接判断
+         时间复杂度：O(N)
+         空间复杂度：O(1)
+         */
+        public boolean isPalindrome(String s) {
+            int left = 0, right = s.length() - 1;
+            while (left < right) {
+                while (left < right && !Character.isLetterOrDigit(s.charAt(left))) left++;
+                while (left < right && !Character.isLetterOrDigit(s.charAt(right))) right--;
+                if (left < right && Character.toLowerCase(s.charAt(left)) != Character.toLowerCase(s.charAt(right))) return false;
+                left++;
+                right--;
+            }
+            return true;
+        }
+
+    }
+
+
+
     public static class Solution1 {
 
         /**

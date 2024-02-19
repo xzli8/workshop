@@ -13,6 +13,48 @@ public class _380insertDeleteGetRandomO1 {
      * int param_3 = obj.getRandom();
      */
 
+    public static class Solution0 {
+
+        /**
+         哈希表 + 动态数组
+         时间复杂度：O(1)
+         空间复杂度：O(N)
+         */
+        class RandomizedSet {
+
+            private Map<Integer, Integer> num2Idx = new HashMap<>();
+            private List<Integer> nums = new ArrayList<>();
+            private Random random = new Random();
+
+            public RandomizedSet() {
+            }
+
+            public boolean insert(int val) {
+                if (num2Idx.containsKey(val)) return false;
+                nums.add(val);
+                num2Idx.put(val, nums.size() - 1);
+                return true;
+            }
+
+            public boolean remove(int val) {
+                if (!num2Idx.containsKey(val)) return false;
+                num2Idx.put(nums.get(nums.size() - 1), num2Idx.get(val));
+                nums.set(num2Idx.get(val), nums.get(nums.size() - 1));
+                nums.remove(nums.size() - 1);
+                num2Idx.remove(val);
+                return true;
+            }
+
+            public int getRandom() {
+                return nums.get(random.nextInt(nums.size()));
+            }
+
+        }
+
+    }
+
+
+
     public static class Solution1 {
 
         class RandomizedSet {
