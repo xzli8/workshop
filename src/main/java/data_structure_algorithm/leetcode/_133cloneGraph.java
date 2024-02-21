@@ -67,4 +67,60 @@ public class _133cloneGraph {
 
     }
 
+
+
+    public static class Solution2 {
+
+        // Definition for a Node.
+        class Node {
+            public int val;
+            public List<Node> neighbors;
+            public Node() {
+                val = 0;
+                neighbors = new ArrayList<>();
+            }
+            public Node(int _val) {
+                val = _val;
+                neighbors = new ArrayList<>();
+            }
+            public Node(int _val, ArrayList<Node> _neighbors) {
+                val = _val;
+                neighbors = _neighbors;
+            }
+        }
+
+        /**
+         哈希表 + DFS/BFS遍历
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
+        public Node cloneGraph(Node node) {
+            traverse(node);
+            visited.clear();
+            return build(node);
+        }
+
+        private Set<Node> visited = new HashSet<>();
+        private Map<Node, Node> old2New = new HashMap<>();
+
+        private void traverse(Node node) {
+            if (node == null || visited.contains(node)) return;
+            visited.add(node);
+            old2New.put(node, new Node(node.val));
+            for (Node neighbor : node.neighbors) traverse(neighbor);
+        }
+
+        private Node build(Node node) {
+            if (node == null || visited.contains(node)) return null;
+            visited.add(node);
+            Node newNode = old2New.get(node);
+            for (Node neighbor : node.neighbors) {
+                newNode.neighbors.add(old2New.get(neighbor));
+                build(neighbor);
+            }
+            return newNode;
+        }
+
+    }
+
 }
