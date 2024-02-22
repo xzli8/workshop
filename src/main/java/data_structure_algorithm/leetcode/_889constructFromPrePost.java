@@ -7,6 +7,37 @@ import java.util.Map;
 
 public class _889constructFromPrePost {
 
+    public static class Solution0 {
+
+        /**
+         DFS + HashMap
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
+        public TreeNode constructFromPrePost(int[] preorder, int[] postorder) {
+            this.preorder = preorder;
+            int n = preorder.length;
+            for (int i = 0; i < n; i++) postorderVal2Idx.put(postorder[i], i);
+            return dfs(0, n - 1, 0, n - 1);
+        }
+
+        private int[] preorder;
+        private Map<Integer, Integer> postorderVal2Idx = new HashMap<>();
+        private TreeNode dfs(int preorderLeft, int preorderRight, int postorderLeft, int postorderRight) {
+            TreeNode root = new TreeNode(preorder[preorderLeft]);
+            if (preorderLeft == preorderRight) return root;
+            int postorderIdx = postorderVal2Idx.get(preorder[preorderLeft + 1]);
+            int leftLen = postorderIdx - postorderLeft + 1;
+            if (leftLen > 0) root.left = dfs(preorderLeft + 1, preorderLeft + leftLen, postorderLeft, postorderIdx);
+            int rightLen = postorderRight - postorderIdx - 1;
+            if (rightLen > 0) root.right = dfs(preorderRight - rightLen + 1, preorderRight, postorderIdx + 1, postorderRight - 1);
+            return root;
+        }
+
+    }
+
+
+
     public static class Solution1 {
 
         /**
