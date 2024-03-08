@@ -1,5 +1,7 @@
 package data_structure_algorithm.leetcode;
 
+import java.util.Arrays;
+
 public class _1509minDifference {
 
     public static class Solution1 {
