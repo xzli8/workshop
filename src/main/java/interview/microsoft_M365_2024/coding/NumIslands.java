@@ -1,11 +1,15 @@
-package interview.microsoft_M365_2024;
+package interview.microsoft_M365_2024.coding;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
 
 public class NumIslands {
 
-    // 2024.04.01
+
+    /**
+     * Date: 2024.04.01
+     * Solution: DFS/BFS (要求用BFS)
+     */
 
     public int numIslands(char[][] grid) {
         int[][] dirs = new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};

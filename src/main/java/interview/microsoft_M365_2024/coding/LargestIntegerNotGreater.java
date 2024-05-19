@@ -1,4 +1,4 @@
-package interview.microsoft_M365_2024;
+package interview.microsoft_M365_2024.coding;
 
 import java.util.Arrays;
 import java.util.HashSet;
