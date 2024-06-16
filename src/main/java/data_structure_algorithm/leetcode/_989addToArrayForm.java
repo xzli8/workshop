@@ -6,6 +6,8 @@ import java.util.List;
 
 public class _989addToArrayForm {
 
+
+
     public static class Solution1 {
 
         /**
@@ -24,6 +26,33 @@ public class _989addToArrayForm {
                 val %= 10;
                 res.add(val);
                 i--;
+            }
+            Collections.reverse(res);
+            return res;
+        }
+
+    }
+
+
+
+    public static class Solution2 {
+
+        /**
+         模拟(竖式加法)
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
+        public List<Integer> addToArrayForm(int[] num, int k) {
+            List<Integer> res = new ArrayList<>();
+            int i = num.length - 1, carry = 0;
+            while (i >= 0 || k != 0 || carry != 0) {
+                int n1 = i >= 0 ? num[i] : 0;
+                int n2 = k % 10;
+                int sum = n1 + n2 + carry;
+                res.add(sum % 10);
+                i--;
+                k /= 10;
+                carry = sum / 10;
             }
             Collections.reverse(res);
             return res;

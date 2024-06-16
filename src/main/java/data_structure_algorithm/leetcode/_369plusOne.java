@@ -17,6 +17,40 @@ public class _369plusOne {
      *  Nowcoder link: https://www.nowcoder.com/questionTerminal/a2f1105d2ac5466e9ba8fd61310ba6d1
      */
 
+    public static class Solution0 {
+
+        public ListNode plusOne(ListNode head) {
+            ListNode p = reverse(head), dummy = new ListNode(), p0 = dummy;
+            int carry = 1;
+            while (p != null || carry != 0) {
+                int n = 0;
+                if (p != null) {
+                    n = p.val;
+                    p = p.next;
+                }
+                int sum = n + carry;
+                carry = sum / 10;
+                p0.next = new ListNode(sum % 10);
+                p0 = p0.next;
+            }
+            return reverse(dummy.next);
+        }
+
+        private ListNode reverse(ListNode head) {
+            ListNode prev = null, cur = head;
+            while (cur != null) {
+                ListNode next = cur.next;
+                cur.next = prev;
+                prev = cur;
+                cur = next;
+            }
+            return prev;
+        }
+
+    }
+
+
+
     public static class Solution1 {
 
         public ListNode plusOne(ListNode head) {

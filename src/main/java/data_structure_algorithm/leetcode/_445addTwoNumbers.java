@@ -8,6 +8,50 @@ import java.util.Deque;
 
 public class _445addTwoNumbers {
 
+    public static class Solution0 {
+
+        /**
+         反转链表 + 模拟竖式加法
+         时间复杂度：O(N)
+         空间复杂度：O(N)
+         */
+        public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+            ListNode p1 = reverse(l1), p2 = reverse(l2), dummy = new ListNode(), p = dummy;
+            int carry = 0;
+            while (p1 != null || p2 != null || carry != 0) {
+                int n1 = 0;
+                if (p1 != null) {
+                    n1 = p1.val;
+                    p1 = p1.next;
+                }
+                int n2 = 0;
+                if (p2 != null) {
+                    n2 = p2.val;
+                    p2 = p2.next;
+                }
+                int sum = n1 + n2 + carry;
+                carry = sum / 10;
+                p.next = new ListNode(sum % 10);
+                p = p.next;
+            }
+            return reverse(dummy.next);
+        }
+
+        private ListNode reverse(ListNode head) {
+            ListNode prev = null, cur = head;
+            while (cur != null) {
+                ListNode next = cur.next;
+                cur.next = prev;
+                prev = cur;
+                cur = next;
+            }
+            return prev;
+        }
+
+    }
+
+
+
     public static class Solution1 {
 
         /**
