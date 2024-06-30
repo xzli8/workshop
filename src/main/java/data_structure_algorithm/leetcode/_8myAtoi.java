@@ -4,7 +4,6 @@ public class _8myAtoi {
 
     public static class Solution0 {
 
-        /**
          /**
          模拟 + 遍历
          时间复杂度：O(N)
