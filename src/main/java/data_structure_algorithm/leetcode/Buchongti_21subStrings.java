@@ -7,9 +7,10 @@ public class Buchongti_21subStrings {
 
     @Test
     public void test() {
-        Assert.assertEquals("1607", subStrings("9999", "8392"));
-        Assert.assertEquals("-1607", subStrings("8392", "9999"));
-        Assert.assertEquals("0", subStrings("8392", "8392"));
+        Assert.assertEquals("1607", subtractStrings("9999", "8392"));
+        Assert.assertEquals("-1607", subtractStrings("8392", "9999"));
+        Assert.assertEquals("0", subtractStrings("8392", "8392"));
+        Assert.assertEquals("97", subtractStrings("100", "3"));
     }
 
     /**
@@ -23,49 +24,42 @@ public class Buchongti_21subStrings {
      *      1.如果是小数减大数，交换次序，最后结果加负号；
      *      2.删除前导0，当结果是"00000"时，保留一个0即可；
      */
-    public String subStrings(String num1, String num2) {
-        String res;
-        // 如果是小数减大数，交换位置，然后前面加负号
+    public String subtractStrings(String num1, String num2) {
+        // 被减数小于减数时，需要交换顺序并且结果加负号
         if (less(num1, num2)) {
-            res = sub(num2, num1);
-            if (!res.equals("0")) res = "-" + res;
-        } else {
-            res = sub(num1, num2);
+            return "-" + subtractStrings(num2, num1);
         }
-        return res;
+
+        StringBuilder result = new StringBuilder();
+        int borrow = 0;
+        int i = num1.length() - 1;
+        int j = num2.length() - 1;
+
+        while (i >= 0 || j >= 0) {
+            int digit1 = i >= 0 ? num1.charAt(i--) - '0' : 0;
+            int digit2 = j >= 0 ? num2.charAt(j--) - '0' : 0;
+            int difference = digit1 - digit2 - borrow;
+            if (difference < 0) {
+                difference += 10;
+                borrow = 1;
+            } else {
+                borrow = 0;
+            }
+            result.append(difference);
+        }
+        String res = result.reverse().toString();
+
+        // 去除前导零
+        int pos = 0;
+        while (pos < result.length() && res.charAt(pos) == '0') {
+            pos++;
+        }
+        return pos == res.length() ? "0" : res.substring(pos);
     }
 
     private boolean less(String num1, String num2) {
-        if (num1.length() == num2.length()) {
-            return num1.compareTo(num2) < 0;
-        }
-        return num1.length() < num2.length();
+        return num1.length() < num2.length() || (num1.length() == num2.length() && num1.compareTo(num2) < 0);
     }
 
-    /**
-     *  计算num1 - num2，这里num1 > num2
-     */
-    private String sub(String num1, String num2) {
-        int i = num1.length() - 1, j = num2.length() - 1, borrow = 0;
-        StringBuilder sb = new StringBuilder();
-        while (i >= 0 || j >= 0) {
-            int x = i >= 0 ? num1.charAt(i) - '0' : 0;
-            int y = j >= 0 ? num2.charAt(j) - '0' : 0;
-            int tmp = x - borrow - y;
-            borrow = tmp < 0 ? 1 : 0;
-            sb.append(tmp < 0 ? tmp + 10 : tmp);
-            i--;
-            j--;
-        }
-        String res = sb.reverse().toString();
-
-        // 删除前导0
-        int pos = 0;
-        while (pos < res.length() - 1) {
-            if (res.charAt(pos) != '0') break;
-            pos++;
-        }
-        return res.substring(pos);
-    }
 
 }

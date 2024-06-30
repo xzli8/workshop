@@ -28,7 +28,7 @@ public class _166fractionToDecimal {
             b = Math.abs(b);
 
             // 计算整数部分
-            sb.append(String.valueOf(a / b) + ".");
+            sb.append(a / b + ".");
 
             // key:余数, value:位置(下标)
             Map<Long, Integer> map = new HashMap<>();
