@@ -1,5 +1,6 @@
 package data_structure_algorithm.leetcode;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class _1206Skiplist {
@@ -75,6 +76,112 @@ public class _1206Skiplist {
                     res[i].nexts[i] = res[i].nexts[i].nexts[i];
                 }
                 return true;
+            }
+        }
+
+    }
+
+
+
+    public static class Solution2 {
+
+
+        /**
+         跳表:多层级链表
+         ref: https://leetcode.cn/problems/design-skiplist/solutions/1696545/she-ji-tiao-biao-by-leetcode-solution-e8yh/
+         时间复杂度：O(logN)
+         空间复杂度：O(N)
+         */
+        class Skiplist {
+
+            // 跳表节点定义
+            class SkipListNode {
+                int val;
+                SkipListNode[] forward;
+
+                public SkipListNode(int val, int maxLevel) {
+                    this.val = val;
+                    this.forward = new SkipListNode[maxLevel];
+                }
+            }
+
+            // 常量定义
+            public static final int MAX_LEVEL = 32;
+            public static final double P_FACTOR = 0.25;
+
+            private SkipListNode head = new SkipListNode(-1, MAX_LEVEL);
+            private int level = 0;
+            private Random random = new Random();
+
+            public Skiplist() {
+                // nothing here
+            }
+
+            public boolean search(int target) {
+                SkipListNode cur = this.head;
+                for (int i = level - 1; i >= 0; i--) {
+                    while (cur.forward[i] != null && cur.forward[i].val < target) {
+                        cur = cur.forward[i];
+                    }
+                }
+                cur = cur.forward[0];
+                if (cur != null && cur.val == target) return true;
+                return false;
+            }
+
+            public void add(int num) {
+                // 找到第i层小于且最接近num的元素
+                SkipListNode[] update = new SkipListNode[MAX_LEVEL];
+                Arrays.fill(update, head);
+                SkipListNode cur = this.head;
+                for (int i = level - 1; i >= 0; i--) {
+                    while (cur.forward[i] != null && cur.forward[i].val < num) {
+                        cur = cur.forward[i];
+                    }
+                    update[i] = cur;
+                }
+
+                // 对i层的状态进行更新，将当前元素的forward指向新的节点
+                int lv = randomLevel();
+                level = Math.max(level, lv);
+                SkipListNode newNode = new SkipListNode(num, lv);
+                for (int i = 0; i < lv; i++) {
+                    newNode.forward[i] = update[i].forward[i];
+                    update[i].forward[i] = newNode;
+                }
+            }
+
+            public boolean erase(int num) {
+                // 找到第i层小于且最接近num的元素
+                SkipListNode[] update = new SkipListNode[MAX_LEVEL];
+                SkipListNode cur = this.head;
+                for (int i = level - 1; i >= 0; i--) {
+                    while (cur.forward[i] != null && cur.forward[i].val < num) {
+                        cur = cur.forward[i];
+                    }
+                    update[i] = cur;
+                }
+
+                // 如果不存在返回false
+                cur = cur.forward[0];
+                if (cur == null || cur.val != num) return false;
+
+                // 更新每一层的状态，将forward指针指向下一跳
+                for (int i = 0; i < level; i++) {
+                    if (update[i].forward[i] != cur) break;
+                    update[i].forward[i] = cur.forward[i];
+                }
+
+                // 更新当前的level
+                while (level > 1 && head.forward[level - 1] == null) level--;
+                return true;
+            }
+
+            // 随机生成新加入节点的层数
+            private int randomLevel() {
+                int lv = 1;
+                while (random.nextDouble() < P_FACTOR && lv < MAX_LEVEL) lv++;
+                return lv;
             }
         }
 
