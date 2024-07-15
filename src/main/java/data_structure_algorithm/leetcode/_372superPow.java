@@ -26,7 +26,9 @@ public class _372superPow {
 
         /**
          计算a^k对base取余的结果
-         NOTE：为了更高效，这里可以换用快速幂(50.Pow(x, n))，但不是很有必要，因为k的范围是[0,9]
+            NOTE：
+                1.这里一边计算一边取余，也可以先计算处结果再取余；
+                2.为了更高效，这里可以换用快速幂(50.Pow(x, n))，但不是很有必要，因为k的范围是[0,9]；
          */
         private int powMod(int a, int k) {
             a %= base;
