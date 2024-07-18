@@ -52,18 +52,27 @@ public class _323countComponents {
                 count--;
             }
 
+            // 返回某个节点的根节点
             private int find(int x) {
                 // 普通写法，可能导致树不平衡，时间复杂度退化为O(N)
+                // 根节点的 parent[x] == x
                 // while (parent[x] != x) {
                 //     x = parent[x];
                 // }
                 // return x;
 
                 // 路径压缩，会保持树平衡，时间复杂度简化为O(1)
-                if (parent[x] != x) {
-                    parent[x] = find(parent[x]);
+//                if (parent[x] != x) {
+//                    parent[x] = find(parent[x]);
+//                }
+//                return parent[x];
+
+                // 路径压缩的另一种写法
+                while (parent[x] != x) {
+                    parent[x] = parent[parent[x]];
+                    x = parent[x];
                 }
-                return parent[x];
+                return x;
             }
 
             public int count() {
