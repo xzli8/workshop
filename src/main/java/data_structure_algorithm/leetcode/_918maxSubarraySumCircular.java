@@ -49,7 +49,7 @@ public class _918maxSubarraySumCircular {
             q.offer(new int[] {0, preSum});
             for (int i = 1; i < 2 * n; i++) {
                 // 区间元素不能重复，即区间长度不大于n
-                while (!q.isEmpty() && q.peekFirst()[0] < i - n) q.pollFirst();
+                while (!q.isEmpty() && i - q.peekFirst()[0] > n) q.pollFirst();
 
                 // 更新前缀和以及子数组的最大值
                 preSum += nums[i % n];

@@ -27,6 +27,8 @@ public class _239maxSlidingWindow {
 
         class MaxQueue {
             private Queue<Integer> main = new ArrayDeque<>();
+
+            // 辅助队列，单调递减，队头元素一直是max
             private Deque<Integer> help = new ArrayDeque<>();
 
             public void offer(int val) {
