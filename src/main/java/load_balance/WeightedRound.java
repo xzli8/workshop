@@ -7,13 +7,13 @@ public class WeightedRound {
 
     private volatile int index;
 
-    private int prev;
+    private int preSumsIdx;
 
     private int[] weights, preSums;
 
     public WeightedRound(int[] weights) {
         this.index = 0;
-        this.prev = 1;
+        this.preSumsIdx = 1;
         this.weights = weights;
         initPreSums();
     }
@@ -28,10 +28,10 @@ public class WeightedRound {
         int n = weights.length;
         if (++index == preSums[n]) {
             index = 0;
-            prev = 1;
+            preSumsIdx = 1;
         }
-        if (index >= preSums[prev]) prev++;
-        return prev - 1;
+        if (index >= preSums[preSumsIdx]) preSumsIdx++;
+        return preSumsIdx - 1;
     }
 
 

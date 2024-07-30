@@ -14,7 +14,7 @@ public class _1209removeDuplicates {
          空间复杂度：O(N)
          */
         public String removeDuplicates(String s, int k) {
-            Deque<int[]> stack = new ArrayDeque<>();    // 存储元素及其出现次数
+            Deque<int[]> stack = new ArrayDeque<>();    // 存储元素及其连续出现次数
             for (char c : s.toCharArray()) {
                 int num = c - 'a';
                 if (stack.isEmpty()) {
