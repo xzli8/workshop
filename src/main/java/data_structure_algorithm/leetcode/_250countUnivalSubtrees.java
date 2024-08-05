@@ -4,11 +4,38 @@ import data_structure_algorithm.domain.TreeNode;
 
 public class _250countUnivalSubtrees {
 
-    /**
-     * 参考题解：https://www.cnblogs.com/grandyang/p/5206862.html
-     */
-
     public static class Solution1 {
+
+        /**
+         * postorder
+         * ref:https://www.cnblogs.com/cnoodle/p/12484102.html
+         */
+        public int countUnivalSubtrees(TreeNode root) {
+            helper(root);
+            return count;
+        }
+
+        private int count = 0;
+        private boolean helper(TreeNode node) {
+            if (node == null) return true;
+            boolean left = helper(node.left), right = helper(node.right);
+            if (left && right) {
+                if (node.left != null && node.left.val != node.val) return false;
+                if (node.right != null && node.right.val != node.val) return false;
+                count++;
+                return true;
+            }
+            return false;
+        }
+
+    }
+
+
+    public static class Solution2 {
+
+        /**
+         * 参考题解：https://www.cnblogs.com/grandyang/p/5206862.html
+         */
 
         /**
          * 对于以节点now为根节点的子树来说，如果其所有节点是同值的，那么其左右子树必然也是同值的，

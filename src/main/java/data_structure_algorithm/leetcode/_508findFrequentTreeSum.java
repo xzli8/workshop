@@ -14,7 +14,7 @@ public class _508findFrequentTreeSum {
     public static class Solution1 {
 
         /**
-         DFS + HashMap
+         DFS(PostOrder) + HashMap
          时间复杂度：O(N)
          空间复杂度：O(N)
          */
@@ -42,6 +42,36 @@ public class _508findFrequentTreeSum {
             return sum;
         }
 
+    }
+
+
+
+    public static class Solution2 {
+
+        public int[] findFrequentTreeSum(TreeNode root) {
+            sum(root);
+            return res.stream().mapToInt(Integer::intValue).toArray();
+        }
+
+        private Map<Integer, Integer> sum2Count = new HashMap<>();
+        private int maxCount = 0;
+        private List<Integer> res = new ArrayList<>();
+
+        private int sum(TreeNode node) {
+            int sum = node.val;
+            if (node.left != null) sum += sum(node.left);
+            if (node.right != null) sum += sum(node.right);
+            int count = sum2Count.getOrDefault(sum, 0) + 1;
+            if (count > maxCount) {
+                maxCount = count;
+                res.clear();
+                res.add(sum);
+            } else if (count == maxCount) {
+                res.add(sum);
+            }
+            sum2Count.put(sum, count);
+            return sum;
+        }
 
     }
 
