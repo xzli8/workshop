@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Lintcode_3686diameterOfBinaryTree {
+public class _1522diameter {
 
     /**
-     * ref:https://www.lintcode.com/problem/3686/description
+     * lintcode3686:https://www.lintcode.com/problem/3686/description
      */
 
     public static class Solution1 {

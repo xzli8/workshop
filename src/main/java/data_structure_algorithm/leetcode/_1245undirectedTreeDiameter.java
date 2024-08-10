@@ -5,7 +5,7 @@ import java.util.*;
 public class _1245undirectedTreeDiameter {
 
     /**
-     * lintcode:https://www.lintcode.com/problem/3663/description
+     * lintcode3663:https://www.lintcode.com/problem/3663/description
      */
 
     public static class Solution1 {
