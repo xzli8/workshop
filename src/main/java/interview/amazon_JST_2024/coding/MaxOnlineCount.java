@@ -6,6 +6,7 @@ public class MaxOnlineCount {
      * Date: 2024.03.02 (OA)
      * Description: 某网站的每日的活跃用户有1亿人(10^9)，该网站的日志有记录每个用户的上线时间和下线时间，求该网站同一时刻的最多在线人数，时间取样精确到秒。
      * Link: (Similar case) https://blog.csdn.net/xupan_jsj/article/details/7774517
+     * Similar leetcode issue: https://leetcode.cn/problems/maximum-population-year/description/
      */
 
     /**
@@ -14,13 +15,18 @@ public class MaxOnlineCount {
      *  SC: O(1)
      */
     public int maxOnlineCount(int[] login, int[] logout) {
+        // define difference array
         int MAX_TIME = 86400, n = login.length;
         int[] counts = new int[MAX_TIME];
         Difference diff = new Difference(counts);
+
+        // update while traversing
         for (int i = 0; i < n; i++) {
             diff.update(login[i], logout[i], 1);
         }
+        counts = diff.result();
 
+        // find the maximum count
         int maxOnlineCount = 0;
         for (int i = 0; i < MAX_TIME; i++) {
             maxOnlineCount = Math.max(maxOnlineCount, counts[i]);

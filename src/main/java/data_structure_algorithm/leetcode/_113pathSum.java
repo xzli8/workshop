@@ -54,20 +54,20 @@ public class _113pathSum {
          private List<List<Integer>> res = new ArrayList<>();
          private void dfs(TreeNode cur, int targetSum, List<Integer> path) {
              if (cur == null) return;
-
              path.add(cur.val);
              targetSum -= cur.val;
-             if (cur.left == null && cur.right == null) {
-                 if (targetSum == 0) {
-                     res.add(new ArrayList<>(path));     // 这里要new一个，因为path是共享的，只有一份副本
-                 }
-                 // 这里不能return，因为即使这条路径不通，还需要尝试其他路径，所以后面要"remove"
-                 // 这里如果return了，后面的"remove"就无法执行，路径上就多了一个节点
+             if (cur.left == null && cur.right == null && targetSum == 0) {
+                 // 这里要new一个，因为path是共享的，只有一份副本
+                 res.add(new ArrayList<>(path));
+
+                 // 这里要么不return，要么将path中最后一个元素remove后return(对于叶子结点不用后面对其子节点的多余判断)
+                 path.remove(path.size() - 1);
+                 return;
              }
              dfs(cur.left, targetSum, path);
              dfs(cur.right, targetSum, path);
              path.remove(path.size() - 1);
-             // 为什么targetSum不用"回溯"，因为targetSum是int类型，每次都是new一个传下去，不是共享的，有多份副本
+             // 为什么targetSum不用"回溯"，因为targetSum是int类型(值传递而不是引用传递)[每次都是new一个传下去，不是共享的，有多份副本]
          }
 
     }
@@ -91,21 +91,19 @@ public class _113pathSum {
         private void dfs(TreeNode cur, int targetSum, List<Integer> path, List<List<Integer>> res) {
             targetSum -= cur.val;
             path.add(cur.val);
-            if (cur.left == null && cur.right == null) {
-                if (targetSum == 0) {
-                    res.add(new ArrayList<>(path)); // 这里要new一个，因为path是共享的
-                }
-                return;     // 这里有没有return都可以，因为后面也会判空，加上return避免重复判空
+            if (cur.left == null && cur.right == null && targetSum == 0) {
+                // 这里要new一个，因为path是共享的(引用传递而非值传递)
+                res.add(new ArrayList<>(path));
+
+                // 这里要么不return，要么将path中最后一个元素remove后return(对于叶子结点不用后面对其子节点的多余判断)
+                path.remove(path.size() - 1);
+                return;
             }
 
-            if (cur.left != null) {
-                dfs(cur.left, targetSum, path, res);
-                path.remove(path.size() - 1);   // “回溯”为什么要写在这个地方？
-            }
-            if (cur.right != null) {
-                dfs(cur.right, targetSum, path, res);
-                path.remove(path.size() - 1);
-            }
+            if (cur.left != null) dfs(cur.left, targetSum, path, res);
+            if (cur.right != null) dfs(cur.right, targetSum, path, res);
+            path.remove(path.size() - 1);
+            // 为什么targetSum不用"回溯"，因为targetSum是int类型(值传递而不是引用传递)[每次都是new一个传下去，不是共享的，有多份副本]
         }
 
     }

@@ -48,20 +48,33 @@ public class _120minimumTotal {
          优化空间
          */
          public int minimumTotal(List<List<Integer>> triangle) {
-             int n = triangle.size(), m = triangle.get(n-1).size();
+             // define state
+             int n = triangle.size();
              int[] dp = new int[n], tmp = new int[n];
+
+             // initialize state
              dp[0] = triangle.get(0).get(0);
 
+             // transfer state
              for (int i = 1; i < n; i++) {
+                 // copy dp to tmp
                  for (int j = 0; j <= i; j++) {
                      tmp[j] = dp[j];
                  }
-                 for (int j = 0; j <= i; j++) {
-                     int min = Integer.MAX_VALUE;
-                     if (j - 1 >= 0) min = Math.min(min, tmp[j-1]);
-                     if (j < i) min = Math.min(min, tmp[j]);
-                     dp[j] = min + triangle.get(i).get(j);
+
+                 // transfer state
+                 dp[0] = tmp[0] + triangle.get(i).get(0);
+                 for (int j = 1; j < i; j++) {
+                     dp[j] = Math.min(tmp[j - 1], tmp[j]) + triangle.get(i).get(j);
                  }
+                 dp[i] = tmp[i - 1] + triangle.get(i).get(i);
+
+//                 for (int j = 0; j <= i; j++) {
+//                     int min = Integer.MAX_VALUE;
+//                     if (j - 1 >= 0) min = Math.min(min, tmp[j-1]);
+//                     if (j < i) min = Math.min(min, tmp[j]);
+//                     dp[j] = min + triangle.get(i).get(j);
+//                 }
              }
              return Arrays.stream(dp).min().getAsInt();
          }
