@@ -10,6 +10,38 @@ import java.util.Map;
 
 public class _437pathSum {
 
+    public static class Solution0 {
+
+        /**
+         PreSum + HashMap
+         */
+        public int pathSum(TreeNode root, int targetSum) {
+            this.targetSum = targetSum;
+            preSum2Count.put(0L, 1);
+            dfs(root, 0L);
+            return count;
+        }
+
+        private int targetSum, count = 0;
+        private Map<Long, Integer> preSum2Count = new HashMap<>();
+
+        private void dfs(TreeNode root, long preSum) {
+            if (root == null) return;
+            preSum += root.val;
+            long remain = preSum - targetSum;
+            if (preSum2Count.containsKey(remain)) {
+                count += preSum2Count.get(remain);
+            }
+            preSum2Count.put(preSum, preSum2Count.getOrDefault(preSum, 0) + 1);
+            dfs(root.left, preSum);
+            dfs(root.right, preSum);
+            preSum2Count.put(preSum, preSum2Count.get(preSum) - 1); // 记住这里要回溯
+        }
+
+    }
+
+
+
     public static class Solution1 {
 
         /**

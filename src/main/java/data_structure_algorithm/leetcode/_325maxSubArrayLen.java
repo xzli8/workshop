@@ -157,9 +157,10 @@ public class _325maxSubArrayLen {
                 }
             }
 
-            // 从后往前遍历前缀和数组
+            // 从后往前遍历前缀和数组(从前往后也可以)
             int maxLen = 0;
-            for (int i = n; i >= 0; i--) {
+//            for (int i = n; i >= 0; i--) {
+            for (int i = 0; i < n; i++) {
                 int remain = preSum[i] - k;
                 if (preSum2Idx.containsKey(remain) && i - preSum2Idx.get(remain) > maxLen) {
                     maxLen = i - preSum2Idx.get(remain);
@@ -187,10 +188,13 @@ public class _325maxSubArrayLen {
          *      空间复杂度：O(N)
          */
         public int maxSubArrayLen(int[] nums, int k) {
-            int n = nums.length, preSum = 0, maxLen = 0;
+            // init
             Map<Integer, Integer> preSum2Idx = new HashMap<>();
             preSum2Idx.put(0, -1);
-            for (int i = 0; i < n; i++) {
+
+            // loop
+            int preSum = 0, maxLen = 0;
+            for (int i = 0; i < nums.length; i++) {
                 preSum += nums[i];
                 int remain = preSum - k;
                 if (preSum2Idx.containsKey(remain)) {
