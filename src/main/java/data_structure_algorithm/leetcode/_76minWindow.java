@@ -23,7 +23,8 @@ public class _76minWindow {
                 char c1 = s.charAt(end);
                 if (needs.containsKey(c1)) {
                     count.put(c1, count.getOrDefault(c1, 0) + 1);
-                    // 注意这里不能用"=="比较，因为Integer采用享元模式(-128, 127)之间的值会共用同一个，而"=="比较的是地址
+                    // 注意这里不能用"=="比较，因为Integer采用享元模式(-128, 127)之间的值会共用同一个，
+                    // 在这个范围之外的是不同的对象，而"=="比较的是地址。
                     if (count.get(c1).equals(needs.get(c1))) {
                         match++;
                     }
