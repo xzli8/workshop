@@ -8,7 +8,7 @@ public class _42trap {
     public static class Solution1 {
 
         /**
-         暴力法
+         暴力法（纵向加）
          时间复杂度：O(N^2)
          空间复杂度：O(1)
          */
@@ -44,7 +44,7 @@ public class _42trap {
     public static class Solution2 {
 
         /**
-         动态规划
+         动态规划（纵向加）
          定义状态：leftMax[i]表示第i个元素左边的最大值，rightMax[i]表示第i个元素右边的最大值
          状态转移：leftMax[i] = Math.max(leftMax[i-1], height[i])，从左到右遍历
          rightMax[i] = Math.max(rightMax[i+1], height[i])，从右到左遍历
@@ -86,7 +86,7 @@ public class _42trap {
     public static class Solution3 {
 
         /**
-         双指针：哪边高度小移动哪个
+         双指针：哪边高度小移动哪个（纵向加）
          时间复杂度：O(N)
          空间复杂度：O(1)
          */
@@ -115,7 +115,7 @@ public class _42trap {
 
 
         /**
-         单调(递减)栈
+         单调(递减)栈（横向加）
          时间复杂度：O(N)
          空间复杂度：O(N)
          */

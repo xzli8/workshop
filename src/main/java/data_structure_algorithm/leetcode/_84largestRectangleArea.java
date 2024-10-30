@@ -74,10 +74,12 @@ public class _84largestRectangleArea {
              int maxArea = 0;
              Deque<Integer> s = new ArrayDeque<>();
              for (int i = 0; i < newHeights.length; i++) {
+                 // 当触发出栈条件时，意味着当前元素heights[i]就是右边第一个比出栈元素小的元素，那么就可以计算出栈元素对应的最大矩形面积
+                 // https://leetcode.cn/problems/largest-rectangle-in-histogram/solutions/108083/84-by-ikaruga/
                  while (!s.isEmpty() && newHeights[i] < newHeights[s.peek()]) {
                      int curIndex = s.pop();
                      maxArea = Math.max(maxArea, newHeights[curIndex] * (i - s.peek() - 1));
-                     // i表示下标right, s.peek()表示下标left，这样就计算出了curIndex的最大面积
+                     // i表示下标right, s.peek()表示下标left(栈内元素单调递增，所以s.peek()就是左边界)，这样就计算出了curIndex的最大面积
                  }
                  s.push(i);
              }
