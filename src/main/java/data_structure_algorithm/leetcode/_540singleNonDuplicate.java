@@ -46,7 +46,6 @@ public class _540singleNonDuplicate {
     }
 
     public boolean before(int[] nums, int mid) {
-        int n = nums.length;
         // 当mid为偶数时并且是第一次出现 or 当mid为奇数时并且是第二次出现
         return (mid % 2 == 0 && nums[mid + 1] == nums[mid])
                 || (mid % 2 != 0 && nums[mid - 1] == nums[mid]);
