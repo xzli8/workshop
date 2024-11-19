@@ -7,7 +7,10 @@ public class _1644lowestCommonAncestor {
     /**
      * 题解：
      *      https://blog.csdn.net/fdl123456/article/details/123887678
-     *      https://blog.csdn.net/qq_46105170/article/details/109699655
+     *      https://www.cnblogs.com/Dylan-Java-NYC/p/16184297.html
+     *
+     *      Solution1: 两次遍历，第一次找P和Q是否都存在，第二次找LCA(236)
+     *      Solution2: 一次遍历
      */
 
     public static class Solution1 {
@@ -35,6 +38,36 @@ public class _1644lowestCommonAncestor {
             if (left == null) return right;
             if (right == null) return left;
             return cur;
+        }
+
+    }
+
+
+
+    public static class Solution2 {
+
+        /**
+         *  DFS: Postorder
+         *  TC: O(N)
+         *  SC: O(N)
+         */
+        public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+            TreeNode res = dfs(root, p, q);
+            return (foundP && foundQ) ? res : null;
+        }
+
+        private boolean foundP = false, foundQ = false;
+        private TreeNode dfs(TreeNode node, TreeNode p, TreeNode q) {
+            if (node == null) return null;
+            TreeNode left = dfs(node.left, p, q), right = dfs(node.right, p, q);
+            if (node == p || node == q) {
+                if (node == p) foundP = true;
+                if (node == q) foundQ = true;
+                return node;
+            }
+            if (left == null) return right;
+            if (right == null)  return left;
+            return node;
         }
 
     }
