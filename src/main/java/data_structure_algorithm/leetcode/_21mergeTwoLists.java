@@ -6,39 +6,27 @@ public class _21mergeTwoLists {
 
     public static class Solution1 {
 
-
         /**
-         双指针（类似于归并排序）
-         时间复杂度：O(N)
-         空间复杂度：O(1)
+         TwoPointers
+         T: O(N)
+         S: O(1)
          */
         public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
-            ListNode dummy = new ListNode();
-            ListNode p = dummy;
-            ListNode p1 = list1;
-            ListNode p2 = list2;
-
-            while (p1 != null && p2 != null) {
-                if (p1.val < p2.val) {
-                    p.next = p1;
-                    p1 = p1.next;
-                    p = p.next;
+            if (list1 == null) return list2;
+            if (list2 == null) return list1;
+            ListNode dummy = new ListNode(), p = dummy;
+            while (list1 != null && list2 != null) {
+                if (list1.val < list2.val) {
+                    p.next = list1;
+                    list1 = list1.next;
                 } else {
-                    p.next = p2;
-                    p2 = p2.next;
-                    p = p.next;
+                    p.next = list2;
+                    list2 = list2.next;
                 }
-            }
-            while (p1 != null) {
-                p.next = p1;
-                p1 = p1.next;
                 p = p.next;
             }
-            while (p2 != null) {
-                p.next = p2;
-                p2 = p2.next;
-                p = p.next;
-            }
+            if (list1 != null) p.next = list1;
+            if (list2 != null) p.next = list2;
             return dummy.next;
         }
 
