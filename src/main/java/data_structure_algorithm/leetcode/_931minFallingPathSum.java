@@ -70,7 +70,7 @@ public class _931minFallingPathSum {
             for (int i = 1; i < n; i++) {
                 // 这里需要先把dp数组copy出来一份，因为计算后面的dp[j]的时候需要用到前面的dp[j]
                 // 如果在原数组上进行，在计算后面的dp[j]的时候，前面的dp[j]已经被覆盖了
-                // 这里偷懒直接使用了java的语法糖Arrays.copyOf，但更好的做法是在i循环外面分配好内存，避免多次分配
+                // 这里偷懒直接使用了java的语法糖Arrays.copyOf，但更好的做法是在i循环外面分配好内存，避免多次分配。我猜想现在的java编译器会优化这部分，但不确定。
                 int[] tmp = Arrays.copyOf(dp, n);
                 dp[0] = Math.min(tmp[0], tmp[1]) + matrix[i][0];
                 for (int j = 1; j < n - 1; j++) {
