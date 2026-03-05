@@ -2,48 +2,12 @@ package data_structure_algorithm.leetcode;
 
 public class _74searchMatrix {
 
+
+
     public static class Solution1 {
 
         /**
-         二分查找
-         时间复杂度：O(log m*n)
-         空间复杂度：O(m*n)
-         */
-         public boolean searchMatrix(int[][] matrix, int target) {
-             // 2D -> 1D
-             int m = matrix.length, n = matrix[0].length;
-             int[] nums = new int[m * n];
-             for (int i = 0; i < m; i++) {
-                 for (int j = 0; j < n; j++) {
-                     nums[i * n + j] = matrix[i][j];
-                 }
-             }
-
-             // BS
-             int low = 0, high = m * n - 1;
-             while (low <= high) {
-                 int mid = low + ((high - low) >> 1);
-                 if (nums[mid] == target) {
-                     return true;
-                 } else if (nums[mid] < target) {
-                     low = mid + 1;
-                 } else {
-                     high = mid - 1;
-                 }
-             }
-             return false;
-         }
-
-    }
-
-
-
-    public static class Solution2 {
-
-        /**
-         一次二分查找
-         时间复杂度：O(log m*n)
-         空间复杂度：O(1)
+         二分搜索: O(log M * N), O(1)
          */
          public boolean searchMatrix(int[][] matrix, int target) {
              int m = matrix.length, n = matrix[0].length;
@@ -65,15 +29,45 @@ public class _74searchMatrix {
     }
 
 
+    public static class Solution2 {
+
+        /**
+         二分搜索：O(log M * N), O(M * N)
+         */
+        public boolean searchMatrix(int[][] matrix, int target) {
+            // 2D -> 1D
+            int m = matrix.length, n = matrix[0].length;
+            int[] nums = new int[m * n];
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    nums[i * n + j] = matrix[i][j];
+                }
+            }
+
+            // BS
+            int low = 0, high = m * n - 1;
+            while (low <= high) {
+                int mid = low + ((high - low) >> 1);
+                if (nums[mid] == target) {
+                    return true;
+                } else if (nums[mid] < target) {
+                    low = mid + 1;
+                } else {
+                    high = mid - 1;
+                }
+            }
+            return false;
+        }
+
+    }
+
 
     public static class Solution3 {
 
 
         /**
-         两次二分查找
-         思路：先定位在哪一行，再定位在这一行的哪一列
-         时间复杂度：O(logM) + O(logN) = O(log M*N)
-         空间复杂度：O(1)
+         两次二分搜索: O(logM) + O(logN) = O(log M*N), O(1)
+         Note：先定位在哪一行，再定位在这一行的哪一列
          */
         public boolean searchMatrix(int[][] matrix, int target) {
             int row = binarySearchFirstColumn(matrix, target);

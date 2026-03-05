@@ -38,8 +38,7 @@ public class LCP_41fliChess {
 
         private int m, n;
         private char[][] board;
-        private int[][] dirs = new int[][] {{-1, 0}, {1, 0}, {0, -1}, {0, 1},
-                {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+        private int[][] dirs = new int[][] {{-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
 
         private int bfs(int[] startPos, String[] chessboard) {
             // init board every time

@@ -4,6 +4,29 @@ import data_structure_algorithm.domain.ListNode;
 
 public class _82deleteDuplicates {
 
+    public static class Solution0 {
+
+        /**
+         哑元节点+前驱节点: O(N), O(1)
+         */
+        public ListNode deleteDuplicates(ListNode head) {
+            ListNode dummy = new ListNode(0, head), prev = dummy;
+            while (prev.next != null) {
+                ListNode cur = prev.next;
+                while (cur.next != null && cur.next.val == cur.val) {
+                    cur = cur.next;
+                }
+                if (cur == prev.next) {
+                    prev = prev.next;
+                } else {
+                    prev.next = cur.next;
+                }
+            }
+            return dummy.next;
+        }
+
+    }
+
     public static class Solution1 {
 
         /**

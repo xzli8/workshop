@@ -32,7 +32,7 @@ public class _3255resultsArray {
     public static class Solution2 {
 
         /**
-         Count
+         DP: Count
          TC: O(N)
          SC: O(1)
          */

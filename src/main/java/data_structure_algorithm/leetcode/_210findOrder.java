@@ -7,17 +7,14 @@ public class _210findOrder {
     public static class Solution1 {
 
         /**
-         BFS拓扑排序
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         BFS拓扑排序: O(N), O(N)
+         Note: 邻接表g用List<List<Integer>>的形式
          */
         public int[] findOrder(int numCourses, int[][] prerequisites) {
             // 构建邻接表和入度
             int[] indeg = new int[numCourses];
             List<List<Integer>> g = new ArrayList<>();
-            for (int i = 0; i < numCourses; i++) {
-                g.add(new ArrayList<>());
-            }
+            for (int i = 0; i < numCourses; i++) g.add(new ArrayList<>());
             for (int i = 0; i < prerequisites.length; i++) {
                 g.get(prerequisites[i][1]).add(prerequisites[i][0]);
                 indeg[prerequisites[i][0]]++;
@@ -54,16 +51,14 @@ public class _210findOrder {
     public static class Solution2 {
 
         /**
-         BFS拓扑排序
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         BFS拓扑排序: O(N), O(N)
+         Note: 邻接表g用List<Integer>[]的形式
          */
         public int[] findOrder(int numCourses, int[][] prerequisites) {
             // 构建邻接表和入度
             int[] indeg = new int[numCourses];
             List<Integer>[] g = new List[numCourses];
-            for (int i = 0; i < numCourses; i++) g[i] = new ArrayList<>();
-            // Arrays.fill(g, new ArrayList<>());  // 这样填充的是同一个ArrayList对象，有问题
+            Arrays.setAll(g, e -> new ArrayList<>());   // for (int i = 0; i < numCourses; i++) g[i] = new ArrayList<>();    // Arrays.fill(g, new ArrayList<>();  // (这样填充的是同一个ArrayList对象，有问题)
             for (int i = 0; i < prerequisites.length; i++) {
                 g[prerequisites[i][1]].add(prerequisites[i][0]);
                 indeg[prerequisites[i][0]]++;

@@ -2,7 +2,41 @@ package data_structure_algorithm.leetcode;
 
 public class _372superPow {
 
+
+    /**
+     * 快速幂: O(logN), O(1)
+     * ref: https://leetcode.doocs.org/lc/372/#_3
+     */
     public static class Solution1 {
+
+        /**
+         快速幂: O(logN), O(1)
+         */
+        public int superPow(int a, int[] b) {
+            long res = 1, num = a;
+            for (int i = b.length - 1; i >= 0; i--) {
+                res = res * qpow(num, b[i]) % mod;
+                num = qpow(num, 10);
+            }
+            return (int) res;
+        }
+
+        private int mod = 1337;
+
+        private long qpow(long a, int n) {
+            long res = 1;
+            while (n > 0) {
+                if ((n & 1) == 1) {
+                    res = res * a % mod;
+                }
+                a = a * a % mod;
+                n >>= 1;
+            }
+            return res;
+        }
+    }
+
+    public static class Solution2 {
 
         /**
          分治：将数组b分解，逐位计算

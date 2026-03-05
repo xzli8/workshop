@@ -86,7 +86,7 @@ public class _907sumSubarrayMins {
                 s.push(i);
             }
 
-            // 计算每个点的贡献度
+            // 计算每个点的贡献度(left[i]和right[i]实际上记录的是左边界-1和右边界+1)
             long sum = 0;
             for (int i = 0; i < n; i++) {
                 sum = (sum + (long) (i - left[i]) * (right[i] - i) * arr[i]) % MOD;

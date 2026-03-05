@@ -9,13 +9,36 @@ public class _285inorderSuccessor {
 
     /**
      * 题目链接：https://leetcode.cn/problems/successor-lcci/
+     * Ref: https://leetcode.doocs.org/lc/285/
      */
+
+    public static class Solution0 {
+
+        /**
+         * 二分搜索: O(N), O(N)
+         * Note: 二叉搜索树节点p的中序遍历后序节点是所有大于p的节点中的最小值。
+         */
+        public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
+            TreeNode res = null;
+            while (root != null) {
+                if (root.val > p.val) {
+                    res = root; // 先找到一个可能的值，后面可能再更新
+                    root = root.left;
+                } else {
+                    root = root.right;
+                }
+            }
+            return res;
+        }
+
+    }
+
 
     public static class Solution1 {
 
         /**
          中序遍历(递归)
-         注意：不仅适用于BST，而且适用于所有二叉树，但没有充分利用BST的特性
+         注意：不仅适用于BST，而且适用于所有二叉树，但没有充分利用BST的特性。还可以用Morris遍历(空间复杂度O(1))
          时间复杂度：O(N)
          空间复杂度：O(N)
          */
@@ -34,7 +57,6 @@ public class _285inorderSuccessor {
         }
 
     }
-
 
 
     public static class Solution2 {
@@ -63,38 +85,6 @@ public class _285inorderSuccessor {
              }
              return null;
          }
-
-    }
-
-
-
-    public static class Solution3 {
-
-        /**
-         利用BST的特性
-         时间复杂度：O(N)
-         空间复杂度：O(1)
-         */
-        public TreeNode inorderSuccessor(TreeNode root, TreeNode p) {
-            if (p.right != null) {
-                TreeNode successor = p.right;
-                while (successor.left != null) {
-                    successor = successor.left;
-                }
-                return successor;
-            }
-
-            TreeNode cur = root, successor = null;
-            while (cur != null) {
-                if (cur.val > p.val) {
-                    successor = cur;
-                    cur = cur.left;
-                } else {
-                    cur = cur.right;
-                }
-            }
-            return successor;
-        }
 
     }
 

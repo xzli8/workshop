@@ -4,6 +4,31 @@ import data_structure_algorithm.domain.ListNode;
 
 public class _1290getDecimalValue {
 
+    public static class Solution0 {
+
+        /**
+         反转链表后转换: O(N), O(1)
+         */
+        public int getDecimalValue(ListNode head) {
+            ListNode prev = null;
+            while (head != null) {
+                ListNode next = head.next;
+                head.next = prev;
+                prev = head;
+                head = next;
+            }
+
+            int res = 0, i = 1;
+            while (prev != null) {
+                res += i * prev.val;
+                prev = prev.next;
+                i *= 2;
+            }
+            return res;
+        }
+
+    }
+
     public static class Solution1 {
 
         /**

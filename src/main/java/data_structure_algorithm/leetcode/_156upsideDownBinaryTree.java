@@ -7,6 +7,8 @@ public class _156upsideDownBinaryTree {
     /**
      * Lintcode: https://www.lintcode.com/problem/649/
      * Reference: https://www.acwing.com/solution/LeetCode/content/250/
+     *
+     * ref: https://leetcode.doocs.org/lc/156/
      */
 
     public static class Solution1 {

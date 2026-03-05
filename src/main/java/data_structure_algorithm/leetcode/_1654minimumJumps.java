@@ -33,13 +33,13 @@ public class _1654minimumJumps {
                     int cur = pair.getKey(), forward = cur + a, backward = cur - b;
                     if (cur == x) return step;
 
-                    // 往前跳
+                    // 往前跳(无论上一次的跳跃方向是什么，只要位置有效且未被访问，就可以进行往前跳跃)
                     if (forward <= max && !visited[forward][0]) {
                         visited[forward][0] = true;
                         q.offer(new Pair<>(forward, true));
                     }
 
-                    // 往后跳
+                    // 往后跳(只有在最后一次跳跃是向前时，才能进行往后跳跃，因为如果你已经向后跳过，就不能再往后跳。这是为了防止在同一位置来回跳跃，导致算法陷入循环。)
                     if (backward >= 0 && !visited[backward][1] && pair.getValue()) {
                         visited[backward][1] = true;
                         q.offer(new Pair<>(backward, false));

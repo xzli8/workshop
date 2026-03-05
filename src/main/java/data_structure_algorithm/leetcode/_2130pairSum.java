@@ -4,6 +4,37 @@ import data_structure_algorithm.domain.ListNode;
 
 public class _2130pairSum {
 
+    public static class Solution0 {
+
+        /**
+         快慢指针找中点 + 反转: O(N), O(1)
+         */
+        public int pairSum(ListNode head) {
+            ListNode fast = head, slow = head;
+            while (fast != null && fast.next != null) {
+                slow = slow.next;
+                fast = fast.next.next;
+            }
+
+            ListNode prev = null;
+            while (head != slow) {
+                ListNode next = head.next;
+                head.next = prev;
+                prev = head;
+                head = next;
+            }
+
+            int max = 0;
+            while (prev != null && slow != null) {
+                max = Math.max(max, prev.val + slow.val);
+                prev = prev.next;
+                slow = slow.next;
+            }
+            return max;
+        }
+
+    }
+
     public static class Solution1 {
 
         /**

@@ -20,6 +20,10 @@ public class Buchongti_18reverseDLL {
             }
         }
 
+
+        /**
+         * 迭代：O(N), O(1)
+         */
         public static Node reverseDLL(Node  head)
         {
             Node prev = null, cur = head;
@@ -33,6 +37,25 @@ public class Buchongti_18reverseDLL {
             return prev;
         }
 
+
+        /**
+         * 递归: O(N), O(N)
+         */
+        public Node reverse(Node head) {
+            return reverse(null, head);
+        }
+
+        private Node reverse(Node prev, Node cur) {
+            if (cur == null) {
+                return prev;
+            }
+            Node next = cur.next;
+            cur.prev = next;
+            cur.next = prev;
+            return reverse(cur, next);
+        }
+
     }
+
 
 }

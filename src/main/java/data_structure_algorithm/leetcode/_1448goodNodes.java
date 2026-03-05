@@ -7,6 +7,30 @@ public class _1448goodNodes {
     public static class Solution1 {
 
         /**
+         dfs(preorder): O(N), O(N)
+         */
+        public int goodNodes(TreeNode root) {
+            dfs(root, root.val);
+            return n;
+        }
+
+        private int n = 0;
+        private void dfs(TreeNode root, int max) {
+            if (root == null) return;
+            if (root.val >= max) {
+                n++;
+                max = root.val;
+            }
+            dfs(root.left, max);
+            dfs(root.right, max);
+        }
+
+    }
+
+
+    public static class Solution2 {
+
+        /**
          DFS: preorder
          */
         public int goodNodes(TreeNode root) {

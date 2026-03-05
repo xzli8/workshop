@@ -42,4 +42,35 @@ public class _78subsets {
 
     }
 
+
+    public static class Solution2 {
+
+        // DFS-backtrace
+        public List<List<Integer>> subsets(int[] nums) {
+            this.nums = nums;
+            this.res = new ArrayList<>();
+            backtrace(0, new ArrayList<>());
+            return res;
+        }
+
+        private int[] nums;
+        private List<List<Integer>> res;
+
+        private void backtrace(int idx, List<Integer> path) {
+            if (idx == nums.length) {
+                res.add(new ArrayList<>(path));
+                return;
+            }
+
+            // include nums[idx]
+            path.add(nums[idx]);
+            backtrace(idx + 1, path);
+
+            // exclude nums[idx]
+            path.remove(path.size() - 1);
+            backtrace(idx + 1, path);
+        }
+
+    }
+
 }

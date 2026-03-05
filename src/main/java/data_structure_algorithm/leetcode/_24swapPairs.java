@@ -4,10 +4,34 @@ import data_structure_algorithm.domain.ListNode;
 
 public class _24swapPairs {
 
+    public static class Solution0 {
+
+        /**
+         迭代: O(N), O(1)
+         */
+        public ListNode swapPairs(ListNode head) {
+            if (head == null || head.next == null) {
+                return head;
+            }
+
+            ListNode dummy = new ListNode(0, head), prev = dummy, cur = head;
+            while (cur != null && cur.next != null) {
+                ListNode next = cur.next;
+                cur.next = next.next;
+                next.next = cur;
+                prev.next = next;
+                prev = cur;
+                cur = cur.next;
+            }
+            return dummy.next;
+        }
+
+    }
+
     public static class Solution1 {
 
         /**
-         迭代
+         迭代: O(N), O(1)
          */
          public ListNode swapPairs(ListNode head) {
 
@@ -39,7 +63,7 @@ public class _24swapPairs {
     public static class Solution2 {
 
         /**
-         递归
+         递归: O(N), O(N)
          */
         public ListNode swapPairs(ListNode head) {
             if (head == null || head.next == null) return head;

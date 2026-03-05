@@ -76,6 +76,22 @@ public class _53maxSubArray {
             return max;
         }
 
+
+        /**
+         贪心: O(N), O(1)
+         Note: 当前“连续和”为负数的时候立刻放弃，从下一个元素重新计算“连续和”。
+         */
+        public int maxSubArrayII(int[] nums) {
+            int maxSum = Integer.MIN_VALUE;
+            for (int i = 0, sum = 0; i < nums.length; i++) {
+                sum += nums[i];
+                maxSum = Math.max(maxSum, sum);
+                sum = Math.max(0, sum);
+            }
+            return maxSum;
+        }
+
+
     }
 
 

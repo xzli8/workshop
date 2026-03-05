@@ -13,7 +13,7 @@ public class _523checkSubarraySum {
          空间复杂度：O(N)
          */
         public boolean checkSubarraySum(int[] nums, int k) {
-            // 记录前缀和对k取余的结果到最小下标的映射
+            // 记录前缀和对k取余的结果到最小下标的映射(因为子数组长度最少为2，也就是说要尽可能长，所以取最小下标)
             Map<Integer, Integer> preSumModK2Idx = new HashMap<>();
             preSumModK2Idx.put(0, -1);
 

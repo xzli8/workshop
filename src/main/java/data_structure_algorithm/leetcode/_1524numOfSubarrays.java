@@ -5,6 +5,31 @@ import java.util.Map;
 
 public class _1524numOfSubarrays {
 
+    public static class Solution0 {
+
+        /**
+         PreSum + Hash: O(N), O(N)
+         */
+        public int numOfSubarrays(int[] arr) {
+            int mod = (int) (1e9) + 7, preSum = 0, count = 0;
+            Map<Boolean, Integer> odd2Count = new HashMap<>();
+            odd2Count.put(true, 0);
+            odd2Count.put(false, 1);
+            for (int num : arr) {
+                preSum += num;
+                if (preSum % 2 == 0) {
+                    count = (count + odd2Count.get(true)) % mod;
+                    odd2Count.put(false, (odd2Count.get(false) + 1) % mod);
+                } else {
+                    count = (count + odd2Count.get(false)) % mod;
+                    odd2Count.put(true, (odd2Count.get(true) + 1) % mod);
+                }
+            }
+            return count;
+        }
+
+    }
+
     public static class Solution1 {
 
         /**

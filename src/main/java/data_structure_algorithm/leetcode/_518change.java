@@ -22,7 +22,7 @@ public class _518change {
 
         // 状态转移
         // 注意这里先对coins循环，然后对amount循环，保证每个coin只考虑一次，从而得到组合数
-        // 如果这里先对amount循环，再对coins循环，则每个coin会被多次考虑，得到的是排列数
+        // 如果这里先对amount循环，再对coins循环，则每个coin会被多次考虑，得到的是排列数(377.组合总和IV)
         for (int coin : coins) {
             // 完全背包：内循环从小到大开始遍历
             for (int i = coin; i <= amount; i++) {

@@ -26,6 +26,23 @@ public class _3lengthOfLongestSubstring {
             return maxLen;
         }
 
+        // 另一种写法，更麻烦点
+        public int lengthOfLongestSubstringII(String s) {
+            Set<Character> set = new HashSet<>();
+            int n = s.length(), maxLen = 0, left = 0, right = 0;
+            while (right < n) {
+                while (right < n && !set.contains(s.charAt(right))) {
+                    set.add(s.charAt(right++));
+                }
+                maxLen = Math.max(maxLen, right - left);
+                while (right < n && set.contains(s.charAt(right))) {
+                    set.remove(s.charAt(left++));
+                }
+            }
+            return maxLen;
+        }
+
+
     }
 
 }

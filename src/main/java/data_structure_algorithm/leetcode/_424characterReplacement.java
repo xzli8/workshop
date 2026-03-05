@@ -1,5 +1,8 @@
 package data_structure_algorithm.leetcode;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class _424characterReplacement {
 
     public static class Solution1 {
@@ -23,6 +26,23 @@ public class _424characterReplacement {
                 }
 
                 // 更新最大长度
+                maxLen = Math.max(maxLen, right - left);
+            }
+            return maxLen;
+        }
+
+        public int characterReplacementII(String s, int k) {
+            // 不仅包含大写字母时的通用解法：map计数
+            int maxLen = 0, maxCount = 0, left = 0, right = 0;
+            Map<Character, Integer> count = new HashMap<>();
+            while (right < s.length()) {
+                char rc = s.charAt(right++);
+                count.put(rc, count.getOrDefault(rc, 0) + 1);
+                maxCount = Math.max(maxCount, count.get(rc));
+                while (maxCount + k < right - left) {
+                    char lc = s.charAt(left++);
+                    count.put(lc, count.get(lc) - 1);
+                }
                 maxLen = Math.max(maxLen, right - left);
             }
             return maxLen;

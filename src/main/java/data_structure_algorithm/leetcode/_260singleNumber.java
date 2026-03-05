@@ -1,5 +1,7 @@
 package data_structure_algorithm.leetcode;
 
+import java.util.List;
+
 public class _260singleNumber {
 
     public static class Solution1 {

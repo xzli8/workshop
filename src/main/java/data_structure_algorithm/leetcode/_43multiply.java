@@ -13,7 +13,7 @@ public class _43multiply {
             String res = "0";
             for (int i = num2.length() - 1; i >= 0; i--) {
                 // tmp保存num2[i]与num1相乘的结果，注意进位补0
-                StringBuffer tmp = new StringBuffer();
+                StringBuilder tmp = new StringBuilder();
                 for (int j = i; j < num2.length() - 1; j++) {
                     tmp.append("0");
                 }
@@ -23,12 +23,10 @@ public class _43multiply {
                 int carry = 0;
                 int j = num1.length() - 1;
                 while (j >= 0 || carry != 0) {
-                    int n1 = j >= 0 ? num1.charAt(j) - '0' : 0;
+                    int n1 = j >= 0 ? num1.charAt(j--) - '0' : 0;
                     int val = n1 * n2 + carry;
+                    tmp.append(val % 10);
                     carry = val / 10;
-                    val %= 10;
-                    tmp.append(val);
-                    j--;
                 }
 
                 // 将每次相乘的结果相加
@@ -39,20 +37,16 @@ public class _43multiply {
 
         // 字符串相加（415）
         private String sum(String num1, String num2) {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             int i = num1.length() - 1, j = num2.length() - 1, carry = 0;
             while (i >= 0 || j >= 0 || carry != 0) {
-                int n1 = i >= 0 ? num1.charAt(i) - '0' : 0;
-                int n2 = j >= 0 ? num2.charAt(j) - '0' : 0;
+                int n1 = i >= 0 ? num1.charAt(i--) - '0' : 0;
+                int n2 = j >= 0 ? num2.charAt(j--) - '0' : 0;
                 int val = n1 + n2 + carry;
+                sb.append(val % 10);
                 carry = val / 10;
-                val %= 10;
-                sb.append(val);
-                i--;
-                j--;
             }
-            sb.reverse();
-            return sb.toString();
+            return sb.reverse().toString();
         }
 
     }

@@ -5,9 +5,9 @@ public class _463islandPerimeter {
     public static class Solution1 {
 
         /**
-         遍历：遍历岛屿上每一个位置，根据该位置相邻位置是边界/海洋/岛屿进行计算
-         时间复杂度：O(M * N)
-         空间复杂度：O(1)
+         遍历: O(M * N), O(1)
+         Note: 遍历岛屿上每一个位置，根据该位置相邻位置是边界/海洋/岛屿进行计算
+         Ref: https://leetcode.cn/problems/island-perimeter/solutions/151724/tu-jie-jian-ji-er-qiao-miao-de-dfs-fang-fa-java-by/
          */
         public int islandPerimeter(int[][] grid) {
             // 初始化
@@ -21,6 +21,7 @@ public class _463islandPerimeter {
                     if (grid[i][j] == 1) {
                         for (int[] dir : dirs) {
                             int x = i + dir[0], y = j + dir[1];
+                            // 遇到边界或海洋，周长+1
                             if (!inArea(x, y) || grid[x][y] == 0) {
                                 res++;
                             }
@@ -45,9 +46,8 @@ public class _463islandPerimeter {
     public static class Solution2 {
 
         /**
-         DFS：从岛屿上任意位置出发，遍历并标记(可以在原数组上标记，也可以用visited标记)，计算周长
-         时间复杂度：O(M * N)
-         空间复杂度：O(M * N)
+         DFS: O(M * N), O(M * N)
+         Note: 从岛屿上任意位置出发，遍历并标记(可以在原数组上标记，也可以用visited标记)，计算周长
          */
         public int islandPerimeter(int[][] grid) {
             // 初始化
@@ -83,7 +83,6 @@ public class _463islandPerimeter {
         private boolean inArea(int i, int j) {
             return 0 <= i && i < m && 0 <= j && j < n;
         }
-
 
     }
 

@@ -52,6 +52,7 @@ public class _211WordDictionary {
                 return dfs(word, 0, root);
             }
 
+            // idx为匹配到的字符索引，p为当前节点的父节点
             private boolean dfs(String word, int idx, Node p) {
                 if (idx == word.length()) return p.isEndingChar;
                 char c = word.charAt(idx);

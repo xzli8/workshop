@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+// 前缀和 + 二分搜索
 public class WeightedRandom {
 
     private final Random random = new Random();

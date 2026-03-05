@@ -71,22 +71,16 @@ public class _1095findInMountainArray {
         return -1;
     }
 
+    // "852.山脉数组的峰值索引"
     private int binarySearchPeek(MountainArray mountainArr) {
         int n = mountainArr.length();
         int left = 0, right = n - 1;
         while (left <= right) {
             int mid = left + ((right - left) >> 1);
-            int val = mountainArr.get(mid);
-            if ((mid == 0 || mountainArr.get(mid - 1) < val)
-                    && (mid == n - 1 || val > mountainArr.get(mid + 1))) {
-                return mid;
-            }
-
-            if (mid == 0 || mountainArr.get(mid - 1) < val) {
-                left = mid + 1;
-            } else {
-                right = mid - 1;
-            }
+            int target = mountainArr.get(mid);
+            if ((mid == 0 || mountainArr.get(mid - 1) < target) && (mid == n - 1 || target > mountainArr.get(mid + 1))) return mid;
+            else if (mid == 0 || mountainArr.get(mid - 1) < target) left = mid + 1;
+            else right = mid - 1;
         }
         return -1;
     }

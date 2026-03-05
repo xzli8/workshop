@@ -5,6 +5,28 @@ public class _238productExceptSelf {
     public static class Solution1 {
 
         /**
+         两次遍历: O(N), O(1)
+         ref: https://leetcode.doocs.org/lc/238/
+         */
+        public int[] productExceptSelf(int[] nums) {
+            int n = nums.length;
+            int[] res = new int[n];
+            for (int i = 0, left = 1; i < n; i++) {
+                res[i] = left;
+                left *= nums[i];
+            }
+            for (int i = n - 1, right = 1; i >= 0; i--) {
+                res[i] *= right;
+                right *= nums[i];
+            }
+            return res;
+        }
+
+    }
+
+    public static class Solution2 {
+
+        /**
          把res看作矩阵来构建：(相同题："剑指offer66.构建乘积数组")
          思路：先计算下三角各元素乘积，直接乘入res[i]；然后计算上三角各元素乘积，记为tmp，并乘入res[i]
          ref:https://leetcode.cn/problems/product-of-array-except-self/solutions/11472/product-of-array-except-self-shang-san-jiao-xia-sa/

@@ -51,8 +51,11 @@ public class _1325removeLeafNodes {
          */
         public TreeNode removeLeafNodes(TreeNode root, int target) {
             if (root == null) return null;
+            // 因为要反复删除，所以要先处理左右子节点再处理当前节点
+            // 因为子节点删除后可能是null，所以这里要改变root.left/right的指向
             root.left = removeLeafNodes(root.left, target);
             root.right = removeLeafNodes(root.right, target);
+            // 处理完左右子节点再处理当前节点
             if (root.left == null && root.right == null && root.val == target) {
                 return null;
             }

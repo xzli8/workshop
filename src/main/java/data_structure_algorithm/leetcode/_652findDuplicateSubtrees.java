@@ -12,10 +12,8 @@ public class _652findDuplicateSubtrees {
     public static class Solution1 {
 
         /**
-         DFS序列化：前序/后序都可以，中序不行
-         考点：如何将一棵树唯一的序列化(层序/前序/后序)
-         时间复杂度：O(N^2)
-         空间复杂度：O(N)
+         DFS + Hash: O(N), O(N)
+         Note: DFS序列化时，前序/后序/层序都行，中序不行(中序没有根节点的确切信息，而前序根节点在第一位/后序根节点在最后一位/层序根节点在第一位)，但层序遍历这里不太好操作[无法找路径]
          */
         public List<TreeNode> findDuplicateSubtrees(TreeNode root) {
             dfs(root);
@@ -24,13 +22,12 @@ public class _652findDuplicateSubtrees {
 
         private Map<String, Integer> str2Count = new HashMap<>();
         private List<TreeNode> res = new ArrayList<>();
-
-        private String dfs(TreeNode cur) {
-            if (cur == null) return "";
-            String str = new StringBuilder().append(cur.val).append(",")
-                    .append(dfs(cur.left)).append(",").append(dfs(cur.right)).toString();
-            str2Count.put(str, str2Count.getOrDefault(str, 0) + 1);
-            if (str2Count.get(str) == 2) res.add(cur);
+        private String dfs(TreeNode root) {
+            if (root == null) return "";
+            String str = root.val + "," + dfs(root.left) + "," + dfs(root.right);
+            // String str = dfs(root.left) + "," + dfs(root.right) + "," + root.val;
+            // String str = dfs(root.left) + "," + root.val + "," + dfs(root.right);   // error case: [0,0,0,0,null,null,0,null,null,null,0], output: [[0],[0,null,0]], expected: [[0]]
+            if (str2Count.merge(str, 1, Integer::sum) == 2) res.add(root);
             return str;
         }
 

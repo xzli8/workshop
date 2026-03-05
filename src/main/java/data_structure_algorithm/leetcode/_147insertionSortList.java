@@ -4,6 +4,29 @@ import data_structure_algorithm.domain.ListNode;
 
 public class _147insertionSortList {
 
+    public static class Solution0 {
+
+        /**
+         从前往后遍历新链表，找到插入点: O(N^2), O(1)
+         */
+        public ListNode insertionSortList(ListNode head) {
+            ListNode dummy = new ListNode();
+            while (head != null) {
+                ListNode cur = head;
+                head = head.next;
+
+                ListNode p = dummy;
+                while (p.next != null && cur.val > p.next.val) {
+                    p = p.next;
+                }
+                cur.next = p.next;
+                p.next = cur;
+            }
+            return dummy.next;
+        }
+
+    }
+
     public static class Solution1 {
 
         /**

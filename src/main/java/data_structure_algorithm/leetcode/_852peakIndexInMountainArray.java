@@ -5,9 +5,11 @@ public class _852peakIndexInMountainArray {
     public static class Solution1 {
 
         /**
-         二分查找(相似题："1095.山脉数组中查找目标值")
-         时间复杂度：O(logN)
-         空间复杂度：O(1)
+         二分搜索：O(logN), O(1)
+         Note:(二段性)在以 mid 为分割点的数组上，根据 nums[mid] 与 nums[mid±1] 的大小关系，可以确定其中一段满足「必然有解」，另外一段不满足「必然有解」（可能有解，可能无解）
+         1.如果nums[i] < nums[i+1]，峰值一定在i之后（nums[i+2]有两种可能，一种是小于nums[i+1]，那么nums[i+1]就是峰值；如果大于nums[i+1]，继续后推，因为nums[n]=-∞，所以nums[n-1]是峰值）
+         2.如果nums[i] > nums[i+1]，峰值一定在i之前（同理）
+         Ref: https://leetcode.cn/problems/find-peak-element/solutions/998441/gong-shui-san-xie-noxiang-xin-ke-xue-xi-qva7v/
          */
         public int peakIndexInMountainArray(int[] arr) {
             int n = arr.length, left = 0, right = n - 1;
@@ -19,40 +21,6 @@ public class _852peakIndexInMountainArray {
             }
             return -1;
         }
-
-    }
-
-
-
-    public static class Solution2 {
-
-        /**
-         二分查找(相似题："1095.山脉数组中查找目标值")
-         分析：这种写法有局限性，当arr[i]的取值范围是int时就不好办了，除非get方法返回值为long，不然会溢出
-         时间复杂度：O(logN)
-         空间复杂度：O(1)
-         */
-         public int peakIndexInMountainArray(int[] arr) {
-             int low = 0, high = arr.length - 1;
-             while (low <= high) {
-                 int mid = low + ((high - low) >> 1);
-                 if (arr[mid] > get(arr, mid-1) && arr[mid] > get(arr, mid+1)) {
-                     return mid;
-                 } else if (arr[mid] < get(arr, mid+1)) {
-                     low = mid + 1;
-                 } else {
-                     high = mid - 1;
-                 }
-             }
-             return -1;
-         }
-
-         private int get(int[] arr, int index) {
-             if (index < 0 || index >= arr.length) {
-                 return -1;  // 题目规定 0 <= arr[i] <= 10^6，所以这里返回-1即可
-             }
-             return arr[index];
-         }
 
     }
 

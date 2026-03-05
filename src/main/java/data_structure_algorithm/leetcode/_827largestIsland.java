@@ -10,9 +10,8 @@ public class _827largestIsland {
     public static class Solution1 {
 
         /**
-         DFS：先遍历每个岛屿，标记并计算每个岛屿的面积，然后遍历海洋，计算最大人工岛
-         时间复杂度：O(M * N)
-         空间复杂度：O(M * N)
+         DFS: O(M * N), O(M * N)
+         Note: 先遍历每个岛屿，标记并计算每个岛屿的面积，然后遍历海洋，将与其相邻的两个不同岛屿面积相加，计算最大人工岛
          */
         public int largestIsland(int[][] grid) {
             // 初始化
@@ -34,7 +33,7 @@ public class _827largestIsland {
                 for (int j = 0; j < n; j++) {
                     if (grid[i][j] == 0) {
                         int area = 1;
-                        Set<Integer> visited = new HashSet<>();
+                        Set<Integer> visited = new HashSet<>();     // 防止将同一个岛屿计算两次
                         for (int[] dir : dirs) {
                             int x = i + dir[0], y = j + dir[1];
                             if (inArea(x, y) && islandIdx2Area.containsKey(grid[x][y]) && !visited.contains(grid[x][y])) {
@@ -68,6 +67,15 @@ public class _827largestIsland {
             }
             return area;
         }
+
+    }
+
+
+    public static class Solution2 {
+
+        /**
+         * BFS
+         */
 
     }
 

@@ -51,6 +51,7 @@ public class _718findLength {
 
     }
 
+
     public static class Solution2 {
 
         /**
@@ -80,28 +81,31 @@ public class _718findLength {
     }
 
 
-
     public static class Solution3 {
 
         /**
          空间压缩：dp[i][j]只与dp[i-1][j-1]有关，可以用滚动数组将二维状态数组压缩为一维状态数组
          */
+        public int findLength(int[] nums1, int[] nums2) {
+            int n1 = nums1.length, n2 = nums2.length, max = 0;
+            int[] dp = new int[n2 + 1];
+            for (int i = 1; i <= n1; i++) {
+                for (int j = n2; j > 0; j--) {
+                    if (nums1[i - 1] == nums2[j - 1]) {
+                        dp[j] = dp[j - 1] + 1;
+                    } else {
+                        dp[j] = 0;
+                    }
+                    max = Math.max(max, dp[j]);
+                }
+            }
+            return max;
+        }
 
     }
-
 
 
     public static class Solution4 {
-
-        /**
-         空间压缩：dp[i][j]只与dp[i-1][j-1]有关，可以用滚动数组将二维状态数组压缩为一维状态数组
-         */
-
-    }
-
-
-
-    public static class Solution5 {
 
         /**
          滑动窗口(todo)

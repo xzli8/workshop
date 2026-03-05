@@ -14,6 +14,7 @@ public class _402removeKdigits {
 
         /**
          贪心 + 单调栈
+         Note: 两个相同位数的数字大小关系取决于第一个不同的数的大小，从前往后遍历，如果当前数字大于前一个数字，则丢弃当前数字
          时间复杂度：O(N)
          空间复杂度：O(N)
          */
@@ -37,7 +38,7 @@ public class _402removeKdigits {
             StringBuilder sb = new StringBuilder();
             boolean leadingZero = true;
             while (!dq.isEmpty()) {
-                char digit = dq.pollFirst();
+                char digit = dq.pollFirst();    // Deque，这里可以直接pollFirst，也可以pollLast(poll)，然后reverse
                 if (leadingZero && digit == '0') {
                     continue;
                 }

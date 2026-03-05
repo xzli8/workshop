@@ -12,44 +12,34 @@ public class _556nextGreaterElement {
          空间复杂度：O(1)
          */
         public int nextGreaterElement(int n) {
-            // 将n表示为数组
-            String str = n + "";
-            int len = str.length();
-            int[] nums = new int[len];
-            for (int i = 0; i < len; i++) {
-                nums[i] = str.charAt(i) - '0';
-            }
-
-            // 从后往前遍历，找第一个逆序对，交换逆序对中较小元素与已遍历过的元素中最大的元素
-            // 然后将逆序对中较小元素后的所有元素升序排列
+            char[] cs = String.valueOf(n).toCharArray();
+            int len = cs.length;
             for (int i = len - 2; i >= 0; i--) {
-                // 找到逆序对
-                if (nums[i] < nums[i+1]) {
-                    // 从已遍历过的区间中找第一个大于nums[i]的元素，已遍历区间为升序（从后往前看）
+                if (cs[i] < cs[i + 1]) {
                     for (int j = len - 1; j > i; j--) {
-                        if (nums[j] > nums[i]) {
-                            int tmp = nums[j];
-                            nums[j] = nums[i];
-                            nums[i] = tmp;
+                        if (cs[j] > cs[i]) {
+                            swap(cs, i, j);
                             break;
                         }
                     }
-
-                    // 将从i+1到末尾的元素，按照升序排列
-                    Arrays.sort(nums, i+1, len);
-
-                    // 输出结果
-                    StringBuilder sb = new StringBuilder();
-                    for (int j = 0; j < len; j++) {
-                        sb.append(nums[j]);
-                    }
-                    String res = sb.toString();
-                    return Long.valueOf(res) > Integer.MAX_VALUE ? -1 : Integer.valueOf(res);
+                    reverse(cs, i + 1, len - 1);
+                    long res = Long.parseLong(String.valueOf(cs));
+                    return res > Integer.MAX_VALUE ? -1 : (int) res;
                 }
             }
-
-            // 不存在这样的正整数（已经是最大数，没有逆序对），返回-1
             return -1;
+        }
+
+        private void swap(char[] cs, int i, int j) {
+            char tmp = cs[i];
+            cs[i] = cs[j];
+            cs[j] = tmp;
+        }
+
+        private void reverse(char[] cs, int i, int j) {
+            while (i < j) {
+                swap(cs, i++, j--);
+            }
         }
 
     }

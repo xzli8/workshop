@@ -5,6 +5,26 @@ public class _400findNthDigit {
     public static class Solution1 {
 
         /**
+         数学: O(logN), O(1)
+         ref: https://leetcode.doocs.org/lc/400/#_2
+         */
+        public int findNthDigit(int n) {
+            int k = 1, cnt = 9;
+            while ((long) k * cnt < n) {
+                n -= k * cnt;
+                ++k;
+                cnt *= 10;
+            }
+            int num = (int) Math.pow(10, k - 1) + (n - 1) / k;
+            int idx = (n - 1) % k;
+            return String.valueOf(num).charAt(idx) - '0';
+        }
+
+    }
+
+    public static class Solution2 {
+
+        /**
          模拟：依次减去每个长度的数字所占位的数量
          时间复杂度：O(logN)
          空间复杂度：O(1)

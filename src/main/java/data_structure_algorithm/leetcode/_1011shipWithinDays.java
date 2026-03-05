@@ -3,18 +3,16 @@ package data_structure_algorithm.leetcode;
 public class _1011shipWithinDays {
 
     /**
-     二分查找
-     NOTE：难点在于上下界的确定
-     时间复杂度：O(N)
-     空间复杂度：O(1)
+     值域二分搜索: O(NlogU), O(1)
      */
     public int shipWithinDays(int[] weights, int days) {
-        // 上下界根据题目已知条件确定(1 <= weights[i] <= 500, days <= weight.length)，也可以遍历找最大值确定上界
-        int max = 0;
+        // 确定搜索的上下界
+        int max = 0, sum = 0;
         for (int weight : weights) {
+            sum += weight;
             max = Math.max(max, weight);
         }
-        int left = max, right = 500 * weights.length;
+        int left = max, right = sum;
 
         // 找满足条件的最小值
         while (left <= right) {

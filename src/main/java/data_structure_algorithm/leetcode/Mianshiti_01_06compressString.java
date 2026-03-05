@@ -25,7 +25,7 @@ public class Mianshiti_01_06compressString {
                 sb.append(S.charAt(left)).append(right - left);
                 left = right++;
             }
-            return sb.length() < n ? sb.toString() : S;
+            return sb.toString();
         }
 
     }

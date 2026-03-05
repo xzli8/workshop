@@ -20,8 +20,8 @@ public class _398randomPickIndex {
              时间复杂度：初始化为O(N)，pick为O(1)
              空间复杂度：O(N)
              */
-            private Map<Integer, List<Integer>> value2Index = new HashMap<>();
-            private Random random = new Random();
+            private final Map<Integer, List<Integer>> value2Index = new HashMap<>();
+            private final Random random = new Random();
 
             public Solution(int[] nums) {
                 for (int i = 0; i < nums.length; i++) {

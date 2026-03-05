@@ -8,8 +8,7 @@ public class _1109corpFlightBookings {
          差分数组（多次修改某个区间，求最终结果）
          */
         public int[] corpFlightBookings(int[][] bookings, int n) {
-            int[] nums = new int[n];
-            Difference diff = new Difference(nums);
+            Difference diff = new Difference(new int[n]);
             for (int[] booking : bookings) {
                 diff.update(booking[0]-1, booking[1]-1, booking[2]);
             }

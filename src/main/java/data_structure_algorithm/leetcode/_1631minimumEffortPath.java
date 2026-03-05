@@ -8,7 +8,7 @@ public class _1631minimumEffortPath {
     public static class Solution1 {
 
         /**
-         dijkstra
+         Dijkstra + PriorityQueue: O(NlogN), O(N)
          */
         public int minimumEffortPath(int[][] heights) {
 
@@ -62,6 +62,24 @@ public class _1631minimumEffortPath {
                 this.cost = cost;
             }
         }
+
+    }
+
+
+    public static class Solution2 {
+
+        /**
+         * UnionFind
+         */
+
+    }
+
+
+    public static class Solution3 {
+
+        /**
+         * BinarySearch + BFS
+         */
 
     }
 

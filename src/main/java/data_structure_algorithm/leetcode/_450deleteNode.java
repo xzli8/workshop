@@ -7,26 +7,32 @@ public class _450deleteNode {
     public static class Solution1 {
 
         /**
-         递归：通过交换指针而不是赋值完成，推荐使用
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         递归(DFS-preorder): O(N), O(N)
+         Note: 通过交换指针而不是赋值完成，推荐使用
          */
          public TreeNode deleteNode(TreeNode root, int key) {
              if (root == null) return null;
              if (root.val == key) {
                  if (root.left == null) return root.right;
                  if (root.right == null) return root.left;
-                 // 找右子树的最小节点或者左子树的最大节点
-                 TreeNode cur = root.right;
-                 while(cur.left != null) {
-                     cur = cur.left;
-                 }
-                 // 将root的左子树拼接到右子树最小节点的left上
-                 cur.left = root.left;
+                 // option1: 找当前节点的左子树的最大节点，将当前节点的左子树拼接到右子树最小节点的left上
+//                 TreeNode p = root.left;
+//                 while (p.right != null) p = p.right;
+//                 p.right = root.right;
+//                 return root.left;
+
+                 // option2: 找当前节点的右子树的最小节点，将当前节点的右子树拼接到左子树最大节点的right上
+                 TreeNode p = root.right;
+                 while(p.left != null) p = p.left;
+                 p.left = root.left;
                  return root.right;
              }
-             if (root.val > key) root.left = deleteNode(root.left, key);
-             if (root.val < key) root.right = deleteNode(root.right, key);
+             else if (root.val > key) {
+                 root.left = deleteNode(root.left, key);
+             }
+             else {
+                 root.right = deleteNode(root.right, key);
+             }
              return root;
          }
 

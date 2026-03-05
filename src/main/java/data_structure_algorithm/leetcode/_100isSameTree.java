@@ -7,7 +7,7 @@ public class _100isSameTree {
     public static class Solution1 {
 
         /**
-         递归
+         递归(前中后序都可以)
          递推：根节点值相等，并且左右子树都是相同的树，那么这两棵树相同
          终止：节点为空
          */

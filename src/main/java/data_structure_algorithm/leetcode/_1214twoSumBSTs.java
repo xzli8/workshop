@@ -2,12 +2,41 @@ package data_structure_algorithm.leetcode;
 
 import data_structure_algorithm.domain.TreeNode;
 
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 public class _1214twoSumBSTs {
+
+    /**
+     * 中序遍历 + 双指针: O(M + N), O(M + N)
+     * ref: https://leetcode.doocs.org/lc/1214/
+     */
+    public static class Solution0 {
+
+        public boolean twoSumBSTs(TreeNode root1, TreeNode root2, int target) {
+            // 中序遍历
+            List<Integer> nums1 = new ArrayList<>(), nums2 = new ArrayList<>();
+            inorderDFS(root1, nums1);
+            inorderDFS(root2, nums2);
+
+            // 双指针
+            int i = 0, j = nums2.size() - 1;
+            while(i < nums1.size() && j >= 0) {
+                int sum = nums1.get(i) + nums2.get(j);
+                if (sum == target) return false;
+                else if (sum < target) i++;
+                else j--;
+            }
+            return false;
+        }
+
+        private void inorderDFS(TreeNode root, List<Integer> vals) {
+            if (root == null) return;
+            inorderDFS(root.left, vals);
+            vals.add(root.val);
+            inorderDFS(root.right, vals);
+        }
+
+    }
 
     public static class Solution1 {
 

@@ -45,7 +45,9 @@ public class KamaCoder_56maxValue {
             // 状态转移
             for (int i = 1; i < n; i++) {
                 for (int j = 0; j <= capacity; j++) {
-                    dp[i][j] = dp[i - 1][j];
+                    dp[i][j] = dp[i - 1][j];    // 第i个矿石一个都不拿(可以省略，相当于后面的"k = 0")
+
+                    // 第i个矿石拿k个
                     for (int k = 0; k <= nums[i]; k++) {
                         if (j - k * weights[i] >= 0 && dp[i - 1][j - k * weights[i]] >= 0) {
                             dp[i][j] = Math.max(dp[i][j], dp[i - 1][j - k * weights[i]] + k * values[i]);

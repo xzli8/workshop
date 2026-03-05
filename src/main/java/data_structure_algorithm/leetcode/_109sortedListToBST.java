@@ -58,7 +58,7 @@ public class _109sortedListToBST {
 
              TreeNode root = new TreeNode(slow.val);
              if (prev != null) {
-                 prev.next = null;
+                 prev.next = null;  // 切记这里要断开
                  root.left = sortedListToBST(head);
              }
              root.right = sortedListToBST(slow.next);

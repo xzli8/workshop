@@ -66,6 +66,7 @@ public class _407trapRainWater {
 
         /**
          最小堆 + BFS：二维情况下，我们维护左右两边两个最高的墙，那么在这里就需要维护周围的一个圈，用最小堆找圈中最小元素
+         ref: https://leetcode.cn/problems/trapping-rain-water-ii/solutions/1079738/jie-yu-shui-ii-by-leetcode-solution-vlj3/
          时间复杂度：O(M * N * log(M*N))
          空间复杂度：O(M * N)
          */
@@ -88,11 +89,13 @@ public class _407trapRainWater {
             int sum = 0;
             int[][] dirs = new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
             while (!pq.isEmpty()) {
+                // 每次从最外层最低方块出发，计算其周围的方块
                 int[] cur = pq.poll();
                 for (int[] dir : dirs) {
                     int x = cur[0] / n + dir[0], y = cur[0] % n + dir[1];
                     if (x >= 0 && x < m && y >= 0 && y < n && !visited[x][y]) {
                         visited[x][y] = true;
+                        // 当前接满水后的高度为: Math.max(heightMap[x][y], cur[1])
                         pq.offer(new int[] {x * n + y, Math.max(heightMap[x][y], cur[1])});
                         if (cur[1] > heightMap[x][y]) sum += cur[1] - heightMap[x][y];
                     }

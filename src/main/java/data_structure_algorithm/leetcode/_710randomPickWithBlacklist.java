@@ -1,8 +1,6 @@
 package data_structure_algorithm.leetcode;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class _710randomPickWithBlacklist {
 
@@ -14,6 +12,42 @@ public class _710randomPickWithBlacklist {
      */
 
     public static class Solution1 {
+
+        // 将backlist中的元素交换到数组的尾部，再在非尾部区域生成随机数
+        class SolutionII {
+            private int[] nums;
+            private int bound;     // 有效区间是 [0, bound)
+            private Random rand = new Random();
+
+            public SolutionII(int n, int[] blacklist) {
+                // 1. 把数组建出来：a = [0, 1, ..., n-1]
+                nums = new int[n];
+                for (int i = 0; i < n; i++) nums[i] = i;
+
+                bound = n - blacklist.length;   // 黑名单恰好占满尾部 [bound, n)
+
+                Set<Integer> black = new HashSet<>();
+                for (int b : blacklist) black.add(b);
+
+                // 2. 把落在前部区 [0, bound) 的黑名单值，交换到尾部
+                int last = n - 1;
+                for (int b : blacklist) {
+                    if (b < bound) {                       // 只有前部区的才需要处理
+                        while (black.contains(nums[last])) {  // 在尾部找一个“白名单值”的槽
+                            last--;
+                        }
+                        int tmp = nums[b]; nums[b] = nums[last]; nums[last] = tmp;  // 换：白名单值进前部，黑名单值去尾部
+                        last--;
+                    }
+                    // b >= bound 本来就在尾部，跳过
+                }
+            }
+
+            public int pick() {
+                // 3. 只在非尾部区间随机取下标
+                return nums[rand.nextInt(bound)];
+            }
+        }
 
         class Solution {
 

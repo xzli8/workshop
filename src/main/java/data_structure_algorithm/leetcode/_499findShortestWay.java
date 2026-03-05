@@ -89,4 +89,13 @@ public class _499findShortestWay {
 
     }
 
+
+    public static class Solution2 {
+
+        /**
+         * DFS
+         */
+
+    }
+
 }

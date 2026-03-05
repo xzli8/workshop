@@ -7,13 +7,15 @@ import java.util.Scanner;
 public class NowCoder_CD21SmallSum {
 
     /**
-     *  题目：https://www.nowcoder.com/practice/edfe05a1d45c4ea89101d936cac32469?tpId=101&tqId=33089&tPage=1&rp=1&ru=%2Fta%2Fprogrammer-code-interview-guide
-     *      题解：https://mp.weixin.qq.com/s/rMsbcUf9ZPhvfRoyZGW6HA
-     *      分析：与“数组中的逆序对”类似，有多种解法。从i的角度考虑比较简单，从j的角度考虑要复杂一些。
-     *      注意：NowCoder上的用例要用long类型跑才能通过，否则会溢出
+     *  归并排序：O(NlogN), O(N)
+     *      分析：最容易想到的做法是遍历一遍数组，对于每个元素计算前面比它小的数的和，累加即可得出结果，时间复杂度是O(N²)
+     *      Note: 更好的做法是借助「归并排序」的思路。smallSum([1,3,4,2,5])实际就等于smallSum([1,3,4])+smallSum([2,5])+c。之所以还有个c，是因为左半段数组中可能存在比右半段数组小的元素，这个不能遗漏。通过归并排序的merge过程，我们可以很方便计算这个c。
+     *          与“数组中的逆序对”类似，有多种解法。从i的角度考虑比较简单，从j的角度考虑要复杂一些。
+     *      Ref：https://mp.weixin.qq.com/s/rMsbcUf9ZPhvfRoyZGW6HA
+     *      Nowcoder(NowCoder上的用例要用long类型跑才能通过，否则会溢出): https://www.nowcoder.com/practice/edfe05a1d45c4ea89101d936cac32469?tpId=101&tqId=33089&tPage=1&rp=1&ru=%2Fta%2Fprogrammer-code-interview-guide
      */
 
-    // 返回值 + i后面比i大的数
+    // 从i的角度考虑: 返回值 + i后面比i大的数
     public static class Solution1 {
 
 
@@ -71,7 +73,8 @@ public class NowCoder_CD21SmallSum {
 
     }
 
-    // 全局变量 + j前面比j小的数
+
+    // 从i的角度考虑: 全局变量 + j前面比j小的数
     public static class Solution2 {
 
         // ACM模式

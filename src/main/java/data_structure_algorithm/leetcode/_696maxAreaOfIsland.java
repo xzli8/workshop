@@ -5,9 +5,8 @@ public class _696maxAreaOfIsland {
     public static class Solution1 {
 
         /**
-         DFS：从任意岛屿上出发，遍历并标记(可以在原数组上标记，也可以用visited标记)
-         时间复杂度：O(M * N)
-         空间复杂度：O(M * N)
+         DFS：O(M * N), O(M * N)
+         Note: 从任意岛屿上出发，遍历并标记(可以在原数组上标记，也可以用visited标记)
          */
         public int maxAreaOfIsland(int[][] grid) {
             // 初始化
@@ -40,6 +39,15 @@ public class _696maxAreaOfIsland {
         private boolean inArea(int i, int j) {
             return 0 <= i && i < m && 0 <= j && j < n;
         }
+
+    }
+
+
+    public static class Solution2 {
+
+        /**
+         * BFS
+         */
 
     }
 

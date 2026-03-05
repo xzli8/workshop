@@ -10,10 +10,14 @@ public class _310findMinHeightTrees {
     public static class Solution1 {
 
         /**
-         BFS拓扑排序：越靠近里面的节点越有可能是最小高度树，所以可以倒着来，从边缘开始，找到所有出度为1的节点，加入队列进行BFS，
-         就可以找到从两边同时开始向中间靠近的节点，相当于将整个距离二分了。
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         * 一般思路：挨个节点遍历bfs，统计下每个节点的高度，然后用map存储起来，后面查询这个高度的集合里最小的就可以了（TLE）
+         */
+
+        /**
+         BFS拓扑排序：O(N), O(N)
+         Note: 越靠近里面的节点越有可能是最小高度树，所以可以倒着来，从边缘开始，找到所有出度为1的节点，加入队列进行BFS，
+            就可以找到从两边同时开始向中间靠近的节点，相当于将整个距离二分了。
+         Ref: https://leetcode.cn/problems/minimum-height-trees/solutions/242910/zui-rong-yi-li-jie-de-bfsfen-xi-jian-dan-zhu-shi-x/
          */
         public List<Integer> findMinHeightTrees(int n, int[][] edges) {
             // 边界情况

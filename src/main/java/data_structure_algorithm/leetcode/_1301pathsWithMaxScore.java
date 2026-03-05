@@ -1,31 +1,11 @@
 package data_structure_algorithm.leetcode;
 
-import org.junit.Test;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class _1301pathsWithMaxScore {
 
     public static class Solution1 {
-
-        @Test
-        public void test() {
-//            List<String> board = new ArrayList<>();
-//            board.add("E23");
-//            board.add("2X2");
-//            board.add("12S");
-
-            List<String> board = new ArrayList<>();
-            board.add("E11345");
-            board.add("X452XX");
-            board.add("3X43X4");
-            board.add("44X312");
-            board.add("2345XX");
-            board.add("1342XS");
-            System.out.println(pathsWithMaxScore(board));
-        }
 
         /**
          动态规划
@@ -57,7 +37,7 @@ public class _1301pathsWithMaxScore {
                 }
             }
 
-            // 状态转移
+            // 状态转移(当前状态可以由下、右、右下转移而来)
             int[][] dirs = new int[][] {{1, 1}, {1, 0}, {0, 1}};
             for (int i = m - 2; i >= 0; i--) {
                 s = board.get(i);
@@ -71,45 +51,17 @@ public class _1301pathsWithMaxScore {
                                 cnt[i][j] = 1;
                             }
                         } else {
-                            if (dp[i + 1][j + 1] != -1) {
-                                if (dp[i + 1][j + 1] + num > dp[i][j]) {
-                                    dp[i][j] = dp[i + 1][j + 1] + num;
-                                    cnt[i][j] = cnt[i + 1][j + 1];
-                                } else if (dp[i + 1][j + 1] + num == dp[i][j]) {
-                                    cnt[i][j] += cnt[i + 1][j + 1];
-                                }
-                                cnt[i][j] %= MOD;
-                            }
-                            if (dp[i + 1][j] != -1) {
-                                if (dp[i + 1][j] + num > dp[i][j]) {
-                                    dp[i][j] = dp[i + 1][j] + num;
-                                    cnt[i][j] = cnt[i + 1][j];
-                                } else if (dp[i + 1][j] + num == dp[i][j]) {
-                                    cnt[i][j] += cnt[i + 1][j];
-                                }
-                                cnt[i][j] %= MOD;
-                            }
-                            if (dp[i][j + 1] != -1) {
-                                if (dp[i][j + 1] + num > dp[i][j]) {
-                                    dp[i][j] = dp[i][j + 1] + num;
-                                    cnt[i][j] = cnt[i][j + 1];
-                                } else if (dp[i][j + 1] + num == dp[i][j]) {
-                                    cnt[i][j] += cnt[i][j + 1];
-                                }
-                                cnt[i][j] %= MOD;
-                            }
-
-                            // 用方向数组优化(why error?)
-                            // for (int[] dir : dirs) {
-                            //     int x = i + dir[0], y = j + dir[1];
-                            //     if (dp[x][y] + num > dp[i][j]) {
-                            //         dp[i][j] = dp[x][y] + num;
-                            //         cnt[i][j] = cnt[x][y];
-                            //     } else if (dp[x][y] + num == dp[i][j]) {
-                            //         cnt[i][j] += cnt[x][y];
-                            //     }
-                            //     cnt[i][j] %= MOD;
-                            // }
+                             for (int[] dir : dirs) {
+                                 int x = i + dir[0], y = j + dir[1];
+                                 if (dp[x][y] == -1) continue;
+                                 if (dp[x][y] + num > dp[i][j]) {
+                                     dp[i][j] = dp[x][y] + num;
+                                     cnt[i][j] = cnt[x][y];
+                                 } else if (dp[x][y] + num == dp[i][j]) {
+                                     cnt[i][j] += cnt[x][y];
+                                 }
+                                 cnt[i][j] %= MOD;
+                             }
                         }
                     }
                 }

@@ -31,25 +31,24 @@ public class _701insertIntoBST {
          */
          public TreeNode insertIntoBST(TreeNode root, int val) {
              if (root == null) return new TreeNode(val);
-             TreeNode cur = root, parent = root;
-             while (cur != null) {
-                 if (val < cur.val) {
-                     if (cur.left == null) {
-                         cur.left = new TreeNode(val);
+             TreeNode p = root;
+             while (true) {
+                 if (val < p.val) {
+                     if (p.left == null) {
+                         p.left = new TreeNode(val);
                          return root;
                      } else {
-                         cur = cur.left;
+                         p = p.left;
                      }
                  } else {
-                     if (cur.right == null) {
-                         cur.right = new TreeNode(val);
+                     if (p.right == null) {
+                         p.right = new TreeNode(val);
                          return root;
                      } else {
-                         cur = cur.right;
+                         p = p.right;
                      }
                  }
              }
-             return root;
          }
 
     }

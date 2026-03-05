@@ -1,6 +1,7 @@
 package data_structure_algorithm.leetcode;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class _1637maxWidthOfVerticalArea {
 
@@ -13,7 +14,7 @@ public class _1637maxWidthOfVerticalArea {
          */
         public int maxWidthOfVerticalArea(int[][] points) {
             // sort by x coordinate
-            Arrays.sort(points, (p1, p2) -> p1[0] - p2[0]);
+            Arrays.sort(points, Comparator.comparingInt(p -> p[0]));
 
             // find max
             int max = 0;

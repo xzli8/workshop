@@ -7,6 +7,50 @@ public class _143reorderList {
     public static class Solution1 {
 
         /**
+         快慢指针找中点断开+反转后半部分+重新拼装：O(N), O(1)
+         */
+        public void reorderList(ListNode head) {
+            // fast/slow find mid
+            ListNode fast = head, slow = head, prev = null;
+            while (fast != null && fast.next != null) {
+                prev = slow;
+                slow = slow.next;
+                fast = fast.next.next;
+            }
+            if (fast != null) {
+                prev = slow;
+                slow = slow.next;
+            }
+            prev.next = null;
+
+            // reverse last half
+            prev = null;
+            while (slow != null) {
+                ListNode next = slow.next;
+                slow.next = prev;
+                prev = slow;
+                slow = next;
+            }
+
+            // merge two parts
+            ListNode dummy = new ListNode(0, head), p = dummy;
+            while (head != null && prev != null) {
+                p.next = head;
+                head = head.next;
+                p = p.next;
+
+                p.next = prev;
+                prev = prev.next;
+                p = p.next;
+            }
+            if (head != null) p.next = head;
+        }
+
+    }
+
+    public static class Solution2 {
+
+        /**
          快慢指针找中点 + 反转后半部分 + 合并
          时间复杂度：O(N)
          空间复杂度：O(1)

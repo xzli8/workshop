@@ -49,7 +49,7 @@ public class _1361validateBinaryTreeNodes {
                 roots[rootChild] = roots[rootParent];
                 // 设置子节点的父节点
                 parents[child] = parent;
-                // 连同数量减一
+                // 连通数量减一
                 n--;
                 return true;
             }

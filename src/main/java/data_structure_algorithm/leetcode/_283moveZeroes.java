@@ -2,26 +2,36 @@ package data_structure_algorithm.leetcode;
 
 public class _283moveZeroes {
 
-    public static class Solution1 {
+    public static class Solution0 {
 
         /**
-         /**
-         双指针：慢指针指向第一个未被处理的元素，快指针指向当前遍历元素
-         时间复杂度：O(N)
-         空间复杂度：O(1)
+         一次遍历: O(N), O(1)
          */
         public void moveZeroes(int[] nums) {
-            int slow = 0, fast = 0;
-            while (fast < nums.length) {
-                if (nums[fast] != 0) {
-                    nums[slow++] = nums[fast];
+            int i = 0;
+            for (int num : nums) {
+                if (num != 0) {
+                    nums[i++] = num;
                 }
-                fast++;
             }
+            for (int j = i; j < nums.length; j++) {
+                nums[j] = 0;
+            }
+        }
 
-            // 尾部元素赋值为0
-            while (slow < nums.length) {
-                nums[slow++] = 0;
+    }
+
+    public static class Solution1 {
+
+        public void moveZeroes(int[] nums) {
+            int firstZero = 0;
+            for (int i = 0; i < nums.length; i++) {
+                if (nums[i] != 0) {
+                    int temp = nums[firstZero];
+                    nums[firstZero] = nums[i];
+                    nums[i] = temp;
+                    firstZero++;
+                }
             }
         }
 

@@ -7,6 +7,34 @@ import java.util.Map;
 
 public class _106buildTree {
 
+    public static class Solution0 {
+
+        /**
+         DFS + Hash: O(N), O(N)
+         Note: 后序遍历的最后一个节点是根节点，因为没有重复元素，所以在中序遍历序列中可以找到一个唯一的值相同的元素，将中序遍历序列分为两部分，分别为左右子树。
+         */
+        public TreeNode buildTree(int[] inorder, int[] postorder) {
+            int n = inorder.length;
+            this.postorder = postorder;
+            for (int i = 0; i < n; i++) inorderVal2Idx.put(inorder[i], i);
+            return dfs(0, n - 1, 0, n - 1);
+        }
+
+        private int[] postorder;
+        private Map<Integer, Integer> inorderVal2Idx = new HashMap<>();
+
+        private TreeNode dfs(int inorderStart, int inorderEnd, int postorderStart, int postorderEnd) {
+            if (inorderStart > inorderEnd) return null;     // "if (postorderStart > postorderEnd) return null"也可以，任用其一
+            TreeNode root = new TreeNode(postorder[postorderEnd]);
+            int inorderRoot = inorderVal2Idx.get(root.val), leftLen = inorderRoot - inorderStart;
+            root.left = dfs(inorderStart, inorderRoot - 1, postorderStart, postorderStart + leftLen - 1);
+            root.right = dfs(inorderRoot + 1, inorderEnd, postorderStart + leftLen, postorderEnd - 1);
+            return root;
+        }
+
+    }
+
+
     public static class Solution1 {
 
         /**

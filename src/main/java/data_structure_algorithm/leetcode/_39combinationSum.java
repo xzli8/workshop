@@ -23,7 +23,7 @@ public class _39combinationSum {
 
         private void backtrace(int[] candidates, int target, int start, LinkedList<Integer> path) {
             if (target == 0) {
-                res.add(new ArrayList<Integer>(path));
+                res.add(new ArrayList<>(path));
                 return;
             }
 

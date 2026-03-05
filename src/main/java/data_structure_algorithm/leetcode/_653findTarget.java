@@ -23,6 +23,27 @@ public class _653findTarget {
 
         private Set<Integer> set = new HashSet<Integer>();
 
+
+        /**
+         Hash + BFS: O(N), O(N)
+         */
+//        public boolean findTarget(TreeNode root, int k) {
+//            Set<Integer> visited = new HashSet<>();
+//            Deque<TreeNode> q = new ArrayDeque<>();
+//            q.offer(root);
+//            while (!q.isEmpty()) {
+//                int size = q.size();
+//                for (int i = 0; i < size; i++) {
+//                    TreeNode node = q.poll();
+//                    if (visited.contains(k - node.val)) return true;
+//                    visited.add(node.val);
+//                    if (node.left != null) q.offer(node.left);
+//                    if (node.right != null) q.offer(node.right);
+//                }
+//            }
+//            return false;
+//        }
+
     }
 
 
@@ -30,7 +51,7 @@ public class _653findTarget {
     public static class Solution2 {
 
         /**
-         中序遍历 + 双指针:中序遍历得到一个有序数组，然后用双指针在有序数组中寻找
+         中序遍历(迭代/递归) + 双指针:中序遍历得到一个有序数组，然后用双指针在有序数组中寻找
          时间复杂度：O(N)
          空间复杂度：O(N)
          */

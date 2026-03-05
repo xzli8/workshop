@@ -1,6 +1,7 @@
 package data_structure_algorithm.leetcode;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class _1365smallerNumbersThanCurrent {
 
@@ -45,7 +46,7 @@ public class _1365smallerNumbersThanCurrent {
              }
 
              // 根据值对paris数组排序
-             Arrays.sort(pairs, (pair1, pair2) -> pair1[0] - pair2[0]);
+             Arrays.sort(pairs, Comparator.comparingInt(pair -> pair[0]));
 
              // 计算最终结果
              int[] res = new int[n];

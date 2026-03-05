@@ -68,8 +68,8 @@ public class _743networkDelayTime {
                 State cur = pq.poll();
 
                 // 已经有一条更短的路径能到达当前节点，当前节点不加入路径
-                // 加入优先队列不意味着加入路径，只有从当前节点出发，访问当前节点的相邻节点，当前节点才算加入了路径
-                // 加入优先队列，只是一种尝试，从当前节点遍历相邻节点，才说明当前节点加入了队列
+                // 加入优先队列不意味着加入路径，只有从当前节点出发(即pq.poll()，从优先队列中取出最小节点)，当前节点才算加入了路径
+                // 加入优先队列，只是一种尝试，从当前节点出发，才说明当前节点加入了队列
                 if (cur.dist > dist[cur.id]) {
                     continue;
                 }
@@ -91,6 +91,52 @@ public class _743networkDelayTime {
             return dist;
         }
 
+    }
+
+
+    /**
+     * ShortestPath: 给两个数组，分别是图中所有相连的edge和每个edge的长度，另外给了起点和终点，需要求出从起点到终点最短路径。
+     */
+    public static class Solution2 {
+
+        public int shortestPath(int[][] edges, int[] lengths, int start, int end) {
+            // 若没给 n，从端点推出节点数（假设编号从 0 开始）
+            int n = 0;
+            for (int[] e : edges) n = Math.max(n, Math.max(e[0], e[1]) + 1);
+
+            // 建邻接表 —— 无向图：两个方向都加；若是有向图，删掉第二行
+            List<int[]>[] graph = new ArrayList[n];
+            for (int i = 0; i < n; i++) graph[i] = new ArrayList<>();
+            for (int i = 0; i < edges.length; i++) {
+                int u = edges[i][0], v = edges[i][1], w = lengths[i];
+                graph[u].add(new int[]{v, w});
+                graph[v].add(new int[]{u, w});   // 有向图就删掉这行
+            }
+
+            int[] dist = new int[n];
+            Arrays.fill(dist, Integer.MAX_VALUE);
+            dist[start] = 0;
+
+            // int[0] -> 节点编号; int[1] -> 节点距离起点的dist
+            PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> Integer.compare(a[1], b[1]));
+            pq.offer(new int[]{start, 0});
+
+            while (!pq.isEmpty()) {
+                int[] cur = pq.poll();
+                int id = cur[0], d = cur[1];
+                if (id == end) return d;        // 终点第一次出队即最短，提前返回
+                if (d > dist[id]) continue;     // 过期条目，跳过
+                for (int[] adj : graph[id]) {
+                    int nb = adj[0], nd = d + adj[1];
+                    if (nd < dist[nb]) {
+                        dist[nb] = nd;
+                        pq.offer(new int[]{nb, nd});
+                    }
+                }
+            }
+            return -1;   // 终点不可达
+
+        }
     }
 
 }

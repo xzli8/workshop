@@ -4,77 +4,6 @@ import java.util.Arrays;
 
 public class _300lengthOfLIS {
 
-    public static class Solution00 {
-
-        /**
-         动态规划
-         时间复杂度：O(N^2)
-         空间复杂度：O(N)
-         */
-         public int lengthOfLIS(int[] nums) {
-             // 定义状态：dp[i]表示以nums[i]结尾的最长递增子序列的长度
-             int n = nums.length;
-             int[] dp = new int[n];
-
-             // 初始状态
-             Arrays.fill(dp, 1);
-
-             // 状态转移
-             int max = 1;
-             for (int i = 1; i < n; i++) {
-                 for (int j = 0; j < i; j++) {
-                     if (nums[i] > nums[j]) dp[i] = Math.max(dp[i], dp[j] + 1);
-                 }
-                 max = Math.max(max, dp[i]);
-             }
-             return max;
-         }
-
-    }
-
-
-
-    public static class Solution01 {
-
-        /**
-         贪心 + 二分查找
-         时间复杂度：O(NlogN)
-         空间复杂度：O(N)
-         */
-        public int lengthOfLIS(int[] nums) {
-            // 定义状态：dp[i]表示长度为i的递增子序列末尾的元素
-            int n = nums.length;
-            int[] dp = new int[n];
-
-            // 初始状态
-            dp[0] = nums[0];
-
-            // 状态转移
-            int len = 1;
-            for (int i = 1; i < n; i++) {
-                if (nums[i] > dp[len - 1]) {
-                    dp[len++] = nums[i];
-                } else {
-                    // 二分查找：找第一个大于目标值的元素
-                    int left = 0, right = len - 1;
-                    while (left <= right) {
-                        int mid = left + ((right - left) >> 1);
-                        if (dp[mid] > nums[i]) {
-                            if (mid == 0 || dp[mid - 1] < nums[i]) dp[mid] = nums[i];
-                            else right = mid - 1;
-                        } else {
-                            left = mid + 1;
-                        }
-                    }
-                }
-            }
-            return len;
-        }
-
-    }
-
-
-
     public static class Solution1 {
 
         /**
@@ -110,7 +39,6 @@ public class _300lengthOfLIS {
     }
 
 
-
     public static class Solution2 {
 
         /**
@@ -143,7 +71,7 @@ public class _300lengthOfLIS {
                     tail[++end] = nums[i];
                 }
                 // 当前元素比tail末尾元素小，因为tail是单调递增的，所以在tail中用二分查找，
-                // 找到第一个大于等于nums[i]的元素，尝试让其更小
+                // 找到第一个大于等于nums[i]的元素，尝试让其更小("tail[mid] = nums[i];")
                 else {
                     int left = 0, right = end;
                     while (left <= right) {

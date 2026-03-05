@@ -21,7 +21,8 @@ public class _3096minimumLevels {
             // two sets both need to be non-empty
             // so i starts from 1 rather 0 and 'i < n' rather than 'i <= n'
             for (int i = 1; i < n; i++) {
-                if (preSum[i] > preSum[n] - preSum[i]) return i;
+//                if (preSum[i] > preSum[n] - preSum[i]) return i;
+                if (preSum[i] > preSum[n] / 2) return i;
             }
             return -1;
         }

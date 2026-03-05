@@ -33,7 +33,7 @@ public class MaxWeight {
     private boolean[][] visited;    // 这里其实就对应的动态规划中的状态
 
     public void backtrace(int[] weights, int capacity, int i, int cw) {
-        if (i == weights.length || cw >= capacity) {
+        if (i == weights.length || cw == capacity) {
             maxWeight = Math.max(maxWeight, cw);
             return;
         }

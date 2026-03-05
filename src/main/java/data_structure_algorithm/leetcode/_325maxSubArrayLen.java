@@ -12,6 +12,27 @@ public class _325maxSubArrayLen {
      * 题目链接：https://blog.csdn.net/qq_29051413/article/details/108659861
      */
 
+    public static class Solution0 {
+
+
+        /**
+         * PreSum + Hash: O(N), O(N)
+         */
+        public int maxSubArrayLen(int[] nums, int k) {
+            int maxLen = 0;
+            long preSum = 0;
+            Map<Long, Integer> preSum2Idx = new HashMap<>();
+            preSum2Idx.put(preSum, -1);
+            for (int i = 0; i < nums.length; i++) {
+                preSum += nums[i];
+                maxLen = Math.max(maxLen, i - preSum2Idx.getOrDefault(preSum - k, i));
+                preSum2Idx.putIfAbsent(preSum, i);
+            }
+            return maxLen;
+        }
+
+    }
+
     public static class Solution1 {
 
         @Test

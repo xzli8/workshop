@@ -11,9 +11,8 @@ public class _865subtreeWithAllDeepest {
     public static class Solution1 {
 
         /**
-         DFS: (DFS + 1644)
-         TC: O(N)
-         SC: O(N)
+         DFS: O(N), O(N)
+         Note: 先找到所有最深节点(DFS or BFS都可以)，然后找这些节点的LCA(DFS)[1644]。
          */
          public TreeNode subtreeWithAllDeepest(TreeNode root) {
              findDeepestNodes(root, 0);
@@ -47,18 +46,17 @@ public class _865subtreeWithAllDeepest {
     }
 
 
-
     public static class Solution2 {
 
         /**
-         DFS
-         TC: O(N)
-         SC: O(N)
+         DFS(postorder): O(N), O(N)
+         Note: 遍历的同时计算深度并做取舍
          */
         public TreeNode subtreeWithAllDeepest(TreeNode root) {
             return dfs(root).getKey();
         }
 
+        // 返回以当前节点为根节点的具有最深节点的最小子树的根节点(key)和最深深度(value)
         private Pair<TreeNode, Integer> dfs(TreeNode root) {
             if (root == null) return new Pair<>(root, 0);
             Pair<TreeNode, Integer> left = dfs(root.left), right = dfs(root.right);

@@ -11,23 +11,22 @@ public class NowCoder_207sortLinkedList {
     public static class Solution1 {
 
         /**
-         拆分 + 反转 + 合并
-         时间复杂度：O(N)
-         空间复杂度：O(1)
+         奇偶拆分+反转偶数链表+合并两个升序链表: O(N), O(1)
          */
         public ListNode sortLinkedList (ListNode head) {
             // 奇偶拆分
-            ListNode odd = new ListNode(0), even = new ListNode(0);
-            ListNode p = head, p1 = odd, p2 = even;
+            ListNode odd = new ListNode(0), even = new ListNode(0), p1 = odd, p2 = even, p = head;
             while (p != null && p.next != null) {
                 p1.next = p;
-                p2.next = p.next;
+                p = p.next;
                 p1 = p1.next;
+                p2.next = p;
+                p = p.next;
                 p2 = p2.next;
-                p = p.next.next;
             }
             if (p != null) {
                 p1.next = p;
+                p = p.next;
                 p1 = p1.next;
             }
             p1.next = null;
@@ -45,27 +44,22 @@ public class NowCoder_207sortLinkedList {
 
             // 合并两个升序链表
             ListNode dummy = new ListNode(0);
-            p = dummy; p1 = odd.next; p2 = prev;
+            p1 = odd.next;
+            p2 = prev;
+            p = dummy;
             while (p1 != null && p2 != null) {
                 if (p1.val < p2.val) {
                     p.next = p1;
                     p1 = p1.next;
+                    p = p.next;
                 } else {
                     p.next = p2;
                     p2 = p2.next;
+                    p = p.next;
                 }
-                p = p.next;
             }
-            while (p1 != null) {
-                p.next = p1;
-                p1 = p1.next;
-                p = p.next;
-            }
-            while (p2 != null) {
-                p.next = p2;
-                p2 = p2.next;
-                p = p.next;
-            }
+            if (p1 != null) p.next = p1;
+            if (p2 != null) p.next = p2;
             return dummy.next;
         }
 

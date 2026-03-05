@@ -2,6 +2,23 @@ package data_structure_algorithm.leetcode;
 
 public class _27removeElement {
 
+    public static class Solution0 {
+
+        /**
+         一次遍历:O(N), O(1)
+         */
+        public int removeElement(int[] nums, int val) {
+            int i = 0;
+            for (int num : nums) {
+                if (num != val) {
+                    nums[i++] = num;
+                }
+            }
+            return i;
+        }
+
+    }
+
     public static class Solution1 {
 
         /**

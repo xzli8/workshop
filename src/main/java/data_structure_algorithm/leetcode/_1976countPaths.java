@@ -10,12 +10,12 @@ public class _1976countPaths {
     public static class Solution1 {
 
         /**
-         Dijkstra算法:有向正权图
+         Dijkstra + PriorityQueue: O(NlogN), O(N)
          */
         public int countPaths(int n, int[][] roads) {
             // 构建图(邻接表):无向图转换成双向图
             List<int[]>[] graph = new ArrayList[n];
-            for (int i = 0; i < n; i++) graph[i] = new ArrayList<int[]>();
+            Arrays.setAll(graph, e -> new ArrayList<>());
             for (int[] road : roads) {
                 int from = road[0], to = road[1], weight = road[2];
                 graph[from].add(new int[] {to, weight});
@@ -23,7 +23,7 @@ public class _1976countPaths {
             }
 
             // 记录从起点出发到每个点最短距离的数量
-            int mod = 1000000007;
+            int mod = (int) 1e9 + 7;
             int[] ways = new int[n];
             ways[0] = 1;
 

@@ -31,8 +31,28 @@ public class _129sumNumbers {
     }
 
 
-
     public class Solution2 {
+
+        /**
+         DFS: O(N), O(N)
+         Note: 用StringBuilder或者List来记录路径，这样效率会慢一些，但能得到路径。
+         */
+        public int sumNumbers(TreeNode root) {
+            dfs(root, new StringBuilder());
+            return sum;
+        }
+
+        private int sum = 0;
+        private void dfs(TreeNode root, StringBuilder path) {
+            if (root == null) return;
+            path.append(root.val);
+            if (root.left == null && root.right == null) {
+                sum += Integer.valueOf(path.toString());
+            }
+            dfs(root.left, path);
+            dfs(root.right, path);
+            path.deleteCharAt(path.length() - 1);
+        }
 
     }
 

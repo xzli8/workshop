@@ -5,6 +5,25 @@ import java.util.Map;
 
 public class _525findMaxLength {
 
+    public static class Solution0 {
+
+        /**
+         PreSum + Hash: O(N), O(N)
+         */
+        public int findMaxLength(int[] nums) {
+            int maxLen = 0, preSum = 0;
+            Map<Integer, Integer> preSum2Idx = new HashMap<>();
+            preSum2Idx.put(preSum, -1);
+            for (int i = 0; i < nums.length; i++) {
+                preSum += nums[i] == 0 ? -1 : 1;
+                maxLen = Math.max(maxLen, i - preSum2Idx.getOrDefault(preSum, i));
+                preSum2Idx.putIfAbsent(preSum, i);
+            }
+            return maxLen;
+        }
+
+    }
+
     public static class Solution1 {
 
         /**

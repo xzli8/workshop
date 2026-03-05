@@ -7,6 +7,7 @@ public class _233countDigitOne {
         /**
          数学：找规律，计算每一位上1出现的次数
          参考题解：https://leetcode.cn/problems/1nzheng-shu-zhong-1chu-xian-de-ci-shu-lcof/solutions/229751/mian-shi-ti-43-1n-zheng-shu-zhong-1-chu-xian-de-2/
+                 https://leetcode.cn/problems/number-of-digit-one/solutions/2362053/233-shu-zi-1-de-ge-shu-qing-xi-tu-jie-by-pgb1/
 
          时间复杂度：O(logN)
          空间复杂度：O(1)

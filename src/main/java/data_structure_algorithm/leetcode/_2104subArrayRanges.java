@@ -42,6 +42,7 @@ public class _2104subArrayRanges {
 
         /**
          单调栈(类似题："907.子数组的最小值之和")
+         Note: 计算每个元素nums[i]作为区间最大值的次数k1和最小值的次数k2，最终nums[i]的贡献为(k1 - k2) * nums[i]
          ref:https://leetcode.cn/problems/sum-of-subarray-ranges/solutions/1308898/gong-shui-san-xie-yi-ti-san-jie-qu-jian-wn84z/
          时间复杂度：O(N)
          空间复杂度：O(N)
@@ -59,6 +60,9 @@ public class _2104subArrayRanges {
             }
             s.clear();
             for (int i = n - 1; i >= 0; i--) {
+                // 为什么这里是<=，而不是和上面一样是<？
+                // 因为一个子数组里面可能有多个相同的最小值，为了不重复，那此时这个子数组只能让一个最小值做贡献。
+                // 所以为了统一，可以让最小值里面的最左边的值来做贡献。(也可以让前面是<=，这里是<)
                 while (!s.isEmpty() && nums[i] <= nums[s.peek()]) s.pop();
                 minRight[i] = s.isEmpty() ? n : s.peek();
                 s.push(i);

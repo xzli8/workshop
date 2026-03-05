@@ -60,7 +60,7 @@ public class _301removeInvalidParentheses {
             }
             // 当前字符不是括号，不能删除，保持原样
             else {
-                backtrace(s, index + 1, cur + String.valueOf(c), sum);
+                backtrace(s, index + 1, cur + c, sum);
             }
         }
 

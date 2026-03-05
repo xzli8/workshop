@@ -78,6 +78,8 @@ public class _146LRUCache {
             private Node removeNode(Node node) {
                 node.next.prev = node.prev;
                 node.prev.next = node.next;
+                node.prev = null;
+                node.next = null;
                 return node;
             }
 

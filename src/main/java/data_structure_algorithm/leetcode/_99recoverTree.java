@@ -22,11 +22,11 @@ public class _99recoverTree {
              TreeNode x = null, y = null;
              for (int i = 1; i < inorder.size(); i++) {
                  if (inorder.get(i).val < inorder.get(i - 1).val) {
-                     // 这里不太好理解。可以分为两种情况来考虑：
-                     // 第一种是存在一对逆序对：直接交换
-                     // 第二种是存在两对逆序对：交换第一个逆序对的前一个元素和第二个逆序对的后一个元素
+                     // 这里需要分为两种情况来考虑：
+                     // 第一种是存在一对逆序对(相邻节点交换)：直接交换
+                     // 第二种是存在两对逆序对(不相邻节点交换)：交换第一个逆序对的前一个元素和第二个逆序对的后一个元素
                      y = inorder.get(i);
-                     if (x == null) x = inorder.get(i - 1);
+                     if (x == null) x = inorder.get(i - 1); // x为第一个逆序对的前一个元素
                  }
              }
              if (x != null && y != null) {
@@ -73,7 +73,7 @@ public class _99recoverTree {
              }
          }
 
-         private TreeNode x = null, y = null, prev = null;
+         private TreeNode x = null, y = null, prev = null;  // prev就是中序遍历的前一个节点
          private void dfs(TreeNode cur) {
              if (cur == null) return;
              dfs(cur.left);

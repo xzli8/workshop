@@ -11,7 +11,8 @@ public class _1008bstFromPreorder {
     public static class Solution1 {
 
         /**
-         Sort + Build
+         Sort + DFS: O(NlogN)[排序O(NlogN)，构建O(N)], O(N)
+         Note: BST的inorder为有序数组，可以先将preorder排序得到inorder，然后根据preorder+inorder构建树
          */
         public TreeNode bstFromPreorder(int[] preorder) {
             // sort to get inorder

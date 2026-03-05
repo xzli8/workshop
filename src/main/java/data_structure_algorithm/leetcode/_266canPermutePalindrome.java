@@ -24,6 +24,26 @@ public class _266canPermutePalindrome {
      *
      */
 
+    public static class Solution0 {
+
+        public boolean canPermutePalindrome(String s) {
+            // 记录s中每个字符出现的次数
+            int[] counts = new int[26];
+            for (char c : s.toCharArray()) {
+                counts[c - 'a']++;
+            }
+
+            int oddCount = 0;
+            for (int count : counts) {
+                if (count % 2 == 1) {
+                    oddCount++;
+                }
+            }
+            return oddCount < 2;
+        }
+
+    }
+
     public static class Solution1 {
 
         /**

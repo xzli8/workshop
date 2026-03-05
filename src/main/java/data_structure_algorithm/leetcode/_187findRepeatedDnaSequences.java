@@ -78,9 +78,8 @@ public class _187findRepeatedDnaSequences {
                 if (right - left == len) {
                     if (seen.contains(windowHash)) {
                         res.add(s.substring(left, right));
-                    } else {
-                        seen.add(windowHash);
                     }
+                    seen.add(windowHash);
 
                     // 缩小窗口，移除字符，重新计算哈希值
                     windowHash = windowHash - nums[left++] * factor;

@@ -1,11 +1,31 @@
 package data_structure_algorithm.leetcode;
 
+import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.Random;
 
 public class Mianshiti_17_14smallestK {
 
     public static class Solution1 {
+
+        /**
+         * 排序: O(NlogN), O(1)
+         */
+        public int[] smallestK(int[] arr, int k) {
+            // 排序
+            Arrays.sort(arr);
+
+            // 取前K个数
+            int[] res = new int[k];
+            for (int i = 0; i < k; ++i) {
+                res[i] = arr[i];
+            }
+            return res;
+        }
+
+    }
+
+    public static class Solution2 {
 
         /**
          优先队列
@@ -34,11 +54,10 @@ public class Mianshiti_17_14smallestK {
 
 
 
-    public static class Solution2 {
-
+    public static class Solution3 {
 
         /**
-         用快速排序中的partion思想
+         用快速排序中的partition思想
          时间复杂度：O(N)
          空间复杂度：O(1)
          */
@@ -88,8 +107,6 @@ public class Mianshiti_17_14smallestK {
             nums[i] = nums[j];
             nums[j] = tmp;
         }
-
-
 
     }
 

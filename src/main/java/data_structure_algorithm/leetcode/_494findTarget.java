@@ -2,12 +2,11 @@ package data_structure_algorithm.leetcode;
 
 public class _494findTarget {
 
-    public static class Solution0 {
+    public static class Solution1 {
 
         /**
-         DFS：枚举每个数的两种可能
-         时间复杂度：O(2^N)
-         空间复杂度：O(N)
+         DFS：O(2^N), O(N)
+         Note: 每个数前面可能是“+”也可能是“—”，枚举每一种可能，计算每种可能的sum。(能否用备忘录？不能，因为没有重复子问题)
          */
         public int findTargetSumWays(int[] nums, int target) {
             dfs(nums, 0, target);
@@ -28,39 +27,6 @@ public class _494findTarget {
     }
 
 
-
-    public static class Solution1 {
-
-        /**
-         回溯：每个数前面可能是“+”也可能是“—”，枚举每一种可能，计算每种可能的sum
-         时间复杂度：(2^N)，指数级别
-         空间复杂度：O(N)
-
-         思考：能否用备忘录？不能，因为没有重复子问题
-         */
-        public int findTargetSumWays(int[] nums, int target) {
-            findTarget(nums, target, 0, 0);
-            return count;
-        }
-
-        private int count = 0;
-
-        private void findTarget(int[] nums, int target, int i, int sum) {
-            if (i == nums.length) {
-                if (sum == target) {
-                    count++;
-                }
-                return;
-            }
-
-            findTarget(nums, target, i + 1, sum + nums[i]);
-            findTarget(nums, target, i + 1, sum - nums[i]);
-        }
-
-    }
-
-
-
     public static class Solution2 {
 
         /**
@@ -76,16 +42,12 @@ public class _494findTarget {
          */
         public int findTargetSumWays(int[] nums, int target) {
             // 求和
-            int n = nums.length, sum = 0;
-            for (int num : nums) {
-                sum += num;
-            }
+            int sum = 0;
+            for (int num : nums) sum += num;
 
             // 排除不可能情况
             if (sum < target) return 0;
-            if ((sum - target) % 2 != 0) {
-                return 0;
-            }
+            if ((sum - target) % 2 != 0) return 0;
 
             // 计算和为negative的组合数(01背包问题)
             int negative = (sum - target) / 2;

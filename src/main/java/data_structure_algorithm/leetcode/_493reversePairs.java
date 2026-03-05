@@ -5,9 +5,9 @@ public class _493reversePairs {
     public static class Solution1 {
 
         /**
-         分治(归并排序)：在两个有序数组中，翻转对的数量等于两个数组中翻转对的数量和左右端点分别位于两个子数组的翻转对数目
-         时间复杂度：O(NlogN)
-         空间复杂度：O(N)
+         分治(归并排序)：O(NlogN), O(N)
+         Note: 在两个有序数组中，翻转对的数量等于两个数组中翻转对的数量和左右端点分别位于两个子数组的翻转对数目
+         Ref: https://leetcode.cn/problems/reverse-pairs/solutions/501005/fan-zhuan-dui-by-leetcode-solution/
          */
         public int reversePairs(int[] nums) {
             int n = nums.length;
@@ -19,7 +19,7 @@ public class _493reversePairs {
             int mid = left + ((right - left) >> 1);
             int res = mergeSort(nums, tmp, left, mid) + mergeSort(nums, tmp, mid + 1, right);
 
-            // 计算左右子端点分别位于两个子数组中的翻转对数目
+            // 计算左右子端点分别位于两个子数组中的翻转对数目：对于每个l，枚举r直到满足条件(因为经过前面的排序，两部分都是升序数组，所以l和r只能右移)
             int l = left, r = mid + 1;
             while (l <= mid) {
                 while (r <= right && (long) nums[l] > 2 * (long) nums[r]) r++;

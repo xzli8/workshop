@@ -7,6 +7,72 @@ import java.util.List;
 
 public class _1721swapNodes {
 
+    public static class Solution0 {
+
+        /**
+         用双指针交换链表节点的值: O(N), O(1)
+         */
+        // public ListNode swapNodes(ListNode head, int k) {
+        //     ListNode kth = head;
+        //     for (int i = 1; i < k; i++) {
+        //         kth = kth.next;
+        //     }
+
+        //     ListNode kthToLast = head, cur = kth;
+        //     while (cur.next != null) {
+        //         cur = cur.next;
+        //         kthToLast = kthToLast.next;
+        //     }
+
+        //     int tmp = kth.val;
+        //     kth.val = kthToLast.val;
+        //     kthToLast.val = tmp;
+        //     return head;
+        // }
+
+        /**
+         交换实际节点: O(N), O(1)
+         */
+        public ListNode swapNodes(ListNode head, int k) {
+            ListNode dummy = new ListNode(0, head), kth = head, prevKth = dummy;
+            for (int i = 1; i < k; i++) {
+                kth = kth.next;
+                prevKth = prevKth.next;
+            }
+
+            ListNode kthToLast = head, prevKthToLast = dummy, cur = kth;
+            while (cur.next != null) {
+                cur = cur.next;
+                kthToLast = kthToLast.next;
+                prevKthToLast = prevKthToLast.next;
+            }
+
+            // corner case: 待交换的两节点相邻时要特殊处理，否则会形成环
+            if (kth == kthToLast) {
+                return dummy.next;
+            } else if (kth.next == kthToLast) {
+                prevKth.next = kthToLast;
+                kth.next = kthToLast.next;
+                kthToLast.next = kth;
+            } else if (kthToLast.next == kth) {
+                prevKthToLast.next = kth;
+                kthToLast.next = kth.next;
+                kth.next = kthToLast;
+            } else {
+                // general case
+                ListNode kthNext = kth.next;
+                kth.next = kthToLast.next;
+                kthToLast.next = kthNext;
+                prevKth.next = kthToLast;
+                prevKthToLast.next = kth;
+            }
+            return dummy.next;
+        }
+
+    }
+
+
+
     public static class Solution1 {
 
         /**
@@ -46,7 +112,7 @@ public class _1721swapNodes {
         /**
          swap the values of two nodes only using two pointers
          TimeComplexity: O(N)
-         SpaceComplexity: O(N)
+         SpaceComplexity: O(1)
          */
         public ListNode swapNodes(ListNode head, int k) {
             // find k-th

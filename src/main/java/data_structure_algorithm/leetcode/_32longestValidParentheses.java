@@ -10,9 +10,8 @@ public class _32longestValidParentheses {
     public static class Solution1 {
 
         /**
-         栈：用栈遍历一遍，将无法匹配的括号的位置标记为false，转换为寻找最长连续true的长度
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         栈 + 滑动窗口：O(N), O(N)
+         Note: 用栈遍历一遍，将无法匹配的括号的位置标记为false，转换为寻找最长连续true的长度
          */
          public int longestValidParentheses(String s) {
              // 初始化标记数组
@@ -50,14 +49,12 @@ public class _32longestValidParentheses {
     }
 
 
-
     public static class Solution2 {
 
         /**
-         栈：保持栈底元素为当前已遍历过的元素中最后一个没有被匹配的右括号的下标
-         ref:https://leetcode.cn/problems/longest-valid-parentheses/solutions/314683/zui-chang-you-xiao-gua-hao-by-leetcode-solution/
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         栈：O(N), O(N)
+         Note: 保持栈底元素为当前已遍历过的元素中最后一个没有被匹配的右括号的下标
+         Ref:https://leetcode.cn/problems/longest-valid-parentheses/solutions/314683/zui-chang-you-xiao-gua-hao-by-leetcode-solution/
          */
          public int longestValidParentheses(String s) {
              int maxLen = 0;
@@ -75,7 +72,6 @@ public class _32longestValidParentheses {
          }
 
     }
-
 
 
     public static class Solution3 {

@@ -37,33 +37,22 @@ public class _2100goodDaysToRobBank {
         //     return true;
         // }
 
-
         /**
-         PreComputation
+         DP: O(N), O(N)
          */
         public List<Integer> goodDaysToRobBank(int[] security, int time) {
-            // PreCompute
             int n = security.length;
-            int[] beforeNonIncreases = new int[n], afterNonDecreases = new int[n];
+            int[] left = new int[n], right = new int[n];
             for (int i = 1; i < n; i++) {
-                if (security[i - 1] >= security[i]) {
-                    beforeNonIncreases[i] = beforeNonIncreases[i - 1] + 1;
-                } else {
-                    beforeNonIncreases[i] = 0;
-                }
+                left[i] = security[i] <= security[i - 1] ? left[i - 1] + 1 : 0;
             }
             for (int i = n - 2; i >= 0; i--) {
-                if (security[i] <= security[i + 1]) {
-                    afterNonDecreases[i] = afterNonDecreases[i + 1] + 1;
-                } else {
-                    afterNonDecreases[i] = 0;
-                }
+                right[i] = security[i] <= security[i + 1] ? right[i + 1] + 1 : 0;
             }
 
-            // compute
             List<Integer> res = new ArrayList<>();
-            for (int i = time; i + time < n; i++) {
-                if (beforeNonIncreases[i] >= time && afterNonDecreases[i] >= time) {
+            for (int i = time; i < n - time; i++) {
+                if (time <= Math.min(left[i], right[i])) {
                     res.add(i);
                 }
             }

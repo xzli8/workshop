@@ -11,6 +11,7 @@ public class _95generateTrees {
 
         /**
          回溯
+         Note: 每次都枚举不同的节点作为根节点，同时dfs求根节点的左右子树，然后从左右子树中各选择一个拼接在根节点下。
          */
         public List<TreeNode> generateTrees(int n) {
             if (n == 0) return new ArrayList<>();

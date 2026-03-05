@@ -10,8 +10,8 @@ public class _91numDecodings {
          动态规划
          定义状态：dp[i]表示前i个字符s[1...i]的解码方法数
          状态转移：dp[i]可能由dp[i-1]或者dp[i-2]转换而来
-         if s[i]属于[1, 9]，dp[i] = dp[i-1]
-         if s[i-1]不等于0，并且s[i-1]s[i]属于[1,26]，dp[i] = dp[i-2]
+         if s[i]属于[1, 9]，dp[i] += dp[i-1]
+         if s[i-1]不等于0，并且s[i-1]s[i]属于[1,26]，dp[i] += dp[i-2]
          时间复杂度：O(n)
          空间复杂度：O(n)
          */
@@ -48,6 +48,7 @@ public class _91numDecodings {
         public int numDecodings(String s) {
             int n = s.length(), a = 0, b = 1, c = 0;    // a = dp[i - 2], b = dp[i - 1], c = dp[i]
             for (int i = 1; i <= n;  i++) {
+                // 这里要用"*"，用"+"的话会一直累加，不对
                 c = b * check1Digit(s.charAt(i - 1));
                 if (i > 1) {
                     c += a * check2Digits(s.charAt(i - 2), s.charAt(i - 1));

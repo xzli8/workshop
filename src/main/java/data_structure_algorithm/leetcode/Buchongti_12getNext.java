@@ -22,6 +22,9 @@ public class Buchongti_12getNext {
 
     public class Solution {
 
+        /**
+         * Note: Morris遍历是找中序遍历的前驱节点，这里是找后继节点
+         */
         public TreeLinkNode GetNext(TreeLinkNode pNode) {
             // 存在右子树时，返回右子树的最左侧节点
             if (pNode.right != null) {

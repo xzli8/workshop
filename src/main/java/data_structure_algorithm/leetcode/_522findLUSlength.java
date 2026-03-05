@@ -21,32 +21,46 @@ public class _522findLUSlength {
                 boolean isUS = true;
                 for (int j = 0; j < n && isUS; j++) {
                     if (i == j) continue;
-                    if (check(strs[i], strs[j])) isUS = false;
+                    if (isSubSeq(strs[i], strs[j])) isUS = false;
                 }
                 if (isUS) res = strs[i].length();
             }
             return res;
         }
 
-        //
+        /**
+         * 检查s1是否是s2的子序列：双指针(392.判断子序列)
+         */
+        private boolean isSubSeq(String s1, String s2) {
+            int i1 = 0, i2 = 0;
+            while (i1 < s1.length() && i2 < s2.length()) {
+                if (s1.charAt(i1) == s2.charAt(i2)) {
+                    i1++;
+                }
+                i2++;
+            }
+            return i1 == s1.length();
+        }
+
         /**
          检查s1是否为s2的子序列：转换为求s1和s2的最长公共子序列长度
+         O(M * N), O(M * N)
          */
-        private boolean check(String s1, String s2) {
-            int n1 = s1.length(), n2 = s2.length();
-            if (n1 > n2) return false;
-            int[][] dp = new int[n1 + 1][n2 + 1];
-            for (int i = 1; i <= n1; i++) {
-                for (int j = 1; j <= n2; j++) {
-                    if (s1.charAt(i - 1) == s2.charAt(j - 1)) {
-                        dp[i][j] = dp[i - 1][j - 1] + 1;
-                    } else {
-                        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
-                    }
-                }
-            }
-            return dp[n1][n2] == n1;
-        }
+//        private boolean isSubSeq(String s1, String s2) {
+//            int n1 = s1.length(), n2 = s2.length();
+//            if (n1 > n2) return false;
+//            int[][] dp = new int[n1 + 1][n2 + 1];
+//            for (int i = 1; i <= n1; i++) {
+//                for (int j = 1; j <= n2; j++) {
+//                    if (s1.charAt(i - 1) == s2.charAt(j - 1)) {
+//                        dp[i][j] = dp[i - 1][j - 1] + 1;
+//                    } else {
+//                        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+//                    }
+//                }
+//            }
+//            return dp[n1][n2] == n1;
+//        }
 
     }
 

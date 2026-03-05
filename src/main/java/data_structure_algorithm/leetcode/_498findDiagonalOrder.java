@@ -2,6 +2,33 @@ package data_structure_algorithm.leetcode;
 
 public class _498findDiagonalOrder {
 
+    public static class Solution0 {
+
+        /**
+         模拟：O(N), O(1)
+         */
+        public int[] findDiagonalOrder(int[][] mat) {
+            int m = mat.length, n = mat[0].length, idx = 0;
+            int[] res = new int[m * n];
+            for (int i = 0; i < m + n - 1; i++) {
+                // 偶数，从下往上遍历
+                if (i % 2 == 0) {
+                    // 确定起点
+                    int r = i < m ? i : m - 1, c = i - r;
+                    while (r >= 0 && c < n) res[idx++] = mat[r--][c++];
+                }
+                // 奇数，从上往下遍历
+                else {
+                    // 确定起点
+                    int c = i < n ? i : n - 1, r = i - c;
+                    while (c >= 0 && r < m) res[idx++] = mat[r++][c--];
+                }
+            }
+            return res;
+        }
+
+    }
+
     public static class Solution1 {
 
         /**

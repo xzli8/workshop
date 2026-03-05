@@ -9,11 +9,13 @@ public class _2867countPaths {
     public static class Solution1 {
 
         /**
-         埃氏筛 + DFS
-         ref:https://leetcode.cn/problems/count-valid-paths-in-a-tree/solutions/2654126/tong-ji-shu-zhong-de-he-fa-lu-jing-shu-m-yyuw/
-         https://leetcode.cn/problems/count-valid-paths-in-a-tree/solutions/2456716/tu-jie-on-xian-xing-zuo-fa-pythonjavacgo-tjz2/
-         时间复杂度：
-         空间复杂度：
+         埃氏筛 + DFS:
+         Note: 分别以质数节点为根，用「深度优先搜索」的方式，递归搜索所有的非质数的子树，并求出所有子树的大小，搜索过程中只搜索非质数节点。
+            任何两个来自不同子树的节点，其路径都通过质数根节点，路径上恰好只有根节点一个质数节点，根据题意路径是合法的。
+            我们只需要把所子树大小，两两相乘并求和，就可以得到包含根节点的所有合法路径。遍历所有质数节点，并且重复上述过程，便可以得到所有合法路径的数目，返回为最终结果。
+
+         Ref:https://leetcode.cn/problems/count-valid-paths-in-a-tree/solutions/2654126/tong-ji-shu-zhong-de-he-fa-lu-jing-shu-m-yyuw/
+             https://leetcode.cn/problems/count-valid-paths-in-a-tree/solutions/2456716/tu-jie-on-xian-xing-zuo-fa-pythonjavacgo-tjz2/
          */
         public long countPaths(int n, int[][] edges) {
             // 埃氏筛(预处理)："204.计数质数"
@@ -28,7 +30,7 @@ public class _2867countPaths {
             }
 
             // 将邻接矩阵转换成邻接表(初始化图)
-            List<Integer>[] g = new ArrayList[n + 1];
+            List<Integer>[] g = new ArrayList[n + 1];   // 边数 = 节点数 + 1
             for (int i = 0; i <= n; i++) g[i] = new ArrayList<>();
             for (int[] edge : edges) {
                 g[edge[0]].add(edge[1]);
@@ -41,9 +43,10 @@ public class _2867countPaths {
             long[] count = new long[n + 1];
             for (int i = 1; i <= n; i++) {
                 if (!isPrime[i]) continue;  // 从以质数为根的节点开始
-                long cur = 0;
+
+                long cur = 0;   // 对于cur的解释:https://leetcode.cn/problems/count-valid-paths-in-a-tree/solutions/2654126/tong-ji-shu-zhong-de-he-fa-lu-jing-shu-m-yyuw/comments/2240081/
                 for (int j : g[i]) {
-                    if (isPrime[j]) continue;   // 遇到质数就跳过
+                    if (isPrime[j]) continue;   // 遇到质数就跳过(只搜索非质数节点)
                     if (count[j] == 0) {
                         seen.clear();
                         dfs(g, seen, j, 0);

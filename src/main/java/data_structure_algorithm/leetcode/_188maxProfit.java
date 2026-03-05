@@ -1,5 +1,7 @@
 package data_structure_algorithm.leetcode;
 
+import java.util.Arrays;
+
 public class _188maxProfit {
 
     /**
@@ -22,20 +24,17 @@ public class _188maxProfit {
         public int maxProfit(int k, int[] prices) {
             int n = prices.length;
 
-            // 初始化状态(k = 0, i = 0)
+            // 定义状态
             int[][][] dp = new int[n][2][k+1];
-            for (int i = 0; i < n; i++) {   // k = 0
-                dp[i][0][0] = 0;
-                dp[i][1][0] = 0;
-            }
-            for (int j = 1; j <= k; j++) {  // i = 0
-                dp[0][0][j] = 0;
-                dp[0][1][j] = -prices[0];
-            }
+
+            // 初始化状态
+            Arrays.fill(dp[0][0], 0);
+            Arrays.fill(dp[0][1], -prices[0]);
 
             // 状态转移
             for (int i = 1; i < n; i++) {
                 for (int j = 1; j <= k; j++) {
+                    // 买入的时候计算交易次数，卖出的时候不计算交易次数
                     dp[i][0][j] = Math.max(dp[i-1][0][j], dp[i-1][1][j] + prices[i]);
                     dp[i][1][j] = Math.max(dp[i-1][1][j], dp[i-1][0][j-1] - prices[i]);
                 }

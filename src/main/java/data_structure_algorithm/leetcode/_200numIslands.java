@@ -9,6 +9,46 @@ public class _200numIslands {
      * ref: https://leetcode.cn/problems/number-of-islands/solutions/211211/dao-yu-lei-wen-ti-de-tong-yong-jie-fa-dfs-bian-li-/
      */
 
+    public static class Solution0 {
+
+        // DFS: 用visited数组标记
+        public Integer number_of_islands(int[][] grid) {
+            if (grid == null || grid.length == 0 || grid[0].length == 0) return 0;
+
+            this.count = 0;
+            this.m = grid.length;
+            this.n = grid[0].length;
+            this.grid = grid;
+            this.visited = new boolean[m][n];
+
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (grid[i][j] == 1 && !visited[i][j]) {
+                        count++;
+                        dfs(i, j);
+                    }
+                }
+            }
+            return count;
+        }
+
+        private int m, n, count;
+        private int[][] grid;
+        private boolean[][] visited;
+        private int[][] dirs = new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+
+        private void dfs(int x, int y) {
+            visited[x][y] = true;
+            for (int[] dir : dirs) {
+                int xx = x + dir[0], yy = y + dir[1];
+                if (0 <= xx && xx < m && 0 <= yy && yy < n && grid[xx][yy] == 1 && !visited[xx][yy]) {
+                    dfs(xx, yy);
+                }
+            }
+        }
+
+    }
+
     public static class Solution1 {
 
         /**

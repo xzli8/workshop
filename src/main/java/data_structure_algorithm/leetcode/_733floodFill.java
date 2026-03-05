@@ -1,13 +1,15 @@
 package data_structure_algorithm.leetcode;
 
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Queue;
+
 public class _733floodFill {
 
     public static class Solution1 {
 
         /**
-         DFS
-         时间复杂度：O(M * N)
-         空间复杂度：O(M * N)
+         DFS: O(M * N), O(M * N)
          */
         public int[][] floodFill(int[][] image, int sr, int sc, int color) {
             // 初始化
@@ -37,6 +39,37 @@ public class _733floodFill {
             }
         }
 
+    }
+
+
+    public static class Solution2 {
+
+        /**
+         BFS: O(M * N), O(M * N)
+         */
+        public int[][] floodFill(int[][] image, int sr, int sc, int color) {
+            int m = image.length, n = image[0].length, srcColor = image[sr][sc];
+            int[][] dirs = new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+            boolean[][] visited = new boolean[m][n];
+            for (int i = 0; i < m; i++) Arrays.fill(visited[i], false);
+
+            Queue<int[]> q = new ArrayDeque<>();
+            q.offer(new int[] {sr, sc});
+            visited[sr][sc] = true;
+            image[sr][sc] = color;
+            while (!q.isEmpty()) {
+                int[] cur = q.poll();
+                for (int[] dir : dirs) {
+                    int x = cur[0] + dir[0], y = cur[1] + dir[1];
+                    if (0 <= x && x < m && 0 <= y && y < n && !visited[x][y] && image[x][y] == srcColor) {
+                        q.offer(new int[] {x, y});
+                        visited[x][y] = true;
+                        image[x][y] = color;
+                    }
+                }
+            }
+            return image;
+        }
 
     }
 

@@ -86,11 +86,9 @@ public class _1319makeConnected {
             }
 
             UnionFind uf = new UnionFind(n);
-            int unused = 0;
             for (int[] connection : connections) {
                 int a = connection[0], b = connection[1];
                 if (uf.isConnected(a, b)) {
-                    unused++;
                     continue;
                 }
                 uf.connect(a, b);

@@ -24,6 +24,7 @@ public class _496nextGreaterElement {
             Deque<Integer> s = new LinkedList<>();
             for (int i = n2 - 1; i >= 0; i--) {
                 int num = nums2[i];
+                // 当前元素更大，后面的元素被“遮挡住”看不见，可以pop(注意=情况也要被pop)
                 while (!s.isEmpty() && s.peek() <= num) {
                     s.pop();
                 }

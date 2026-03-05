@@ -48,6 +48,7 @@ public class _126findLadders {
                         for (char c = 'a'; c <= 'z'; c++) {
                             charArray[j] = c;
                             String nextWord = String.valueOf(charArray);
+                            // 因为后面有dict.remove(nextWord)，所以这里需要判断
                             if (steps.containsKey(nextWord) && step == steps.get(nextWord)) {
                                 from.get(nextWord).add(currWord);
                             }

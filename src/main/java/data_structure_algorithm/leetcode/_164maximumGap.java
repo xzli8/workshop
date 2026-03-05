@@ -7,9 +7,7 @@ public class _164maximumGap {
     public static class Solution1 {
 
         /**
-         RadixSort
-         TimeComplexity: O(N)
-         SpaceComplexity: O(N)
+         RadixSort: O(N), O(N)
          */
         public int maximumGap(int[] nums) {
             int n = nums.length;
@@ -18,6 +16,7 @@ public class _164maximumGap {
             int[] buf = new int[n];
             int maxVal = Arrays.stream(nums).max().getAsInt();
 
+            // 从低位开始用计数排序(如果从高位开始，那么后面低位再排序的时候会影响前面的结果)
             while (maxVal >= exp) {
                 int[] cnt = new int[10];
                 for (int i = 0; i < n; i++) {

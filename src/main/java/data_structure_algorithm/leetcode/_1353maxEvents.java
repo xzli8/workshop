@@ -11,7 +11,7 @@ public class _1353maxEvents {
          贪心 + 优先队列
          贪心：优先选择结束时间早的会议参加，因为其他会议还有更多的机会参加
          优先队列：如何动态获取当前结束时间最早的会议？用小根堆记录所有当前可参加会议的结束时间
-         ref:https://leetcode.cn/problems/maximum-number-of-events-that-can-be-attended/solutions/98119/sao-miao-suan-fa-tan-xin-by-lucifer1004/
+         ref: https://leetcode.cn/problems/maximum-number-of-events-that-can-be-attended/solutions/98119/sao-miao-suan-fa-tan-xin-by-lucifer1004/
          时间复杂度：O(TlogN)，T为数据范围，N为数据量
          空间复杂度：O(N)
          */
@@ -37,6 +37,16 @@ public class _1353maxEvents {
             }
             return res;
         }
+
+    }
+
+
+    public static class Solution2 {
+
+        /**
+         * 并查集
+         * ref: https://leetcode.cn/problems/maximum-number-of-events-that-can-be-attended/solutions/3707151/liang-chong-fang-fa-zui-xiao-dui-bing-ch-ijbf/
+         */
 
     }
 

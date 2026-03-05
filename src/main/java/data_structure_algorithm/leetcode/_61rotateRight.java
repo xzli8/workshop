@@ -4,6 +4,39 @@ import data_structure_algorithm.domain.ListNode;
 
 public class _61rotateRight {
 
+    public static class Solution0 {
+
+        /**
+         计数+求余找split point：O(N), O(1)
+         */
+        public ListNode rotateRight(ListNode head, int k) {
+            if (head == null || head.next == null) return head;
+
+            ListNode p = head;
+            int n = 0;
+            while (p != null) {
+                p = p.next;
+                n++;
+            }
+            if (k % n == 0) return head;    // 注意处理特殊情况
+
+            // 找到分割点(倒数第k%n个节点)
+            ListNode slow = head, fast = head;
+            for (int i = 0; i < k % n; i++) {
+                fast = fast.next;
+            }
+            while (fast.next != null) {
+                slow = slow.next;
+                fast = fast.next;
+            }
+            ListNode newHead = slow.next;
+            slow.next = null;
+            fast.next = head;
+            return newHead;
+        }
+
+    }
+
     public static class Solution1 {
 
         /**

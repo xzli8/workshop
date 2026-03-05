@@ -7,12 +7,10 @@ import java.util.Deque;
 
 public class _230kthSmallest {
 
-    public static class Solution0 {
+    public static class Solution1 {
 
         /**
-         DFS
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         DFS: O(N), O(N)
          */
         public int kthSmallest(TreeNode root, int k) {
             this.k = k;
@@ -29,33 +27,6 @@ public class _230kthSmallest {
         }
 
     }
-
-
-
-    public static class Solution1 {
-
-        /**
-         DFS-递归
-         时间复杂度：O(N)
-         空间复杂度：O(N)
-         */
-         public int kthSmallest(TreeNode root, int k) {
-             this.k = k;
-             dfs(root);
-             return res;
-         }
-
-         private int res, k;
-         private void dfs(TreeNode cur) {
-             if (cur == null) return;
-             dfs(cur.left);
-             if (k == 0) return;
-             if (--k == 0) res = cur.val;
-             dfs(cur.right);
-         }
-
-    }
-
 
 
     public static class Solution2 {

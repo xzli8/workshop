@@ -29,6 +29,7 @@ public class _583minDistance {
                     if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
                         dp[i][j] = dp[i - 1][j - 1];
                     } else {
+                        // dp[i-1][j] -> 删除j; dp[i][j-1] -> 删除i
                         dp[i][j] = Math.min(dp[i - 1][j], dp[i][j - 1]) + 1;
                     }
                 }

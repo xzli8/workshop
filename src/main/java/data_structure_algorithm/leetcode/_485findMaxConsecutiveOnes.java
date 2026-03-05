@@ -25,6 +25,23 @@ public class _485findMaxConsecutiveOnes {
             return maxLen;
         }
 
+        // 另一种写法
+        public int findMaxConsecutiveOnesII(int[] nums) {
+            int n = nums.length, left = 0, right = 0, maxCount = 0;
+            while (right < n) {
+                while (left < n && nums[left] != 1) {
+                    left++;
+                }
+                right = left;
+                while (right < n && nums[right] == 1) {
+                    right++;
+                }
+                maxCount = Math.max(maxCount, right - left);
+                left = ++right;
+            }
+            return maxCount;
+        }
+
     }
 
 }

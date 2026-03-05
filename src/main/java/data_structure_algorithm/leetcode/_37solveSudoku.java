@@ -1,13 +1,14 @@
 package data_structure_algorithm.leetcode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class _37solveSudoku {
 
     public static class Solution1 {
 
         /**
          二维回溯：有行和列两个维度需要同时枚举
-         时间复杂度：
-         空间复杂度：
          */
         public void solveSudoku(char[][] board) {
             backtrace(board);
@@ -48,6 +49,61 @@ public class _37solveSudoku {
         }
 
     }
+
+
+    public static class Solution1_1 {
+
+        /**
+         二维回溯：有行和列两个维度需要同时枚举
+         Note: 找出所有可能的解决方案
+         */
+        public void solveSudoku(char[][] board) {
+            backtrace(board);
+        }
+
+        private List<char[][]> boards = new ArrayList<>();
+        private void backtrace(char[][] board) {
+            for (int row = 0; row < 9; row++) {
+                for (int col = 0; col < 9; col++) {
+                    if (board[row][col] == '.') {
+                        for (char val = '1'; val <= '9'; val++) {
+                            if (isValid(row, col, val, board)) {
+                                board[row][col] = val;
+                                backtrace(board);
+                                board[row][col] = '.';
+                            }
+                        }
+                    }
+                }
+            }
+
+            char[][] copy = new char[board.length][board[0].length];
+            for (int i = 0; i < board.length; i++) {
+                for (int j = 0; j < board[0].length; j++) {
+                    copy[i][j] = board[i][j];
+                }
+            }
+            boards.add(copy);
+        }
+
+        private boolean isValid(int row, int col, char val, char[][] board) {
+            for (int i = 0; i < 9; i++) {
+                if (board[i][col] == val) return false;
+            }
+            for (int j = 0; j < 9; j++) {
+                if (board[row][j] == val) return false;
+            }
+            int startRow = (row / 3) * 3, startCol = (col / 3) * 3;
+            for (int i = startRow; i < startRow + 3; i++) {
+                for (int j = startCol; j < startCol + 3; j++) {
+                    if (board[i][j] == val) return false;
+                }
+            }
+            return true;
+        }
+
+    }
+
 
     public static class Solution2 {
 

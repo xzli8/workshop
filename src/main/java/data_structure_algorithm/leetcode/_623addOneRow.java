@@ -15,9 +15,7 @@ public class _623addOneRow {
          SC: O(N)
          */
         public TreeNode addOneRow(TreeNode root, int val, int depth) {
-            if (depth == 1) {
-                return new TreeNode(val, root, null);
-            }
+            if (depth == 1) return new TreeNode(val, root, null);
 
             Queue<TreeNode> q = new ArrayDeque<>();
             q.offer(root);
@@ -34,6 +32,7 @@ public class _623addOneRow {
                     if (node.left != null) q.offer(node.left);
                     if (node.right != null) q.offer(node.right);
                 }
+                if (depth == 1) break;
             }
             return root;
         }

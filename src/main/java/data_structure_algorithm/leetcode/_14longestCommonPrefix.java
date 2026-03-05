@@ -5,26 +5,44 @@ public class _14longestCommonPrefix {
     public static class Solution0 {
 
         /**
+         纵向扫描: O(N), O(1)
+         */
+        public String longestCommonPrefix(String[] strs) {
+            int minLen = Integer.MAX_VALUE;
+            for (String str : strs) minLen = Math.min(minLen, str.length());
+            for (int i = 0; i < minLen; i++) {
+                char c = strs[0].charAt(i);
+                for (int j = 1; j < strs.length; j++) {
+                    if (strs[j].charAt(i) != c) {
+                        return strs[0].substring(0, i);
+                    }
+                }
+            }
+            return strs[0].substring(0, minLen);
+        }
+
+
+        /**
          遍历(纵向扫描)
          时间复杂度：O(M * N)
          空间复杂度：O(1)
          */
-        public String longestCommonPrefix(String[] strs) {
-            // 计算最短字符串的长度
-            int minLen = Integer.MAX_VALUE;
-            for (String str : strs) minLen = Math.min(minLen, str.length());
-
-            // 遍历所有字符串，求最长公共前缀
-            int i = 0;
-            while (i < minLen) {
-                char c = strs[0].charAt(i);
-                for (int j = 1; j < strs.length; j++) {
-                    if (strs[j].charAt(i) != c) return strs[0].substring(0, i);
-                }
-                i++;
-            }
-            return strs[0].substring(0, i);
-        }
+//        public String longestCommonPrefix(String[] strs) {
+//            // 计算最短字符串的长度
+//            int minLen = Integer.MAX_VALUE;
+//            for (String str : strs) minLen = Math.min(minLen, str.length());
+//
+//            // 遍历所有字符串，求最长公共前缀
+//            int i = 0;
+//            while (i < minLen) {
+//                char c = strs[0].charAt(i);
+//                for (int j = 1; j < strs.length; j++) {
+//                    if (strs[j].charAt(i) != c) return strs[0].substring(0, i);
+//                }
+//                i++;
+//            }
+//            return strs[0].substring(0, i);
+//        }
 
     }
 

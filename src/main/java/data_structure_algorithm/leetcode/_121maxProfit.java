@@ -6,34 +6,6 @@ public class _121maxProfit {
      * ref:https://labuladong.gitee.io/algo/di-ling-zh-bfe1b/yi-ge-fang-3b01b/
      */
 
-    public static class Solution0 {
-
-        /**
-         动态规划
-         时间复杂度：O(N)
-         空间复杂度：O(N)
-         */
-        public int maxProfit(int[] prices) {
-            // 定义状态：dp[i]表示第i天能获取的最大利润
-            int n = prices.length;
-            int[] dp = new int[n];
-
-            // 初始状态
-            dp[0] = 0;
-
-            // 状态转移
-            int minPrice = prices[0];
-            for (int i = 1; i < n; i++) {
-                minPrice = Math.min(minPrice, prices[i]);
-                dp[i] = Math.max(dp[i - 1], prices[i] - minPrice);
-            }
-            return dp[n - 1];
-        }
-
-    }
-
-
-
     public static class Solution1 {
 
         /**
@@ -56,9 +28,7 @@ public class _121maxProfit {
              return dp[n-1];
          }
 
-
     }
-
 
 
     public static class Solution2 {
@@ -67,18 +37,16 @@ public class _121maxProfit {
          动态规划（优化空间）：用一个变量而不是数组记录前i天的最大收益
          空间复杂度：O(1)
          */
-         public int maxProfit(int[] prices) {
-             int dp = 0, minPrice = prices[0];
-             for (int i = 1; i < prices.length; i++) {
-                 minPrice = Math.min(minPrice, prices[i]);
-                 dp = Math.max(dp, prices[i] - minPrice);
-             }
-             return dp;
-         }
-
+        public int maxProfit(int[] prices) {
+            int maxProfit = 0;
+            for (int i = 1, minPrice = prices[0]; i < prices.length; i++) {
+                maxProfit = Math.max(maxProfit, prices[i] - minPrice);
+                minPrice = Math.min(minPrice, prices[i]);
+            }
+            return maxProfit;
+        }
 
     }
-
 
 
     public static class Solution3 {
@@ -104,7 +72,6 @@ public class _121maxProfit {
             }
             return dp[n-1][0];  // 最后一天不持股一定比持股的利润高
         }
-
 
     }
 

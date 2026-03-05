@@ -1,0 +1,80 @@
+
+# PA Worldwide Expansion 项目 - 排期预估偏差与应对负面评价 STAR 故事（中文+英文精简口语版+LP+BQ问题）
+
+## 一、中文 STAR 故事（100%贴合真实经历，无虚构）
+### 1. Situation（背景）
+在 PA Worldwide Expansion 项目中，我们先完成了 EU 地区的落地，积累了成熟的开发与上线经验。后续计划将业务进一步扩展到 BR（巴西）、Mexico（墨西哥）等新地区。
+由于前期 EU 落地过程顺利，团队默认新地区可直接复用 EU 的底层架构，认为整体落地难度较低，因此对 BR、Mexico 地区的项目排期做了较为 aggressive（激进）的预估，
+设定了明确的 feature launch deadline，未充分考虑新地区可能存在的本地化差异化需求。
+
+### 2. Task（任务）
+我的核心任务是参与 BR、Mexico 地区的 expansion 开发工作，配合团队按激进排期推进核心功能落地，确保按时完成核心模块的开发、联调与测试，保障两个地区能在既定 deadline 前实现 feature launch，
+支撑当地业务顺利启动。
+
+### 3. Action（行动）
+项目启动初期，我们沿用 EU 地区的技术方案和开发节奏推进，但很快发现关键问题：虽然 BR、Mexico 可复用底层架构，但两个地区存在独特的业务规则
+（如 BR 需适配本地特定的税务计算规则，Mexico 需兼容本地主流的第三方数据接口）和用户需求差异，需要在通用架构基础上做大量定制化开发——这些定制化需求在前期排期预估时完全被忽略。
+
+随着开发推进，定制化工作量逐渐超出预期，原排期的时间余量根本无法覆盖新增工作。我第一时间向团队同步这一情况，联合 PM、TPM 共同梳理未完成的定制化任务清单，测算剩余工作量所需时间，
+明确告知按当前进度无法按期达成 deadline。但此时距离原定 launch 时间已较近，即使团队加班赶工，也无法弥补前期排期的偏差，最终不得不向老板同步情况，申请将 BR、Mexico 地区的 feature launch 推迟。
+
+面对 PM、TPM 和老板的不满（认为前期排期预估不严谨、未兑现 deadline 承诺），我没有辩解，而是主动承认问题：前期过度依赖 EU 经验，未深入调研新地区的差异化细节，导致排期缺乏缓冲，
+这是我们团队在项目规划阶段的疏忽。同时，我牵头整理本次排期偏差的核心原因（包括“新地区差异化需求调研不足”“未预留定制化开发的时间 buff”），并提出后续改进方案：后续拓展新地区前，
+需联合业务、风控团队做详细的本地化需求调研；排期时在核心工作量基础上增加 30% 的缓冲时间，避免再次出现激进预估。
+
+### 4. Result（结果）
+最终，BR、Mexico 地区的 expansion feature launch 未能按原定 deadline 完成，出现了 postpone（延期），导致 PM、TPM 和老板对项目进度表示不满，产生了负面评价。
+但这次经历也给团队敲了关键警钟：后续规划新地区拓展项目时，我们严格执行“先调研差异化需求，再预留缓冲时间”的排期逻辑——例如后续推进东南亚某地区 expansion 时，提前用 2 周时间完成本地化需求调研，
+排期时额外预留 20% 时间应对定制化开发，最终顺利按期落地。同时，我的反思态度和改进方案得到了老板的认可，后续项目规划会邀请我参与排期测算，确保预估更严谨。
+
+
+## 二、英文 STAR 故事（精简口语版，适配面试表达）
+### 1. Situation
+In the PA Worldwide Expansion project, we first completed the launch in the EU region and gained mature development and go-live experience.
+Later, we planned to further expand the business to new regions like Brazil (BR) and Mexico. Since the EU launch went smoothly earlier, our team assumed the underlying architecture of the EU could be directly reused in the new regions, thinking the overall launch difficulty would be low. So we made a relatively aggressive estimate for the project timeline of BR and Mexico, set a clear feature launch deadline, and didn’t fully consider the potential localized and differentiated needs of the new regions.
+
+### 2. Task
+My core task was to participate in the expansion development of BR and Mexico, cooperate with the team to advance the core feature launch according to the aggressive schedule, ensure the completion, joint debugging and testing of core modules on time, and guarantee that both regions could achieve feature launch before the scheduled deadline to support the smooth startup of local business.
+
+### 3. Action
+At the beginning of the project, we advanced with the EU’s technical solution and development rhythm, but soon found a key problem: although the underlying architecture could be reused in BR and Mexico, these two regions had unique business rules (e.g., BR required adaptation to local specific tax calculation rules, Mexico needed to be compatible with local mainstream third-party data interfaces) and user demand differences. A lot of customized development based on the general architecture was needed—and these customized needs were completely ignored in the early timeline estimation.
+
+As development progressed, the customized workload gradually exceeded expectations, and the time margin in the original schedule could not cover the additional work at all. I immediately updated the team on this situation, sorted out the list of unfinished customized tasks with PM and TPM, calculated the time required for the remaining workload, and clearly stated that the deadline could not be met with the current progress. But by then, it was close to the original launch time; even if the team worked overtime, we couldn’t make up for the earlier schedule deviation. Finally, we had to inform the boss and apply to postpone the feature launch of BR and Mexico.
+
+Facing the dissatisfaction from PM, TPM and the boss (who thought the early timeline estimation was not rigorous and we failed to meet the deadline commitment), I didn’t defend myself. Instead, I took the initiative to admit the problem: we over-relied on EU experience in the early stage, didn’t conduct in-depth research on the differentiated details of the new regions, leading to a lack of buffer in the schedule—and this was a negligence of our team in the project planning stage. At the same time, I led the team to sort out the core causes of this schedule deviation (including "insufficient research on differentiated needs in new regions" and "no time buffer reserved for customized development") and proposed follow-up improvement plans: before expanding to new regions in the future, we need to work with business and risk control teams to conduct detailed localized demand research; when estimating the schedule, add 30% buffer time based on the core workload to avoid aggressive estimation again.
+
+### 4. Result
+In the end, the expansion feature launch of BR and Mexico failed to be completed on the original deadline and was postponed, which made PM, TPM and the boss dissatisfied with the project progress and led to negative feedback. However, this experience also sounded a key alarm for the team: when planning subsequent expansion projects in new regions, we strictly implemented the schedule logic of "first researching differentiated needs, then reserving buffer time". For example, when promoting the expansion in a Southeast Asian region later, we spent 2 weeks completing localized demand research in advance, and reserved an additional 20% of time for customized development during the schedule estimation—finally, we successfully launched it on time. Meanwhile, my reflective attitude and improvement plans were recognized by the boss; I was invited to participate in schedule calculation in subsequent project planning to ensure more rigorous estimation.
+
+
+## 三、匹配的 Leadership Principles（LP）及解析
+### 1. Learn & Be Curious（学习与好奇心，外企高频LP）
+- **Matching Point**: After the schedule deviation and launch postponement, I didn’t ignore the problem but took the initiative to sort out the root causes (insufficient research on differentiated needs, no reserved buffer time), summarized experience, and proposed targeted improvement plans. In subsequent Southeast Asian expansion projects, I applied these lessons to avoid similar mistakes, which fully reflects the "Learn & Be Curious" principle—continuously learning from setbacks and optimizing work methods.
+
+### 2. Ownership（主人翁意识）
+- **Matching Point**: When the schedule problem occurred, I didn’t shirk responsibility but took the initiative to admit the team’s negligence in the early planning stage, took the lead in analyzing the causes and formulating improvement plans, and actively promoted the application of lessons in subsequent projects. This shows a strong sense of ownership for the project results and team growth.
+
+### 3. Deliver Results（交付成果，长期视角）
+- **Matching Point**: Although the current project (BR & Mexico expansion) was postponed, I learned from the failure, optimized the planning process, and successfully supported the subsequent launch of the Southeast Asian region. This reflects the ability to turn short-term setbacks into long-term success, and ultimately achieve the core goal of "PA worldwide expansion".
+
+
+## 四、可覆盖的外企高频 BQ 问题（中文+英文）
+### 1. 核心匹配题（必答）
+- Tell me about a time you missed a deadline. How did you handle it?
+- 告诉我一次你错过截止日期的经历，你是如何处理的？
+- Tell me about a time you received negative feedback and what you learned from it.
+- 告诉我一次你收到负面评价的经历，以及从中学习到了什么？
+
+### 2. 补充匹配题
+- Tell me about a time you made a wrong estimate or judgment. How did you correct it?
+- 告诉我一次你做出错误预估或判断的经历，你是如何修正的？
+- Tell me about a time you turned a setback into a learning experience.
+- 告诉我一次你将挫折转化为学习经验的经历。
+- Tell me about a time you took responsibility for a project failure.
+- 告诉我一次你为项目失败承担责任的经历。
+
+
+## 五、面试使用建议
+1. **表达节奏**：中文讲述控制在 1.5-2 分钟，英文控制在 1-1.5 分钟，聚焦“背景-问题-行动-结果-成长”主线，避免冗余细节。
+2. **重点突出**：强调“从激进排期到预留缓冲”的认知转变，以及“短期延期→长期顺利交付”的结果闭环，体现反思能力与落地能力。
+3. **适配场景**：可直接用于“失败经历”“负面反馈”“错过截止日期”“项目规划失误”类 BQ 问题，无需额外调整内容。

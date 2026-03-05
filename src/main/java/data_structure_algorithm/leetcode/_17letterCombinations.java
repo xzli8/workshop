@@ -50,4 +50,34 @@ public class _17letterCombinations {
 
     }
 
+
+    public static class Solution2 {
+
+        /**
+         backtrace: O(3^M * 4^N), O(M + N)
+         */
+        public List<String> letterCombinations(String digits) {
+            this.cs = digits.toCharArray();
+            dfs(0, new StringBuilder());
+            return paths;
+        }
+
+        private char[] cs;
+        private List<String> paths = new ArrayList<>();
+        private String[] dicts = new String[] {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+
+        private void dfs(int i, StringBuilder path) {
+            if (i == cs.length) {
+                paths.add(path.toString());
+                return;
+            }
+            for (char c : dicts[cs[i] - '0'].toCharArray()) {
+                path.append(c);
+                dfs(i + 1, path);
+                path.deleteCharAt(path.length() - 1);
+            }
+        }
+
+    }
+
 }

@@ -12,13 +12,11 @@ public class _286wallsAndGates {
     public static class Solution1 {
 
         /**
-         BFS：(多源BFS)从门出发开始遍历，找到最近的房间
-         时间复杂度：O(M * N)
-         空间复杂度：O(M * N)
+         BFS(多源BFS): O(M * N), O(M * N)
+         Note: 从门出发开始遍历，找到最近的房间。没有用visited标记的原因是在网格自身标记了。
          */
         public void wallsAndGates(int[][] rooms) {
             // 初始化
-            int INF = 2147483647;
             int m = rooms.length, n = rooms[0].length;
             Queue<int[]> q = new ArrayDeque<>();
             for (int i = 0; i < m; i++) {
@@ -30,8 +28,8 @@ public class _286wallsAndGates {
             }
 
             // 遍历
-            int[][] dirs = new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
             int step = 0;
+            int[][] dirs = new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
             while (!q.isEmpty()) {
                 step++;
                 int size = q.size();
@@ -39,8 +37,8 @@ public class _286wallsAndGates {
                     int[] cur = q.poll();
                     for (int[] dir : dirs) {
                         int x = cur[0] + dir[0], y = cur[1] + dir[1];
-                        if (0 <= x && x < m && 0 <= y && y < n && rooms[x][y] == INF) {
-                            rooms[x][y] = step;
+                        if (0 <= x && x < m && 0 <= y && y < n && rooms[x][y] == Integer.MAX_VALUE) {
+                            rooms[x][y] = step;     // 第一次访问的时候是最短路径，所以只在第一次访问时更新
                             q.offer(new int[] {x, y});
                         }
                     }

@@ -2,12 +2,11 @@ package data_structure_algorithm.leetcode;
 
 public class _240searchMatrix {
 
-    public static class Solution0 {
+    public static class Solution1 {
 
         /**
-         遍历查找：从左下/右上开始，每次排除一行或者一列
-         时间复杂度：O(M + N)
-         空间复杂度：O(1)
+         遍历查找：O(M + N), O(1)
+         Note: 从左下/右上开始，每次排除一行或者一列
          */
         public boolean searchMatrix(int[][] matrix, int target) {
             int m = matrix.length, n = matrix[0].length;
@@ -23,13 +22,10 @@ public class _240searchMatrix {
     }
 
 
-
-    public static class Solution1 {
+    public static class Solution2 {
 
         /**
-         1.逐行二分查找
-         时间复杂度：O(mlogn)
-         空间复杂度：O(1)
+         逐行二分查找: O(MlogN), O(1)
          */
          public boolean searchMatrix(int[][] matrix, int target) {
              int m = matrix.length, n = matrix[0].length;
@@ -50,37 +46,5 @@ public class _240searchMatrix {
          }
 
     }
-
-
-
-    public static class Solution2 {
-
-        /**
-         2.从右上开始遍历(左下也是同理)，一次排除一行或者一列
-         思路：
-         if matrix[i][j] == target，完成
-         if matrix[i][j] < target, i++
-         if matrix[i][j] > target, j--
-         时间复杂度：O(m+n)
-         空间复杂度：O(1)
-         */
-        public boolean searchMatrix(int[][] matrix, int target) {
-            int m = matrix.length, n = matrix[0].length;
-            int i = 0, j = n-1;
-            while (i < m && j >= 0) {
-                if (matrix[i][j] == target) {
-                    return true;
-                } else if (matrix[i][j] < target) {
-                    i++;
-                } else {
-                    j--;
-                }
-            }
-            return false;
-        }
-
-    }
-
-
 
 }

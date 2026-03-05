@@ -5,6 +5,26 @@ import java.util.Map;
 
 public class _974subarraysDivByK {
 
+    public static class Solution0 {
+
+        /**
+         PreSum + Hash: O(N), O(N)
+         */
+        public int subarraysDivByK(int[] nums, int k) {
+            int preSum = 0, count = 0;
+            Map<Integer, Integer> preSum2Count = new HashMap<>();
+            preSum2Count.put(preSum, 1);
+            for (int num : nums) {
+                // preSum = (preSum + num) % k;
+                preSum = ((preSum + num) % k + k) % k;  // 修正负数
+                count += preSum2Count.getOrDefault(preSum, 0);
+                preSum2Count.put(preSum, preSum2Count.getOrDefault(preSum, 0) + 1);
+            }
+            return count;
+        }
+
+    }
+
     public static class Solution1 {
 
         /**

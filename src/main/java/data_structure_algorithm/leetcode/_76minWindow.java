@@ -31,6 +31,7 @@ public class _76minWindow {
                 }
                 end++;
 
+                // 这里一定要用while,不能用if
                 while (match == needs.size()) {
                     if (end - start < minLen) {
                         minLen = end - start;

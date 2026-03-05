@@ -5,6 +5,36 @@ public class _1574findLengthOfShortestSubarray {
     public static class Solution1 {
 
         /**
+         * 双指针：O(N), O(1)
+         * ref: https://leetcode.doocs.org/lc/1574/
+         */
+        public int findLengthOfShortestSubarray(int[] arr) {
+            int n = arr.length;
+            int i = 0, j = n - 1;
+            while (i + 1 < n && arr[i] <= arr[i + 1]) {
+                ++i;
+            }
+            while (j - 1 >= 0 && arr[j - 1] <= arr[j]) {
+                --j;
+            }
+            if (i >= j) {
+                return 0;
+            }
+            int ans = Math.min(n - i - 1, j);
+            for (int l = 0, r = j; l <= i; ++l) {
+                while (r < n && arr[r] < arr[l]) {
+                    ++r;
+                }
+                ans = Math.min(ans, r - l - 1);
+            }
+            return ans;
+        }
+
+    }
+
+    public static class Solution2 {
+
+        /**
          双指针
          ref:https://leetcode.cn/problems/shortest-subarray-to-be-removed-to-make-array-sorted/solutions/2189149/dong-hua-yi-xie-jiu-cuo-liang-chong-xie-iijwz/
          分析：需要将区间分成三部分s[0, i]，s[i, j], s[j, n-1]，首尾区间都是非递减并且s[i] <= s[j]，中间s[i, j]是需要删除的区间

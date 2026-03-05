@@ -8,7 +8,8 @@ import java.util.Arrays;
 public class _666pathSum {
 
     /**
-     *  参考题解：https://zhuanlan.zhihu.com/p/441264789?utm_id=0
+     * 参考题解：https://zhuanlan.zhihu.com/p/441264789?utm_id=0
+     * ref: https://leetcode.doocs.org/lc/666/
      */
 
     public static class Solution1 {
@@ -29,6 +30,7 @@ public class _666pathSum {
             Arrays.fill(tree, -1);
             for (int num : nums) {
                 int depth = num / 100, pos = num % 100 / 10, val = num % 10;
+                // 2^(depth - 1) - 1
                 tree[((1 << (depth - 1)) - 1) + pos - 1] = val;
             }
 
@@ -41,6 +43,7 @@ public class _666pathSum {
         private void dfs(int[] tree, int i, int pathSum) {
             if (tree[i] == -1) return;
             pathSum += tree[i];
+            // 判断是否是叶子结点
             if (i >= 7 || (tree[2 * i + 1] == -1 && tree[2 * i + 2] == -1)) {
                 totalSum += pathSum;
                 return;

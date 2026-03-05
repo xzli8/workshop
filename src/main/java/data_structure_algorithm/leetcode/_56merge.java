@@ -17,11 +17,8 @@ public class _56merge {
          */
         public int[][] merge(int[][] intervals) {
             // 将所有区间按照起始端点的大小升序排列
-            Arrays.sort(intervals, new Comparator<int[]>() {
-                public int compare(int[] interval1, int[] interval2) {
-                    return interval1[0] - interval2[0];
-                }
-            });
+//            Arrays.sort(intervals, (interval1, interval2) -> interval1[0] - interval2[0]);
+            Arrays.sort(intervals, Comparator.comparingInt(interval -> interval[0]));
 
             // 合并
             List<int[]> res = new ArrayList<>();
