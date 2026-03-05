@@ -20,27 +20,12 @@ public class _405toHex {
             if (n < 0) n += (long)(Math.pow(2, 32));
 
             // 进制转换
-            Map<Long, Character> digit2Char = new HashMap<>();
-            digit2Char.put(0L, '0');
-            digit2Char.put(1L, '1');
-            digit2Char.put(2L, '2');
-            digit2Char.put(3L, '3');
-            digit2Char.put(4L, '4');
-            digit2Char.put(5L, '5');
-            digit2Char.put(6L, '6');
-            digit2Char.put(7L, '7');
-            digit2Char.put(8L, '8');
-            digit2Char.put(9L, '9');
-            digit2Char.put(10L, 'a');
-            digit2Char.put(11L, 'b');
-            digit2Char.put(12L, 'c');
-            digit2Char.put(13L, 'd');
-            digit2Char.put(14L, 'e');
-            digit2Char.put(15L, 'f');
-
             StringBuilder sb = new StringBuilder();
             while (n != 0) {
-                sb.append(digit2Char.get(n % 16));
+                long mod = n % 16;
+                char c = (char) (mod + '0');
+                if (mod >= 10) c = (char) (mod - 10 + 'a');
+                sb.append(c);
                 n /= 16;
             }
             return sb.reverse().toString();

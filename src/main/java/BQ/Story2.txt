@@ -1,0 +1,108 @@
+
+PA Expansion 项目 - 前端 Marketplace Filter 交互冲突类 STAR 故事（优化版）
+
+一、中文 STAR 故事（贴合真实经历，无虚构）
+
+1. Situation（背景）
+
+在 PAU Expansion 项目中，我负责前端核心交互开发，核心需求是为 mult marketplace 场景添加 marketplace 筛选组件（widget）。
+不同于 JP 地区的 single marketplace 场景，PAU 是多市场模式，需要支持多市场筛选功能。
+项目初期，PM 和 UX Designer（UXD）就这个筛选组件的交互逻辑，提出了一套非常完善但过于复杂的方案，而项目 deadline 非常紧张，必须按时交付才能保障 PAU 地区业务顺利上线。
+
+2. Task（任务）
+
+我需要负责这个 marketplace 筛选组件的前端开发，确保组件交互流畅、满足业务筛选需求，同时配合团队完成整体项目交付，不延误 PAU 地区的上线计划。
+
+3. Action（行动）
+
+PM 和 UXD 提出的交互方案过于复杂，不仅要求支持多市场切换、模糊搜索、批量筛选，还需添加自定义筛选模板、筛选历史记录等附加功能，开发工作量极大。
+结合紧张的 deadline，我判断按此方案开发，必然无法按时交付，还可能影响整个 PAU 上线进度。
+于是我第一时间提出了不同意见，明确告知 PM 和 UXD：当前方案开发量过大，无法在 deadline 前完成，且复杂的交互反而可能增加用户操作成本。
+随后我结合 PAU 地区用户使用习惯，提出了简化方案——先实现核心筛选功能（基础市场切换、精准筛选），保证组件可用、满足业务核心需求，待项目上线后，再通过 quick follow-up 迭代，补充他们提出的复杂交互功能。
+期间我和 PM、UXD 进行了多次沟通，展示了简化方案的原型，测算出两种方案的开发周期差异（复杂方案需10个工作日，简化方案仅需4个工作日），强调延误上线对 PAU 业务的影响，
+最终三方达成一致：本次上线优先实现简化方案，后续快速迭代补充复杂功能。
+确定方案后，我快速推进开发，同步每日进度给 PM 和 UXD，及时反馈开发过程中的问题，同时为后续迭代预留扩展接口，确保后续复杂功能能顺利落地。
+
+4. Result（结果）
+
+我们成功在 deadline 前完成了简化版筛选组件的开发和上线，保障了 PAU 地区业务顺利启动，没有出现任何延误。
+简化版组件完全满足核心筛选需求，用户使用反馈良好，无交互卡顿或操作不便的问题。
+项目上线后，我们快速启动 follow-up 迭代，在1周内完成了 PM 和 UXD 最初提出的复杂交互方案，既满足了业务长期需求，也赢得了 PM 和 UXD 的信任，后续他们提出新需求时，都会先和我沟通技术可行性。
+
+二、英文 STAR 故事（口语优化版，流畅自然，适配面试语气）
+
+Situation
+
+During the PA EU Expansion project, I was responsible for the front-end development of a marketplace filter widget.
+Unlike the JP region which only had a single marketplace, EU was a multi-marketplace scenario, so we needed a filter to support multi-market selection.
+At the beginning, our PM and UX Designer proposed a very comprehensive but overly complex interaction plan for this widget.
+
+Task
+
+My task was to develop this marketplace filter widget, ensure its usability and smooth interaction,
+and coordinate with PM and UX Designer to deliver it on time, so that the EU regional business could launch as scheduled.
+
+Action
+
+I soon realized that the interaction plan proposed by PM and UX Designer was too complex—it included multi-market switching, fuzzy search,
+batch filtering, custom filter templates, and search history records. Given the tight project deadline, I knew we couldn’t finish it on time
+if we followed this plan. So I disagreed with their proposal directly.
+
+I explained my viewpoint clearly: the core need of the EU business was to have a usable filter to support multi-market selection,
+and the complex interaction they proposed was not a must for the initial launch.
+Then I showed them a prototype of my simplified plan, which only focused on the core functions—basic market switching and precise filtering.
+I also compared the development cycle of the two plans: the complex plan would take 10 working days, while the simplified one only needed 4 days.
+I emphasized the impact of delaying the EU launch if we stuck to the complex plan.
+
+After several rounds of discussion, PM and UX Designer agreed to my simplified plan. I then accelerated the development, updated my progress to them every day,
+and reserved expansion interfaces for the follow-up complex functions. I also communicated with the back-end team to ensure the data support matched the simplified filter function.
+
+Result
+
+We successfully delivered the simplified marketplace filter widget before the deadline, which ensured the smooth launch of EU regional business without any delay.
+The simplified widget fully met the core filtering needs, and users gave positive feedback on its simplicity and usability.
+Within one week after the launch, we completed the follow-up iteration and implemented all the complex interaction functions proposed by PM and UX Designer.
+This process also earned me the trust of PM and UX Designer—they would consult me on technical feasibility before proposing new interaction plans later.
+
+三、匹配的 Leadership Principles（LP）及解析
+
+1. Disagree & Commit（亚马逊/Zuora/Booking 必考）
+Matching Point: I disagreed with PM and UX Designer on the complexity of the filter widget’s interaction plan.
+I clearly expressed my viewpoint, provided data support (development cycle comparison), proposed a feasible alternative,
+and finally reached an agreement with them.
+This fully reflects the Disagree & Commit principle—expressing disagreement respectfully and committing to the final decision.
+
+2. Ownership（主人翁意识）
+Matching Point: When I found the original plan was not feasible, I took the initiative to disagree, proposed a simplified solution,
+and took full responsibility for the development and delivery of the filter widget, ensuring it met the core needs and the project deadline.
+This shows my strong ownership.
+
+3. Deliver Results（交付成果）
+Matching Point: Faced with a tight deadline, I proposed a practical simplified plan, coordinated with PM and UX Designer to reach an agreement,
+and successfully delivered the widget on time, ensuring the smooth launch of EU regional business. This reflects my ability to deliver results under pressure.
+
+四、可覆盖的外企高频 BQ 问题（中文+英文）
+
+核心匹配题（必答）
+
+- Tell me about a time you disagreed with someone / your manager.（核心匹配题）
+
+- 告诉我一次你与他人（同事/经理）意见不一致的经历。
+
+补充匹配题
+
+- Tell me about a time you influenced others to change their opinion.（说服他人改变想法）
+
+- Tell me about a time you made a trade-off to meet a deadline.（为赶截止日期做权衡）
+
+- Tell me about a time you took ownership.（主动承担责任）
+
+- Tell me about a time you handled a tight deadline.（应对紧张截止日期）
+
+- 告诉我一次你影响他人改变想法的经历。
+
+- 告诉我一次你为了完成截止日期做权衡的经历。
+
+五、总结
+
+本故事为「冲突/不同意类」核心故事，完美匹配外企高频考点，结合中文+英文STAR、LP匹配和BQ问题，可直接用于面试作答。后续可继续补充其他类型故事，进一步完善BQ面试素材库。

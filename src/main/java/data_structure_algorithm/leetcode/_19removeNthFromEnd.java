@@ -7,28 +7,19 @@ public class _19removeNthFromEnd {
     public static class Solution1 {
 
         /**
-         双指针
-         时间复杂度：O(N)
-         空间复杂度：O(1)
+         哑元节点 + 前驱节点 + 双指针：O(N), O(1)
          */
         public ListNode removeNthFromEnd(ListNode head, int n) {
-            ListNode sentinel = new ListNode();
-            sentinel.next = head;
-
-            ListNode prev = sentinel;
-            ListNode slow = head;
-            ListNode fast = head;
+            ListNode dummy = new ListNode(0, head), fast = dummy, slow = dummy;
             for (int i = 0; i < n; i++) {
                 fast = fast.next;
             }
-
-            while (fast != null) {
+            while (fast.next != null) {
                 fast = fast.next;
-                prev = slow;
                 slow = slow.next;
             }
-            prev.next = slow.next;
-            return sentinel.next;
+            slow.next = slow.next.next;
+            return dummy.next;
         }
 
     }

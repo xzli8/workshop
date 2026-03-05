@@ -3,7 +3,8 @@ package data_structure_algorithm.leetcode;
 public class _426treeToDoublyList {
 
     /**
-     * ref:https://leetcode.cn/problems/er-cha-sou-suo-shu-yu-shuang-xiang-lian-biao-lcof/description/
+     * Ref1: https://leetcode.doocs.org/lc/426/
+     * Ref2:https://leetcode.cn/problems/er-cha-sou-suo-shu-yu-shuang-xiang-lian-biao-lcof/description/
      */
 
     public static class Solution1 {
@@ -35,6 +36,7 @@ public class _426treeToDoublyList {
         public Node treeToDoublyList(Node root) {
             if (root == null) return null;
             dfs(root);
+            // 首尾相连
             head.left = prev;
             prev.right = head;
             return head;

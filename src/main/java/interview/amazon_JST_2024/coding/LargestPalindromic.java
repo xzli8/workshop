@@ -46,7 +46,6 @@ public class LargestPalindromic {
 
         // 找出出现次数为奇数的字符中最大的那个(放在中间)
         StringBuilder res = new StringBuilder(sb.toString());
-        System.out.println(num.length());
         for (int i = 9; i >= 0; i--) {
             if (cnts[i] > 0) {
                 res.append((char) (i + '0'));

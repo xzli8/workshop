@@ -4,6 +4,46 @@ import data_structure_algorithm.domain.ListNode;
 
 public class _725splitListToParts {
 
+    public static class Solution0 {
+
+        /**
+         计数+划分: O(N), O(1)
+         If there are N nodes in the list, and k parts, then every part has N/k elements, except the first N%k parts have an extra one.
+         */
+        public ListNode[] splitListToParts(ListNode head, int k) {
+            int n = 0;
+            ListNode p = head;
+            while (p != null) {
+                n++;
+                p = p.next;
+            }
+
+            p = head;
+            ListNode[] res = new ListNode[k];
+            for (int i = 0; i < n % k; i++) {
+                ListNode subHead = p, prev = null;
+                for (int j = 0; j < n / k + 1; j++) {
+                    prev = p;
+                    p = p.next;
+                }
+                prev.next = null;
+                res[i] = subHead;
+            }
+
+            for (int i = n % k; i < k; i++) {
+                ListNode subHead = p, prev = null;
+                for (int j = 0; j < n / k; j++) {
+                    prev = p;
+                    p = p.next;
+                }
+                if (prev != null) prev.next = null;
+                res[i] = subHead;
+            }
+            return res;
+        }
+
+    }
+
     public static class Solution1 {
 
         /**

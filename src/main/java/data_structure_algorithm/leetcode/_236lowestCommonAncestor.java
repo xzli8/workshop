@@ -7,9 +7,7 @@ public class _236lowestCommonAncestor {
     public static class Solution1 {
 
         /**
-         DFS
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         DFS(postorder): O(N), O(N)
          */
         public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
             if (root == null) return null;

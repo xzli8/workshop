@@ -26,7 +26,9 @@ public class _322coinChange {
             // 状态转移
             for (int i = 1; i < n; i++) {
                 for (int j = 0; j <= amount; j++) {
-                    dp[i][j] = dp[i - 1][j];
+                    dp[i][j] = dp[i - 1][j];    // 第i个硬币一枚都不用(可以不写，等同于下面"k = 0"的情况)
+
+                    // 第i个硬币用k枚
                     for (int k = 0; j - k * coins[i] >= 0; k++) {
                         if (dp[i - 1][j - k * coins[i]] <= amount) {
                             dp[i][j] = Math.min(dp[i][j], dp[i - 1][j - k * coins[i]] + k);
@@ -48,25 +50,33 @@ public class _322coinChange {
          时间复杂度：O(N*M)
          空间复杂度：O(N)
          */
-         public int coinChange(int[] coins, int amount) {
-             // 定义状态：dp[i]表示凑成金额为i的最少硬币个数
-             int[] dp = new int[amount + 1];
+        public int coinChange(int[] coins, int amount) {
+            // 定义状态：dp[i]表示凑成金额为i所需的最少硬币个数
+            int[] dp = new int[amount + 1];
 
-             // 初始状态
-             Arrays.fill(dp, amount + 1);
-             dp[0] = 0;
+            // 初始状态
+            Arrays.fill(dp, amount + 1);
+            dp[0] = 0;
 
-             // 状态转移
-             for (int i = 1; i <= amount; i++) {
-                 for (int j = 0; j < coins.length; j++) {
-                     if (i - coins[j] >= 0) {
-                         dp[i] = Math.min(dp[i], dp[i - coins[j]] + 1);
-                     }
-                 }
-             }
-             return dp[amount] == (amount + 1) ? -1 : dp[amount];
-         }
+            // 状态转移(外层物品内层背包)
+            for (int coin : coins) {
+                for (int j = coin; j <= amount; j++) {
+                    dp[j] = Math.min(dp[j], dp[j - coin] + 1);
+                }
+            }
+
+            // 状态转移(外层背包内层物品)
+//            for (int j = 1; j <= amount; j++) {
+//                for (int coin : coins) {
+//                    if (j - coin >= 0) {
+//                        dp[j] = Math.min(dp[j], dp[j - coin] + 1);
+//                    }
+//                }
+//            }
+            return dp[amount] == amount + 1 ? -1 : dp[amount];
+        }
 
     }
+
 
 }

@@ -1,0 +1,111 @@
+
+Optimize "ViewBy VM/BS" in VAMOS PA EU Expansion
+
+1. Situation
+
+I worked on the Vamos system, a core business system that was first built and launched in the JP region.
+We then launched a global expansion initiative, and my team was in charge of supporting the Vamos EU expansion as part of the PA program.
+My team served as the host team for the underlying service framework and platform, while the EU team acted as the business feature owner,
+responsible for implementing business logic on top of our platform. After launching the same view by VM/BS logic in the EU region,
+we encountered a critical issue: the feature worked stably in JP, but in the EU, the API kept timing out consistently and could not return valid responses to users.
+Initially, we were unsure of the root cause.
+
+2. Task
+
+I needed to quickly identify the root cause of the API timeouts, restore service availability urgently,
+and design a long-term architecture-level solution to support the Vamos EU expansion smoothly.
+
+3. Action
+
+First, I conducted root cause identification: I analyzed online logs, monitoring metrics, and distributed tracing data to troubleshoot the issue.
+I found that the number of VM/BS dimensions in the EU scenario was far larger than that in JP, which led to an extremely high volume of downstream RPC calls
+and heavy network I/O, exhausting thread pool resources and causing persistent timeouts.
+
+Then, I implemented a short-term fix: To avoid blocking the EU launch, we quickly applied a temporary solution by increasing the thread pool size
+to prevent resource exhaustion, ensuring the API could respond within the required time.
+
+Next, I designed and implemented a long-term optimization: As the framework host team, we took strong ownership. Immediately after the business launch,
+we promoted a fundamental solution. We redesigned the logic: instead of sending separate downstream requests for each view-by dimension,
+we fetched all detailed data in one single RPC call and performed aggregation locally in memory.
+This transformed massive network I/O operations into lightweight in-memory computing.
+
+Finally, I promoted implementation and knowledge sharing: We aligned the solution with the EU team, rolled out the change,
+and verified its stability through testing and online observation. After the project, we documented the entire problem, root cause, and solution in detail,
+and shared our findings and lessons learned in a group meeting to help other teams avoid similar issues.
+
+4. Result
+
+- Reduced downstream RPC calls from dozens or hundreds to just one, significantly reducing network I/O pressure.
+
+- Eliminated API timeouts completely and significantly improved service latency, ensuring stable service operation.
+
+- Successfully supported the Vamos EU expansion, enabling stable business operation in the EU region.
+
+- Improved the efficiency and scalability of the underlying framework, making this optimization pattern reusable for other regional expansions.
+
+- Shared best practices across the team, preventing similar performance issues in future projects.
+
+
+二、STAR Story 可回答的BQ高频问题（英文+中文核心要点）
+
+1. Tell me about a time you solved a critical technical issue in a project.（请举例说明你如何在项目中解决关键技术问题。）
+Core Response: When supporting the Vamos EU expansion, the API kept timing out after launching the same view by VM/BS logic.
+I identified the root cause (excessive downstream RPC calls due to more VM/BS dimensions in EU), implemented short-term thread pool adjustment
+and long-term architecture optimization, ultimately eliminating timeouts and supporting smooth EU expansion.
+
+2. Give an example of how you took ownership to resolve a problem.（请举例说明你如何主动承担责任解决问题。）
+Core Response: As part of the underlying service framework team, I took ownership when the EU API timeout issue occurred.
+I proactively troubleshot the root cause, implemented both short-term and long-term solutions, aligned with the EU team for implementation,
+and shared lessons learned to prevent similar issues, ensuring the success of the EU expansion project.
+
+3. Tell me about a time you dived deep to troubleshoot and resolve a complex issue.（请举例说明你如何深入排查并解决复杂问题。）
+Core Response: Faced with consistent API timeouts in the Vamos EU expansion (which worked stably in GP), I dived deep into logs, monitoring metrics,
+and distributed tracing data, identified the root cause (excessive RPC calls from more VM/BS dimensions), and designed a targeted solution to resolve the issue thoroughly.
+
+4. Give an example of how you invented a simplified solution to improve efficiency.（请举例说明你如何创新并简化方案以提升效率。）
+Core Response: To solve the high volume of downstream RPC calls causing timeouts, I redesigned the logic—replacing separate requests for each dimension
+with a single RPC call and in-memory aggregation, which simplified the process, reduced network I/O, and improved service efficiency significantly.
+
+5. Tell me about a time you delivered results under pressure.（请举例说明你如何在压力下交付成果。）
+Core Response: The Vamos EU expansion was time-sensitive, and the API timeout issue blocked the launch. I worked quickly to troubleshoot the root cause,
+implement a temporary fix to unblock the launch, and then design a long-term solution, ultimately ensuring stable service and successful EU expansion.
+
+6. Give an example of how you earned trust from your team or colleagues.（请举例说明你如何赢得团队或同事的信任。）
+Core Response: After resolving the Vamos EU API timeout issue, I documented the entire process (problem, root cause, solution)
+and shared lessons learned in a group meeting, helping other teams avoid similar issues.
+This transparency and proactiveness earned the trust of my team and the EU team.
+
+7. Tell me about a time you learned from a problem and shared your knowledge with the team.（请举例说明你如何从问题中学习并向团队分享知识。）
+Core Response: From the Vamos EU API timeout issue, I learned the importance of considering regional differences in system design. I documented the problem,
+root cause, and solution in detail, and shared findings in a team meeting to help other teams avoid similar performance issues in future regional expansions.
+
+
+三、Matching Leadership Principles（匹配的领导力原则）
+
+Amazon Leadership Principles
+
+1. Ownership（主人翁意识）
+Matching Point: As the host team of the underlying service framework, I took full ownership of the API timeout issue during the Vamos EU expansion.
+I proactively identified the root cause, implemented short-term and long-term solutions, coordinated with the EU team, and followed up on stability verification,
+ensuring the problem was fully resolved and the EU expansion was successful.
+
+2. Dive Deep（深入钻研）
+Matching Point: Faced with the unknown root cause of API timeouts (which worked stably in GP but failed in EU), I dived deep into online logs,
+monitoring metrics, and distributed tracing data, carefully analyzed the difference in VM/BS dimensions between GP and EU, and ultimately identified
+the core cause (excessive downstream RPC calls due to more dimensions).
+
+3. Invent and Simplify（创新与简化）
+Matching Point: To solve the problem of excessive RPC calls and network I/O, I invented a simplified solution—changing from separate requests
+for each dimension to a single RPC call plus in-memory aggregation, which simplified the process, reduced network pressure, and improved service efficiency.
+
+4. Deliver Results（交付成果）
+Matching Point: I successfully resolved the API timeout issue, eliminated service abnormalities, supported the smooth launch of Vamos EU expansion,
+reduced downstream RPC calls significantly, improved service latency, and delivered tangible results (stable business operation, reusable optimization pattern).
+
+5. Earn Trust（赢得信任）
+Matching Point: After resolving the issue, I documented the entire process and shared lessons learned with the team, ensuring transparency
+and helping other teams avoid similar problems. This proactive knowledge sharing and responsible attitude earned the trust of my team and the EU team.
+
+6. Learn and Be Curious（学习与好奇）
+Matching Point: I learned from the API timeout issue—realizing the importance of considering regional differences in system design. I summarized experience
+and shared it with the team, turning the problem into a valuable lesson for future projects, reflecting a curious and learning-oriented attitude.

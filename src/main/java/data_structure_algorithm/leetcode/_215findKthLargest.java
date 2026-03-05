@@ -8,9 +8,9 @@ public class _215findKthLargest {
     public static class Solution0 {
 
         /**
-         分治(快速排序中的partition)
-         时间复杂度：O(N)
-         空间复杂度：O(1)
+         分治(快速排序中的partition): O(N), 迭代O(1)/递归O(logN)
+         ref: https://leetcode.cn/problems/kth-largest-element-in-an-array/solutions/2361969/215-shu-zu-zhong-de-di-k-ge-zui-da-yuan-d786p/
+         时间复杂度分析：每轮划分后，向下迭代/递归子数组的平均长度为N/2(要求数据随机打乱)，所以总的时间复杂度为N + N/2 + N/4 + ... + N/N = 2N - 1(等比数列求和)
          */
         public int findKthLargest(int[] nums, int k) {
             int n = nums.length, target = n - k, left = 0, right = n - 1;
@@ -28,7 +28,7 @@ public class _215findKthLargest {
             int idx = random.nextInt(right - left + 1) + left;
             swap(nums, idx, right);
 
-            // 这样写会超时
+            // 这样写会超时(之前可以)
             // int i = left;
             // for (int j = left; j < right; j++) {
             //     if (nums[j] <= nums[right]) {
@@ -76,8 +76,8 @@ public class _215findKthLargest {
 
         /**
          1.优先队列（第K个最大元素 -> 小顶堆）
-         时间复杂度：O(NlogK)
-         空间复杂度：O(K)
+         时间复杂度：O(NlogK) -> O(NlogN)
+         空间复杂度：O(K) -> O(N)
          */
          public int findKthLargest(int[] nums, int k) {
              PriorityQueue<Integer> pq = new PriorityQueue<>();
@@ -108,7 +108,7 @@ public class _215findKthLargest {
         public int findKthLargest(int[] nums, int k) {
             int n = nums.length;
             int target = n - k;
-            int left = 0, right = n-1;
+            int left = 0, right = n - 1;
             while (true) {
                 int index = randomPartition(nums, left, right);
                 if (index == target) return nums[index];

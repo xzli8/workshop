@@ -12,14 +12,17 @@ public class _203removeElements {
          空间复杂度：O(1)
          */
         public ListNode removeElements(ListNode head, int val) {
-            ListNode dummy = new ListNode(0, head);
-            ListNode p = dummy;
-            while(null != p.next) {
-                if (p.next.val == val) p.next = p.next.next;
-                else p = p.next;
+            ListNode dummy = new ListNode(0, head), prev = dummy;
+            while (prev.next != null) {
+                if (prev.next.val == val) {
+                    prev.next = prev.next.next;
+                } else {
+                    prev = prev.next;
+                }
             }
             return dummy.next;
         }
+
 
     }
 

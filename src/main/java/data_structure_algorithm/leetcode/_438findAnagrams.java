@@ -35,7 +35,7 @@ public class _438findAnagrams {
                     }
                 }
 
-                // 满足条件后，移动左指针，找最优解
+                // 满足条件后，移动左指针，找最优解(因为window size大小固定，这里while可以写成if)
                 while (right - left == p.length()) {
                     if (match == needs.size()) {
                         res.add(left);

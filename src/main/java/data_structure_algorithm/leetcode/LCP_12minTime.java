@@ -7,9 +7,7 @@ public class LCP_12minTime {
     public static class Solution1 {
 
         /**
-         二分查找
-         时间复杂度：O(NlogM)
-         空间复杂度：O(1)
+         值域二分: O(NlogM), O(1)
          */
         public int minTime(int[] time, int m) {
             // 二分查找，首先确定二分的上线边界(不用特别精确)
@@ -28,10 +26,12 @@ public class LCP_12minTime {
             return -1;
         }
 
+        // 计算一天耗时为mid时，需要花费的天数
         private int count(int[] time, int mid) {
             int count = 1, sum = 0, max = 0;
             boolean help = false;
             for (int i = 0; i < time.length; i++) {
+                // 这里用到了贪心的思想，将耗时最大的题请教小杨
                 max = Math.max(max, time[i]);
                 if (sum + time[i] <= mid) {
                     sum += time[i];

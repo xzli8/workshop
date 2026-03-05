@@ -23,7 +23,7 @@ public class _1522diameter {
         }
 
          /**
-             DFS
+            DFS(postorder) + 贪心: O(N), O(N)
          */
          public int diameter(UndirectedGraphNode root) {
              dfs(root);
@@ -31,15 +31,17 @@ public class _1522diameter {
          }
 
          private int maxLen = 0;
-         private int dfs(UndirectedGraphNode cur) {
-             if (cur == null) return 0;
+
+         // 返回以当前节点为起点的最长路径
+         private int dfs(UndirectedGraphNode root) {
+             if (root == null) return 0;
              List<Integer> lens = new ArrayList<>();
-             for (UndirectedGraphNode neighbor : cur.neighbors) {
+             for (UndirectedGraphNode neighbor : root.neighbors) {
                  lens.add(dfs(neighbor));
              }
-             Collections.sort(lens, (len1, len2) -> len2 - len1);
-             int firstMaxLen = lens.size() > 0 ? lens.get(0) : 0;
-             int secondMaxLen = lens.size() > 1 ? lens.get(1) : 0;
+
+             lens.sort((len1, len2) -> len2 - len1);    // 从大到小排序
+             int firstMaxLen = lens.size() > 0 ? lens.get(0) : 0, secondMaxLen = lens.size() > 1 ? lens.get(1) : 0;
              maxLen = Math.max(maxLen, firstMaxLen + secondMaxLen);
              return firstMaxLen + 1;
          }

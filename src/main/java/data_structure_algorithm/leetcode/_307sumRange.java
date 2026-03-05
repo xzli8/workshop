@@ -12,6 +12,13 @@ public class _307sumRange {
 
     public static class Solution1 {
 
+        /**
+         * 核心思想：对于区间查询单点更新的情况，有两种方案：
+         *  1.前缀和数组：查询O(1)，更新O(N)
+         *  2.传统数组：查询O(N)，更新O(1)
+         *  以上两种方案，要么更新O(N)查询O(1)；要么查询O(N)更新O(1)。为了平衡区间查询与单点更新的时间复杂度，将前缀和拆解成1 + 2 + 4 + 8 + ...等2的幂形式，实现更新和查询都是O(NlogN)
+         * ref: https://leetcode.cn/problems/range-sum-query-mutable/solutions/2524481/dai-ni-fa-ming-shu-zhuang-shu-zu-fu-shu-lyfll/
+         */
         class NumArray {
 
             /**
@@ -24,7 +31,7 @@ public class _307sumRange {
 
             /**
              提取i二进制形式的最后一个为1的位
-             input: 6 = 110(2)
+             input: 6 = 110(2) -6 = (010) [原码 -> 反码 -> 补码]
              output: 2 = 010(2)
              */
             private int lowBit(int index) {

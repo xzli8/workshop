@@ -5,16 +5,11 @@ import java.util.Set;
 
 public class _365canMeasureWater {
 
-    /**
-     分析：需要不断尝试每一种可能的方法，DFS/BFS都可以
-     */
-
     public static class Solution1 {
 
         /**
-         DFS
-         时间复杂度：O(M + N)
-         空间复杂度：O(M + N)
+         DFS: O(M + N), O(M + N)
+         Note: 需要不断尝试每一种可能的方法，DFS/BFS都可以
          */
         public boolean canMeasureWater(int jug1Capacity, int jug2Capacity, int targetCapacity) {
             this.cap1 = jug1Capacity; this.cap2 = jug2Capacity; this.target = targetCapacity;
@@ -36,6 +31,25 @@ public class _365canMeasureWater {
         private long hash(int cur1, int cur2) {
             return cur1 * (long) 1e6 + cur2;
         }
+
+    }
+
+
+    public static class Solution2 {
+
+        /**
+         * BFS
+         * Note: https://leetcode.cn/problems/water-and-jug-problem/solutions/161837/tu-de-yan-du-you-xian-bian-li-by-liweiwei1419/
+         */
+    }
+
+
+    public static class Solution3 {
+
+        /**
+         * Math
+         * Note: https://leetcode.cn/problems/water-and-jug-problem/solutions/161010/shui-hu-wen-ti-by-leetcode-solution/
+         */
 
     }
 

@@ -1,0 +1,95 @@
+
+PA EU Expansion 项目 - 带新人（Fresh Graduate）类 STAR 故事（中文+英文+LP+BQ问题）
+
+一、中文 STAR 故事（贴合真实经历，无虚构）
+
+1. Situation（背景）
+在 PA EU Expansion 项目推进过程中，我们组新入职了一名应届毕业生（Fresh Graduate），他刚加入时对项目业务、团队使用的服务架构以及相关开发流程都不熟悉。
+当时项目处于关键开发阶段，需要快速让他上手，参与基础开发工作，减轻团队整体工作量，确保项目按时推进。我负责全程带教这名新人，帮助他快速融入团队、掌握必备的开发技能和业务知识。
+
+2. Task（任务）
+我的任务是系统带教这名应届毕业生，帮助他快速熟悉项目业务、服务架构和开发流程，指导他完成基础开发任务，培养他独立排查问题、规范提交CR的能力，确保他能尽快上手，为项目贡献力量，同时不影响项目整体进度。
+
+3. Action（行动）
+新人刚入职时，我没有直接安排开发任务，而是先帮他梳理学习重点：首先让他阅读项目业务文档，了解项目核心目标、涉及的服务模块，以及各个服务之间的交互逻辑；
+随后，我把自己入职时总结的 service setup 文档分享给他，指导他动手在本地搭建服务环境，确保所有服务能正常跑通，夯实基础。
+
+等他熟悉基础环境和业务后，我给他分配了难度适中、边界清晰的简单开发任务，明确告知他需求细节和交付标准，避免他因任务模糊而无从下手。
+在他开发过程中，每当遇到问题，我不会直接告诉他答案，而是陪着他一起分析问题、查看日志，教他如何通过日志定位问题根源，培养他独立排查问题的能力。
+
+针对他在提交CR时出现的问题，我进行了针对性指导：我之前设计过一套读取 business entity 配置的接口，服务启动时会对配置进行 validate 校验（快速失败机制），
+若配置错误会导致服务无法启动。新人初期提交配置相关的CR时，只检查代码编译是否成功，忽略了服务启动校验，导致出现配置错误、服务无法启动的情况。
+发现这个问题后，我及时提醒他，提交配置类CR时，不仅要检查代码编译情况，还要手动启动服务，确认服务能正常运行后，再提交CR，避免类似问题再次发生。
+
+整个带教过程中，我会定期和他沟通学习进度，耐心解答他的疑问，及时纠正他的不规范操作，帮助他快速积累开发经验。
+
+4. Result（结果）
+通过一段时间的带教，这名新人快速熟悉了项目业务、服务架构和开发流程，能够独立完成基础开发任务，也掌握了通过日志定位问题、规范提交CR的方法，后续提交的配置类CR再也没有出现过导致服务启动失败的问题。
+他顺利融入团队，主动承担基础开发工作，有效减轻了团队的工作量，确保了 PAU EU Expansion 项目的开发进度不受影响。同时，我的带教能力也得到了团队认可，后续组里新入职的新人，也由我负责带教。
+
+二、英文 STAR 故事（口语优化版，流畅自然，适配面试语气）
+
+Situation
+During the PA EU Expansion project, a fresh graduate joined our team. He was not familiar with the project business, the team’s service architecture,
+or the relevant development processes when he first arrived. At that time, the project was in a critical development phase, so we needed him to get started quickly,
+participate in basic development work, reduce the team’s workload, and ensure the project progressed on schedule. I was responsible for mentoring him
+throughout the process to help him integrate into the team and master the necessary development skills and business knowledge.
+
+Task
+My task was to systematically mentor this fresh graduate, help him quickly familiarize himself with the project business,
+service architecture and development processes, guide him to complete basic development tasks, cultivate his ability to troubleshoot problems independently
+and submit CRs standardizedly, so that he could get started as soon as possible and contribute to the project without affecting the overall progress.
+
+Action
+When he first joined, I didn’t assign development tasks directly. Instead, I helped him sort out the learning priorities: first, I asked him to read
+the project business documents to understand the core goals of the project, the involved service modules, and the interaction logic between each service.
+Then, I shared the service setup documents I summarized when I joined the company with him, and guided him to set up the service environment locally
+to ensure all services could run smoothly, laying a solid foundation.
+
+After he became familiar with the basic environment and business, I assigned him simple development tasks with moderate difficulty and clear boundaries,
+clearly informing him of the demand details and delivery standards, so that he would not be at a loss due to vague tasks.
+When he encountered problems during development, I didn’t tell him the answer directly. Instead, I accompanied him to analyze the problems, check the logs,
+and taught him how to locate the root cause of the problems through logs, cultivating his ability to troubleshoot independently.
+
+I also gave targeted guidance on the problems he encountered when submitting CRs. I had designed a set of interfaces for reading business entity configurations
+before, and the service would perform validation checks when starting (a fail-fast mechanism). If the configuration was wrong, the service would fail to start.
+In the early stage, when the new graduate submitted CRs related to configurations, he only checked whether the code compiled successfully, ignoring the service
+startup validation, which led to configuration errors and service startup failures. After finding this problem, I reminded him in a timely manner: when
+submitting configuration-related CRs, he should not only check the code compilation, but also manually start the service to confirm that it could run normally
+before submitting the CR, so as to avoid similar problems from happening again.
+
+During the entire mentoring process, I communicated with him regularly about his learning progress, answered his questions patiently,
+corrected his irregular operations in a timely manner, and helped him accumulate development experience quickly.
+
+Result
+After a period of mentoring, the fresh graduate quickly became familiar with the project business, service architecture and development processes. He could complete basic development tasks independently, and also mastered the methods of locating problems through logs and submitting CRs standardizedly. Later, there were no more problems of service startup failure caused by his configuration-related CRs. He integrated into the team smoothly, took the initiative to take on basic development work, effectively reducing the team’s workload and ensuring that the development progress of the PAU EU Expansion project was not affected. At the same time, my mentoring ability was recognized by the team, and I was also responsible for mentoring new recruits who joined the team later.
+
+三、匹配的 Leadership Principles（LP）及解析
+1. Mentor & Develop Others（指导与培养他人，外企高频LP）
+Matching Point: I systematically mentored a fresh graduate, helped him sort out learning priorities, guided him to set up the service environment, assigned appropriate tasks, taught him how to troubleshoot problems through logs and submit CRs standardizedly. I patiently answered his questions and corrected his mistakes, helping him grow quickly and become a useful member of the team. This fully reflects the principle of Mentoring & Developing Others.
+
+2. Ownership（主人翁意识）
+Matching Point: I took the initiative to take on the responsibility of mentoring the new graduate, actively planned his learning and training process, and solved the problems he encountered in a timely manner. I ensured that he could get started quickly to contribute to the project, which reflected my strong sense of ownership for the team and the project.
+
+3. Teamwork（团队协作）
+Matching Point: By mentoring the new graduate, I helped him integrate into the team quickly, reduced the team’s overall workload, and ensured the smooth progress of the PAU EU Expansion project. This reflects my ability to cooperate with the team and contribute to the team’s goals.
+
+四、可覆盖的外企高频 BQ 问题（中文+英文）
+核心匹配题（必答）
+- Tell me about a time you mentored someone / helped a teammate.（核心匹配题）
+- 告诉我一次你指导他人或帮助队友的经历。
+
+补充匹配题
+- Tell me about a time you helped a new team member integrate into the team.（帮助新成员融入团队）
+
+- Tell me about a time you shared your knowledge or experience with others.（分享知识/经验给他人）
+
+- Tell me about a time you took ownership to help the team.（主动承担责任帮助团队）
+
+- 告诉我一次你帮助新团队成员融入团队的经历。
+
+- 告诉我一次你向他人分享知识或经验的经历。
+
+五、故事关联说明
+
+本故事为「带新人/指导类」核心故事，与你之前的「冲突/不同意类」故事、「技术攻坚类」故事形成互补，完美覆盖外企BQ高频考点。两个故事均基于 PAU EU Expansion 项目背景，面试时讲述会更连贯、更有说服力，避免故事背景杂乱。

@@ -9,6 +9,10 @@ public class _212findWords {
 
     public static class Solution1 {
 
+        /**
+         * backtrace: 超出时间限制
+         * Note: 将单词表存在一个Set中用来判断。
+         */
         public List<String> findWords(char[][] board, String[] words) {
             // 初始化
             this.m = board.length; this.n = board[0].length;
@@ -80,6 +84,7 @@ public class _212findWords {
             for (int i = 0; i < m; i++) {
                 for (int j = 0; j < n; j++) {
                     int index = board[i][j] - 'a';
+                    // 提前剪枝，避免不必要的搜索
                     if (root.children[index] != null) {
                         visited[i][j] = true;
                         backtrace(i, j, root.children[index]);
@@ -103,6 +108,7 @@ public class _212findWords {
                 int xx = x + dir[0], yy = y + dir[1];
                 if (!inArea(xx, yy) || visited[xx][yy]) continue;
                 int index = board[xx][yy] - 'a';
+                // 提前剪枝，避免不必要的搜索
                 if (p.children[index] != null) {
                     visited[xx][yy] = true;
                     backtrace(xx, yy, p.children[index]);
@@ -116,7 +122,7 @@ public class _212findWords {
         }
 
 
-        // 字典树(变体)
+        // 字典树(变体，叶子结点上存放单词而不是isEndChar)
         class TrieNode {
             String s;
             TrieNode[] children = new TrieNode[26];

@@ -12,9 +12,8 @@ public class _286wallsAndGates {
     public static class Solution1 {
 
         /**
-         BFS：(多源BFS)从门出发开始遍历，找到最近的房间
-         时间复杂度：O(M * N)
-         空间复杂度：O(M * N)
+         BFS(多源BFS): O(M * N), O(M * N)
+         Note: 从门出发开始遍历，找到最近的房间。没有用visited标记的原因是在网格自身标记了。
          */
         public void wallsAndGates(int[][] rooms) {
             // 初始化

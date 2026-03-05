@@ -45,26 +45,4 @@ public class _712minimumDeleteSum {
 
     }
 
-
-
-    public static class Solution2 {
-
-
-    }
-
-
-
-    public static class Solution3 {
-
-
-    }
-
-
-
-    public static class Solution4 {
-
-
-    }
-
-
 }

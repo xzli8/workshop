@@ -3,8 +3,8 @@ package data_structure_algorithm.leetcode;
 public class _265minCostII {
 
     /**
-     * lintcode:https://www.lintcode.com/problem/534
-     * ref:https://zhuanlan.zhihu.com/p/593492075
+     * Ref:https://leetcode.doocs.org/lc/256/, https://zhuanlan.zhihu.com/p/593492075
+     * Lintcode:https://www.lintcode.com/problem/534
      */
 
     public static class Solution1 {
@@ -24,7 +24,7 @@ public class _265minCostII {
             int[][] dp = new int[n][k];
 
             // 初始状态
-            for (int i = 0; i < k; i++) dp[0][i] = costs[0][i];
+            dp[0] = costs[0];
 
             // 状态转移
             for (int i = 1; i < n; i++) {

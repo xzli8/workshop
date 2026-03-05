@@ -18,6 +18,7 @@ public class _567checkInclusion {
             Map<Character, Integer> needs = new HashMap<>();
             for (char c : s1.toCharArray()) {
                 needs.put(c, needs.getOrDefault(c, 0) + 1);
+//                needs.merge(c, 1, Integer::sum);
             }
 
             // 滑动窗口
@@ -35,9 +36,7 @@ public class _567checkInclusion {
 
                 // 当窗口大小等于s1长度时，判断是否满足条件(这里用if代替while也可以)
                 while (right - left == s1.length()) {
-                    if (match == needs.size()) {
-                        return true;
-                    }
+                    if (match == needs.size()) return true;
 
                     // 左指针右移，缩小窗口，以便下一次循环开始时能够右移右指针，保持窗口大小不变
                     char cl = s2.charAt(left++);

@@ -28,6 +28,7 @@ public class _297serialize {
                     int size = q.size();
                     for (int i = 0; i < size; i++) {
                         TreeNode cur = q.poll();
+                        // 空节点用"x"代替
                         if (cur == null) {
                             sb.append('x').append(',');
                         } else {

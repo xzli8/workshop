@@ -9,7 +9,7 @@ public class _1094carPooling {
     public static class Solution1 {
 
         /**
-         1.差分数组（多次修改区间，返回最终结果）
+         1.差分数组（多次修改区间，返回最终结果）: O(N), O(N)
          */
          public boolean carPooling(int[][] trips, int capacity) {
              int[] nums = new int[1001];
@@ -65,7 +65,7 @@ public class _1094carPooling {
     public static class Solution2 {
 
         /**
-         排序 + 小顶堆（类似：会议室II）
+         排序 + 小顶堆（类似：会议室II）: O(NlogN), O(N)
          */
         public boolean carPooling(int[][] trips, int capacity) {
 

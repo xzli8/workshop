@@ -7,9 +7,7 @@ public class _700searchBST {
     public static class Solution1 {
 
         /**
-         递归
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         递归(DFS-preorder): O(N), O(N)
          */
         public TreeNode searchBST(TreeNode root, int val) {
             if (root == null) return null;
@@ -25,9 +23,7 @@ public class _700searchBST {
     public static class Solution2 {
 
         /**
-         迭代
-         时间复杂度：O(N)
-         空间复杂度：O(1)
+         迭代: O(N), O(1)
          */
          public TreeNode searchBST(TreeNode root, int val) {
              while (root != null) {

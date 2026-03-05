@@ -9,6 +9,40 @@ public class _138copyRandomList {
      分析：本题的难点在于随机指针，在顺序复制的时候，随机指针指向的节点可能还没有被创建
      */
 
+    public static class Solution0 {
+
+        // Definition for a Node.
+        class Node {
+            int val;
+            Node next;
+            Node random;
+
+            public Node(int val) {
+                this.val = val;
+                this.next = null;
+                this.random = null;
+            }
+        }
+
+        /**
+         哈希表: O(N), O(N)
+         */
+        public Node copyRandomList(Node head) {
+            Map<Node, Node> map = new HashMap<>();
+            for (Node node = head; node != null; node = node.next) {
+                map.put(node, new Node(node.val));
+            }
+
+            for (Node node = head; node != null; node = node.next) {
+                Node newNode = map.get(node);
+                newNode.next = node.next == null ? null : map.get(node.next);
+                newNode.random = node.random == null ? null : map.get(node.random);
+            }
+            return map.get(head);
+        }
+
+    }
+
     public static class Solution1 {
 
         // Definition for a Node.

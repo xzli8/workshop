@@ -3,8 +3,9 @@ package data_structure_algorithm.leetcode;
 public class _256minCost {
 
     /**
-     * leetcode:https://leetcode.cn/problems/JEj789/description/
-     * lintcode:https://www.lintcode.com/problem/515
+     * Ref:https://leetcode.doocs.org/lc/256/
+     * Leetcode:https://leetcode.cn/problems/JEj789/description/
+     * Lintcode:https://www.lintcode.com/problem/515
      */
 
     public static class Solution1 {

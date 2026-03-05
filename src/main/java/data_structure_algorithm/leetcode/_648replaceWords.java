@@ -22,8 +22,8 @@ public class _648replaceWords {
             String[] strs = sentence.split(" ");
             for (int i = 0; i < strs.length; i++) {
                 String res = trie.search(strs[i]);
-                if (res == null) continue;
-                strs[i] = res;
+                if (res == null) continue;  // 如果这个衍生词没有词根，就跳过
+                strs[i] = res;  // 有词根，用词根替换衍生词
             }
             return String.join(" ", strs);
         }

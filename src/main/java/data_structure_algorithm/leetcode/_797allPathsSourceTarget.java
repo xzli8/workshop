@@ -9,7 +9,8 @@ public class _797allPathsSourceTarget {
     public static class Solution1 {
 
         /**
-         DFS
+         DFS: O(N), O(N)
+         Note: 求路径只能用DFS，BFS不行。因为是有向图，所以无需使用visited标记访问情况。
          */
         public List<List<Integer>> allPathsSourceTarget(int[][] graph) {
             // 路径总是从0出发

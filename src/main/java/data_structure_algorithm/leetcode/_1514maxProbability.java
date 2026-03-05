@@ -10,16 +10,14 @@ public class _1514maxProbability {
     public static class Solution1 {
 
         /**
-         dijkstra：有向正权图的最短路径
-         但这里给的是无向图，无向图等价于双向图
-         这里求最大概率，因为每增加一条边，概率都要减小，所以可以(标准dijkstra是每增加一条边路径长度增加求最小)
+         Dijkstra + PriorityQueue：O(NlogN), O(N)
+         Note: Dijkstra用于解决有向正权图的最短路径，但这里给的是无向图，无向图等价于双向图。
+            这里求最大概率，因为每增加一条边，概率都要减小，所以可以(标准dijkstra是每增加一条边路径长度增加求最小)
          */
         public double maxProbability(int n, int[][] edges, double[] succProb, int start_node, int end_node) {
             // 构建图(邻接表)
             List<double[]>[] graph = new ArrayList[n];
-            for (int i = 0; i < n; i++) {
-                graph[i] = new ArrayList<>();
-            }
+            Arrays.setAll(graph, e -> new ArrayList<>());
             for (int i = 0; i < edges.length; i++) {
                 int from = edges[i][0], to = edges[i][1];
                 double prob = succProb[i];

@@ -17,6 +17,7 @@ public class HeapSort {
 
     /**
      *  堆排序：先建堆，将所有非叶子节点正确归位；然后将堆顶的最大元素交换到无序区间的末尾，将堆大小减1，继续调整堆～
+     *      ref: https://www.cnblogs.com/chengxiao/p/6129630.html
      *      时间复杂度：O(NlogN)
      *      空间复杂度：O(1)
      *      稳定性：不稳定
@@ -28,7 +29,7 @@ public class HeapSort {
             adjust(nums, n, i);
         }
 
-        // 排序
+        // 排序，时间复杂度为O(NlogN)
         for (int i = n - 1; i >= 0; i--) {
             swap(nums, i, 0);
             adjust(nums, i, 0);
