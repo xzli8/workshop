@@ -7,9 +7,9 @@ public class _998insertIntoMaxTree {
     public static class Solution1 {
 
         /**
-         遍历寻找右子节点
-         时间复杂度：O(N)
-         空间复杂度：O(1)
+         迭代: O(N), O(1)
+         Note: 遍历寻找右子节点
+         ref: https://leetcode.cn/problems/maximum-binary-tree-ii/solutions/1785544/by-ac_oier-v82s/
          */
         public TreeNode insertIntoMaxTree(TreeNode root, int val) {
             TreeNode node = new TreeNode(val), prev = null, cur = root;
@@ -25,6 +25,23 @@ public class _998insertIntoMaxTree {
                 node.left = cur;
                 return root;
             }
+        }
+
+    }
+
+
+    public static class Solution2 {
+
+        /**
+         递归: O(N), O(N)
+         */
+        public TreeNode insertIntoMaxTree(TreeNode root, int val) {
+            if(root == null) return new TreeNode(val);
+            if(val > root.val){
+                return new TreeNode(val, root, null);
+            }
+            root.right = insertIntoMaxTree(root.right, val);
+            return root;
         }
 
     }

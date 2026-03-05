@@ -15,18 +15,18 @@ public class _1438longestSubarray {
          */
         public int longestSubarray(int[] nums, int limit) {
             int n = nums.length, maxLen = 0, left = 0, right = 0;
-            TreeMap<Integer, Integer> map = new TreeMap<>();
+            TreeMap<Integer, Integer> num2Count = new TreeMap<>();
             while (right < n) {
                 // 更新
                 int nr = nums[right++];
-                map.put(nr, map.getOrDefault(nr, 0) + 1);
+                num2Count.put(nr, num2Count.getOrDefault(nr, 0) + 1);
 
                 // 不满足条件时移动左指针，直至重新满足条件为止
-                while (map.lastKey() - map.firstKey() > limit) {
+                while (num2Count.lastKey() - num2Count.firstKey() > limit) {
                     int nl = nums[left++];
-                    map.put(nl, map.get(nl) - 1);
-                    if (map.get(nl) == 0) {
-                        map.remove(nl);
+                    num2Count.put(nl, num2Count.get(nl) - 1);
+                    if (num2Count.get(nl) == 0) {
+                        num2Count.remove(nl);
                     }
                 }
 

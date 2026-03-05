@@ -5,6 +5,10 @@ import java.util.Deque;
 
 public class _42trap {
 
+    /**
+     * ref: https://leetcode.cn/problems/trapping-rain-water/solutions/9112/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by-w-8/
+     */
+
     public static class Solution1 {
 
         /**

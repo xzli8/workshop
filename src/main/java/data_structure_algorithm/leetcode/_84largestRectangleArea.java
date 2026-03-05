@@ -1,13 +1,13 @@
 package data_structure_algorithm.leetcode;
 
-import org.junit.Test;
-
 import java.util.ArrayDeque;
 import java.util.Deque;
 
 public class _84largestRectangleArea {
 
     /**
+     ref: https://leetcode.cn/problems/largest-rectangle-in-histogram/solutions/142012/bao-li-jie-fa-zhan-by-liweiwei1419/
+
      思路：对于位置i而言，向左找第一个小于heigth[i]的元素hegith[left]，向右找第一个小于height[i]的
      元素height[right]，area = height[i] * (right - left - 1)。可以通过暴力或者单调栈来解决。
      暴力法：时间复杂度O(N^2)，空间复杂度O(1)

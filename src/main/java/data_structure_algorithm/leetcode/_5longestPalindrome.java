@@ -10,6 +10,7 @@ public class _5longestPalindrome {
          状态转移：
          当 j - i = 1时，dp[i][j] = s[i] == s[j]
          当 j - i > 1时，dp[i][j] = s[i] == s[j] && dp[i + 1][j - 1]
+            由于dp[i][j]依赖dp[i+1][j-1]所以需要从大到小枚举i，从小到大枚举j
          初始状态：dp[i][i] = true
 
          时间复杂度：O(N^2)

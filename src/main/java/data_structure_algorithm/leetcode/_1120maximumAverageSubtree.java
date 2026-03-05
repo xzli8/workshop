@@ -11,6 +11,10 @@ public class _1120maximumAverageSubtree {
 
     public static class Solution1 {
 
+        /**
+         * dfs(postorder): O(N), O(N)
+         * Note: Pair可以用int[]替代
+         */
         public double maximumAverageSubtree(TreeNode root) {
             countAndSum(root);
             return maxAverage;

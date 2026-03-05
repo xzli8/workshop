@@ -11,7 +11,6 @@ public class _1598minOperations {
          Stack + Simulation
          */
         public int minOperations(String[] logs) {
-            int n = logs.length;
             Deque<String> s = new ArrayDeque<>();
             for (String log : logs) {
                 log = log.substring(0, log.length() - 1);

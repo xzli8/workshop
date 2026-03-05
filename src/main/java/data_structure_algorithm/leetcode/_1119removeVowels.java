@@ -18,6 +18,38 @@ public class _1119removeVowels {
         }
 
         /**
+         * 一次遍历
+         *  时间复杂度：O(N)
+         *  空间复杂度：O(N)
+         */
+        public String removeVowels(String s) {
+            char[] cs = s.toCharArray();
+            int i = 0;
+            for (char c : cs) {
+                if (!isVowel(c)) {
+                    cs[i++] = c;
+                }
+            }
+            return String.valueOf(cs).substring(0, i);
+        }
+
+        private boolean isVowel(char c) {
+            return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
+        }
+
+    }
+
+
+
+    public static class Solution2 {
+
+        @Test
+        public void test() {
+            Assert.assertEquals("ltcdscmmntyfrcdrs", removeVowels("leetcodeisacommunityforcoders"));
+            Assert.assertEquals("", removeVowels("aeiou"));
+        }
+
+        /**
          * 双指针
          *  时间复杂度：O(N)
          *  空间复杂度：O(N)

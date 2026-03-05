@@ -1,7 +1,5 @@
 package data_structure_algorithm.leetcode;
 
-import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +9,7 @@ public class _1248numberOfSubarrays {
 
         /**
          SlideWindow
+         ref: https://leetcode.cn/problems/count-number-of-nice-subarrays/solutions/213352/hua-dong-chuang-kou-qian-zhui-he-bi-xu-miao-dong-b/
          TC: O(N)
          SC: O(1)
          */

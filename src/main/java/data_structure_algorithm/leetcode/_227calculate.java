@@ -36,6 +36,7 @@ public class _227calculate {
                     if (opsStack.isEmpty()) {
                         opsStack.push(c);
                     } else {
+                        // 将当前操作符c入栈之前，需要先判断并计算栈中已有操作符的情况
                         // 注意这里是while，需要一直找到优先级比当前运算符低的或者运算符栈为空时才停止
                         while (!opsStack.isEmpty() && !opsPriority(c, opsStack.peek())) {
                             cal(numStack, opsStack);

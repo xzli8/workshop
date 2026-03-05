@@ -22,12 +22,11 @@ public class _128longestConsecutive {
             int maxLen = 0;
             for (int num : nums) {
                 if (s.contains(num - 1)) continue;  // 跳过没必要的循环
-                int cur = num, len = 1;
-                while (s.contains(cur + 1)) {
-                    cur += 1;
-                    len += 1;
+                int x = num + 1;
+                while (s.contains(x)) {
+                    x++;
                 }
-                maxLen = Math.max(maxLen, len);
+                maxLen = Math.max(maxLen, x - num);
             }
             return maxLen;
         }

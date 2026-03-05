@@ -1,6 +1,6 @@
 package data_structure_algorithm.leetcode;
 
-public class _1002numEnclaves {
+public class _1020numEnclaves {
 
     public static class Solution1 {
 

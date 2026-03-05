@@ -38,6 +38,7 @@ public class _1379getTargetCopy {
          SC: O(N)
          */
         public final TreeNode getTargetCopy(final TreeNode original, final TreeNode cloned, final TreeNode target) {
+            // 先处理当前节点再处理左右子节点
             if (original == null) return null;
             if (original == target) return cloned;
             TreeNode left = getTargetCopy(original.left, cloned.left, target);

@@ -13,7 +13,7 @@ public class _437pathSum {
     public static class Solution0 {
 
         /**
-         PreSum + HashMap
+         PreSum + HashMap: O(N), O(N)
          */
         public int pathSum(TreeNode root, int targetSum) {
             this.targetSum = targetSum;
@@ -23,15 +23,12 @@ public class _437pathSum {
         }
 
         private int targetSum, count = 0;
-        private Map<Long, Integer> preSum2Count = new HashMap<>();
+        private final Map<Long, Integer> preSum2Count = new HashMap<>();
 
         private void dfs(TreeNode root, long preSum) {
             if (root == null) return;
             preSum += root.val;
-            long remain = preSum - targetSum;
-            if (preSum2Count.containsKey(remain)) {
-                count += preSum2Count.get(remain);
-            }
+            count += preSum2Count.getOrDefault(preSum - targetSum, 0);
             preSum2Count.put(preSum, preSum2Count.getOrDefault(preSum, 0) + 1);
             dfs(root.left, preSum);
             dfs(root.right, preSum);

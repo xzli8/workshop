@@ -15,9 +15,9 @@ public class _207canFinish {
             int[] indeg = new int[numCourses];
             List<Integer>[] g = new List[numCourses];
             for (int i = 0; i < numCourses; i++) g[i] = new ArrayList<>();
-            for (int[] prerequisit : prerequisites) {
-                g[prerequisit[1]].add(prerequisit[0]);
-                indeg[prerequisit[0]]++;
+            for (int[] prerequisite : prerequisites) {
+                g[prerequisite[1]].add(prerequisite[0]);
+                indeg[prerequisite[0]]++;
             }
 
             Queue<Integer> q = new ArrayDeque<>();

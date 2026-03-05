@@ -7,18 +7,18 @@ public class _250countUnivalSubtrees {
     public static class Solution1 {
 
         /**
-         * postorder
+         * dfs(postorder): O(N), O(N)
          * ref:https://www.cnblogs.com/cnoodle/p/12484102.html
          */
         public int countUnivalSubtrees(TreeNode root) {
-            helper(root);
+            dfs(root);
             return count;
         }
 
         private int count = 0;
-        private boolean helper(TreeNode node) {
+        private boolean dfs(TreeNode node) {
             if (node == null) return true;
-            boolean left = helper(node.left), right = helper(node.right);
+            boolean left = dfs(node.left), right = dfs(node.right);
             if (left && right) {
                 if (node.left != null && node.left.val != node.val) return false;
                 if (node.right != null && node.right.val != node.val) return false;
