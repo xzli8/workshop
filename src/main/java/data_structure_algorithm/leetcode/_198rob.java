@@ -2,12 +2,10 @@ package data_structure_algorithm.leetcode;
 
 public class _198rob {
 
-    public static class Solution0 {
+    public static class Solution1 {
 
         /**
-         动态规划
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         动态规划: O(N), O(N)
          */
         public int rob(int[] nums) {
             // 定义状态：dp[i][j]表示第i间房屋偷(j = 1)和不偷(j = 0)时的最高金额
@@ -21,7 +19,7 @@ public class _198rob {
             // 状态转移
             for (int i = 1; i < n; i++) {
                 dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1]);
-                dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] + nums[i]);
+                dp[i][1] = dp[i - 1][0] + nums[i];
             }
             return Math.max(dp[n - 1][0], dp[n - 1][1]);
         }
@@ -29,8 +27,7 @@ public class _198rob {
     }
 
 
-
-    public static class Solution1 {
+    public static class Solution2 {
 
         /**
          动态规划
@@ -62,8 +59,7 @@ public class _198rob {
     }
 
 
-
-    public static class Solution2 {
+    public static class Solution3 {
 
         /**
          优化空间：用临时变量替代数组
@@ -83,9 +79,18 @@ public class _198rob {
              return n1;
          }
 
+         // 另一种更简洁的写法
+         public int robII(int[] nums) {
+             int f2 = 0, f1 = 0;    // f2, f1分别表示d[i-2], dp[i-1]
+             for (int i = 0; i < nums.length; i++) {
+                 int f = Math.max(f1, f2 + nums[i]);
+                 f2 = f1;
+                 f1 = f;
+             }
+             return f1;
+         }
 
     }
-
 
 
 }

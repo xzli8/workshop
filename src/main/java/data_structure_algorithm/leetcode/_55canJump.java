@@ -40,7 +40,6 @@ public class _55canJump {
     }
 
 
-
     public static class Solution2 {
 
         /**
@@ -62,8 +61,8 @@ public class _55canJump {
     }
 
 
-
     public static class Solution3 {
+
         /**
          贪心：从后往前遍历，寻找能到达的最前面的元素，判断该元素是否为第一个元素
          时间复杂度：O(N)
@@ -79,6 +78,7 @@ public class _55canJump {
              }
              return lastPosition == 0;
          }
+
     }
 
 

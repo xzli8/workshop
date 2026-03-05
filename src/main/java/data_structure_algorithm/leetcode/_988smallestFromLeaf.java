@@ -4,6 +4,7 @@ import data_structure_algorithm.domain.TreeNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class _988smallestFromLeaf {
 
@@ -14,33 +15,29 @@ public class _988smallestFromLeaf {
     public class Solution1 {
 
         /**
-         DFS
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         DFS: O(NlogN)[遍历O(N), 比较O(logN)], O(N)
+         Note: 创建出所有可能的字符串，然后逐一比较，输出字典序最小的那个。
          */
         public String smallestFromLeaf(TreeNode root) {
-            dfs(root, new ArrayList<>());
-            return res;
+            dfs(root, new StringBuilder());
+            return min;
         }
 
-        // res初始化为比z字典序大的值即可，或者初始化为""，后面在判断大小前加上"res.equals("") || 大小判断"即可
-        private String res = String.valueOf((char) ('z' + 1));
-        private void dfs(TreeNode cur, List<Integer> path) {
-            if (cur == null) return;
-            path.add(cur.val);
-            if (cur.left == null && cur.right == null) {
-                StringBuilder sb = new StringBuilder();
-                for (int num : path) {
-                    sb.append((char) ('a' + num));
-                }
-                String tmp = sb.reverse().toString();
-                if (tmp.compareTo(res) < 0) {
-                    res = tmp;
+        private String min = "";
+        private void dfs(TreeNode root, StringBuilder path) {
+            if (root == null) return;
+            path.append((char) ('a' + root.val));
+            if (root.left == null && root.right == null) {
+                path.reverse();
+                String s = path.toString();
+                path.reverse(); // 切记一定要reverse回来
+                if (Objects.equals(min, "") || s.compareTo(min) < 0) {
+                    min = s;
                 }
             }
-            dfs(cur.left, path);
-            dfs(cur.right, path);
-            path.remove(path.size() - 1);
+            dfs(root.left, path);
+            dfs(root.right, path);
+            path.deleteCharAt(path.length() - 1);
         }
 
     }

@@ -10,9 +10,8 @@ public class _538convertBST {
     public static class Solution1 {
 
         /**
-         DFS-递归：遍历顺序改为"右根左"，这样就能从小到大遍历节点，然后累加赋值即可
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         递归: O(N), O(N)
+         Note: 遍历顺序改为"右根左"，这样就能从小到大遍历节点，然后累加赋值即可
          */
          public TreeNode convertBST(TreeNode root) {
              dfs(root);
@@ -31,13 +30,11 @@ public class _538convertBST {
     }
 
 
-
     public static class Solution2 {
 
         /**
-         DFS-迭代：遍历顺序改为"右根左"，这样就能从小到大遍历节点，然后累加赋值即可
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         迭代：O(N), O(N)
+         Note: 遍历顺序改为"右根左"，这样就能从小到大遍历节点，然后累加赋值即可
          */
         public TreeNode convertBST(TreeNode root) {
             Deque<TreeNode> s = new ArrayDeque<>();
@@ -55,6 +52,43 @@ public class _538convertBST {
                 }
             }
             return root;
+        }
+
+    }
+
+
+    public static class Solution3 {
+
+        /**
+         * Morris遍历: O(N), O(1)
+         * Note: 中序遍历(左根右)的前驱节点是left.mostRight，这里需要的遍历顺序是(右根左)，所以前驱节点是right.mostLeft
+         */
+        public TreeNode convertBST(TreeNode root) {
+            int s = 0;
+            TreeNode node = root;
+            while (root != null) {
+                if (root.right == null) {
+                    s += root.val;
+                    root.val = s;
+                    root = root.left;
+                } else {
+                    // 中序遍历(左根右)的前驱节点是left.mostRight，这里需要的遍历顺序是(右根左)，所以前驱节点是right.mostLeft
+                    TreeNode next = root.right;
+                    while (next.left != null && next.left != root) {
+                        next = next.left;
+                    }
+                    if (next.left == null) {
+                        next.left = root;
+                        root = root.right;
+                    } else {
+                        s += root.val;
+                        root.val = s;
+                        next.left = null;
+                        root = root.left;
+                    }
+                }
+            }
+            return node;
         }
 
     }

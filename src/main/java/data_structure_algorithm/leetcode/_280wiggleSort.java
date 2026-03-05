@@ -5,7 +5,8 @@ import java.util.Arrays;
 public class _280wiggleSort {
 
     /**
-     * 参考题解：https://www.cnblogs.com/grandyang/p/5177285.html
+     * Ref: https://leetcode.doocs.org/lc/280/
+     *      https://www.cnblogs.com/grandyang/p/5177285.html
      */
 
     public static class Solution1 {

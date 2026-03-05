@@ -7,6 +7,37 @@ import java.util.Deque;
 
 public class _1019nextLargerNodes {
 
+    public static class Solution0 {
+
+        /**
+         单调栈：需要先反转链表 / O(N), O(N)
+         */
+        public int[] nextLargerNodes(ListNode head) {
+            int n = 0;
+            ListNode prev = null;
+            while (head != null) {
+                n++;
+                ListNode next = head.next;
+                head.next = prev;
+                prev = head;
+                head = next;
+            }
+
+            int[] res = new int[n];
+            Deque<ListNode> s = new ArrayDeque<>();
+            while (prev != null) {
+                while (!s.isEmpty() && prev.val >= s.peek().val) {
+                    s.pop();
+                }
+                res[--n] = s.isEmpty() ? 0 : s.peek().val;
+                s.push(prev);
+                prev = prev.next;
+            }
+            return res;
+        }
+
+    }
+
     public static class Solution1 {
 
         /**

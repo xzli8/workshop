@@ -10,6 +10,28 @@ public class _337rob {
     public static class Solution1 {
 
         /**
+         树形DP(DFS-postorder): O(N), O(N)
+         Ref: https://leetcode.cn/problems/house-robber-iii/solutions/2282018/shi-pin-ru-he-si-kao-shu-xing-dppythonja-a7t1/
+         */
+        public int rob(TreeNode root) {
+            int[] res = dfs(root);
+            return Math.max(res[0], res[1]); // 根节点选或不选的最大值
+        }
+
+        private int[] dfs(TreeNode node) {
+            if (node == null) return new int[]{0, 0}; // 没有节点，怎么选都是 0
+            int[] left = dfs(node.left), right = dfs(node.right); // 递归左右子树
+            int rob = left[1] + right[1] + node.val; // 选当前节点
+            int notRob = Math.max(left[0], left[1]) + Math.max(right[0], right[1]); // 不选当前节点
+            return new int[]{rob, notRob};
+        }
+
+    }
+
+
+    public static class Solution2 {
+
+        /**
          深度优先搜索
          思路：每个节点有两种选择：偷或者不偷，如果偷，那么不能偷左右子节点。
          递归遍历时，用map记录已经遍历过节点的最大值
@@ -38,7 +60,6 @@ public class _337rob {
             map.put(root, sum);
             return sum;
         }
-
 
     }
 

@@ -1,8 +1,30 @@
-package load_balance.consistent_hash;
+package load_balance;
+
+import org.junit.Test;
 
 import java.util.*;
 
 public class ConsistentHash {
+
+    public class Server {
+
+        // ip地址
+        private String ip;
+
+        public Server(String ip) {
+            this.ip = ip;
+        }
+
+        public String getIp() {
+            return ip;
+        }
+
+        public void setIp(String ip) {
+            this.ip = ip;
+        }
+
+    }
+
 
     // 哈希环：虚拟节点的哈希值 -> 实际节点列表
     // 因为存在哈希冲突，多个虚拟节点可能映射到同一个哈希值，所以Map的value是List
@@ -27,7 +49,7 @@ public class ConsistentHash {
             int hash = key.hashCode();
             if (hashRing.containsKey(hash)) {
                 List<Server> servers = hashRing.get(hash);
-                servers.remove(server);
+                servers.remove(server);     // Removes the first occurrence of the specified element from this list
                 if (servers.size() == 0) hashRing.remove(hash);
             }
         }
@@ -39,12 +61,12 @@ public class ConsistentHash {
         Map.Entry<Integer, List<Server>> entry = hashRing.ceilingEntry(hash);
         if (entry == null) entry = hashRing.firstEntry();
         List<Server> servers = entry.getValue();
-        return servers.get(hash % servers.size());
+        return servers.get((hash % servers.size() + servers.size()) % servers.size());  // 取余(防止余数为负数)
     }
 
 
-
-    public static void main(String[] args) {
+    @Test
+    public void test() {
         ConsistentHash consistentHash = new ConsistentHash();
         Server server1 = new Server("198.162.0.1");
         Server server2 = new Server("198.162.0.2");

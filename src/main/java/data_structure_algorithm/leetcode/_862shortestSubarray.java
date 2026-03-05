@@ -60,11 +60,11 @@ public class _862shortestSubarray {
             int res = n + 1;
             Deque<Integer> q = new ArrayDeque<>(); // 队列中记录元素下标
             for (int i = 0; i <= n; i++) {
-                // 移除队列左侧元素
+                // 移除队列左侧元素: 当i > j && s[i] - s[j] >= k时，i后面的元素s[x]即使能满足s[x] - s[j] >= k，也不是最短的，s[j]没用了，移除(去除对最优解无帮助的)
                 while (!q.isEmpty() && preSum[i] - preSum[q.peekFirst()] >= k) {
                     res = Math.min(res, i - q.pollFirst());
                 }
-                // 移除队列右侧元素，维持单调队列递增
+                // 移除队列右侧元素: 当i > j && s[i] <= s[j]时，i后面的元素如果满足s[x] - s[j] >=k，也一定满足s[x] - s[i] >= k，并且i更短，所有s[j]没用了，移除(维持队列递增，单调队列)
                 while (!q.isEmpty() && preSum[i] <= preSum[q.peekLast()]) {
                     q.pollLast();
                 }

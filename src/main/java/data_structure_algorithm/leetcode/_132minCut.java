@@ -30,7 +30,9 @@ public class _132minCut {
                 // s[0, i]是回文串，无需分割
                 if (isPalindrome[0][i]) dp[i] = 0;
                 else {
+                    // 枚举分割点j
                     for (int j = 0; j < i; j++) {
+                        // 看分割点j后面的一个元素到i是否是回文串
                         if (isPalindrome[j + 1][i]) dp[i] = Math.min(dp[i], dp[j] + 1);
                     }
                 }

@@ -25,23 +25,22 @@ public class _133cloneGraph {
         }
 
         /**
-         遍历(DFS/BFS) + 哈希表
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         BFS + Hash: O(N), O(N)
+         Note: 用BFS遍历图，同时用HashSet记录每个节点，然后再重新构建
          */
         public Node cloneGraph(Node node) {
             // 边界情况
             if (node == null) return null;
 
             // BFS遍历原图，构建从原节点到新节点的映射
-            Map<Node, Node> map = new HashMap<>();
+            Map<Node, Node> old2New = new HashMap<>();
             Queue<Node> q = new ArrayDeque<>();
             q.offer(node);
             Set<Node> visited = new HashSet<>();
             visited.add(node);
             while (!q.isEmpty()) {
                 Node cur = q.poll();
-                map.put(cur, new Node(cur.val));
+                old2New.put(cur, new Node(cur.val));
                 for (Node neighbor : cur.neighbors) {
                     if (visited.contains(neighbor)) continue;
                     visited.add(neighbor);
@@ -54,15 +53,15 @@ public class _133cloneGraph {
             visited.add(node);
             q.offer(node);
             while (!q.isEmpty()) {
-                Node cur = q.poll(), newNode = map.get(cur);
+                Node cur = q.poll(), newNode = old2New.get(cur);
                 for (Node neighbor : cur.neighbors) {
-                    newNode.neighbors.add(map.get(neighbor));
+                    newNode.neighbors.add(old2New.get(neighbor));
                     if (visited.contains(neighbor)) continue;
                     visited.add(neighbor);
                     q.offer(neighbor);
                 }
             }
-            return map.get(node);
+            return old2New.get(node);
         }
 
     }
@@ -90,12 +89,11 @@ public class _133cloneGraph {
         }
 
         /**
-         哈希表 + DFS/BFS遍历
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         DFS + Hash: O(N), O(N)
+         Note: 用DFS遍历图，同时用HashMap记录每个旧节点->新节点的映射，然后再重新构建
          */
         public Node cloneGraph(Node node) {
-            traverse(node);
+            dfs(node);
             visited.clear();
             return build(node);
         }
@@ -103,11 +101,11 @@ public class _133cloneGraph {
         private Set<Node> visited = new HashSet<>();
         private Map<Node, Node> old2New = new HashMap<>();
 
-        private void traverse(Node node) {
+        private void dfs(Node node) {
             if (node == null || visited.contains(node)) return;
             visited.add(node);
             old2New.put(node, new Node(node.val));
-            for (Node neighbor : node.neighbors) traverse(neighbor);
+            for (Node neighbor : node.neighbors) dfs(neighbor);
         }
 
         private Node build(Node node) {

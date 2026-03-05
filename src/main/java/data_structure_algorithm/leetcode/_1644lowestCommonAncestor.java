@@ -8,17 +8,13 @@ public class _1644lowestCommonAncestor {
      * 题解：
      *      https://blog.csdn.net/fdl123456/article/details/123887678
      *      https://www.cnblogs.com/Dylan-Java-NYC/p/16184297.html
-     *
-     *      Solution1: 两次遍历，第一次找P和Q是否都存在，第二次找LCA(236)
-     *      Solution2: 一次遍历
      */
 
     public static class Solution1 {
 
         /**
-         DFS：(1644.二叉树的最近公共祖先II)如果两个节点未必在树中的做法
-         时间复杂度：O(N)
-         空间复杂度：O(H)
+         DFS(postorder)：O(N), O(N)
+         Note: 如果两个节点未必在树中，一定要后序遍历
          */
         public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
             TreeNode res = find(root, p, q);
@@ -47,9 +43,7 @@ public class _1644lowestCommonAncestor {
     public static class Solution2 {
 
         /**
-         *  DFS: Postorder
-         *  TC: O(N)
-         *  SC: O(N)
+         *  DFS(postorder): O(N), O(N)
          */
         public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
             TreeNode res = dfs(root, p, q);

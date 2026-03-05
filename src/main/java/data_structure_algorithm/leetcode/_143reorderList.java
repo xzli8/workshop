@@ -4,6 +4,50 @@ import data_structure_algorithm.domain.ListNode;
 
 public class _143reorderList {
 
+    public static class Solution0 {
+
+        /**
+         快慢指针找中点断开+反转后半部分+重新拼装：O(N), O(1)
+         */
+        public void reorderList(ListNode head) {
+            if (head == null || head.next == null || head.next.next == null) return;
+
+            // 快慢指针找中点断开
+            ListNode fast = head, slow = head, prev = null;
+            while (fast != null && fast.next != null) {
+                prev = slow;
+                slow = slow.next;
+                fast = fast.next.next;
+            }
+            prev.next = null;
+
+            // 反转后半部分
+            prev = null;
+            while (slow != null) {
+                ListNode next = slow.next;
+                slow.next = prev;
+                prev = slow;
+                slow = next;
+            }
+
+            // 重新组装
+            ListNode dummy = new ListNode(0, head), p = dummy;
+            while (head != null && prev != null) {
+                p.next = head;
+                head = head.next;
+                p = p.next;
+                p.next = prev;
+                prev = prev.next;
+                p = p.next;
+            }
+            if (head != null) {
+                p.next = head;
+            }
+            head = dummy.next;
+        }
+
+    }
+
     public static class Solution1 {
 
         /**

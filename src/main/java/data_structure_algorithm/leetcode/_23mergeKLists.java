@@ -10,27 +10,26 @@ public class _23mergeKLists {
     public static class Solution1 {
 
         /**
-         优先队列
-         时间复杂度：O(kn * logk)
-         空间复杂度：O(k)
+         优先队列: O(KNlogK), O(logK) / K:lists元素数目，N:list中最长链表的节点数
          */
         public ListNode mergeKLists(ListNode[] lists) {
             PriorityQueue<ListNode> pq = new PriorityQueue<>(Comparator.comparingInt(o -> o.val));
             for (ListNode list : lists) {
-                if (list != null) pq.offer(list);
+                if (list != null) {
+                    pq.offer(list);
+                }
             }
 
-            ListNode head = new ListNode();
-            ListNode tail = head;
+            ListNode dummy = new ListNode(), prev = dummy;
             while (!pq.isEmpty()) {
                 ListNode node = pq.poll();
-                tail.next = node;
-                tail = tail.next;
+                prev.next = node;
+                prev = prev.next;
                 if (node.next != null) {
                     pq.offer(node.next);
                 }
             }
-            return head.next;
+            return dummy.next;
         }
 
 

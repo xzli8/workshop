@@ -59,12 +59,12 @@ public class _224calculate {
                             numsStack.push(0);
                         }
 
-                        // 计算，直到操作符栈为空或者遇到左括号为止
+                        // 计算之前的结果，直到操作符栈为空或者遇到左括号为止
                         // 只有加减，没有乘除，不需要考虑运算符优先级
                         while (!opsStack.isEmpty() && opsStack.peek() != '(') {
                             cal(numsStack, opsStack);
                         }
-                        opsStack.push(c);
+                        opsStack.push(c); // 计算完成后将当前操作符入栈
                     }
                 }
 

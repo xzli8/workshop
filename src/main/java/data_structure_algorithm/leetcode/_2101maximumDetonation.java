@@ -17,7 +17,8 @@ public class _2101maximumDetonation {
         }
 
         /**
-         BFS
+         BFS: O(N^2), O(N)
+         Note: 将每个炸弹都作为src尝试一次爆炸
          */
         public int maximumDetonation(int[][] bombs) {
             int n = bombs.length, max = Integer.MIN_VALUE;
@@ -58,7 +59,8 @@ public class _2101maximumDetonation {
     public static class Solution2 {
 
         /**
-         DFS
+         DFS: O(N^2), O(N)
+         Note: 将每个炸弹都作为src尝试一次爆炸
          */
         public int maximumDetonation(int[][] bombs) {
             // init

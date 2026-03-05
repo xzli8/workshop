@@ -16,7 +16,8 @@ public class _490hasPath {
     public static class Solution1 {
 
         /**
-         BFS：每次从停下来的点出发，遍历找下一层
+         BFS：
+         Note: 与DFS相比，BFS可以找到最短路径后立马返回
          */
         public boolean hasPath(int[][] maze, int[] start, int[] destination) {
 
@@ -70,6 +71,16 @@ public class _490hasPath {
             // 遍历完了都还没到终点，返回false
             return false;
         }
+
+    }
+
+
+    public static class Solution2 {
+
+        /**
+         * DFS
+         * Note: DFS也可以，但需要遍历完全部节点后返回visited[destination[0]][destination[1]]，不能像BFS那样找到了最短路径就立马返回
+         */
 
     }
 

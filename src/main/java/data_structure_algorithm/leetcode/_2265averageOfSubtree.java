@@ -18,10 +18,8 @@ public class _2265averageOfSubtree {
         private Integer res = 0;
         private Pair<Integer, Integer> countAndSum(TreeNode root) {
             if (root == null) return new Pair<>(0, 0);
-            Pair<Integer, Integer> leftPair = countAndSum(root.left);
-            Pair<Integer, Integer> rightPair = countAndSum(root.right);
-            int count = leftPair.getKey() + rightPair.getKey() + 1;
-            int sum = leftPair.getValue() + rightPair.getValue() + root.val;
+            Pair<Integer, Integer> leftPair = countAndSum(root.left), rightPair = countAndSum(root.right);
+            int count = leftPair.getKey() + rightPair.getKey() + 1, sum = leftPair.getValue() + rightPair.getValue() + root.val;
             if (sum / count == root.val) res++;
             return new Pair<>(count, sum);
         }

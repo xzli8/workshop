@@ -1,10 +1,59 @@
-package load_balance.smooth_weighted_round;
+package load_balance;
+
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Ref: https://juejin.cn/post/6844903793012768781
+ * Note: 既有轮询的效果，又避免了某台服务器压力突然升高。
+ */
 public class SmoothWeightedRound {
+
+    public class Server {
+
+        // IP地址
+        private String ip;
+
+        // 固定权重
+        private int weight;
+
+        // 当前权重
+        private int currentWeight;
+
+        public Server(String ip, int weight, int currentWeight) {
+            this.ip = ip;
+            this.weight = weight;
+            this.currentWeight = currentWeight;
+        }
+
+        public String getIp() {
+            return ip;
+        }
+
+        public void setIp(String ip) {
+            this.ip = ip;
+        }
+
+        public int getWeight() {
+            return weight;
+        }
+
+        public void setWeight(int weight) {
+            this.weight = weight;
+        }
+
+        public int getCurrentWeight() {
+            return currentWeight;
+        }
+
+        public void setCurrentWeight(int currentWeight) {
+            this.currentWeight = currentWeight;
+        }
+
+    }
 
     private Server[] servers;
 
@@ -30,7 +79,8 @@ public class SmoothWeightedRound {
     }
 
 
-    public static void main(String[] args) {
+    @Test
+    public void test() {
         Server[] servers = new Server[3];
         servers[0] = new Server("192.168.0.1", 1, 1);
         servers[1] = new Server("192.168.0.2", 2, 2);

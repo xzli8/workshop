@@ -29,7 +29,7 @@ public class _673findNumberOfLIS {
             Arrays.fill(cnt, 1);
 
             // 状态转移
-            int maxLen = 1, res = 0;
+            int maxLen = 1, maxCount = 0;
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < i; j++) {
                     if (nums[j] < nums[i]) {
@@ -48,12 +48,12 @@ public class _673findNumberOfLIS {
                 // 找最长递增子序列及其个数
                 if (dp[i] > maxLen) {
                     maxLen = dp[i];
-                    res = cnt[i];
+                    maxCount = cnt[i];
                 } else if (dp[i] == maxLen) {
-                    res += cnt[i];
+                    maxCount += cnt[i];
                 }
             }
-            return res;
+            return  maxCount;
         }
 
     }

@@ -45,9 +45,6 @@ public class SnowflakeDistributeId {
     // 用于序号的与运算，保证序号最大值在0-4095之间
     private long sequenceMask = -1L ^ (-1L << sequenceBits);
 
-
-
-
     // 构造器
     public SnowflakeDistributeId(long workerId, long datacenterId) {
         if (datacenterId > maxDatacenterId || datacenterId < 0) {

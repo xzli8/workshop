@@ -42,6 +42,7 @@ public class _460LFUCache {
             public int get(int key) {
                 Node node = key2Node.get(key);
                 if (node == null) return -1;
+                // 这里一定要先remove再add，直接get后修改node的属性不行，TreeSet只是根据add时的初始状态决定顺序，后面属性的修改不影响顺序
                 set.remove(node);
                 node.cnt += 1;
                 node.time = time++;

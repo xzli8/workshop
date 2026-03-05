@@ -11,9 +11,7 @@ public class _1306canReach {
     public static class Solution1 {
 
         /**
-         DFS
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         DFS: O(N), O(N)
          */
         public boolean canReach(int[] arr, int start) {
             // 初始化
@@ -54,9 +52,7 @@ public class _1306canReach {
     public static class Solution2 {
 
         /**
-         BFS
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         BFS: O(N), O(N)
          */
         public boolean canReach(int[] arr, int start) {
             // 初始化

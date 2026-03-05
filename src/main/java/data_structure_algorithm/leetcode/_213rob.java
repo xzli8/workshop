@@ -2,44 +2,31 @@ package data_structure_algorithm.leetcode;
 
 public class _213rob {
 
+
     public static class Solution0 {
 
         /**
-         动态规划
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         DP: O(N), O(N)
          */
         public int rob(int[] nums) {
             int n = nums.length;
-            if (n == 1) return nums[0];
-            if (n == 2) return Math.max(nums[0], nums[1]);
+            // option1: 偷nums[0]，nums[1]和nums[n - 1]不能偷 -> 从nums[2]到nums[n - 2]的非环形版本
+            // option2: 不偷nums[0] -> 从nums[1]到nums[n - 1]的非环形版本
+            return Math.max(nums[0] + rob1(nums, 2, n - 1), rob1(nums, 1, n));
+        }
 
-            // 定义状态：dp[i][j]表示第i间房屋偷(j = 1)和不偷(j = 0)时的最高金额
-            int[][] dp = new int[n][2];
-
-            // 第一间偷，最后一间不可以偷
-            dp[0][0] = 0;
-            dp[0][1] = nums[0];
-            for (int i = 1; i < n - 1; i++) {
-                dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1]);
-                dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] + nums[i]);
+        // "198.打家劫舍": 偷下标在 [start, end) 中的房子
+        public int rob1(int[] nums, int start, int end) {
+            int f2 = 0, f1 = 0; // f2, f1分别表示d[i-2], dp[i-1]
+            for (int i = start; i < end; i++) {
+                int f = Math.max(f1, f2 + nums[i]);
+                f2 = f1;
+                f1 = f;
             }
-            int max1 = Math.max(dp[n - 2][0], dp[n - 2][1]);
-
-            // 第一间不偷，最后一间可以偷
-            dp[1][0] = 0;
-            dp[1][1] = nums[1];
-            for (int i = 2; i < n; i++) {
-                dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1]);
-                dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] + nums[i]);
-            }
-            int max2 = Math.max(dp[n - 1][0], dp[n - 1][1]);
-            return Math.max(max1, max2);
+            return f1;
         }
 
     }
-
-
 
     public static class Solution1 {
 
@@ -62,7 +49,7 @@ public class _213rob {
 
             // 偷第一家，不偷最后一家
             dp[0] = nums[0];
-            dp[1] = Math.max(dp[0], dp[1]);
+            dp[1] = nums[0];
             for (int i = 2; i < n-1; i++) {
                 dp[i] = Math.max(dp[i-1], dp[i-2] + nums[i]);
             }
@@ -79,7 +66,6 @@ public class _213rob {
         }
 
     }
-
 
 
     public static class Solution2 {

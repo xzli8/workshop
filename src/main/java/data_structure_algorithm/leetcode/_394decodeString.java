@@ -30,7 +30,7 @@ public class _394decodeString {
                         sb.append(strStack.pop());
                     }
                     sb = sb.reverse();
-                    strStack.pop();
+                    strStack.pop();     // pop '['
 
                     StringBuilder res = new StringBuilder();
                     int count = numStack.pop();

@@ -50,4 +50,14 @@ public class _692topKFrequent {
 
     }
 
+
+    public static class Solution2 {
+
+        /**
+         *  哈希表 + 快排分区(类似347): O(N), O(N)
+         *  Note: 先用哈希表统计出现次数，然后快排分区的时候按照出现次数分区。
+         *  分区数组: Pair<String, Integer>[] (k-字符串, v-字符串出现次数)
+         */
+    }
+
 }

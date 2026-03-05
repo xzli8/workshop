@@ -16,7 +16,7 @@ public class _720longestWord {
                 return w1.length() - w2.length();
             });
 
-            // 用长度最小的单词初始化字典树
+            // 用长度最小的单词初始化字典树(长度最小的单词可能不止一个)
             Trie trie = new Trie();
             trie.init(words[0]);
             int n = words.length, i = 1;

@@ -16,11 +16,8 @@ public class _1049lastStoneWeightII {
          */
         public int lastStoneWeightII(int[] stones) {
             // 计算总重量
-            int n = stones.length;
-            int sum = 0;
-            for (int stone : stones) {
-                sum += stone;
-            }
+            int n = stones.length, sum = 0;
+            for (int stone : stones) sum += stone;
 
             // 定义状态
             int capacity = sum >> 1;
@@ -28,9 +25,7 @@ public class _1049lastStoneWeightII {
 
             // 初始状态
             dp[0] = true;
-            if (stones[0] <= capacity) {
-                dp[stones[0]] = true;
-            }
+            if (stones[0] <= capacity) dp[stones[0]] = true;
 
             // 状态转移
             for (int i = 1; i < n; i++) {

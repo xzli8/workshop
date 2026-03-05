@@ -2,18 +2,19 @@ package data_structure_algorithm.leetcode;
 
 import java.util.*;
 
-public class _1245undirectedTreeDiameter {
+public class _1245treeDiameter {
 
     /**
-     * lintcode3663:https://www.lintcode.com/problem/3663/description
+     * Ref: https://leetcode.doocs.org/lc/1245/
+     *      lintcode3663:https://www.lintcode.com/problem/3663/description
      */
 
     public static class Solution1 {
 
         /**
-         DFS
+         DFS: O(NlogN), O(N)
          */
-         public int undirectedTreeDiameter(int[][] edges) {
+         public int treeDiameter(int[][] edges) {
              // 将矩阵转换成多叉树结构，用map记录节点及其子节点
              for (int[] edge : edges) {
                  node2Children.putIfAbsent(edge[0], new ArrayList<>());
@@ -37,7 +38,8 @@ public class _1245undirectedTreeDiameter {
                  if (child == prev) continue;    // 防止走回头路
                  lens.add(dfs(child, cur));
              }
-             Collections.sort(lens, (len1, len2) -> len2 - len1);
+             // 因为只需要求最大与第二大，这里可以不用排序，用两个变量优化(见Solution2)
+             lens.sort((len1, len2) -> len2 - len1);
              int firstMaxLen = lens.size() > 0 ? lens.get(0) : 0;
              int secondMaxLen = lens.size() > 1 ? lens.get(1) : 0;
              maxLen = Math.max(maxLen, firstMaxLen + secondMaxLen);
@@ -51,9 +53,9 @@ public class _1245undirectedTreeDiameter {
     public static class Solution2 {
 
         /**
-         DFS
+         DFS: O(N), O(N)
          */
-        public int undirectedTreeDiameter(int[][] edges) {
+        public int treeDiameter(int[][] edges) {
             // 将矩阵转换成多叉树结构，用map记录节点及其子节点
             for (int[] edge : edges) {
                 node2Children.putIfAbsent(edge[0], new ArrayList<>());

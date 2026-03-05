@@ -5,9 +5,9 @@ public class _327countRangeSum {
     public static class Solution1 {
 
         /**
-         前缀和 + 归并排序：在归并排序的过程中计算符合条件的区间数
-         时间复杂度：O(NlogN)
-         空间复杂度：O(N)
+         前缀和 + 归并排序：O(NlogN), O(N)
+         Note: 在归并排序的过程中计算符合条件的区间数
+         Ref: https://leetcode.cn/problems/count-of-range-sum/solutions/476038/qu-jian-he-de-ge-shu-by-leetcode-solution/
          */
         public int countRangeSum(int[] nums, int lower, int upper) {
             // 计算前缀和数组
@@ -24,7 +24,7 @@ public class _327countRangeSum {
             int mid = left + ((right - left) >> 1);
             int res = mergeSort(nums, tmp, left, mid, lower, upper) + mergeSort(nums, tmp, mid + 1, right, lower, upper);
 
-            // 计算符合条件的区间数(这里由于nums[i]是递增的，所以l,r只能向右移动)
+            // 对于每个左边元素，枚举右边元素直到满足条件[lower, upper]，计算符合条件的区间数(因为前面已经排序了，所以这里nums[i]在左右两个区间中是分别递增的，因此l,r只能向右移动)
             int l = mid + 1, r = mid + 1;
             for (int i = left; i <= mid; i++) {
                 while (l <= right && nums[l] - nums[i] < lower) l++;

@@ -20,7 +20,7 @@ public class QuickSort {
 
     /**
      *  快速排序：从数组中选取一个元素作为主元，每次让主元正确归位，即让主元左边元素都比它小，右边元素都比它大
-     *      分治思想：从上往下
+     *      分治思想：从上往下(归并是从下往上)
      *      两种写法：递归/迭代
      *      时间复杂度：最好O(NlogN)/平均O(NlogN)/最坏O(N^2)
      *      空间复杂度：O(1)
@@ -44,7 +44,7 @@ public class QuickSort {
         }
     }
 
-    // 迭代形式：用栈模拟递归过程。能节约递归栈的空间开销，但同时显示的stack又需要消耗额外空间。
+    // 迭代形式：用栈模拟递归过程。能节约递归栈的空间开销(隐式开销)，但同时stack又需要消耗额外空间(显式开销)。
     public void quickSortIte(int[] nums) {
         Deque<Integer> stack = new ArrayDeque<>();
         stack.push(0);

@@ -12,27 +12,28 @@ public class _687longestUnivaluePath {
     public static class Solution1 {
 
         /**
-         DFS
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         DFS(postorder) + 贪心: O(N), O(N)
          */
         public int longestUnivaluePath(TreeNode root) {
             dfs(root);
             return maxLen;
         }
 
-        // 计算以cur为起点的最长路径长度，同时更新最长路径长度
         private int maxLen = 0;
-        private int dfs(TreeNode cur) {
-            if (cur == null) return 0;
-            int leftLen = dfs(cur.left);
-            int rightLen = dfs(cur.right);
 
+        // 计算以当前节点为起点的最长路径长度，同时更新最长路径长度
+        private int dfs(TreeNode root) {
+            if (root == null) return 0;
+
+            // 先计算左右子树
+            int leftLen = dfs(root.left), rightLen = dfs(root.right);
+
+            // 再计算当前节点: 如果小于0就舍弃(贪心)
             int lenFromLeft = 0, lenFromRight = 0;
-            if (cur.left != null && cur.left.val == cur.val) {
+            if (root.left != null && root.left.val == root.val) {
                 lenFromLeft = leftLen + 1;
             }
-            if (cur.right != null && cur.right.val == cur.val) {
+            if (root.right != null && root.right.val == root.val) {
                 lenFromRight = rightLen + 1;
             }
             maxLen = Math.max(maxLen, lenFromLeft + lenFromRight);

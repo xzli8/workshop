@@ -3,6 +3,7 @@ package load_balance;
 import java.util.HashMap;
 import java.util.Map;
 
+// 前缀和
 public class WeightedRound {
 
     private volatile int index;

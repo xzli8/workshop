@@ -3,7 +3,8 @@ package data_structure_algorithm.leetcode;
 public class _324wiggleSort {
 
     /**
-     * 参考题解：https://leetcode.cn/problems/wiggle-sort-ii/solutions/45144/yi-bu-yi-bu-jiang-shi-jian-fu-za-du-cong-onlognjia/
+     * Ref: https://leetcode.cn/problems/wiggle-sort-ii/solutions/45144/yi-bu-yi-bu-jiang-shi-jian-fu-za-du-cong-onlognjia/
+     *      https://leetcode.doocs.org/lc/324/
      */
 
     public static class Solution1 {

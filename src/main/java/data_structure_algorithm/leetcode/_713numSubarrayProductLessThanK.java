@@ -16,7 +16,7 @@ public class _713numSubarrayProductLessThanK {
                 while (product >= k && left < right) {
                     product /= nums[left++];
                 }
-                count += right - left;
+                count += right - left;  // right - left == 以right结尾的子数组个数
             }
             return count;
         }

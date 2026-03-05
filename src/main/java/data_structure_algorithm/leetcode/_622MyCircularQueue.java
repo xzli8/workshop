@@ -1,7 +1,5 @@
 package data_structure_algorithm.leetcode;
 
-import data_structure_algorithm.domain.ListNode;
-
 public class _622MyCircularQueue {
 
 
@@ -27,74 +25,22 @@ public class _622MyCircularQueue {
     public static class Solution0 {
 
         /**
-         数组(牺牲一个存储空间)：插入或删除时不用多一次维护计数器值的计算
-         */
-        class MyCircularQueue {
-
-            private int front;  // 指向队头元素
-            private int rear;   // 指向队尾元素的下一个位置
-            private int capacity;
-            private int[] nums;
-
-            public MyCircularQueue(int k) {
-                this.front = 0;
-                this.rear = 0;
-                this.capacity = k + 1;
-                this.nums = new int[capacity];
-            }
-
-            public boolean enQueue(int value) {
-                if (isFull()) return false;
-                nums[rear++] = value;
-                if (rear >= capacity) rear -= capacity;
-                return true;
-            }
-
-            public boolean deQueue() {
-                if (isEmpty()) return false;
-                if (++front >= capacity) front -= capacity;
-                return true;
-            }
-
-            public int Front() {
-                if (isEmpty()) return -1;
-                return nums[front];
-            }
-
-            public int Rear() {
-                if (isEmpty()) return -1;
-                int index = rear - 1;
-                if (index < 0) index += capacity;
-                return nums[index];
-            }
-
-            public boolean isEmpty() {
-                return front == rear;
-            }
-
-            public boolean isFull() {
-                int index = rear + 1;
-                if (index >= capacity) index -= capacity;
-                return index == front;
-                // return (rear + 1) % capacity == front;
-            }
-        }
-
-
-    }
-
-    public static class Solution1 {
-
-
-        /**
          链表
          */
         class MyCircularQueue {
 
-            private int capacity;
-            private int size;
-            private ListNode head;
-            private ListNode tail;
+           /**
+            * Definition for singly-linked list.
+            */
+            public class ListNode {
+                int val;
+                ListNode next;
+                ListNode(int val) { this.val = val; }
+            }
+
+
+            private int capacity, size;
+            private ListNode head, tail;    // head -> 队头元素，tail -> 队尾元素
 
             public MyCircularQueue(int k) {
                 capacity = k;
@@ -104,7 +50,7 @@ public class _622MyCircularQueue {
             public boolean enQueue(int value) {
                 if (isFull()) return false;
                 ListNode node = new ListNode(value);
-                if (null == head) {
+                if (isEmpty()) {
                     head = tail = node;
                 } else {
                     tail.next = node;
@@ -136,6 +82,62 @@ public class _622MyCircularQueue {
             public boolean isFull() {
                 return size == capacity;
             }
+
+        }
+
+    }
+
+
+
+    public static class Solution1 {
+
+        /**
+         数组 + 双指针：牺牲一个存储空间 -> 插入或删除时不用多一次维护计数器值的计算
+         Note: 如果不多一个空位置，那么isFull和isEmpty的条件都是head == tail，为了避免冲突选择浪费一个存储位置
+         Ref: https://leetcode.cn/problems/design-circular-queue/solutions/56619/shu-zu-shi-xian-de-xun-huan-dui-lie-by-liweiwei141/
+         */
+        class MyCircularQueue {
+
+            private int[] nums;
+            private int capacity, head, tail;   // head -> 队头元素，tail -> 队尾元素的下一个位置
+
+            public MyCircularQueue(int k) {
+                head = tail = 0;
+                capacity = k + 1;
+                nums = new int[capacity];
+            }
+
+            public boolean enQueue(int value) {
+                if (isFull()) return false;
+                nums[tail] = value;
+                if (++tail == capacity) tail -= capacity;
+                return true;
+            }
+
+            public boolean deQueue() {
+                if (isEmpty()) return false;
+                if (++head == capacity) head -= capacity;
+                return true;
+            }
+
+            public int Front() {
+                if (isEmpty()) return -1;
+                return nums[head];
+            }
+
+            public int Rear() {
+                if (isEmpty()) return -1;
+                return nums[(tail - 1 + capacity) % capacity];
+            }
+
+            public boolean isEmpty() {
+                return head == tail;
+            }
+
+            public boolean isFull() {
+                return (tail + 1) % capacity == head;
+            }
+
         }
 
     }
@@ -145,36 +147,30 @@ public class _622MyCircularQueue {
     public static class Solution2 {
 
         /**
-         数组1：用size记录队列大小
+         数组 + 双指针：用size记录队列大小
          */
         class MyCircularQueue {
 
-            private int capacity;
             private int[] elements;
-            private int head;
-            private int tail;
-            private int size;
+            private int capacity, size, head, tail; // head -> 头元素，tail -> 尾元素的下一个
 
             public MyCircularQueue(int k) {
                 capacity = k;
                 elements = new int[k];
-                head = 0;
-                tail = 0;
-                size = 0;
+                head = tail = size = 0;
             }
 
             public boolean enQueue(int value) {
                 if (isFull()) return false;
-                elements[tail++] = value;
-                if (tail == capacity) tail -= capacity;
+                elements[tail] = value;
+                if (++tail == capacity) tail -= capacity;
                 size++;
                 return true;
             }
 
             public boolean deQueue() {
                 if (isEmpty()) return false;
-                head++;
-                if (head == capacity) head -= capacity;
+                if (++head == capacity) head -= capacity;
                 size--;
                 return true;
             }
@@ -186,7 +182,10 @@ public class _622MyCircularQueue {
 
             public int Rear() {
                 if (isEmpty()) return -1;
-                return elements[(head+size-1)%capacity];
+                // return elements[(head + size - 1) % capacity];
+
+                // 另一种写法(+capacity再%capacity是因为tail-1可能为负数，这里要进行修正)
+                return elements[(tail - 1 + capacity) % capacity];
             }
 
             public boolean isEmpty() {
@@ -196,6 +195,7 @@ public class _622MyCircularQueue {
             public boolean isFull() {
                 return size == capacity;
             }
+
         }
 
     }
@@ -205,7 +205,7 @@ public class _622MyCircularQueue {
     public static class Solution3 {
 
         /**
-         数组2：不用size记录队列大小
+         数组 + 双指针：不用size记录队列大小(这样写不太好，head和tail一直增加可能会溢出)
          */
         class MyCircularQueue {
 
@@ -217,8 +217,7 @@ public class _622MyCircularQueue {
             public MyCircularQueue(int k) {
                 capacity = k;
                 items = new int[capacity];
-                head = 0;
-                tail = 0;
+                head = tail = 0;
             }
 
             public boolean enQueue(int value) {
@@ -249,8 +248,8 @@ public class _622MyCircularQueue {
             public boolean isFull() {
                 return tail - head == capacity;
             }
-        }
 
+        }
     }
 
 

@@ -10,9 +10,7 @@ public class _1305getAllElements {
     public static class Solution1 {
 
         /**
-         Inorder traverse + mergeSort
-         TimeComplexity:O(M + N)
-         SpaceComplexity:O(M + N)
+         inorderTraverse + mergeSort: O(M + N), O(M + N)
          */
         public List<Integer> getAllElements(TreeNode root1, TreeNode root2) {
             // inorder traverse to get sorted list

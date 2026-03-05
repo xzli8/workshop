@@ -8,7 +8,7 @@ public class _22generateParenthesis {
     public static class Solution1 {
 
         /**
-         回溯
+         回溯:dfs过程中时刻保持左括号数量>=右括号数量
          */
         public List<String> generateParenthesis(int n) {
             List<String> res = new ArrayList<>();
