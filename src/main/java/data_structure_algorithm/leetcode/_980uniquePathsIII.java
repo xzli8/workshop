@@ -1,11 +1,15 @@
 package data_structure_algorithm.leetcode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class _980uniquePathsIII {
 
-    public static class Solution2 {
+    public static class Solution1 {
 
         /**
-         DFS(回溯)
+         * DFS
+         * Note: 用visited数组标记访问情况。
          */
         public int uniquePathsIII(int[][] grid) {
             // 初始化
@@ -57,10 +61,12 @@ public class _980uniquePathsIII {
 
     }
 
-    public static class Solution1 {
+
+    public static class Solution1_2 {
 
         /**
-         DFS(回溯)
+         * DFS
+         * Note: 在原数组上标记访问情况
          */
         public int uniquePathsIII(int[][] grid) {
             // 初始化
@@ -101,6 +107,69 @@ public class _980uniquePathsIII {
                 }
             }
             grid[row][col] = origin;
+        }
+
+    }
+
+
+    public static class Solution1_3 {
+
+        /**
+         * DFS
+         * Note: 找出所有路径
+         */
+        public int uniquePathsIII(int[][] grid) {
+            // 初始化
+            this.m = grid.length; this.n = grid[0].length; this.grid = grid;
+            this.visited = new boolean[m][n];
+            int x = 0, y = 0, remain = 0;
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (grid[i][j] == 1) {
+                        x = i; y = j; remain++; visited[i][j] = true;
+                    } else if (grid[i][j] == 0) {
+                        remain++;
+                    } else if (grid[i][j] == -1) {
+                        visited[i][j] = true;
+                    }
+                }
+            }
+
+            // 回溯
+            backtrace(x, y, remain, new ArrayList<>());
+            return paths.size();
+            // return res;
+        }
+
+        private int m, n;
+        private int[][] grid;
+        private boolean[][] visited;
+        private int[][] dirs = new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        private int res = 0;
+        private List<List<int[]>> paths = new ArrayList<>();
+
+        private void backtrace(int x, int y, int remain, List<int[]> path) {
+            if (grid[x][y] == 2) {
+                if (remain == 0) {
+                    res++;
+                    paths.add(new ArrayList<>(path));
+                }
+                return;
+            }
+            for (int[] dir : dirs) {
+                int xx = x + dir[0], yy = y + dir[1];
+                if (inArea(xx, yy) && !visited[xx][yy]) {
+                    visited[xx][yy] = true;
+                    path.add(new int[] {xx, yy});
+                    backtrace(xx, yy, remain - 1, path);
+                    path.remove(path.size() - 1);
+                    visited[xx][yy] = false;
+                }
+            }
+        }
+
+        private boolean inArea(int x, int y) {
+            return 0 <= x && x < m && 0 <= y && y < n;
         }
 
     }

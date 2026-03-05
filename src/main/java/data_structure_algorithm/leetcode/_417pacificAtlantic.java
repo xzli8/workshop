@@ -68,9 +68,8 @@ public class _417pacificAtlantic {
     public static class Solution2 {
 
         /**
-         DFS：逆向思维，从海洋(边界)出发，看一个点是否能流到海洋，然后取交集
-         时间复杂度：O(M * N)
-         空间复杂度：O(M * N)
+         DFS: O(M * N), O(M * N)
+         Note: 逆向思维，从海洋(边界)出发，看从这个海洋出发是否能流到另一个海洋，然后取交集
          */
         public List<List<Integer>> pacificAtlantic(int[][] heights) {
             // 初始化
@@ -100,6 +99,7 @@ public class _417pacificAtlantic {
         private int[][] heights;
         private int[][] dirs = new int[][] {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
+        // 从某个海洋出发，能否流到点[i, j]
         private void dfs(int i, int j, boolean[][] ocean) {
             if (ocean[i][j]) return;
             ocean[i][j] = true;

@@ -28,7 +28,7 @@ public class _216combinationSum3 {
             }
 
             for (int i = start; i <= 9; i++) {
-                if (k - 1 < 0 || n - i < 0) continue;   // 剪枝
+                if (k - 1 < 0 || n - i < 0) continue;   // 剪枝(不加也行，加了更快): k不够了 || n不够了
                 path.addLast(i);
                 backtrace(k - 1, n - i, i + 1, path);
                 path.removeLast();

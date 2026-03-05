@@ -13,15 +13,16 @@ public class _49groupAnagrams {
          空间复杂度：O(1)
          */
         public List<List<String>> groupAnagrams(String[] strs) {
-            Map<String, List<String>> map = new HashMap<>();
+            Map<String, List<String>> res = new HashMap<>();
+            int[] counts = new int[26];
             for (String str : strs) {
-                int[] counts = new int[26];
-                int length = str.length();
-                for (int i = 0; i < length; i++) {
-                    counts[str.charAt(i) - 'a']++;
+                Arrays.fill(counts, 0);
+                for (char c : str.toCharArray()) {
+                    counts[c - 'a']++;
                 }
+
                 // 将每个出现次数大于 0 的字母和出现次数按顺序拼接成字符串，作为哈希表的键(将出现次数为0的字母编码也可以，但效率差点儿)
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < 26; i++) {
                     if (counts[i] != 0) {
                         sb.append((char) ('a' + i));
@@ -29,11 +30,16 @@ public class _49groupAnagrams {
                     }
                 }
                 String key = sb.toString();
-                List<String> list = map.getOrDefault(key, new ArrayList<>());
-                list.add(str);
-                map.put(key, list);
+
+                // option1: getOrDefault -> add -> put
+                // List<String> list = res.getOrDefault(key, new ArrayList<>());
+                // list.add(str);
+                // res.put(key, list);
+
+                // option2: computeIfAbsent
+                res.computeIfAbsent(key, k -> new ArrayList<>()).add(str);
             }
-            return new ArrayList<>(map.values());
+            return new ArrayList<>(res.values());
         }
 
     }

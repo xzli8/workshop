@@ -10,9 +10,9 @@ public class _889constructFromPrePost {
     public static class Solution0 {
 
         /**
-         DFS + HashMap
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         DFS + Hash: O(N), O(N)
+         Note: 这种情况下即使元素不重复但结果仍然不唯一，我们不妨假设preorder[1]总是左子树的根节点
+         ref: https://leetcode.cn/problems/construct-binary-tree-from-preorder-and-postorder-traversal/solutions/2649218/tu-jie-cong-on2-dao-onpythonjavacgojsrus-h0o5/
          */
         public TreeNode constructFromPrePost(int[] preorder, int[] postorder) {
             this.preorder = preorder;
@@ -26,6 +26,8 @@ public class _889constructFromPrePost {
         private TreeNode dfs(int preorderLeft, int preorderRight, int postorderLeft, int postorderRight) {
             TreeNode root = new TreeNode(preorder[preorderLeft]);
             if (preorderLeft == preorderRight) return root;
+
+            // 假设preorder[1]是左子树的根节点，在后序遍历中找根节点对应的下标，将其分成左右两部分
             int postorderIdx = postorderVal2Idx.get(preorder[preorderLeft + 1]);
             int leftLen = postorderIdx - postorderLeft + 1;
             if (leftLen > 0) root.left = dfs(preorderLeft + 1, preorderLeft + leftLen, postorderLeft, postorderIdx);

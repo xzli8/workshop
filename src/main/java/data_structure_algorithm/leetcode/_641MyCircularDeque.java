@@ -1,7 +1,5 @@
 package data_structure_algorithm.leetcode;
 
-import org.junit.Test;
-
 public class _641MyCircularDeque {
 
 
@@ -20,75 +18,156 @@ public class _641MyCircularDeque {
 
     /**
      循环队列的两种实现方式
-     链表：单链表/双链表
-     数组：牺牲一个存储空间；计数器；布尔标记(?)；不用牺牲一个存储空间也不用计数器(不断累加游标，操作次数多后会溢出)
+     链表：双向链表
+     数组：牺牲一个存储空间；计数器(用size记录数组元素个数)；布尔标记(?)；不用牺牲一个存储空间也不用计数器(不断累加游标，操作次数多后会溢出)
      */
 
     public static class Solution1 {
 
         /**
-         数组(牺牲一个存储空间)：插入或删除时不用多一次维护计数器值的计算
+         * 双链表
          */
         class MyCircularDeque {
 
-            private int front;  // 指向队头元素
-            private int rear;   // 指向队尾元素的下一个位置
-            private int capacity;
-            private int[] nums;
+            // Defination of doubly-linked list
+            class ListNode {
+                int val;
+                ListNode prev, next;
+                ListNode(int val) { this.val = val; }
+            }
+
+            private int capacity, size;
+            private ListNode head, tail;
 
             public MyCircularDeque(int k) {
-                this.front = 0;
-                this.rear = 0;
-                this.capacity = k + 1;
-                this.nums = new int[capacity];
+                capacity = k;
+                size = 0;
             }
 
             public boolean insertFront(int value) {
                 if (isFull()) return false;
-                if (--front < 0) front += capacity;
-                nums[front] = value;
+                ListNode node = new ListNode(value);
+                if (isEmpty()) {
+                    head = tail = node;
+                } else {
+                    node.next = head;
+                    head.prev = node;
+                    head = node;
+                }
+                size++;
                 return true;
             }
 
             public boolean insertLast(int value) {
                 if (isFull()) return false;
-                nums[rear] = value;
-                if (++rear >= capacity) rear -= capacity;
+                ListNode node = new ListNode(value);
+                if (isEmpty()) {
+                    head = tail = node;
+                } else {
+                    tail.next = node;
+                    node.prev = tail;
+                    tail = node;
+                }
+                size++;
                 return true;
             }
 
             public boolean deleteFront() {
                 if (isEmpty()) return false;
-                if (++front >= capacity) front -= capacity;
+                head = head.next;
+                if (head != null) head.prev = null;
+                size--;
                 return true;
             }
 
             public boolean deleteLast() {
                 if (isEmpty()) return false;
-                if (--rear < 0) rear += capacity;
+                tail = tail.prev;
+                if (tail != null) tail.next = null;
+                size--;
+                return true;
+            }
+
+            public int getFront() {
+                return isEmpty() ? -1 : head.val;
+            }
+
+            public int getRear() {
+                return isEmpty() ? -1 : tail.val;
+            }
+
+            public boolean isEmpty() {
+                return size == 0;
+            }
+
+            public boolean isFull() {
+                return size == capacity;
+            }
+
+        }
+
+    }
+
+
+
+    public static class Solution2 {
+
+        /**
+         数组+双指针：牺牲一个存储空间 -> 插入或删除时不用多一次维护计数器值的计算
+         */
+        class MyCircularDeque {
+
+            private int[] nums;
+            private int capacity, head, tail;   // head -> 队头元素，tail -> 队尾元素的下一个位置
+
+            public MyCircularDeque(int k) {
+                head = tail = 0;
+                capacity = k + 1;
+                nums = new int[capacity];
+            }
+
+            public boolean insertFront(int value) {
+                if (isFull()) return false;
+                if (--head < 0) head += capacity;
+                nums[head] = value;
+                return true;
+            }
+
+            public boolean insertLast(int value) {
+                if (isFull()) return false;
+                nums[tail] = value;
+                if (++tail == capacity) tail -= capacity;
+                return true;
+            }
+
+            public boolean deleteFront() {
+                if (isEmpty()) return false;
+                if (++head == capacity) head -= capacity;
+                return true;
+            }
+
+            public boolean deleteLast() {
+                if (isEmpty()) return false;
+                if (--tail < 0) tail += capacity;
                 return true;
             }
 
             public int getFront() {
                 if (isEmpty()) return -1;
-                return nums[front];
+                return nums[head];
             }
 
             public int getRear() {
                 if (isEmpty()) return -1;
-                int index = rear - 1;
-                if (index < 0) index += capacity;
-                return nums[index];
+                return nums[(tail - 1 + capacity) % capacity];
             }
 
             public boolean isEmpty() {
-                return front == rear;
+                return head == tail;
             }
 
             public boolean isFull() {
-                int index = rear + 1;
-                if (index >= capacity) index -= capacity;
-                return index == front;
+                return (tail + 1) % capacity == head;
             }
 
         }

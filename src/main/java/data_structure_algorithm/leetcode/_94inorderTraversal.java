@@ -66,15 +66,14 @@ public class _94inorderTraversal {
     public static class Solution3 {
 
         /**
-         Morris遍历
-         时间复杂度：O(N)
-         空间复杂度：O(1)
+         Morris遍历: O(N), O(1)
+         Note: 先找中序遍历的前驱节点(左子树的最右节点)，然后将其右指针指向当前节点(避免遍历当前节点左子树完成后无法找到当前节点)，然后遍历当前节点左子树(最后遍历到的是前驱节点)
          */
         public List<Integer> inorderTraversal(TreeNode root) {
             List<Integer> res = new ArrayList<>();
             TreeNode cur = root;
             while (cur != null) {
-                // 有左子树时，找到左子树的最右节点
+                // 有左子树时，找到左子树的最右节点(也就是中序遍历的前驱节点predecessor)
                 if (cur.left != null) {
                     // 查找左子树的最右节点
                     TreeNode mostRight = cur.left;

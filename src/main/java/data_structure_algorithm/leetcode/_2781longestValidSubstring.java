@@ -26,6 +26,7 @@ public class _2781longestValidSubstring {
 
         private Set<String> forbidden = new HashSet<>();
         private boolean hasForbidden(String word, int left, int right) {
+            // "1 <= forbidden[i].length <= 10" -> right - 11
             for (int start = right - 1; start >= Math.max(left, right - 11); start--) {
                 if (forbidden.contains(word.substring(start, right))) {
                     return true;

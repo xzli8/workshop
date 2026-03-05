@@ -31,7 +31,7 @@ public class _257binaryTreePaths {
                  }
                  res.add(sb.toString());
                  // 这里不能return，因为即使这条路径不通，还需要尝试其他路径，所以后面要"remove"
-                 // 这里如果return了，后面的"remove"就无法执行，路径上就多了一个节
+                 // 这里如果return了，后面的"remove"就无法执行，路径上就多了一个节点
              }
              dfs(cur.left, path);
              dfs(cur.right, path);

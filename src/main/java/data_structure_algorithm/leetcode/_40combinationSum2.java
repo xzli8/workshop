@@ -27,7 +27,7 @@ public class _40combinationSum2 {
 
             for (int i = start; i < candidates.length; i++) {
                 if (target - candidates[i] < 0) continue;   // 剪枝
-                if (i > start && candidates[i] == candidates[i - 1]) continue;  // 去重
+                if (i > start && candidates[i] == candidates[i - 1]) continue;  // 去重(解集不能包含重复的组合)如果和上一次选的数字一样，那么就重复了
                 path.addLast(candidates[i]);
                 backtrace(candidates, target - candidates[i], i + 1, path);
                 path.removeLast();

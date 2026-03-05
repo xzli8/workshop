@@ -121,6 +121,9 @@ public class _225MyStack {
                 // nothing to do here
             }
 
+            /**
+             * 保证辅助队列help一直都是空的，仅在push的时候过渡使用
+             */
             public void push(int x) {
                 // 先入到辅助队列中
                 help.offer(x);

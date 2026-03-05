@@ -3,7 +3,10 @@ package data_structure_algorithm.leetcode;
 public class _33search {
 
     /**
-     二分：首先根据二段性找旋转点，然后判断target在哪个单调区间，再在相应单调区间用二分查找target
+     二分搜索: O(logN), O(1)
+     Note: 首先根据二段性找旋转点，然后判断target在哪个单调区间，再在相应单调区间用二分查找target。
+        经过旋转的数组，显然前半段满足 >= nums[0]，而后半段不满足 >= nums[0]。我们可以以此作为依据，通过「二分」找到旋转点。
+     Ref: https://leetcode.cn/problems/search-in-rotated-sorted-array/solutions/577298/shua-chuan-lc-yan-ge-ologn100yi-qi-kan-q-xifo/
      */
     public int search(int[] nums, int target) {
         int n = nums.length;

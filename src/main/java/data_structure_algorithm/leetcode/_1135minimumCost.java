@@ -5,14 +5,15 @@ import java.util.Arrays;
 public class _1135minimumCost {
 
     /**
-     * 题目链接：https://www.lintcode.com/problem/3672/
+     * Ref: https://leetcode.doocs.org/lc/1135/
+     * Lintcode：https://www.lintcode.com/problem/3672/
      */
 
     public static class Solution1 {
 
         /**
-         Kruskal最小生成树
-         贪心思想：每次优先选择成本最低的边
+         Kruskal(Prim)最小生成树: O(MlogM), O(N), M为边数，N为顶点数
+         Note: Kruskal算法的基本思想(贪心)，每次从边集中选择一条最小的边，如果这条边连接的两个顶点不在同一个连通分量中，则将这条边加入到最小生成树中，否则舍弃这条边。
          */
         public int minimumCost(int n, int[][] connections) {
             // 初始化节点数量为n的并查集

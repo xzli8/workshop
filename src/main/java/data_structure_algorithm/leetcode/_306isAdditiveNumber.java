@@ -18,8 +18,9 @@ public class _306isAdditiveNumber {
                 return count > 2;
             for (int i = startIndex; i < num.length(); i++) {
                 if (isValid(num, startIndex, i, count, pre1, pre2)) {
-                    System.out.println(startIndex + ", " + i + num.substring(startIndex, i + 1));
-                    if (backtrace(num, i + 1, count + 1, pre2, Integer.valueOf(num.substring(startIndex, i + 1)))) return true;
+                    if (backtrace(num, i + 1, count + 1, pre2, Integer.valueOf(num.substring(startIndex, i + 1)))) {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -53,7 +54,9 @@ public class _306isAdditiveNumber {
             if (startIndex == num.length()) return count > 2;
             for (int i = startIndex; i < num.length(); i++) {
                 if (isValid(num, startIndex, i, count, pre1, pre2)) {
-                    if (backtrace(num, i + 1, count + 1, pre2, num.substring(startIndex, i + 1))) return true;
+                    if (backtrace(num, i + 1, count + 1, pre2, num.substring(startIndex, i + 1))) {
+                        return true;
+                    }
                 }
             }
             return false;

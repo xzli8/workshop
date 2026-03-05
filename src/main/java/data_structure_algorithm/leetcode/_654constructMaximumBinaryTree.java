@@ -7,9 +7,8 @@ public class _654constructMaximumBinaryTree {
     public static class Solution1 {
 
         /**
-         DFS
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         DFS: O(N^2)[每次找最大值O(N)，构建O(N)，嵌套在一起O(N^2)], O(N)
+         Note: 每次都先从序列中找最大值将序列一分为二，对应左右子树
          */
         public TreeNode constructMaximumBinaryTree(int[] nums) {
             return build(nums, 0, nums.length - 1);
@@ -32,6 +31,12 @@ public class _654constructMaximumBinaryTree {
             return root;
         }
 
+    }
+
+
+    public static class Solution2 {
+
+        // 单调栈(todo)
     }
 
 }

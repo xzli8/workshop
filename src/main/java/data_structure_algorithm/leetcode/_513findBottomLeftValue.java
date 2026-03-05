@@ -10,9 +10,8 @@ public class _513findBottomLeftValue {
     public class Solution1 {
 
         /**
-         BFS
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         BFS(level order): O(N), O(N)
+         Note: 左下角 -> 最后一层第一个
          */
          public int findBottomLeftValue(TreeNode root) {
              int res = 0;

@@ -8,37 +8,25 @@ public class _1026maxAncestorDiff {
     public static class Solution1 {
 
         /**
-         DFS: postorder
-         TC: O(N)
-         SC: O(N)
+         dfs(preorder): O(N), O(N)
          */
         public int maxAncestorDiff(TreeNode root) {
-            dfs(root);
+            dfs(root, root.val, root.val);
             return res;
         }
 
-        private int res = 0;
-        private Pair<Integer, Integer> dfs(TreeNode node) {
-            if (node == null) return null;
-            Pair<Integer, Integer> left = dfs(node.left), right = dfs(node.right);
-            int minValue = Integer.MAX_VALUE, maxValue = Integer.MIN_VALUE, curMin = node.val, curMax = node.val;
-            if (left != null) {
-                minValue = Math.min(minValue, left.getKey());
-                maxValue = Math.max(maxValue, left.getValue());
-            }
-            if (right != null) {
-                minValue = Math.min(minValue, right.getKey());
-                maxValue = Math.max(maxValue, right.getValue());
-            }
-            if (minValue != Integer.MAX_VALUE) {
-                curMin = Math.min(curMin, minValue);
-                res = Math.max(res, Math.abs(node.val - minValue));
-            }
-            if (maxValue != Integer.MIN_VALUE) {
-                curMax = Math.max(curMax, maxValue);
-                res = Math.max(res, Math.abs(node.val - maxValue));
-            }
-            return new Pair<>(curMin, curMax);
+        private int res = Integer.MIN_VALUE;
+
+        /**
+         遍历到当前节点root时，其祖先节点的最小值为min最大值为max
+         */
+        private void dfs(TreeNode root, int min, int max) {
+            if (root == null) return;
+            res = Math.max(res, Math.max(Math.abs(root.val - min), Math.abs(root.val - max)));
+            min = Math.min(min, root.val);
+            max = Math.max(max, root.val);
+            dfs(root.left, min, max);
+            dfs(root.right, min, max);
         }
 
     }

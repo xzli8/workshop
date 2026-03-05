@@ -19,6 +19,13 @@ public class _112hasPathSum {
              return targetSum == 0 || dfs(cur.left, targetSum) || dfs(cur.right, targetSum);
          }
 
+         // 上面的写法中dfs函数签名和hasPathSum一样，所以可以合二为一
+         public boolean hasPathSumII(TreeNode root, int targetSum) {
+             if (root == null) return false;
+             targetSum -= root.val;
+             return targetSum == 0 || hasPathSumII(root.left, targetSum) || hasPathSumII(root.right, targetSum);
+         }
+
     }
 
     public class Solution1 {

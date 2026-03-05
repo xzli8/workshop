@@ -22,10 +22,10 @@ public class Mianshiti_03_05SortedStack {
              类似“双栈排序”，每次调用push时，进行一次双栈排序
              */
 
-            // 主栈
+            // 主栈:所有的元素都存在主栈中
             private Deque<Integer> main;
 
-            // 辅助栈
+            // 辅助栈:仅在push的时候排序用
             private Deque<Integer> help;
 
             public SortedStack() {

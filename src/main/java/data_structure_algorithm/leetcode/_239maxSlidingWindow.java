@@ -44,7 +44,7 @@ public class _239maxSlidingWindow {
             }
 
             public int max() {
-                return help.peek();
+                return help.peekFirst();
             }
 
         }
@@ -73,12 +73,14 @@ public class _239maxSlidingWindow {
 
             // 处理后面的数
             for (int i = k; i < n; i++) {
+                // 删除窗口最左边的数
                 int nl = nums[i - k];
                 num2Count.put(nl, num2Count.get(nl) - 1);
                 if (num2Count.get(nl) == 0)  {
                     num2Count.remove(nl);
                 }
 
+                //  加入下一个数
                 int nr = nums[i];
                 num2Count.put(nr, num2Count.getOrDefault(nr, 0) + 1);
                 res[i - k + 1] = num2Count.lastKey();
@@ -143,7 +145,7 @@ public class _239maxSlidingWindow {
             }
 
             public int max() {
-                return help.peek();
+                return help.peekFirst();
             }
 
         }

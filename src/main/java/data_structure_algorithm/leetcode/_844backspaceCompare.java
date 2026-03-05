@@ -2,6 +2,30 @@ package data_structure_algorithm.leetcode;
 
 public class _844backspaceCompare {
 
+    public static class Solution0 {
+
+        /**
+         模拟栈: O(N), O(1)
+         */
+        public boolean backspaceCompare(String s, String t) {
+            return delete(s).equals(delete(t));
+        }
+
+        private String delete(String s) {
+            char[] cs = s.toCharArray();
+            int i = 0;
+            for (char c : cs) {
+                if (c != '#') {
+                    cs[i++] = c;
+                } else {
+                    if (i > 0) i--;
+                }
+            }
+            return String.valueOf(cs).substring(0, i);
+        }
+
+    }
+
     public static class Solution1 {
 
         /**

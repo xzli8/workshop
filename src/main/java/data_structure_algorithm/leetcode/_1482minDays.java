@@ -5,9 +5,7 @@ public class _1482minDays {
     public static class Solution1 {
 
         /**
-         二分查找
-         时间复杂度：O(NlogM)，N为数据量，M为数据范围
-         空间复杂度：O(1)
+         值域二分：O(NlogM), O(1), [N为数据量，M为数据范围]
          */
         public int minDays(int[] bloomDay, int m, int k) {
             int n = bloomDay.length;
@@ -33,6 +31,7 @@ public class _1482minDays {
             return -1;
         }
 
+        // 计算在第mid天有多少束花(相邻的k朵花为1束)
         private int count(int[] bloomDay, int mid, int k) {
             int n = bloomDay.length, left = 0, right = 0, count = 0;
             while (right < n) {

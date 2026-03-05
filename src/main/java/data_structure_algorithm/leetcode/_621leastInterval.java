@@ -5,10 +5,8 @@ public class _621leastInterval {
     public static class Solution1 {
 
         /**
-         桶思想
-         ref:https://leetcode.cn/problems/task-scheduler/solutions/196302/tong-zi-by-popopop/
-         时间复杂度：O(N)
-         空间复杂度：O(1)
+         桶思想(贪心): O(N), O(1)
+         Ref:https://leetcode.cn/problems/task-scheduler/solutions/196302/tong-zi-by-popopop/
          */
         public int leastInterval(char[] tasks, int n) {
             // 统计每个任务的次数，并计算出现次数最多的任务

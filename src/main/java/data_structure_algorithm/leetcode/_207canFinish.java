@@ -7,17 +7,15 @@ public class _207canFinish {
     public static class Solution0 {
 
         /**
-         拓扑排序(DAG)
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         拓扑排序(DAG): O(N), O(N)
          */
         public boolean canFinish(int numCourses, int[][] prerequisites) {
             int[] indeg = new int[numCourses];
             List<Integer>[] g = new List[numCourses];
-            for (int i = 0; i < numCourses; i++) g[i] = new ArrayList<>();
-            for (int[] prerequisit : prerequisites) {
-                g[prerequisit[1]].add(prerequisit[0]);
-                indeg[prerequisit[0]]++;
+            Arrays.setAll(g, e -> new ArrayList<>());   // for (int i = 0; i < numCourses; i++) g[i] = new ArrayList<>();
+            for (int[] prerequisite : prerequisites) {
+                g[prerequisite[1]].add(prerequisite[0]);
+                indeg[prerequisite[0]]++;
             }
 
             Queue<Integer> q = new ArrayDeque<>();

@@ -21,7 +21,8 @@ public class _295MedianFinder {
 
             /**
              时间复杂度：O(logN)
-             NOTE：大顶堆元素数量 <= 小顶堆元素数量 <= 大顶堆元素数量 + 1
+             Note: 大顶堆元素数量 <= 小顶堆元素数量 <= 大顶堆元素数量 + 1
+             加入新元素后需要再平衡两个堆的元素数量，这个rebalance的过程与"1670.设计前中后队列"中的类似。
              */
             public void addNum(int num) {
                 if (minHeap.isEmpty() || num > minHeap.peek()) {

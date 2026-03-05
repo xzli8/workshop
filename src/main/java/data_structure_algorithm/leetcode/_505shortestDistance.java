@@ -16,7 +16,8 @@ public class _505shortestDistance {
     public static class Solution1 {
 
         /**
-         BFS：遍历全部搜索空间，找到最短路径
+         BFS：
+         Note: 与DFS一样，需要遍历全部搜索空间找到最短路径，而不是一找到最短路径立马返回。
          */
         public int shortestDistance(int[][] maze, int[] start, int[] destination) {
 
@@ -71,6 +72,16 @@ public class _505shortestDistance {
             // 球无法停留在目的地，返回-1
             return steps[destination[0]][destination[1]] == Integer.MAX_VALUE ? -1 : steps[destination[0]][destination[1]];
         }
+
+    }
+
+
+    public static class Solution2 {
+
+        /**
+         * DFS
+         * Note: 与BFS一样，遍历所有可能路径后返回最短路径。
+         */
 
     }
 

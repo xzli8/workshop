@@ -1,18 +1,32 @@
 package data_structure_algorithm.leetcode;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class _560subarraySum {
 
     /**
      分析：因为数组中可能有负数，不能使用滑动窗口（负数使得单向性无法满足）
      */
+
+    public static class Solution0 {
+
+        /**
+         PreSum + Hash: O(N), O(N)
+         */
+        public int subarraySum(int[] nums, int k) {
+            int preSum = 0, count = 0;
+            Map<Integer, Integer> preSum2Count = new HashMap<>();
+            preSum2Count.put(preSum, 1);
+            for (int num : nums) {
+                preSum += num;
+                count += preSum2Count.getOrDefault(preSum - k, 0);
+                preSum2Count.put(preSum, preSum2Count.getOrDefault(preSum, 0) + 1);
+            }
+            return count;
+        }
+
+    }
 
 
     public static class Solution1 {

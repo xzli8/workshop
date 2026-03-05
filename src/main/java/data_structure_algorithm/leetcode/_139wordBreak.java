@@ -1,10 +1,12 @@
 package data_structure_algorithm.leetcode;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class _139wordBreak {
+
+    /**
+     * Ref: https://leetcode.cn/problems/word-break/solutions/302779/shou-hui-tu-jie-san-chong-fang-fa-dfs-bfs-dong-tai/
+     */
 
     public static class Solution1 {
 
@@ -46,10 +48,8 @@ public class _139wordBreak {
             for (int i = startIndex; i < s.length(); i++) {
                 String substring = s.substring(startIndex, i + 1);
                 if (wordDict.contains(substring) && backtrace(s, i + 1, wordDict, memo)) {
-                    if (backtrace(s, i + 1, wordDict, memo)) {
-                        memo[startIndex] = true;
-                        return true;
-                    }
+                    memo[startIndex] = true;
+                    return true;
                 }
             }
             memo[startIndex] = false;
@@ -63,11 +63,54 @@ public class _139wordBreak {
 
     public static class Solution3 {
 
+        /**
+         BFS: TLE
+         */
+        public boolean wordBreak(String s, List<String> wordDict) {
+            Set<String> dict = new HashSet<>(wordDict);
+            Queue<Integer> q = new ArrayDeque<>();
+            q.offer(0);
+            while (!q.isEmpty()) {
+                int start = q.poll();
+                for (int end = start; end < s.length(); end++) {
+                    String substring = s.substring(start, end + 1);
+                    if (dict.contains(substring)) {
+                        if (end + 1 == s.length()) return true;
+                        q.offer(end + 1);
+                    }
+                }
+            }
+            return false;
+        }
+
     }
 
 
 
     public static class Solution4 {
+
+        /**
+         BFS + memo
+         */
+        public boolean wordBreak(String s, List<String> wordDict) {
+            Set<String> dict = new HashSet<>(wordDict);
+            boolean[] visited = new boolean[s.length()];    // default false
+            Queue<Integer> q = new ArrayDeque<>();
+            q.offer(0);
+            while (!q.isEmpty()) {
+                int start = q.poll();
+                if (visited[start]) continue;
+                visited[start] = true;
+                for (int end = start; end < s.length(); end++) {
+                    String substring = s.substring(start, end + 1);
+                    if (dict.contains(substring)) {
+                        if (end + 1 == s.length()) return true;
+                        q.offer(end + 1);
+                    }
+                }
+            }
+            return false;
+        }
 
     }
 

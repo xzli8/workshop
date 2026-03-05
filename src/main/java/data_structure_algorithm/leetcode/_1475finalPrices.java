@@ -17,6 +17,7 @@ public class _1475finalPrices {
             int[] res = new int[n];
             Deque<Integer> s = new ArrayDeque<>(n);
             for (int i = n - 1; i >= 0; i--) {
+                // 这里必须是s.peek() > price[i]，不能是 >=，case: [10, 1, 1, 6]
                 while (!s.isEmpty() && s.peek() > prices[i]) {
                     s.pop();
                 }

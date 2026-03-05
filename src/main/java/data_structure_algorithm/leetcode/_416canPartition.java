@@ -29,6 +29,7 @@ public class _416canPartition {
             if (target == 0) {
                 return true;
             }
+            // 不选第i个元素 || 选第i个元素
             return backtrace(nums, target, i + 1) || backtrace(nums, target - nums[i], i + 1);
         }
 

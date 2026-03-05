@@ -10,9 +10,8 @@ public class _105buildTree {
     public static class Solution0 {
 
         /**
-         DFS
-         时间复杂度：O(N)
-         空间复杂度：O(N)
+         DFS + Hash: O(N), O(N)
+         Note: 前序遍历的第一个是根节点，因为没有重复元素，所以可以在中序遍历序列中找到一个值相同的唯一元素，将中序遍历序列分为两部分分别为左右子树。
          */
         public TreeNode buildTree(int[] preorder, int[] inorder) {
             int n = preorder.length;
@@ -24,7 +23,7 @@ public class _105buildTree {
         private int[] preorder;
         private Map<Integer, Integer> inorderVal2Idx = new HashMap<>();
         private TreeNode build(int preorderLeft, int preorderRight, int inorderLeft, int inorderRight) {
-            if (preorderLeft > preorderRight) return null;
+            if (inorderLeft > inorderRight) return null;    // "if (preorderLeft > preorderRight) return null"也可以，任用其一
             TreeNode root = new TreeNode(preorder[preorderLeft]);
             int inorderRoot = inorderVal2Idx.get(root.val), leftLen = inorderRoot - inorderLeft;
             root.left = build(preorderLeft + 1, preorderLeft + leftLen, inorderLeft, inorderRoot - 1);

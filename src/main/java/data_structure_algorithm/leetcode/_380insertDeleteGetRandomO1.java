@@ -22,31 +22,43 @@ public class _380insertDeleteGetRandomO1 {
          */
         class RandomizedSet {
 
-            private Map<Integer, Integer> num2Idx = new HashMap<>();
-            private List<Integer> nums = new ArrayList<>();
+            private List<Integer> vals = new ArrayList<>();
+            private Map<Integer, Integer> val2Idx = new HashMap<>();
             private Random random = new Random();
 
             public RandomizedSet() {
             }
 
             public boolean insert(int val) {
-                if (num2Idx.containsKey(val)) return false;
-                nums.add(val);
-                num2Idx.put(val, nums.size() - 1);
+                if (val2Idx.containsKey(val)) return false;
+                vals.add(val);
+                val2Idx.put(val, vals.size() - 1);
                 return true;
             }
 
             public boolean remove(int val) {
-                if (!num2Idx.containsKey(val)) return false;
-                num2Idx.put(nums.get(nums.size() - 1), num2Idx.get(val));
-                nums.set(num2Idx.get(val), nums.get(nums.size() - 1));
-                nums.remove(nums.size() - 1);
-                num2Idx.remove(val);
+                // if (!val2Idx.containsKey(val)) return false;
+                // int idx = val2Idx.remove(val), lastVal = vals.get(vals.size() - 1);
+                // if (val2Idx.isEmpty()) {
+                //     vals.remove(vals.size() - 1);
+                //     return true;
+                // }
+                // vals.set(idx, lastVal);
+                // vals.remove(vals.size() - 1);
+                // val2Idx.put(lastVal, idx);
+                // return true;
+
+                if (!val2Idx.containsKey(val)) return false;
+                int idx = val2Idx.get(val), lastVal = vals.get(vals.size() - 1);
+                vals.set(idx, lastVal);
+                vals.remove(vals.size() - 1);
+                val2Idx.put(lastVal, idx);
+                val2Idx.remove(val);
                 return true;
             }
 
             public int getRandom() {
-                return nums.get(random.nextInt(nums.size()));
+                return vals.get(random.nextInt(vals.size()));
             }
 
         }

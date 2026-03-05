@@ -24,10 +24,7 @@ public class _901StockSpanner {
              */
             private Deque<Pair<Integer, Integer>> dq = new ArrayDeque<>();
 
-            private int index = 0;
-
             public StockSpanner() {
-
             }
 
             public int next(int price) {
@@ -36,7 +33,7 @@ public class _901StockSpanner {
                     days += dq.peek().getValue();
                     dq.pop();
                 }
-                dq.push(new Pair<>(price, days));
+                dq.push(new Pair<>(price, days));   // 这里需要将累加天数放回栈中保存，因为数据流会丢失过去的数据
                 return days;
             }
 

@@ -4,6 +4,23 @@ import data_structure_algorithm.domain.ListNode;
 
 public class _2095deleteMiddle {
 
+    public static class Solution0 {
+
+        /**
+         快慢指针+前驱指针: O(N), O(1)
+         */
+        public ListNode deleteMiddle(ListNode head) {
+            ListNode dummy = new ListNode(0, head), prev = dummy, fast = head;
+            while (fast != null && fast.next != null) {
+                prev = prev.next;
+                fast = fast.next.next;
+            }
+            prev.next = prev.next.next;
+            return dummy.next;
+        }
+
+    }
+
     public static class Solution1 {
 
         /**

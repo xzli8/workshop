@@ -8,9 +8,8 @@ public class _994orangesRotting {
     public static class Solution1 {
 
         /**
-         BFS：多源BFS
-         时间复杂度：O(M * N)
-         空间复杂度：O(M * N)
+         BFS(多源BFS): O(M * N), O(M * N)
+         Note: 从腐烂的橘子出发BFS遍历，没有用visited标记的原因是在网格自身标记了。
          */
         public int orangesRotting(int[][] grid) {
             // 初始化
@@ -56,7 +55,6 @@ public class _994orangesRotting {
             // 处理完最后一层后又+1，所以这里要-1
             return step - 1;
         }
-
 
     }
 

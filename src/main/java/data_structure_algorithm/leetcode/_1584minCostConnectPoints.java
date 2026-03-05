@@ -9,7 +9,8 @@ public class _1584minCostConnectPoints {
     public static class Solution1 {
 
         /**
-         最小生成树(Kruskal or Prim)
+         Kruskal(Prim)最小生成树: O(MlogM), O(N), M为边数，N为顶点数
+         Note: Kruskal算法的基本思想(贪心)，每次从边集中选择一条最小的边，如果这条边连接的两个顶点不在同一个连通分量中，则将这条边加入到最小生成树中，否则舍弃这条边。
          */
         public int minCostConnectPoints(int[][] points) {
             // 计算所有点的曼哈顿距离，生成所有的边及其权重(曼哈顿距离)

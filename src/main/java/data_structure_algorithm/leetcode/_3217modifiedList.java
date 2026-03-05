@@ -5,12 +5,12 @@ import data_structure_algorithm.domain.ListNode;
 import java.util.HashSet;
 import java.util.Set;
 
-public class _3127modifiedList {
+public class _3217modifiedList {
 
     public static class Solution1 {
 
         /**
-         HashSet
+         哈希表+前驱节点：O(N), O(M)
          */
         public ListNode modifiedList(int[] nums, ListNode head) {
             Set<Integer> s = new HashSet<>();
@@ -18,14 +18,12 @@ public class _3127modifiedList {
                 s.add(num);
             }
 
-            ListNode dummy = new ListNode();
-            dummy.next = head;
-            ListNode p = dummy;
-            while (p.next != null) {
-                if (s.contains(p.next.val)) {
-                    p.next = p.next.next;
+            ListNode dummy = new ListNode(0, head), prev = dummy;
+            while (prev.next != null) {
+                if (s.contains(prev.next.val)) {
+                    prev.next = prev.next.next;
                 } else {
-                    p = p.next;
+                    prev = prev.next;
                 }
             }
             return dummy.next;
