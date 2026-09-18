@@ -1,0 +1,691 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maya 重构设计</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F4F6F9; --surface:#FFFFFF; --text:#1A222D; --muted:#5B6673; --line:#D9DEE6;
+  --accent:#3949AB; --accent-soft:#E8EAF6; --warn:#B4541A; --warn-soft:#FBEEE4;
+  --ok:#2E7D57; --ok-soft:#E3F2EA; --code-bg:#EEF1F6; --shadow:0 1px 2px rgba(20,30,50,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10151C; --surface:#171E27; --text:#E6EAF0; --muted:#9AA6B4; --line:#2A3441;
+    --accent:#8C9CFF; --accent-soft:#232B4A; --warn:#E8955A; --warn-soft:#3A2618;
+    --ok:#6FCF97; --ok-soft:#173226; --code-bg:#1E2631; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10151C; --surface:#171E27; --text:#E6EAF0; --muted:#9AA6B4; --line:#2A3441;
+  --accent:#8C9CFF; --accent-soft:#232B4A; --warn:#E8955A; --warn-soft:#3A2618;
+  --ok:#6FCF97; --ok-soft:#173226; --code-bg:#1E2631; --shadow:none;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.75 "Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.layout{display:block;max-width:1200px;margin:0 auto;padding:40px 32px 96px}
+.toc{position:fixed;top:0;left:0;height:100vh;width:280px;padding:56px 16px 24px 20px;background:var(--surface);border-right:1px solid var(--line);box-shadow:0 0 24px rgba(20,30,50,.12);overflow:auto;transform:translateX(-100%);transition:transform .2s ease;z-index:40}
+body.toc-open .toc{transform:none}
+.toc-toggle{position:fixed;top:14px;left:14px;z-index:50;font:13px "Noto Sans SC",sans-serif;padding:6px 12px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer;box-shadow:var(--shadow)}
+.toc-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.toc-backdrop{position:fixed;inset:0;z-index:30;display:none}
+body.toc-open .toc-backdrop{display:block}
+@media (max-width:900px){.layout{padding:56px 16px 64px}}
+.toc{font-size:13px;line-height:1.6}
+.toc .kicker{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.toc a{display:block;color:var(--muted);padding:3px 0 3px 10px;border-left:2px solid transparent;margin-left:-1px}
+.toc a.sub{padding-left:22px;font-size:12.5px}
+.toc a.sub2{padding-left:34px;font-size:12px}
+.toc a.sub3{padding-left:46px;font-size:11.5px}
+.toc a.active{color:var(--accent);border-left-color:var(--accent)}
+main{max-width:1120px;min-width:0;margin:0 auto}
+h1,h2,h3,h4,h5,h6{font-family:"Noto Serif SC","Songti SC","STSong",serif;text-wrap:balance;line-height:1.3;margin:0}
+h1{font-size:30px;font-weight:700;margin-bottom:8px}
+h2{font-size:22px;font-weight:700;margin:56px 0 16px;padding-top:24px;border-top:1px solid var(--line)}
+h3{font-size:17px;font-weight:600;margin:32px 0 10px}
+h4{font-size:15px;font-weight:600;margin:20px 0 6px;font-family:"Noto Sans SC",sans-serif}
+h5{font-size:14px;font-weight:700;margin:22px 0 6px;font-family:"Noto Sans SC",sans-serif}
+h6{font-size:13.5px;font-weight:700;margin:16px 0 4px;font-family:"Noto Sans SC",sans-serif}
+.lede{color:var(--muted);font-size:15px;margin:0 0 20px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:22px}
+li{margin:4px 0}
+li>ul{margin-top:4px}
+strong{font-weight:700}
+code{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;background:var(--code-bg);padding:1px 5px;border-radius:3px}
+pre{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;line-height:1.6;background:var(--code-bg);border:1px solid var(--line);border-radius:6px;padding:14px 16px;overflow-x:auto;margin:10px 0 16px}
+pre code{background:none;padding:0;font-size:inherit}
+figure.arch{margin:12px 0 18px;padding:12px;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+figure.arch svg{width:100%;height:auto;display:block}
+.tbl{overflow-x:auto;margin:10px 0 18px}
+td ul{margin:4px 0 0;padding-left:18px}
+table.cmp{table-layout:fixed}
+table.cmp td{font-size:13px;line-height:1.55}
+td li{margin:2px 0}
+table.fc-nowrap th:first-child,table.fc-nowrap td:first-child{white-space:nowrap;width:1%}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:12.5px;letter-spacing:.02em;background:var(--surface)}
+tr:hover td{background:var(--surface)}
+.grid6{display:grid;grid-template-columns:110px 1fr;gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:12px 0 18px;background:var(--surface);box-shadow:var(--shadow)}
+.grid6>div{padding:10px 14px;border-bottom:1px solid var(--line)}
+.grid6>div:nth-last-child(-n+2){border-bottom:0}
+.grid6 .k{font-weight:600;color:var(--muted);font-size:13px;background:var(--bg)}
+.grid6 p:last-child,.grid6 ul:last-child{margin-bottom:0}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0 16px}
+.callout.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.callout.ok{border-left-color:var(--ok);background:var(--ok-soft)}
+.callout .tag{display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:4px}
+.callout.warn .tag{color:var(--warn)}
+.callout .tag{color:var(--accent)}
+.callout.ok .tag{color:var(--ok)}
+.callout p:last-child{margin-bottom:0}
+.qa{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0 18px;background:var(--surface);box-shadow:var(--shadow)}
+.qa h4{margin:0 0 8px;font-size:14px;color:var(--muted);letter-spacing:.04em}
+.qa dl{margin:0}
+.qa dt{font-weight:600;margin-top:10px}
+.qa dt:first-child{margin-top:0}
+.qa dd{margin:2px 0 0 0;color:var(--text)}
+.qa dd p{margin:6px 0}
+.qa dd .tbl{margin:8px 0}
+.qa dd pre{margin:8px 0}
+.check{list-style:none;padding:0;margin:0}
+.check li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line);margin:0}
+.check input{margin-top:6px;width:16px;height:16px;accent-color:var(--accent)}
+.check .n{color:var(--muted);font-size:12px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13px;color:var(--muted);margin-bottom:28px}
+.pill{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);vertical-align:middle;margin-left:4px}
+.pill.warn{border-color:var(--warn);color:var(--warn)}
+.tbd{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;padding:0 6px;border-radius:4px;background:var(--warn-soft);color:var(--warn);vertical-align:middle;margin-right:5px}
+.draft{border:1px dashed var(--line);border-radius:8px;padding:14px 16px;margin:10px 0 18px;background:var(--surface)}
+.draft .lang{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px}
+.small{font-size:13px;color:var(--muted)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+
+<div class="layout">
+<button class="toc-toggle" type="button" aria-controls="toc" aria-expanded="false">目录</button>
+<div class="toc-backdrop"></div>
+<nav class="toc" id="toc" aria-label="目录">
+  <div class="kicker">目录</div>
+  <a href="#s0">0 Agent 工程与传统工程</a>
+  <a href="#s1">1 Maya</a>
+  <a href="#s1-1" class="sub">1.1 角色定位</a>
+  <a href="#s1-2" class="sub">1.2 技术实现</a>
+  <a href="#s1-3" class="sub">1.3 现状问题</a>
+  <a href="#s2">2 HLD</a>
+  <a href="#s2-1" class="sub">2.1 目标架构</a>
+  <a href="#s2-1-1" class="sub2">2.1.1 边界划分</a>
+  <a href="#s2-1-2" class="sub2">2.1.2 内部分工</a>
+  <a href="#s2-1-3" class="sub2">2.1.3 基础设施</a>
+  <a href="#s2-2" class="sub">2.2 重构方案</a>
+  <a href="#s2-2-1" class="sub2">2.2.1 编排</a>
+  <a href="#s2-2-1-1" class="sub3">方案选型</a>
+  <a href="#s2-2-1-2" class="sub3">对话状态图</a>
+  <a href="#s2-2-1-3" class="sub3">现状对比</a>
+  <a href="#s2-2-2" class="sub2">2.2.2 上下文与状态</a>
+  <a href="#s2-2-2-1" class="sub3">方案选型</a>
+  <a href="#s2-2-2-2" class="sub3">会话定义</a>
+  <a href="#s2-2-2-3" class="sub3">上下文管理</a>
+  <a href="#s2-2-2-4" class="sub3">现状对比</a>
+  <a href="#s2-2-3" class="sub2">2.2.3 边界与契约</a>
+  <a href="#s2-2-4" class="sub2">2.2.4 观测与评测</a>
+  <a href="#s2-3" class="sub">2.3 迁移方案</a>
+  <a href="#sa">附录：个人复盘</a>
+  <a href="#sa-1" class="sub">A 面试追问</a>
+  <a href="#sa-2" class="sub">B 对照 JD 的映射</a>
+  <a href="#sa-3" class="sub">C 两分钟版本</a>
+  <a href="#sa-4" class="sub">D 判断复盘</a>
+  <a href="#sa-5" class="sub">E 09-18 规划稿</a>
+</nav>
+
+
+<main>
+<h1>Maya 重构设计</h1>
+
+<!-- ===================== 0 ===================== -->
+<h2 id="s0">0 Agent 工程与传统工程</h2>
+
+<div class="callout">
+<div class="tag">根因（root cause）</div>
+<p>Agent 工程与传统工程的全部差异，来自把 LLM 放进了控制流：一个概率性的、以自然语言为接口的、慢而贵且上下文有限的组件，开始决定程序的下一步。（<strong>概率性</strong>、<strong>自然语言接口</strong>、<strong>资源属性</strong>是 LLM 的性质，「<strong>放进控制流</strong>」是架构选择。不放进控制流只是「用了 LLM 的应用」，放进去才是 agent。）</p>
+</div>
+<p>传统工程对「组件」有四个隐含假设，LLM 逐条打破：</p>
+<div class="tbl"><table class="cmp">
+<colgroup><col style="width:18%"><col style="width:22%"><col style="width:30%"><col style="width:30%"></colgroup>
+<thead><tr><th>传统工程</th><th>agent 工程</th><th>如何处理（业界调研结果）</th><th>常用实现</th></tr></thead>
+<tbody>
+<tr><td><strong>确定性</strong><br>同输入同输出，坏 case 一定可复现</td><td><strong>概率性</strong><br>同输入不同输出，坏 case 不一定复现</td><td>无法杜绝，只能记录和约束<ul><li>全量 trace 记录每步输入输出</li><li>评测集加 pass^k 门禁，报可靠性不报单次成功率</li><li>缩窄决策点、结构化输出压方差</li></ul></td><td><ul><li>trace 与评测平台：LangSmith、Langfuse、OpenTelemetry GenAI 约定</li><li>评测器：LLM-as-judge、DeepEval、Ragas</li><li>评测跑在 CI 里</li></ul></td></tr>
+<tr><td><strong>强类型接口</strong><br>结构由 schema 保证，指令与数据分离</td><td><strong>自然语言接口</strong><br>结构靠约定，指令与数据同一通道，任何位置输出 EOS 都合法</td><td>在边界上把软结构变成硬结构<ul><li>边界处一次解析成类型，工具调用当结构化输出由代码校验执行</li><li>分层 guardrail 叠在鉴权之上</li><li>prompt 当版本化配置，变更过评测</li></ul></td><td><ul><li>结构化输出：pydantic + 模型侧 structured outputs、instructor</li><li>guardrail：Guardrails AI、NeMo Guardrails、厂商 moderation API</li><li>prompt 版本化：LangSmith Prompt Hub 或 git</li></ul></td></tr>
+<tr><td><strong>廉价无界</strong><br>调用快、便宜、资源不设上限</td><td><strong>资源属性</strong><br>调用慢、按 token 计费、上下文窗口有限</td><td>把上下文和调用当预算管<ul><li>上下文工程：只放高信号 token，记忆分层，压缩与按需检索</li><li>流式输出</li><li>按任务大小选模型</li><li>超时按失败类型定策略</li></ul></td><td><ul><li>记忆与检索：LangGraph checkpointer / Store，向量库（OpenSearch、pgvector）</li><li>token 计数与压缩：tiktoken、摘要节点</li><li>模型抽象与路由：LangChain 模型接口、LiteLLM</li><li>流式：SSE</li></ul></td></tr>
+<tr><td><strong>控制流归代码</strong><br>组件只返回结果，不决定下一步</td><td><strong>输出决定控制流</strong><br>输出决定下一步做什么、调哪个工具、何时停（架构选择，不是 LLM 性质）</td><td>循环归代码，模型只判断意图<ul><li>显式边与步数上限</li><li>每步 checkpoint，可暂停可恢复，节点幂等</li><li>执行状态与业务状态单源</li></ul></td><td><ul><li>LangGraph：StateGraph、条件边、recursion_limit、checkpointer、interrupt</li><li>同类：OpenAI Agents SDK 的 run loop</li><li>持久化工作流引擎：Temporal</li></ul></td></tr>
+</tbody>
+</table></div>
+<p><strong>概率性</strong>、<strong>自然语言接口</strong>、<strong>资源属性</strong>三者相互独立；<strong>输出决定控制流</strong>由前两者叠加放大：<strong>自然语言接口</strong>让「不调工具、直接 EOS」成为合法输出，<strong>概率性</strong>让它偶发。</p>
+
+
+<!-- ===================== 1 ===================== -->
+<h2 id="s1">1 Maya</h2>
+<h3 id="s1-1">1.1 角色定位</h3>
+<p>Maya 是 BNTO 的 AI 导购助手，支持用户用自然语言/图片搜索相关服装饰品等潮牌搭配，问账户、订单、FAQ 等相关问题。</p>
+<h3 id="s1-2">1.2 技术实现</h3>
+<div class="tbl"><table>
+<thead><tr><th>层</th><th>实现</th></tr></thead>
+<tbody>
+<tr><td>入口</td><td>Python / FastAPI，一次 HTTP 请求一轮对话，SSE 下发结构化消息（text、product_card、button、image_overlay 等）</td></tr>
+<tr><td>编排</td><td>openai-agents SDK，三个 agent 跑在一个 Runner 里：Orchestrator 做路由，Fashion 挂搜索、图搜和用户数据工具，FAQ 挂知识库和用户数据工具</td></tr>
+<tr><td>模型</td><td>主对话 gpt-5.6-terra，看图 gpt-5.6-luna，识图 Gemini 2.5 flash</td></tr>
+<tr><td>状态与持久化</td><td>服务端每轮无状态；对话历史经 RocketMQ 写入 Context Hub；用户画像与上下文从 Context Hub 拉取</td></tr>
+<tr><td>知识库（RAG）</td><td>FAQ 知识库用 OpenAI FileSearch 托管检索</td></tr>
+</tbody>
+</table></div>
+<h3 id="s1-3">1.3 现状问题</h3>
+<div class="tbl"><table class="fc-nowrap">
+<thead><tr><th>特性</th><th>现状问题</th><th>短期方案（快速止血）</th><th>长期方案（体系重构）</th></tr></thead>
+<tbody>
+<tr><td><strong>概率性</strong></td><td>无回归体系，换 prompt 换模型靠手工探针和 grep 日志验证</td><td>日志打标统计兜底触发率，手工探针验收</td><td><a href="#s2-2-4">2.2.4 观测与评测</a></td></tr>
+<tr><td><strong>自然语言接口</strong></td><td>模型输出靠正则修 JSON；外部数据进来不解析不校验，失败静默；意图路由不稳定；模型拿不到数据时自行编造回答</td><td>定下边界解析法则与契约测试；用户数据类工具同时挂到两个 agent，让路由错误无害；补齐用户数据工具，事实走工具取</td><td><a href="#s2-2-3">2.2.3 边界与契约</a></td></tr>
+<tr><td><strong>资源属性</strong></td><td>每轮无状态，历史不进模型；外部模型调用没有统一的超时与降级策略；上下文和成本没有预算</td><td>每轮从 Context Hub 拉最近历史，清洗压缩后回放；外部模型调用加超时、输出上限和输入归一化</td><td><a href="#s2-2-2">2.2.2 上下文与状态</a></td></tr>
+<tr><td><strong>输出决定控制流</strong></td><td>终态靠模型自觉，模型宣布了下一步动作却不执行、直接结束是常态</td><td>流结束时检测缺失的终态并补发，兜底逻辑收进独立模块；代价是每加一种终态消息就要加一处兜底</td><td><a href="#s2-2-1">2.2.1 编排</a></td></tr>
+</tbody>
+</table></div>
+
+<!-- ===================== 2 ===================== -->
+<h2 id="s2">2 HLD</h2>
+<p>约束：前端契约不变（Client 不随本次重构改版）→ SSE 消息类型不变 &amp; 弹窗作为一轮终态（而不是 LangGraph interrupt）</p>
+<h3 id="s2-1">2.1 目标架构</h3>
+<figure class="arch">
+<svg viewBox="0 0 820 420" role="img" aria-label="Maya 目标架构">
+<defs>
+  <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker>
+</defs>
+<g font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="13" fill="var(--text)" text-anchor="middle">
+  <!-- client -->
+  <rect x="20" y="130" width="110" height="56" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="75" y="163">Client</text>
+  <!-- gateway -->
+  <line x1="130" y1="158" x2="180" y2="158" stroke="var(--muted)" stroke-width="1.5" marker-start="url(#ah)" marker-end="url(#ah)"/>
+  <rect x="180" y="130" width="110" height="56" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="235" y="163">API Gateway</text>
+  <line x1="290" y1="158" x2="340" y2="158" stroke="var(--muted)" stroke-width="1.5" marker-start="url(#ah)" marker-end="url(#ah)"/>
+  <!-- maya -->
+  <rect x="340" y="40" width="330" height="240" rx="8" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+  <text x="505" y="62" font-weight="700" fill="var(--accent)">Maya</text>
+  <rect x="440" y="78" width="130" height="40" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="505" y="103">Router</text>
+  <line x1="505" y1="118" x2="410" y2="150" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#ah)"/>
+  <line x1="505" y1="118" x2="505" y2="150" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#ah)"/>
+  <line x1="505" y1="118" x2="600" y2="150" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#ah)"/>
+  <rect x="360" y="150" width="95" height="40" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="407" y="175">Fashion</text>
+  <rect x="457" y="150" width="95" height="40" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="504" y="175">Account</text>
+  <rect x="554" y="150" width="95" height="40" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="601" y="175">FAQ</text>
+  <line x1="407" y1="190" x2="480" y2="222" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#ah)"/>
+  <line x1="504" y1="190" x2="504" y2="222" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#ah)"/>
+  <line x1="601" y1="190" x2="530" y2="222" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#ah)"/>
+  <rect x="400" y="224" width="210" height="40" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="505" y="249">SSE 适配层</text>
+  <!-- business systems (right, vertical) -->
+  <rect x="700" y="40" width="100" height="240" rx="8" fill="none" stroke="var(--line)" stroke-dasharray="5 4"/>
+  <text x="750" y="62" fill="var(--muted)" font-size="12">业务系统</text>
+  <rect x="704" y="80" width="92" height="48" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="750" y="100">core</text><text x="750" y="117" font-size="11" fill="var(--muted)">inner 接口</text>
+  <rect x="704" y="142" width="92" height="48" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="750" y="162" font-size="12">Context Hub</text><text x="750" y="179" font-size="11" fill="var(--muted)">画像 · 上下文</text>
+  <rect x="704" y="204" width="92" height="48" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="750" y="224">reco</text><text x="750" y="241" font-size="11" fill="var(--muted)">召回 · 相似</text>
+  <!-- infra (bottom, horizontal) -->
+  <rect x="20" y="310" width="780" height="90" rx="8" fill="none" stroke="var(--line)" stroke-dasharray="5 4"/>
+  <text x="410" y="332" fill="var(--muted)" font-size="12">基础设施</text>
+  <rect x="45" y="345" width="170" height="44" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="130" y="364">模型供应商</text><text x="130" y="380" font-size="11" fill="var(--muted)">OpenAI · Gemini</text>
+  <rect x="235" y="345" width="170" height="44" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="320" y="364">历史消息存储</text><text x="320" y="380" font-size="11" fill="var(--muted)">跨轮持久化</text>
+  <rect x="425" y="345" width="170" height="44" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="510" y="364">RAG 检索</text><text x="510" y="380" font-size="11" fill="var(--muted)">知识库</text>
+  <rect x="615" y="345" width="170" height="44" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="700" y="364">trace 与评测平台</text><text x="700" y="380" font-size="11" fill="var(--muted)">观测 · 评测集</text>
+</g>
+</svg>
+</figure>
+<h4 id="s2-1-1">2.1.1 边界划分</h4>
+<div class="tbl"><table class="fc-nowrap">
+<thead><tr><th>相邻系统</th><th>Maya 负责</th><th>对方负责</th><th>交互</th></tr></thead>
+<tbody>
+<tr><td>前端</td><td>接收一轮对话请求，流式返回结构化消息；历史消息的查询与管理</td><td>发起请求、渲染消息、处理点击</td><td>前端经网关调 Maya，SSE 消息契约不变</td></tr>
+<tr><td>core</td><td>把用户数据查询、商品搜索计数组织成回答</td><td>用户数据与商品数据的真源和鉴权</td><td>Maya 经内网 inner 接口同步调用，只读，不落用户数据</td></tr>
+<tr><td>Context Hub</td><td>拉取用户上下文写进 state：画像每轮拉，天气按意图拉；按其判定在对话轮内以弹窗终态展示 consent 与问卷</td><td>画像与上下文的组装；弹窗与问卷的判定（是否展示、展示什么、频控）及展示回调</td><td>Maya 同步调用，只读</td></tr>
+<tr><td>reco</td><td>把用户意图变成检索条件（文本搜索的 searchJson、图搜识别出的物件与类别），下发给前端相应的 url + param</td><td>按检索条件执行搜索、召回、相似推荐</td><td>Maya 不调 reco；前端根据 Maya 下发的 url + param 调用 reco 接口</td></tr>
+</tbody>
+</table></div>
+<ul>
+  <li>对话历史：原由 Context Hub 保存，现划入 Maya 自身闭环。</li>
+  <li>弹窗与问卷判定：原在 bnto-ai 内判定并持有频控锁，现划归 Context Hub；前端展示回调直接打 Context Hub，不经 Maya。</li>
+</ul>
+
+<h4 id="s2-1-2">2.1.2 内部分工</h4>
+<div class="tbl"><table class="fc-nowrap">
+<thead><tr><th></th><th>职责</th><th>数据源</th><th>输出</th><th>边界</th></tr></thead>
+<tbody>
+<tr><td><strong>Router</strong></td><td>判断这轮谁接，多步时排顺序</td><td>用户消息与历史消息（自有存储）</td><td>意图枚举</td><td>单次 LLM 分类调用，无工具无循环；走哪条边由代码定</td></tr>
+<tr><td><strong>Fashion</strong></td><td>找商品、图搜、搭配建议（含按天气穿搭）</td><td>商品目录（core）</td><td>检索条件，以 url + param 下发</td><td>不查用户数据，所需用户上下文从 state 读（画像、天气来自 Context Hub，订单、购物车、心愿单等来自 Account）</td></tr>
+<tr><td><strong>Account</strong></td><td>用户自己的数据：订单、购物车、心愿单、订阅、当月箱、最近浏览、画像</td><td>用户数据（core）</td><td>结构化事实，再措辞</td><td>只报事实，不做推荐</td></tr>
+<tr><td><strong>FAQ</strong></td><td>政策、规则、平台用法</td><td>FAQ 知识库（RAG 检索服务）</td><td>带出处的回答</td><td>不碰用户数据和目录</td></tr>
+</tbody>
+</table></div>
+<ul>
+  <li>一个 Router 分类节点加三个按数据源划界的 agent，跨域问题由 Router 排成多步。</li>
+  <li>鉴权、consent 和画像拉取在 Router 之前的入口节点完成，一轮一次。</li>
+  <li>天气按意图拉取，作为 Fashion 的一个场景（独立天气入口保留，直达 Fashion，不经 Router）。</li>
+</ul>
+<h4 id="s2-1-3">2.1.3 基础设施</h4>
+<div class="tbl"><table class="fc-nowrap">
+<thead><tr><th>项</th><th>作用</th><th>Maya 如何依赖</th><th>选型</th></tr></thead>
+<tbody>
+<tr><td>模型供应商</td><td>对话、看图、识图的模型推理</td><td>同步调用，超时与重试在 Maya 侧</td><td>OpenAI（对话、看图）、Gemini（识图）</td></tr>
+<tr><td>历史消息存储</td><td>按照 session 存储历史消息用于消息展示和摘要，通过 CDC 同步到索引供向量查询</td><td>轮初读出作为起点，轮末追加</td><td>短期 PostgreSQL + pgvector；长期追加型日志存储 + CDC 同步向量索引</td></tr>
+<tr><td>RAG 检索</td><td>FAQ 知识库的检索</td><td>FAQ 回答时同步调用</td><td>自建 OpenSearch、pgvector、沿用 OpenAI FileSearch</td></tr>
+<tr><td>trace 与评测平台</td><td>记录每步输入输出；存评测集并跑评测</td><td>运行时异步上报；CI 拉评测集跑门禁</td><td>LangSmith、自托管 Langfuse、OpenTelemetry 加自有存储</td></tr>
+</tbody>
+</table></div>
+<ul>
+  <li>部署形态：bnto-monorepo 的 <code>apps/maya</code> 可部署单元，自带 Dockerfile 与 deploy.yaml，按部署契约进 ECS，运行时配置走 SSM。</li>
+  <li>历史消息存储
+    <ul>
+      <li>短期：PostgreSQL + pgvector 同库。当前量级追加写无瓶颈，按用户过滤后候选集很小，同库做向量查询不需要 CDC。</li>
+      <li>长期：写入量上来后，日志迁到追加型日志存储（日志追加负载，宽表或带排序键的 KV 模型），经 CDC 同步到向量索引（搜索负载，倒排加向量索引）。
+        <ul>
+          <li>options：追加型日志存储
+            <div class="tbl"><table class="fc-nowrap">
+            <thead><tr><th>方案</th><th>优点</th><th>缺点</th></tr></thead>
+            <tbody>
+            <tr><td>DynamoDB【选定】（B-tree + WAL）</td><td>分区键 session、排序键时间（顺序读和分页是原生模式）；TTL 内建；Streams 即 CDC；托管零运维</td><td>和厂商绑定</td></tr>
+            <tr><td>Cassandra / HBase（LSM-tree）</td><td>宽表加时间聚簇的模型完全匹配，消息与日志系统的经典选择；写吞吐高；开源可迁出</td><td>自管集群运维重，HBase 还要拖 Hadoop 与 ZooKeeper；CDC 要另搭</td></tr>
+            </tbody>
+            </table></div>
+          </li>
+          <li>options：向量索引
+            <div class="tbl"><table class="fc-nowrap">
+            <thead><tr><th>方案</th><th>优点</th><th>缺点</th></tr></thead>
+            <tbody>
+            <tr><td>OpenSearch【选定】</td><td>按用户过滤后 kNN 加 BM25 混合检索原生支持，用户提品牌名、品类词时关键词比向量准；增量写、按文档删方便；托管版有</td><td>比纯向量库重；相关性调参要投入</td></tr>
+            <tr><td>独立向量库（Milvus、Qdrant、Pinecone 一类）</td><td>大规模 ANN 性能强，向量专用功能全</td><td>召回限定在单用户历史内，候选集小，ANN 规模用不上；无原生全文混合；多一个系统</td></tr>
+            <tr><td>Vespa</td><td>混合检索能力最强，向量、全文、结构化过滤一体</td><td>极重，学习和运维成本高；对单用户小候选集是杀鸡用牛刀</td></tr>
+            </tbody>
+            </table></div>
+          </li>
+          <li>conclusion：DynamoDB 存日志，Streams 作 CDC，OpenSearch 做向量索引。</li>
+          <li>tradeoff
+            <ul>
+              <li>托管换锁定：DynamoDB 与 OpenSearch 都用 AWS 托管版，换来零运维和内建的 CDC、TTL，付出和厂商绑定。Maya 本就跑在 AWS 上，可接受。</li>
+              <li>分开换复杂度：日志与索引分成两个系统各取所长，付出一条 CDC 链路和两套运维。</li>
+              <li>混合检索换重量：OpenSearch 比纯向量库重、相关性要调参，换来过滤后的向量加关键词混合检索。</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="s2-2">2.2 重构方案</h3>
+<h4 id="s2-2-1">2.2.1 编排</h4>
+<h5 id="s2-2-1-1">方案选型</h5>
+<div class="tbl"><table class="fc-nowrap">
+<thead><tr><th>方案</th><th>是什么</th><th>优点</th><th>缺点</th></tr></thead>
+<tbody>
+<tr><td>代码优先的手写循环（现状）【不选】</td><td>openai-agents SDK 的形态：一个 run loop，模型通过 handoff 和工具调用决定下一步</td><td>零改动，写法直接</td><td>控制流在循环体内，终态靠模型自觉，每种终态要单独兜底</td></tr>
+<tr><td>持久化工作流引擎（Temporal 类）【不选】</td><td>面向长时任务的可靠执行：持久化、重试、超时</td><td>执行可靠性强</td><td>不提供结构化输出、流式和工具循环的约束；对几秒一轮的对话是多余的重量</td></tr>
+<tr><td><strong>LangGraph【选定】</strong></td><td>把一轮对话写成显式状态图：节点、条件边、子图，自带 checkpoint、interrupt、步数上限、流式</td><td>控制流在边上不在模型输出里，终态由出口节点保证；Maya 的流程边界有限、画得出来</td><td>引入新依赖，节点、状态、边全部要重写</td></tr>
+</tbody>
+</table></div>
+<h5 id="s2-2-1-2">对话状态图</h5>
+<figure class="arch">
+<svg viewBox="0 0 820 330" role="img" aria-label="一轮对话的状态图">
+<defs>
+  <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker>
+</defs>
+<g font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="13" fill="var(--text)" text-anchor="middle">
+  <!-- entry -->
+  <rect x="20" y="150" width="120" height="60" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="80" y="173">入口</text><text x="80" y="191" font-size="11" fill="var(--muted)">鉴权 · consent · 画像</text>
+  <text x="80" y="228" font-size="11" fill="var(--warn)">弹窗终态：consent / 问卷</text>
+  <path d="M80,210 L80,242 L650,242 L650,210" fill="none" stroke="var(--warn)" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#ah2)"/>
+  <line x1="140" y1="180" x2="190" y2="180" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah2)"/>
+  <!-- router -->
+  <rect x="190" y="150" width="110" height="60" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="245" y="173">Router</text><text x="245" y="191" font-size="11" fill="var(--muted)">意图枚举</text>
+  <line x1="300" y1="170" x2="360" y2="82" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#ah2)"/>
+  <line x1="300" y1="180" x2="360" y2="180" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#ah2)"/>
+  <line x1="300" y1="190" x2="360" y2="278" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#ah2)"/>
+  <!-- agent subgraphs -->
+  <rect x="360" y="52" width="180" height="60" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+  <text x="450" y="75">Fashion 子图</text><text x="450" y="93" font-size="11" fill="var(--muted)">LLM ⇄ 工具 循环，步数上限</text>
+  <rect x="360" y="150" width="180" height="60" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+  <text x="450" y="173">Account 子图</text><text x="450" y="191" font-size="11" fill="var(--muted)">LLM ⇄ 工具 循环，步数上限</text>
+  <rect x="360" y="248" width="180" height="60" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/>
+  <text x="450" y="271">FAQ 子图</text><text x="450" y="289" font-size="11" fill="var(--muted)">LLM ⇄ 检索 循环，步数上限</text>
+  <!-- cross-domain -->
+  <line x1="450" y1="150" x2="450" y2="112" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#ah2)"/>
+  <text x="498" y="135" font-size="11" fill="var(--muted)">跨域：先 Account 再 Fashion</text>
+  <!-- exits -->
+  <line x1="540" y1="82" x2="600" y2="170" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#ah2)"/>
+  <line x1="540" y1="180" x2="600" y2="180" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#ah2)"/>
+  <line x1="540" y1="278" x2="600" y2="190" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#ah2)"/>
+  <rect x="600" y="150" width="100" height="60" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="650" y="173">出口校验</text><text x="650" y="191" font-size="11" fill="var(--muted)">终态 schema</text>
+  <line x1="700" y1="180" x2="740" y2="180" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ah2)"/>
+  <rect x="740" y="150" width="70" height="60" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="775" y="173">SSE</text><text x="775" y="191" font-size="11" fill="var(--muted)">适配层</text>
+  <!-- weather entry -->
+  <rect x="20" y="20" width="120" height="50" rx="6" fill="var(--surface)" stroke="var(--line)" stroke-dasharray="4 3"/>
+  <text x="80" y="41">天气入口</text><text x="80" y="58" font-size="11" fill="var(--muted)">不经 Router</text>
+  <line x1="140" y1="45" x2="190" y2="45" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#ah2)"/>
+  <rect x="190" y="20" width="110" height="50" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="245" y="41">取天气</text><text x="245" y="58" font-size="11" fill="var(--muted)">Context Hub</text>
+  <line x1="300" y1="45" x2="330" y2="45" stroke="var(--muted)" stroke-width="1.2"/>
+  <line x1="330" y1="45" x2="330" y2="82" stroke="var(--muted)" stroke-width="1.2"/>
+  <line x1="330" y1="82" x2="360" y2="82" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#ah2)"/>
+</g>
+</svg>
+</figure>
+
+<ul>
+  <li>循环归代码，模型只判断意图
+    <ul>
+      <li>Router 是一次结构化输出：意图枚举，多步时带顺序；走哪条边由代码映射，不解析自由文本。</li>
+      <li>agent 子图内部是工具循环，模型每步只输出结构化决定：调哪个工具、给出结果、还是需要澄清；条件边按字段判定。</li>
+      <li>工具调用是结构化输出，参数经 schema 校验后由代码执行；工具报错压缩成一条结果写回 state，不把 stack trace 喂给模型。</li>
+    </ul>
+  </li>
+  <li>终态由结构保证
+    <ul>
+      <li>每个子图只有一个出口节点，出口有 schema：Fashion 出检索条件或澄清问题，Account 出结构化事实，FAQ 出带出处的回答。</li>
+      <li>模型输出不满足出口 schema 时进不了终态：有步数余量就回循环，没有就走澄清出口。模型无法以 EOS 结束一轮。</li>
+      <li>现状的流末兜底（wait cue、overlay）不再存在：它们兜的是「模型停在半路」，图里没有这条路径。</li>
+    </ul>
+  </li>
+  <li>步数上限与弹窗
+    <ul>
+      <li>每个子图设 recursion_limit；超限进固定的兜底出口（澄清或失败文案），不向用户抛异常。</li>
+      <li>consent 与问卷弹窗是本轮的一个终态：入口节点按 Context Hub 的判定直接出弹窗，本轮结束；用户处理后的下一条消息作为新一轮进入口重新判定（受约束「前端契约不变」；约束解除时改为 interrupt 加恢复接口，本轮原地续跑）。</li>
+    </ul>
+  </li>
+  <li>流式与 SSE 适配
+    <ul>
+      <li>图以 stream 方式运行，三类事件：节点更新（进度）、token（文本流式）、自定义事件（结构化消息）。</li>
+      <li>SSE 适配层在图外，把事件映射到现有消息类型；消息送达时写消息表（受约束「前端契约不变」；约束解除时按终态类型重新定义消息 schema，适配层消失）。</li>
+    </ul>
+  </li>
+</ul>
+
+<h5 id="s2-2-1-3">现状对比</h5>
+<div class="tbl"><table class="fc-nowrap">
+<thead><tr><th>机制</th><th>现状</th><th>LangGraph</th></tr></thead>
+<tbody>
+<tr><td>状态图与子图</td><td>单 Runner 内的 handoff 与 as_tool</td><td>StateGraph，子图作为节点</td></tr>
+<tr><td>意图路由</td><td>Orchestrator 的生成式路由</td><td>结构化输出 + 条件边</td></tr>
+<tr><td>出口校验</td><td>wait cue 与 overlay 的流末兜底、正则修 JSON</td><td>出口节点，只有出口连向 END；结构化输出 schema</td></tr>
+<tr><td>步数上限</td><td>无</td><td>recursion_limit</td></tr>
+<tr><td>弹窗</td><td>consent 与 survey 的手写拦截与重发</td><td>入口节点直连出口的弹窗终态</td></tr>
+<tr><td>流式</td><td>base_agent 内直接拼装 SSE</td><td>stream_mode：updates / messages / custom</td></tr>
+</tbody>
+</table></div>
+
+<h4 id="s2-2-2">2.2.2 上下文与状态</h4>
+<h5 id="s2-2-2-1">方案选型</h5>
+<div class="tbl"><table class="fc-nowrap">
+<thead><tr><th>方案</th><th>是什么</th><th>优点</th><th>缺点</th></tr></thead>
+<tbody>
+<tr><td>每轮从 Context Hub 拉历史回放（现状）【不选】</td><td>对话经 RocketMQ 异步写入 Context Hub，每轮拉最近 20 行清洗后回放进内存 Session</td><td>零改动</td><td>两份真源；异步链路静默丢；每轮多一次 hub 往返和清洗；只有倒序取 20 行一个接口，窗口外的历史用不上</td></tr>
+<tr><td>模型供应商侧保存历史【不选】</td><td>用 OpenAI 的 previous_response_id 或 thread 让供应商保存对话</td><td>不用自己存</td><td>状态锁在供应商，换模型即丢；不能查询、裁剪，做不了历史展示</td></tr>
+<tr><td><strong>自有历史消息存储【选定】</strong></td><td>历史消息存在自有存储，每轮追加，下一轮按 session 读出作为起点（需要更细粒度时可改为每步落 checkpoint）；展示历史读同一份</td><td>状态单源，读写都在 Maya 内；存有全部历史，窗口外可做摘要压缩和相关性召回</td><td>Maya 承担会话数据的持久化运维：保留期、删除、分页</td></tr>
+</tbody>
+</table></div>
+
+<h5 id="s2-2-2-2">会话定义</h5>
+<div class="tbl"><table class="fc-nowrap">
+<thead><tr><th>方案</th><th>定义</th><th>优点</th><th>缺点</th></tr></thead>
+<tbody>
+<tr><td>前端定义会话（现状）【不选】</td><td>sessionId 由前端生成放在 cookie，App 或 Web 重开即换</td><td>零改动</td><td>历史页按用户展示、模型记忆按 session 取，Maya 认不出对话框里正在展示的历史</td></tr>
+<tr><td>显式多会话【不选】</td><td>用户主动新建会话，后端在 DB 建会话记录并返回 id，前端按 id 切换</td><td>最合理的产品形态：上下文按会话隔离，长度可控</td><td>前端要做会话列表和切换，契约变，本次不能到位</td></tr>
+<tr><td><strong>用户全局会话【选定】</strong></td><td>一个用户只有一个会话：登录用户 userId，游客 deviceId，登录时把游客会话并入（前端 sessionId 字段保留但不参与会话定义，为将来改传后端下发的会话 id 预留）</td><td>串起用户全部历史，对话框里展示的 Maya 都认得；前端不改</td><td>上下文过长，靠窗口和摘要控制进模型的量（受「前端契约不变」约束的过渡形态；改成显式多会话后此缺点消除，届时只换会话 id 的来源，由用户身份推导改为后端为每个新会话下发，状态结构不动）</td></tr>
+</tbody>
+</table></div>
+<h5 id="s2-2-2-3">上下文管理</h5>
+<figure class="arch">
+<svg viewBox="0 0 820 360" role="img" aria-label="上下文管理">
+<defs>
+  <marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker>
+</defs>
+<g font-family="Noto Sans SC, PingFang SC, sans-serif" font-size="13" fill="var(--text)" text-anchor="middle">
+  <!-- 1 user input -->
+  <rect x="20" y="24" width="360" height="44" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="200" y="51">用户本轮输入</text>
+  <!-- 2 history -->
+  <rect x="20" y="84" width="360" height="118" rx="8" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="200" y="106" font-weight="700">历史消息</text>
+  <rect x="36" y="118" width="160" height="70" rx="6" fill="var(--code-bg)" stroke="var(--line)"/>
+  <text x="116" y="144">窗口内</text><text x="116" y="164" font-size="11" fill="var(--muted)">最近 N 轮</text>
+  <rect x="204" y="118" width="160" height="70" rx="6" fill="var(--code-bg)" stroke="var(--line)"/>
+  <text x="284" y="144">窗口外</text><text x="284" y="164" font-size="11" fill="var(--muted)">摘要 · 相似召回</text>
+  <!-- 3 external -->
+  <rect x="20" y="218" width="360" height="56" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="200" y="240">外部数据源</text><text x="200" y="260" font-size="11" fill="var(--muted)">画像 · 天气（Context Hub）· 用户数据（Account）</text>
+  <!-- 4 system prompt -->
+  <rect x="20" y="290" width="360" height="56" rx="6" fill="var(--surface)" stroke="var(--line)"/>
+  <text x="200" y="312">system prompt</text><text x="200" y="332" font-size="11" fill="var(--muted)">角色 · 规则 · 工具</text>
+  <!-- prompt -->
+  <rect x="560" y="110" width="240" height="150" rx="8" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+  <text x="680" y="178" font-weight="700" fill="var(--accent)">本轮 prompt</text>
+  <text x="680" y="200" font-size="12" fill="var(--muted)">模型这一次调用看到的全部上下文</text>
+  <!-- arrows -->
+  <line x1="380" y1="46" x2="560" y2="150" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#ah3)"/>
+  <line x1="380" y1="143" x2="560" y2="170" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#ah3)"/>
+  <line x1="380" y1="246" x2="560" y2="200" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#ah3)"/>
+  <line x1="380" y1="318" x2="560" y2="222" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#ah3)"/>
+</g>
+</svg>
+</figure>
+<ul>
+  <li>用户本轮输入：用户当前输入的消息（文本/图片等）。</li>
+  <li>历史消息：按照 session 跨轮持久化存储，每轮追加（展示用的历史接口读同一份存储，不另存）。
+    <ul>
+      <li>窗口内：最近 N 轮原文。</li>
+      <li>窗口外：摘要是超预算时把更早轮次压缩成的事实概要；相似召回是按当前输入从全部历史中命中的相关旧轮。两者互补。</li>
+    </ul>
+  </li>
+  <li>外部数据源：按需拉取、不落盘。
+    <ul>
+      <li>画像每轮拉。</li>
+      <li>天气按意图拉。</li>
+      <li>Account 的用户数据按路由拉。</li>
+    </ul>
+  </li>
+  <li>system prompt：角色、规则、工具定义（版本化配置，见 <a href="#s2-2-3">边界与契约</a>）。</li>
+</ul>
+
+<h5 id="s2-2-2-4">现状对比</h5>
+<div class="tbl"><table class="fc-nowrap">
+<thead><tr><th>机制</th><th>现状</th><th>重构后</th></tr></thead>
+<tbody>
+<tr><td>历史消息</td><td>内存 Session 每请求重建，每轮从 Context Hub 拉 20 行回放</td><td>自有存储，轮初读轮末追加</td></tr>
+<tr><td>展示历史</td><td>经 RocketMQ 写 Context Hub 对话表</td><td>读同一份历史消息存储</td></tr>
+<tr><td>窗口控制</td><td>每条 1200、总 8000 字符硬截断</td><td>token 预算加摘要压缩</td></tr>
+<tr><td>窗口外历史</td><td>看不见</td><td>相关性召回进 prompt</td></tr>
+<tr><td>会话定义</td><td>前端 sessionId，重开即换</td><td>用户全局会话</td></tr>
+</tbody>
+</table></div>
+
+<h4 id="s2-2-3">2.2.3 边界与契约</h4>
+<p class="small">待写：外部源边界模块、结构化输出、工具 schema 与风险分级、guardrail 节点、prompt 作为版本化配置。</p>
+<h4 id="s2-2-4">2.2.4 观测与评测</h4>
+<p class="small">待写：tracing 后端与脱敏、评测集来源与五个数据集、pass^k 门禁、CI 接入。</p>
+<h3 id="s2-3">2.3 迁移方案</h3>
+<p class="small">待写：功能批次与顺序、每批验收指标、影子对比、回退方式、风险。</p>
+
+<!-- ===================== A ===================== -->
+<h2 id="sa">附录：个人复盘（导出公司文档时整节删除）</h2>
+
+<h3 id="sa-1">A 面试追问</h3>
+<h4>系统形态与契约</h4>
+<div class="qa">
+<dl>
+  <dt>为什么不做多轮流式会话，而是一次请求一轮？</dt>
+  <dd>前端契约先于我存在。一次请求一轮让服务端可以无状态横向扩，代价是历史要显式回放。我的判断是保留请求模型、修历史回放，比改前端契约代价小一个量级。</dd>
+  <dt>路由靠模型分类，不怕不稳定吗？</dt>
+  <dd>怕，而且实测就是不稳定。处理原则不是消灭不稳定，是让错误路由无害：两边都挂工具，走到哪边都能答。真正要精确路由的只有职能绑定类工具，那是单挂的。</dd>
+</dl>
+</div>
+<h4>终态保证</h4>
+<div class="qa">
+<dl>
+  <dt>rescue 会不会误伤：模型故意不调工具、只是想澄清？</dt>
+  <dd>判定条件是 readiness 1.0 且 search_json 完整，模型自己声明了"我要搜了"。这个状态下不调工具没有合理解释。真正的澄清走 A 路径，readiness 不足，不触发。</dd>
+  <dt>为什么不直接用 tool_choice="required"？</dt>
+  <dd>Fashion Agent 有十几个工具，required 只保证调一个，不保证是搜索；而且澄清轮本来就不该调。选项 ③ 是"检测到 C 再用 required 克隆重跑"，比 ① 多一次模型调用，UX 好一点点，我们的判断是不值。</dd>
+  <dt>rescue 率是多少？</dt>
+  <dd>升级 terra 前 UAT 全天 5 次真实 rescue，升级后 1 次，且那次是登录态多轮长上下文的跟进轮。计数要精确 grep <code>base_agent - [wait-cue-fallback]</code>，裸 grep 会被 MQ produce 行和历史回显放大三倍。</dd>
+  <dt>这是打补丁还是设计？</dt>
+  <dd>诚实说是补丁，但它是正确的补丁：把终态责任放到确定性的一侧。长期方案是把终态做成编排图里的一个节点，rescue 消失，见第 2 节。</dd>
+</dl>
+</div>
+<h4>外部模型调用治理</h4>
+<div class="qa">
+<dl>
+  <dt>15 秒怎么定的？</dt>
+  <dd>正常识别 7 秒左右，用户能等的上限十几秒，网关 60 秒。15 秒给了两倍正常延迟的余量，又远离网关线。8824 之后 13.8 秒的样本离线很近，备选是缩到 1024 边，一行配置。</dd>
+  <dt>为什么服务端缩图而不是让 iOS 对齐 Web 的压缩？</dt>
+  <dd>两个都要做，但服务端先做：客户端有版本分布，改了要等用户升级；服务端一次生效覆盖所有端，而且服务端本来就该对输入归一化，不该信任客户端字节。</dd>
+  <dt>截断的 JSON 为什么不做 salvage parse？</dt>
+  <dd>触发图片在 temp=0 下必然截断、必然失败，救不出结果；salvage 只是把 4 分钟的失败变成 4 分钟的部分结果。先把 4 分钟变成 15 秒才是重点。</dd>
+  <dt>tracing 为什么关了？</dt>
+  <dd>openai-agents 默认 trace export 把 original_input 连同完整图片 base64 发到 OpenAI tracing 端点，被 length 拒，刷屏 errors.log，还外发了用户图片。这是第 2 节接 LangSmith 时要用 hide_inputs 剥掉的东西。</dd>
+</dl>
+</div>
+<h4>上下文与记忆</h4>
+<div class="qa">
+<dl>
+  <dt>为什么不用 SDK 的持久化 Session 直接落库？</dt>
+  <dd>历史已经在 Context Hub 里，是 Java 侧的事实源，历史页也从那读。再落一份就是两个事实源。回放的成本是每轮一次清洗，实测 215 token，可以接受。</dd>
+  <dt>历史多长合适？</dt>
+  <dd>20 行是 hub 的上限，我用了全部，再用预算截。不是算出来的，是够用且长上下文会抬 path-C，所以没往上加。有评测体系后这是第一个该调的参数。</dd>
+  <dt>历史里有 base64 怎么办？</dt>
+  <dd>存量行有。注入时的转换永远不内联图片值，只放 URL 占位。这条是在一次误报排查里定下来的：我自己的 smoke 用了旧的字符串形状，绕过了剥 base64 的分支，看起来像回归，其实是载荷形状错了。教训是 smoke 载荷必须用前端契约形状。</dd>
+  <dt>结果页追问还是不承接上下文？</dt>
+  <dd>对。召回是点击后的同步调用，不是对话轮，模型知道用户传了图、识别出什么，不知道结果页展示了什么、点了哪个框。补齐要前端随追问带结果页上下文，或服务端把点击记进会话。Lee 判定当前不做。</dd>
+</dl>
+</div>
+<h4>模型升级与验证</h4>
+<div class="qa">
+<dl>
+  <dt>没有评测集，怎么敢换模型？</dt>
+  <dd>不敢，所以验收标准定得很窄：不是"更好"，是"关键路径不退化"。九探针加 A/B/C 计数就是最小验收集。这也是为什么第 2 节第一步是接观测建评测，下次换模型不该再靠手工探针。</dd>
+  <dt>同车上线双变量归因怎么办？</dt>
+  <dd>分支内独立 commit，出问题按 commit revert 看指标。当时判断风险可接受：模型变更的探针已经过了，图搜是新功能没有基线可退化。</dd>
+  <dt>离题空气泡真的修了吗？</dt>
+  <dd>以模型升级结案，17/17 零复现，但没有加服务端空轮兜底。评论里写明了复发时的方案：流末检测整轮无文本回复，补发固定引导文案，仿 wait-cue rescue。</dd>
+</dl>
+</div>
+<h4>总体</h4>
+<div class="qa">
+<dl>
+  <dt>1. 这个项目你是从零做的吗？</dt>
+  <dd>不是。两位同事写的第一版，我 5 月接手做生产化。接手比从零更能说明"own production quality"：所有问题都是在真实流量下发现、根因、修复、验证的。</dd>
+  <dt>2. 团队多大，你负责什么？</dt>
+  <dd>bnto-ai 服务端改造由我独立承担，包括 core 侧配套的三个 Java inner 接口。iOS、Web 各一人对接契约，QA 一人，core 一人确认数据语义。</dd>
+  <dt>3. 为什么是 openai-agents SDK 而不是 LangChain？</dt>
+  <dd>接手时已定。我的判断是框架不是当前瓶颈，见第 2 节：先观测评测，编排重写放最后且可选。</dd>
+  <dt>4. 你最得意的一个决策？</dt>
+  <dd>把终态从模型手里拿回来。它让"模型怎么变"和"用户一定能点到结果"解耦，后面换模型、加历史、加工具都没再碰它。</dd>
+  <dt>5. 你最想重做的一个决策？</dt>
+  <dd>接手第一周就该接 tracing。7 月所有根因都是靠 grep 多 worker 轮转日志加 awk 指纹做的，能做但慢，而且换人做不了。</dd>
+  <dt>6. 三次判断错在哪里？</dt>
+  <dd>consent 降级的大面积触发预测，前提来自过期注释；8824 第一版假设退化循环，原字节复跑后改为输出过长；base64 进历史的回归告警，是我自己 smoke 载荷形状错了。三次共同教训：拿真实字节和真实请求头，不拿代码注释和自己的探针当证据。</dd>
+  <dt>7. 和推荐系统、BFF 的关系？</dt>
+  <dd>推荐讲的是定边界再分层，BFF 讲的是编排演进，这个讲的是把不确定的组件放进确定的系统：终态由确定的一侧保证，外部调用有超时与降级，失败响亮，验证有方法。三个项目的共同点是先定契约，再让两侧独立演进。</dd>
+  <dt>8. 延迟 6–9 秒能接受吗？</dt>
+  <dd>对话场景用户容忍度高于搜索页，首 token 流式先出。大头是模型推理与工具往返，不是我们的代码。能做的是并行（S3 上传已与识别并行）、缩输入（缩边、历史清洗）、少一轮（rescue 不额外调模型）。再往下要 reasoning 档位和工具并行调用，需要评测体系兜着才敢动。</dd>
+</dl>
+</div>
+
+<h3 id="sa-2">B 对照 JD 的映射</h3>
+<div class="tbl"><table>
+<tr><th>JD 要求</th><th>本项目的证据</th></tr>
+<tr><td>Partner with Applied Scientists to take models into production: inference, observability</td><td>模型输出契约的服务端兜底；Gemini 调用的超时、退化、输入归一化；rescue 日志行即指标</td></tr>
+<tr><td>Own production quality: reliability, latency, cost, monitoring, incident response</td><td>四起线上事故的根因、修复与验证；识别延迟 23–44s → 9–13s，图搜挂死 12min → 17s 明确失败；luna 看图与 S3 存缩图的成本决策</td></tr>
+<tr><td>Generative AI systems, LLM, agents, multimodal pipelines</td><td>三 agent 编排、两步式工具契约、图片识别到 kNN 召回的多模态链路</td></tr>
+<tr><td>Data pipelines, data readiness</td><td>历史持久化链路（MQ → Context Hub）的修复与 URL 化；六个上下文工具的数据分配原则</td></tr>
+<tr><td>Raise the engineering bar: code review, testing, operational practices</td><td>六条重构法则、机制与策略分层、契约测试、21 条机器审查评论逐条实证判定</td></tr>
+<tr><td>Python</td><td>整个项目是 Python（FastAPI、openai-agents、pydantic、PIL、google-genai）</td></tr>
+</table></div>
+
+<p class="small">与另外两个项目的关系：推荐系统讲工程与算法的契约与分层，BFF 讲取数编排的演进，这个讲的是<strong>把不确定的模型放进确定的生产系统</strong>。</p>
+
+<h3 id="sa-3">C 两分钟版本</h3>
+<p>Maya 是 BNTO 的 AI 导购助手，Python 写的，跑在 openai-agents SDK 上，我 5 月接手时能演示但不能运维：按钮偶发不出、图搜偶发永挂、每轮不记得上一轮、照片进不了历史、失败全部静默。我做的第一件事是把终态从模型手里拿回来：模型说"正在搜"却不调工具的比例约三分之一，根因是 prompt 契约要求一次回复两个动作，和模型的补全先验冲突，我在流末加服务端 rescue，检测到孤儿 wait cue 就重跑计数查询补发按钮，用户可见的失败归零，同一模式复用到图搜的 overlay 兜底。第二件是外部模型调用治理：Gemini 对某些图片进入重复循环，一次四分钟、三次重试静默十二分钟，网关六十秒掐流，前端永远转圈；改成十五秒一次、加输出 token 上限，永挂变成十七秒明确失败。九月手机端高清图必超时，根因是模型把背景路人的衣服全数出来，送识别前统一缩边到 1600，延迟从 23 到 44 秒降到 9 到 13 秒。第三件是上下文：每轮无状态的根因是 SDK Session 每请求重建，我从 Context Hub 拉最近二十行历史、清洗到十三分之一的体积回放进 Session；图片消息超 128KB 被 MQ 客户端静默丢弃，改成异步上 S3、历史只存 URL，单轮 SSE 从 275KB 降到 4KB。第四件是模型升级：gpt-4.1 升到 gpt-5.6-terra，SDK 不动，用路径分类和 per-trace 日志指纹验证，全天真实 rescue 从六次降到一次且被兜住，离题空气泡十七次零复现。</p>
+
+<h3 id="sa-4">D 判断复盘</h3>
+<dl>
+  <dt>consent 降级误判</dt>
+  <dd>我一度判断 Web 升 UA 版本会把登录用户拉进 consent 静默降级、上线日会大面积触发。Lee 指出上一版 Web 的 UA 早已过门槛，我的前提来自一个过期的 docstring 示例。预测作废，问题降级为"platform 参数接受但未使用"的卫生问题。教训：代码注释里的示例不是线上行为的证据，要看真实请求头。</dd>
+  <dt>拦截轮去重被回滚</dt>
+  <dd>survey 拦截的图片轮不上 S3 不持久化，我做了并合了 dev，Lee 当天回滚，判断是不该这么改。记着的是接受了的权衡：问卷完成但重发没触发时历史里没有那张图。</dd>
+</dl>
+
+
+<h3 id="sa-5">E 09-18 规划稿（已由第 2 节取代）</h3>
+<p>判断：Maya 的痛是"没有眼睛和尺子"，不是编排框架。四步，前三步是主线，第四步可选：</p>
+<ol>
+  <li><strong>接观测（约 1 周）</strong>：注册 openai-agents 的 LangSmith TracingProcessor；工具、图搜阶段、Context Hub 调用加 traceable；metadata 带 session / user / 端 / 版本 / prompt 版本；hide_inputs 剥 base64 与 PII，关掉 OpenAI tracing 端点。path-C 率从 grep 变成查询。</li>
+  <li><strong>评测基线（2–3 周）</strong>：从生产 trace 攒五个数据集：路由、工具调用（query 到工具与 searchJson 字段）、终态完整性、离题处理、图片识别。前四个代码 evaluator，回复质量 LLM 裁判。进 CI，改 prompt 或换模型必须过。</li>
+  <li><strong>Prompt 治理</strong>：渲染器拼出的完整 prompt 作为版本化产物入 Hub，trace 带版本；在线抽 5% 打离题与空回复分。</li>
+  <li><strong>编排重构（可选）</strong>：LangGraph 显式状态图，分类 → 子图 → 工具循环 → <strong>终态节点</strong>，按钮与 overlay 由图保证，rescue 消失；checkpointer 替每轮回放历史；同意弹窗与问卷拦截用 interrupt；自定义 stream 经薄适配层映射到现有 SSE 契约，前端不动。按场景灰度，新旧成对评测。</li>
+</ol>
+<p class="small">截至 2026-09-20 四步均未启动。09-20 决策改为全量迁移，此稿仅存档。</p>
+
+
+</main>
+
+</div>
+<script>
+(function(){
+  // TOC scrollspy
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var map = {};
+  links.forEach(function(a){ var id = a.getAttribute('href').slice(1); var el = document.getElementById(id); if (el) map[id] = a; });
+  var targets = Object.keys(map).map(function(id){ return document.getElementById(id); });
+  function setActive(id){ links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + id); }); }
+  if ('IntersectionObserver' in window) {
+    var visible = {};
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ visible[e.target.id] = e.isIntersecting; });
+      for (var i = 0; i < targets.length; i++) { if (visible[targets[i].id]) { setActive(targets[i].id); return; } }
+    }, { rootMargin: '-10% 0px -70% 0px', threshold: 0 });
+    targets.forEach(function(t){ io.observe(t); });
+  }
+})();
+</script>
+
+<script>
+(function(){
+  var btn=document.querySelector('.toc-toggle'),bd=document.querySelector('.toc-backdrop');
+  function set(open){document.body.classList.toggle('toc-open',open);btn.setAttribute('aria-expanded',open?'true':'false');}
+  btn.addEventListener('click',function(){set(!document.body.classList.contains('toc-open'));});
+  bd.addEventListener('click',function(){set(false);});
+  document.querySelectorAll('.toc a').forEach(function(a){a.addEventListener('click',function(){set(false);});});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')set(false);});
+})();
+</script>
+</body>
+</html>
+
