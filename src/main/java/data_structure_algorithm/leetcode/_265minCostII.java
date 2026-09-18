@@ -3,7 +3,7 @@ package data_structure_algorithm.leetcode;
 public class _265minCostII {
 
     /**
-     * Ref:https://leetcode.doocs.org/lc/256/, https://zhuanlan.zhihu.com/p/593492075
+     * Ref:https://leetcode.doocs.org/lc/265/, https://zhuanlan.zhihu.com/p/593492075
      * Lintcode:https://www.lintcode.com/problem/534
      */
 

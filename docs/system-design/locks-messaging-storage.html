@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>锁、消息与存储</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F5F7FA; --surface:#FFFFFF; --surface-2:#EEF2F6;
+  --text:#1B2430; --muted:#5B6673; --border:#D8DEE6; --border-strong:#B9C2CE;
+  --accent:#0F6E7A; --accent-soft:#DCEFF1; --amber:#A8691A; --amber-soft:#F7ECD9;
+  --code-bg:#F0F3F7; --code-text:#1E2A36;
+  --shadow: 0 1px 2px rgba(20,30,40,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12161C; --surface:#1A2029; --surface-2:#212934;
+    --text:#E6EAF0; --muted:#98A4B4; --border:#2B343F; --border-strong:#3B4652;
+    --accent:#5FBDC8; --accent-soft:#16333A; --amber:#DDA755; --amber-soft:#2E2618;
+    --code-bg:#161C24; --code-text:#DCE3EB;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12161C; --surface:#1A2029; --surface-2:#212934;
+  --text:#E6EAF0; --muted:#98A4B4; --border:#2B343F; --border-strong:#3B4652;
+  --accent:#5FBDC8; --accent-soft:#16333A; --amber:#DDA755; --amber-soft:#2E2618;
+  --code-bg:#161C24; --code-text:#DCE3EB;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  font-size:15px; line-height:1.8;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+h1,h2,h3,h4{font-family:"Noto Serif SC","Songti SC","STSong",Georgia,serif; text-wrap:balance; line-height:1.3; margin:0}
+h1{font-size:2.1rem; font-weight:700; letter-spacing:.01em}
+h2{font-size:1.5rem; font-weight:700; padding-top:.4rem}
+h3{font-size:1.12rem; font-weight:600; color:var(--text)}
+h4{font-family:"Noto Sans SC",system-ui,sans-serif; font-size:.95rem; font-weight:700; color:var(--muted); letter-spacing:.02em}
+p{margin:0}
+ul,ol{margin:0; padding-left:1.4em}
+li{margin:.15em 0}
+li::marker{color:var(--muted)}
+strong{font-weight:700}
+code,pre{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+code{font-size:.86em; background:var(--code-bg); color:var(--code-text); padding:.1em .4em; border-radius:4px}
+pre{
+  margin:0; background:var(--code-bg); color:var(--code-text);
+  border:1px solid var(--border); border-radius:6px;
+  padding:.9rem 1.1rem; font-size:.8rem; line-height:1.55;
+  overflow-x:auto; white-space:pre; tab-size:4;
+}
+pre code{background:none; padding:0; font-size:inherit}
+
+.eyebrow{font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:500}
+.page{max-width:1180px; margin:0 auto; padding:0 1.25rem 4rem}
+
+header.top{padding:2.6rem 0 1.8rem; border-bottom:1px solid var(--border)}
+header.top .lead{max-width:66ch; color:var(--muted); margin-top:.9rem; font-size:1rem}
+.threads{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin-top:1.6rem}
+.thread{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1rem 1.1rem; box-shadow:var(--shadow)}
+.thread .num{font-family:"JetBrains Mono",monospace; font-size:.75rem; color:var(--accent); letter-spacing:.08em}
+.thread h3{margin-top:.25rem; font-size:1.05rem}
+.thread p{margin-top:.5rem; font-size:.88rem; color:var(--muted); line-height:1.65}
+.thread a{display:inline-block; margin-top:.6rem; font-size:.85rem}
+
+.layout{display:grid; grid-template-columns:minmax(0,1fr); gap:2rem; margin-top:1.5rem}
+@media (min-width: 980px){
+  .layout{grid-template-columns:230px minmax(0,1fr); gap:3rem}
+  nav.toc{position:sticky; top:1.25rem; align-self:start; max-height:calc(100vh - 2.5rem); overflow:auto}
+}
+nav.toc{font-size:.85rem; line-height:1.55}
+nav.toc .group{margin-bottom:1.1rem}
+nav.toc .group > a{display:block; font-weight:700; color:var(--text); padding:.2rem 0}
+nav.toc ul{list-style:none; padding:0; margin:.15rem 0 0; border-left:1px solid var(--border)}
+nav.toc ul a{display:block; color:var(--muted); padding:.18rem 0 .18rem .75rem; margin-left:-1px; border-left:2px solid transparent}
+nav.toc ul a:hover{color:var(--text); text-decoration:none}
+nav.toc ul a.active{color:var(--accent); border-left-color:var(--accent)}
+
+main{min-width:0}
+section.part{padding:2.2rem 0 1rem}
+section.part + section.part{border-top:1px solid var(--border)}
+.part-head{display:flex; align-items:baseline; gap:.9rem; margin-bottom:.4rem}
+.part-head .num{font-family:"JetBrains Mono",monospace; color:var(--accent); font-size:.85rem; letter-spacing:.08em}
+.mainline{
+  margin:.9rem 0 1.4rem; padding:.85rem 1.1rem; background:var(--accent-soft);
+  border-radius:6px; font-size:.92rem; line-height:1.7;
+}
+.mainline b{color:var(--accent)}
+.block{display:grid; gap:.8rem; margin-top:1.6rem}
+.block > h3{padding-bottom:.3rem; border-bottom:1px dashed var(--border)}
+.prose{max-width:70ch}
+.two{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem}
+
+.tbl{overflow-x:auto; border:1px solid var(--border); border-radius:6px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.86rem; line-height:1.55; min-width:560px}
+th,td{padding:.55rem .75rem; text-align:left; vertical-align:top; border-bottom:1px solid var(--border)}
+th{font-weight:700; color:var(--muted); font-size:.78rem; letter-spacing:.04em; background:var(--surface-2); white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:500; white-space:nowrap}
+.tbl.wide table{min-width:760px}
+.num-col{font-variant-numeric:tabular-nums}
+
+.note{font-size:.88rem; color:var(--muted); padding-left:.9rem; border-left:2px solid var(--border-strong); max-width:70ch}
+
+.principles{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1rem; margin-top:1.2rem}
+.principle{background:var(--amber-soft); border-radius:8px; padding:1rem 1.1rem}
+.principle .k{font-family:"JetBrains Mono",monospace; font-size:.75rem; color:var(--amber); letter-spacing:.08em}
+.principle h3{margin-top:.2rem; font-size:1rem}
+.principle p{margin-top:.45rem; font-size:.88rem; color:var(--text); line-height:1.65}
+
+footer{margin-top:3rem; padding-top:1.2rem; border-top:1px solid var(--border); color:var(--muted); font-size:.8rem}
+.back{font-size:.8rem}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="top" id="top">
+  <div class="eyebrow">系统设计复习笔记 · 整理于 2026 年 9 月</div>
+  <h1 style="margin-top:.5rem">锁、消息与存储</h1>
+  <p class="lead">从 MySQL 一行上的锁出发，走到 Redis Pub/Sub 与 Kafka 的取舍，再到存储分层和 Flink、Spark、OLAP。每一部分先给主线，再给要点和 Hello Interview 的案例，最后是贯穿全部的六条原则。</p>
+  <div class="threads">
+    <div class="thread"><div class="num">PART 1</div><h3>并发控制与锁</h3><p>行锁 → 悲观 / 乐观 → CAS · MVCC · 2PL → 分布式锁 → 锁只管效率，条件写管正确性。</p><a href="#p1">跳到这一部分</a></div>
+    <div class="thread"><div class="num">PART 2</div><h3>数据流动：通知、消息、认证</h3><p>轮询 → push → 路由 → Pub/Sub 还是 Kafka → 消费者有没有游标；Session / JWT / HMAC。</p><a href="#p2">跳到这一部分</a></div>
+    <div class="thread"><div class="num">PART 3</div><h3>数据存放与计算</h3><p>LSM → 温度、负载、模型、分布四个轴 → 热点 → Flink · Spark · OLAP → Lambda / Kappa。</p><a href="#p3">跳到这一部分</a></div>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="toc" aria-label="目录">
+  <div class="group"><a href="#p1">一、并发控制与锁</a><ul>
+    <li><a href="#s1-1">InnoDB 行锁</a></li><li><a href="#s1-2">悲观 vs 乐观</a></li><li><a href="#s1-3">CAS · MVCC · 2PL</a></li><li><a href="#s1-4">分布式锁</a></li><li><a href="#s1-5">教程里的锁</a></li></ul></div>
+  <div class="group"><a href="#p2">二、数据流动</a><ul>
+    <li><a href="#s2-1">因果链与两跳</a></li><li><a href="#s2-2">三种消息模型</a></li><li><a href="#s2-3">Redis Pub/Sub 细节</a></li><li><a href="#s2-4">Pub/Sub 还是 Kafka</a></li><li><a href="#s2-5">案例</a></li><li><a href="#s2-6">ZooKeeper / etcd</a></li><li><a href="#s2-7">认证与签名</a></li></ul></div>
+  <div class="group"><a href="#p3">三、数据存放与计算</a><ul>
+    <li><a href="#s3-1">LSM 树</a></li><li><a href="#s3-2">四个坐标轴</a></li><li><a href="#s3-3">产品定位</a></li><li><a href="#s3-4">热点读写</a></li><li><a href="#s3-5">Flink · Spark · OLAP</a></li><li><a href="#s3-6">Ad Click 全链路</a></li></ul></div>
+  <div class="group"><a href="#principles">贯穿全部的原则</a></div>
+  <div class="group"><a href="#index">案例索引</a></div>
+</nav>
+
+<main>
+
+<!-- ================= PART 1 ================= -->
+<section class="part" id="p1">
+  <div class="part-head"><span class="num">PART 1</span><h2>并发控制与锁</h2></div>
+  <div class="mainline"><b>主线</b>　单机行锁 → 悲观 / 乐观两种策略 → 三个底层机制 → 分布式锁 → 教程里锁的实际用法 → 锁只管效率，条件写管正确性。</div>
+
+  <div class="block" id="s1-1">
+    <h3>InnoDB 行锁</h3>
+    <ul class="prose">
+      <li>锁的是<strong>索引记录</strong>，不是物理行。WHERE 不走索引等于锁全表。只有 InnoDB 有行锁，MyISAM 只有表锁。</li>
+      <li>普通 SELECT 是快照读，不加锁；UPDATE / DELETE / <code>SELECT ... FOR UPDATE</code> 是当前读，加 X 锁。</li>
+      <li>两阶段锁协议：事务提交或回滚时统一释放。把加锁操作放事务最后能缩短持锁时间。</li>
+      <li>RC 只有 Record Lock，死锁少但有幻读；RR 用 Next-Key Lock 防幻读，锁范围大。很多公司线上默认 RC。</li>
+      <li>排查：<code>performance_schema.data_locks</code>、<code>SHOW ENGINE INNODB STATUS</code>；锁等待默认 50 秒，死锁检测回滚代价小的事务。</li>
+    </ul>
+    <div class="tbl"><table>
+      <thead><tr><th>类型</th><th>锁什么</th><th>目的</th></tr></thead>
+      <tbody>
+        <tr><td>Record Lock</td><td>单条索引记录</td><td>防止别人改这行</td></tr>
+        <tr><td>Gap Lock</td><td>两条记录之间的开区间</td><td>防止往区间插入，解决幻读</td></tr>
+        <tr><td>Next-Key Lock</td><td>Record + 前面的 Gap，左开右闭</td><td>RR 下的默认加锁单位</td></tr>
+        <tr><td>Insert Intention Lock</td><td>插入前在 gap 上打的意向标记</td><td>多个事务往同一 gap 不同位置插入不互斥</td></tr>
+      </tbody></table></div>
+  </div>
+
+  <div class="block" id="s1-2">
+    <h3>悲观锁 vs 乐观锁</h3>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>悲观锁 Pessimistic Locking</th><th>乐观锁 Optimistic Locking (OCC)</th></tr></thead>
+      <tbody>
+        <tr><td>实现</td><td><code>SELECT ... FOR UPDATE</code>，或直接 UPDATE 隐式加锁</td><td><code>UPDATE ... WHERE version = ?</code>，或直接用业务字段 <code>WHERE stock &gt; 0</code>，看 affected rows</td></tr>
+        <tr><td>时机</td><td>事前阻塞</td><td>事后校验</td></tr>
+        <tr><td>持锁</td><td>整个事务</td><td>只有那条 UPDATE 的几毫秒（底层仍用行锁）</td></tr>
+        <tr><td>适合</td><td>冲突多、事务短、必须成功：余额扣减、状态机流转</td><td>冲突少、读多写少、跨请求：后台编辑表单、配置修改</td></tr>
+        <tr><td>注意</td><td>命中索引；不持锁做 RPC；固定加锁顺序</td><td>重试上限；版本号用自增整数防 ABA；多行校验退回悲观</td></tr>
+      </tbody></table></div>
+    <p class="note">两者本质区别不是"有没有锁"，而是<strong>持锁时长</strong>和<strong>冲突检测时机</strong>。高冲突下乐观锁反而更差，999 个失败重试白烧 DB。热点行两者都不行，真正的解法是把冲突挪出 DB。OCC 的 O 是 Optimistic，不是 Optimal。</p>
+  </div>
+
+  <div class="block" id="s1-3">
+    <h3>CAS · MVCC · 2PL</h3>
+    <div class="two">
+      <div>
+        <h4>CAS　Compare-And-Swap</h4>
+        <ul><li>CPU 原子指令：x86 <code>LOCK cmpxchg</code>，ARM 用 LL/SC 模拟。</li><li>Java 的 Atomic*、AQS 建在它上面，自旋重试。</li><li>DB 里就是带条件的 UPDATE，InnoDB 语句内加 X 锁保证原子。</li><li>坑：ABA 靠版本号防；高竞争自旋空转，用分段累加（LongAdder、库存分桶）缓解。</li></ul>
+      </div>
+      <div>
+        <h4>MVCC　Multi-Version Concurrency Control</h4>
+        <ul><li>每行隐藏列 <code>DB_TRX_ID</code>、<code>DB_ROLL_PTR</code>，旧版本进 undo log 串成链。</li><li>Read View 记 m_ids / min / max / creator，沿链找第一个可见版本。</li><li>RC 每条 SELECT 新建 Read View，RR 整个事务复用第一个。</li><li>长事务卡住 purge，undo 膨胀，是线上最常见的危害。</li></ul>
+      </div>
+    </div>
+    <div>
+      <h4>2PL　Two-Phase Locking</h4>
+      <ul class="prose">
+        <li>规则只有一条：扩张阶段只加锁不放锁，收缩阶段只放锁不加锁。按<strong>锁点</strong>排序就是等价的串行顺序。</li>
+        <li>为什么需要：单条操作各自加锁再放锁，会出现读到转账中间态、丢失更新。锁必须跨操作持有。</li>
+        <li>Basic 2PL 有级联回滚；Strict 2PL 把 X 锁持到提交；Rigorous 2PL 所有锁持到提交，InnoDB 用这个。</li>
+        <li>InnoDB 锁管理器：按 <code>(space_id, page_no)</code> 哈希，每页一个位图记哪些记录被锁；死锁用 wait-for graph 找环，回滚代价小的。</li>
+        <li>三者关系：2PL 是悲观并发控制的理论基础；CAS、MVCC 是乐观路线的两个工具。InnoDB 读走 MVCC，写走 2PL，应用层再用 CAS 式条件 UPDATE 做乐观锁。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="block" id="s1-4">
+    <h3>分布式锁</h3>
+    <ul class="prose">
+      <li>三要求：互斥、不死锁（要过期）、不误删（比对 token）。<strong>过期和互斥天然矛盾</strong>，整个设计史都在这两条之间找平衡。</li>
+      <li>DB 唯一索引：简单，无过期，低频任务用。</li>
+      <li>Redis：<code>SET key token NX PX 30000</code>，Lua 比对 token 再 DEL；Redisson watchdog 续期；主从异步复制会丢锁，Redlock 靠多数派但依赖时钟，Kleppmann 批评过。结论：适合效率型场景，不适合正确性场景。</li>
+      <li>ZooKeeper 临时顺序节点，序号最小者持锁，只 watch 前一个防惊群，会话断了节点自动消失；etcd 用 lease + revision。</li>
+      <li><strong>fencing token</strong>：锁服务发单调递增 token，下游拒绝比见过的更小的。本质是把分布式锁降级成乐观锁，锁只减少冲突，正确性靠最后写入的条件校验。</li>
+      <li>和分布式事务的区别：锁管"谁能进这段代码"，2PC 管"多库要么全成要么全败"，2PC 是 2PL 的分布式延伸。</li>
+    </ul>
+  </div>
+
+  <div class="block" id="s1-5">
+    <h3>教程里的锁</h3>
+    <div class="tbl wide"><table>
+      <thead><tr><th>案例</th><th>锁的对象</th><th>方案演进</th><th>兜底</th></tr></thead>
+      <tbody>
+        <tr><td>Ticketmaster</td><td>票，10 分钟</td><td>长事务 FOR UPDATE（Bad）→ status + expiration + cron（Good）→ 隐式状态条件更新，<code>WHERE status='AVAILABLE' OR (RESERVED AND expired)</code>（Great）→ Redis <code>SET NX EX 600</code>（Great，推荐）</td><td>webhook 事务里 <code>WHERE status='available'</code>，bookingId 做幂等键；TTL 过期与支付完成竞争时 DB 只让一个成功，另一个退款</td></tr>
+        <tr><td>Uber</td><td>司机，10 秒</td><td>内存锁（Bad）→ DB status outstanding_request + cron（Good）→ Redis <code>SET lock:driver:{id} {requestId} EX 10 NX</code>（Great）</td><td>接单 <code>UPDATE ride SET status='accepted' WHERE id=? AND status='requested'</code>；超时推进用 SQS delay queue 或 Temporal</td></tr>
+        <tr><td>Web Crawler</td><td>域名</td><td>Redis SET NX，TTL 等于爬取间隔</td><td>SQS visibility timeout 当租约</td></tr>
+        <tr><td>Gopuff</td><td>反例</td><td>跨库分布式锁标 Bad（崩在中间、重叠库存死锁）→ 单库 SERIALIZABLE 事务</td><td>能用单库事务就不用分布式锁</td></tr>
+        <tr><td>Shopify</td><td>库存</td><td>一件商品拆 1000 行，<code>SELECT ... FOR UPDATE SKIP LOCKED</code>；降到 RC 避 Gap 锁；补货单独一把锁</td><td>所有路径固定加锁顺序防死锁</td></tr>
+        <tr><td>Rate Limiter / Tinder / Bitly / WhatsApp</td><td>无锁</td><td>Lua 把 read-modify-write 做成一步；Redis INCR 单线程；DynamoDB 条件表达式</td><td>能用一条原子命令就不加锁</td></tr>
+      </tbody></table></div>
+    <p class="note">条件写怎么理解：<code>UPDATE ... WHERE status='requested'</code> 在拿到行锁之后用<strong>最新值</strong>匹配 WHERE，第二个事务的 affected_rows 一定为 0。它就是把业务字段当版本号的 CAS。</p>
+  </div>
+</section>
+
+<!-- ================= PART 2 ================= -->
+<section class="part" id="p2">
+  <div class="part-head"><span class="num">PART 2</span><h2>数据流动：通知、消息、认证</h2></div>
+  <div class="mainline"><b>主线</b>　DB 落库 + 轮询 → push 降延迟 → 服务器有连接状态需要路由 → 注册表转发或 Pub/Sub → push 会丢，DB 兜底补差。</div>
+
+  <div class="block" id="s2-1">
+    <h3>因果链与两跳框架</h3>
+    <pre>数据源 ──第二跳：server 到 server──► 持连接的服务器 ──第一跳：server 到 client──► 客户端
+        Redis Pub/Sub / SQS / Kafka                       轮询 / 长轮询 / SSE / WebSocket</pre>
+    <ul class="prose">
+      <li><strong>第一跳</strong>问"等一个结果还是等一个流"。一次性结果、秒级可接受、无扇出用轮询（LeetCode 每秒查判题、上传状态、兜底同步）；持续变化、毫秒级、大扇出用 push（评论、聊天、座位图、司机位置）。轮询在 push 方案里还有一个固定角色：保底。</li>
+      <li><strong>第二跳</strong>问"丢一条要不要紧"和"订阅关系是静态业务维度还是动态用户维度"。</li>
+      <li>轮询不是一定错。"引入队列会破坏 500ms 延迟约束"，Gopuff 下单、Bitly、抢票都在同步路径上，一个都没用队列。</li>
+    </ul>
+  </div>
+
+  <div class="block" id="s2-2">
+    <h3>三种消息模型</h3>
+    <div class="tbl wide"><table>
+      <thead><tr><th></th><th>Redis Pub/Sub</th><th>SQS</th><th>Kafka</th></tr></thead>
+      <tbody>
+        <tr><td>模型</td><td>内存广播</td><td>分布式队列</td><td>分区日志</td></tr>
+        <tr><td>语义</td><td>at-most-once</td><td>Standard at-least-once；FIFO exactly-once processing</td><td>at-least-once，可配 exactly-once</td></tr>
+        <tr><td>确认</td><td>无</td><td>DeleteMessage，逐条</td><td>commit offset，游标</td></tr>
+        <tr><td>重试 / 死信</td><td>无</td><td>visibility timeout 自动回队；ChangeMessageVisibility 做指数退避；redrive maxReceiveCount 进 DLQ</td><td>自建 retry topic / DLQ</td></tr>
+        <tr><td>重放</td><td>无</td><td>无，删了就没</td><td>retention 内任意 offset</td></tr>
+        <tr><td>多消费方</td><td>天然广播</td><td>配 SNS 扇出</td><td>consumer group 各读一份</td></tr>
+        <tr><td>channel / topic 成本</td><td>零，订阅时才存在</td><td>一个队列一份</td><td>重量级，约 50KB，rebalance 秒级</td></tr>
+        <tr><td>顺序</td><td>单发布者有序</td><td>Standard 无序；FIFO 组内有序但吞吐低</td><td>分区内有序</td></tr>
+        <tr><td>背压</td><td>慢订阅者被踢（32MB 缓冲上限）</td><td>消费者控速</td><td>消费者控速</td></tr>
+        <tr><td>教程案例</td><td>WhatsApp、Live Comments</td><td>LeetCode、News Feed、Web Crawler、Uber 延迟队列</td><td>Ad Click、Top-K、Post Search、Uber 请求队列、Slack 缓冲</td></tr>
+      </tbody></table></div>
+    <p class="note">记忆锚点：Kafka 是硬盘上的日志，SQS 是有确认机制的任务篓子，Redis Pub/Sub 是一根喇叭。SQS 一条慢消息不堵后面的，Kafka 一个分区里会。RabbitMQ 教程只提名字：传统 broker，push 模型，exchange 路由，和 SQS 同属任务队列。</p>
+  </div>
+
+  <div class="block" id="s2-3">
+    <h3>Redis Pub/Sub 细节</h3>
+    <pre>时间线                         pubsub_channels 字典内容
+───────────────────────────────────────────────────────────
+Redis 启动                      {}                         ← 没有任何 channel
+S1: PUBLISH user:B "hi"         {}                         ← 合法，返回 0，消息丢弃
+S2: SUBSCRIBE user:B            {"user:B": [conn_S2]}      ← channel 此刻"诞生"
+S1: PUBLISH user:B "hi"         {"user:B": [conn_S2]}      ← 返回 1，S2 收到
+S3 断线 / 最后一个退订           {}                         ← channel 消失</pre>
+    <ul class="prose">
+      <li>channel 只是字典 key，不需要创建；发布者和订阅者都是 Redis 客户端。<code>PUBSUB CHANNELS / NUMSUB</code> 能看实时内容。</li>
+      <li>PUBLISH 查字典，把消息写进每个订阅连接的输出缓冲区，返回订阅者数；返回 0 可当作"对方离线"的信号。</li>
+      <li>拓扑：单机；主从（PUBLISH 随复制流传播，订阅可连副本）；Cluster 普通模式全集群广播，每次 N-1 条 bus 消息；Redis 7 sharded（<code>SSUBSCRIBE / SPUBLISH</code>）按 slot 路由，订阅方必须连对节点。</li>
+      <li>订阅端套路：专用连接进入订阅模式；断线后重新 SUBSCRIBE 全部本地用户，并让客户端从 DB 拉一次增量。</li>
+      <li>Redis 三种消息原语：List（<code>LPUSH/BRPOP</code>，简单队列，无 ack）、Pub/Sub（广播，不存）、Streams（<code>XADD/XREADGROUP/XACK</code>，Kafka 式日志，有消费组和 pending list）。</li>
+    </ul>
+  </div>
+
+  <div class="block" id="s2-4">
+    <h3>Pub/Sub 还是 Kafka：本质</h3>
+    <p class="prose">Pub/Sub 传的是<strong>提示</strong>："有新东西，去看"。Kafka 传的是<strong>带位置的记录</strong>。关键区别是订阅方丢了一条之后，<strong>能不能靠自己知道丢了什么、去哪补</strong>。</p>
+    <div class="tbl"><table>
+      <thead><tr><th>维度</th><th>WhatsApp / Live Comments</th><th>Ad Click</th></tr></thead>
+      <tbody>
+        <tr><td>消费者</td><td>人，通过一条连接</td><td>机器，一个聚合任务</td></tr>
+        <tr><td>丢一条</td><td>延迟，人会重连或刷新</td><td>计费数字错，且 Flink 自己不知道</td></tr>
+        <tr><td>游标</td><td>客户端 lastSeenId、Inbox 行</td><td>没有，只有一个越来越不准的累加值</td></tr>
+        <tr><td>不在线时</td><td>本来就送不到，上线再补</td><td>Flink 重启那 30 秒的点击必须留着</td></tr>
+        <tr><td>订阅关系</td><td>十亿动态频道，每条给一两个</td><td>一个静态 topic，每条给同一组</td></tr>
+        <tr><td>重放</td><td>不需要，DB 就是历史</td><td>需要，修 bug 重算昨天</td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li>三个判断：消费者输出是"展示最新状态"还是"全部事件的函数"；消费者自己有游标吗；真相源支持"从游标顺序读"吗。任一为否就需要 Kafka。</li>
+      <li>Ad Click 存 Cassandra 再 Pub/Sub 不行：Cassandra 按 <code>(ad_id, 小时桶)</code> 分区，没有"按时间全局顺序读"，Flink 补不回来；手工建一张按时间追加的表就是重新发明 Kafka。存 DynamoDB 用 DynamoDB Streams 可以，因为 Streams 就是 log。</li>
+      <li>WhatsApp 不用 Kafka：不是不可靠，是它的持久化和 Inbox 表重复了，而 topic 开销和 rebalance 是实打实的代价。</li>
+    </ul>
+  </div>
+
+  <div class="block" id="s2-5">
+    <h3>案例</h3>
+    <h4>WhatsApp</h4>
+    <ul class="prose">
+      <li>六张表：Chat、ChatParticipant（含 GSI）、<strong>Message</strong>（按 chatId，存内容，TTL 30 天）、<strong>Inbox</strong>（按 clientId，存"还欠哪条"，ack 即删）、Client（多设备）、LastSeen（只在断线时条件写）。</li>
+      <li>发送顺序：查成员展开设备 → 写 Message 1 行 + Inbox 每设备 1 行 → 回发送方 → PUBLISH <code>user:{id}</code> → 对方 server 查本地 map 推 WebSocket → ack → DELETE Inbox。</li>
+      <li>登录：认证 → 本地 map → <strong>先 SUBSCRIBE 再拉 Inbox</strong>，两边不留缝。离线时 PUBLISH 返回 0，走系统推送。</li>
+      <li>每用户一 Kafka topic 标 Bad（50KB × 10 亿）；一致性哈希 + ZK 是 Good（服务器要互连）；Redis Pub/Sub 是 Great。按用户分频道而不按会话分，因为一个用户约 250 个会话。</li>
+      <li>服务器<strong>不是无状态</strong>，它持有临时可重建的连接状态；Pub/Sub 解决的是让服务器不需要知道彼此。心跳 10 到 30 秒，序号检测漏消息，NTP 时间戳排序。</li>
+    </ul>
+    <h4>Live Comments</h4>
+    <ul class="prose">
+      <li>SSE 单向推送，发评论走 POST。naive 全订阅 → <code>hash(videoId) % N</code> 分频道 + 一致性哈希把同一直播的观众聚到同一台 server。Dispatcher 服务是替代方案。</li>
+      <li>Kafka 扛不住观众切直播的动态订阅；丢了刷新从 DB 读，连 Inbox 都不要。一致性哈希是优化，Pub/Sub 是正确性，扩缩容时新旧两台都订阅即可。</li>
+      <li>重连和翻页走独立 GET，游标分页；SSE 自带 <code>Last-Event-ID</code> 可在同一连接先补差再推实时。</li>
+    </ul>
+    <h4>其他</h4>
+    <ul class="prose">
+      <li>Ticketmaster 虚拟排队用 Redis sorted set，放行的进带 TTL 的 <code>admitted:{eventId}</code>。</li>
+      <li>Uber：叫车进 Kafka/SQS 按区域分区，<strong>匹配成功后才 commit offset</strong>；司机超时用 SQS delay queue 或 Temporal 持久化工作流。</li>
+      <li>LeetCode：SQS 削峰，容器崩了自动重试，客户端每秒轮询，WebSocket 是过度设计。News Feed：SQS fan-out-on-write，大 V 打标记读时合并。</li>
+      <li>Web Crawler 明确选 SQS 不选 Kafka：内建退避、DLQ、托管；抓取和解析拆两个队列。YouTube：S3 CompleteMultipartUpload 事件 exactly-once 触发 Temporal DAG。</li>
+      <li>Slack：Redis 队列被积压塞满连出队都失败，前面加 Kafka 做持久缓冲，relay 落到 Redis 后才 commit offset。教训：积压存储不能放有界内存。</li>
+    </ul>
+  </div>
+
+  <div class="block" id="s2-6">
+    <h3>ZooKeeper / etcd</h3>
+    <ul class="prose">
+      <li>本质是<strong>小容量、强一致、支持 watch 的 KV</strong>，存集群元数据。所有用法从这三个特性推出来。</li>
+      <li>用法：服务注册发现（临时节点）、leader 选举（临时顺序节点）、分布式锁、配置与开关、分片归属（Kafka KRaft 之前、HBase）、成员列表（一致性哈希环的输入）。</li>
+      <li>红线：<strong>不在数据路径上</strong>。存"有哪些服务器"，不存"用户 B 在哪台"，后者由哈希函数算或由 Pub/Sub 订阅表隐式维护。</li>
+      <li>一致性哈希在 L7 LB 做，按 URL 里的 videoId 算；它把路由状态压缩成"成员列表 + 确定性函数"，和 dispatcher 的"每观众一条记录、每秒几十万次写"是两个量级。</li>
+    </ul>
+  </div>
+
+  <div class="block" id="s2-7">
+    <h3>认证与签名</h3>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>Session</th><th>JWT</th><th>Opaque Token</th></tr></thead>
+      <tbody>
+        <tr><td>状态在哪</td><td>服务端存储（Redis）</td><td>token 自身</td><td>认证服务存储</td></tr>
+        <tr><td>每请求查库</td><td>要</td><td>不要，纯验签</td><td>要，introspection</td></tr>
+        <tr><td>即时撤销</td><td>能</td><td>不能，靠短 exp + refresh 补</td><td>能</td></tr>
+        <tr><td>多服务共享</td><td>连同一个 session 存储</td><td>分发公钥即可</td><td>都要调认证服务</td></tr>
+        <tr><td>典型</td><td>单体 Web、后台</td><td>微服务网关、移动端、WebSocket 握手</td><td>OAuth2 对外 API</td></tr>
+      </tbody></table></div>
+    <h4>JWT 七步递进</h4>
+    <ol class="prose">
+      <li>直接带 user=lee → 谁都能改。</li>
+      <li>加签名 <code>header.payload.signature</code>，payload 明文只防篡改不防偷看。到这 JWT 已完整：验证不查库。</li>
+      <li>加 exp，15 分钟。</li>
+      <li>加 refresh token：随机串、存哈希、30 天，只在换 access 时用一次，放 HttpOnly cookie。</li>
+      <li>登出：删 refresh 断续期；要立刻生效就 jti 进 Redis 黑名单。</li>
+      <li>RS256 私签公验，kid + JWKS 轮换，公钥泄露无害。</li>
+      <li>防攻击：算法白名单防 <code>alg:none</code> 和混淆；HTTPS；SameSite；refresh rotation + 重放检测，同一 refresh 第二次使用即吊销整条链。</li>
+    </ol>
+    <ul class="prose">
+      <li>Gateway 统一鉴权后内部传 <code>X-User-Id</code> 是标准做法，与 session/JWT 无关。前提是内网可信、所有入口经 Gateway。长连接、异步任务、服务间自发调用三种情况 Gateway 管不到。Gateway 做认证，服务做授权。</li>
+      <li><strong>HMAC 签名的 impression ID</strong>：投放服务签 <code>imp_id | ad_id | exp</code>，点击时验签失败照跳转不计数，<code>SET imp_id NX EX</code> 原子去重，先写 Kafka 再写缓存宁重不丢。用 HMAC 不用非对称：签验同方、每秒万次、签名要进 URL。签名答"是不是我发的"，去重答"是不是第一次"，反作弊答"点的人是不是真的"。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= PART 3 ================= -->
+<section class="part" id="p3">
+  <div class="part-head"><span class="num">PART 3</span><h2>数据存放与计算</h2></div>
+  <div class="mainline"><b>主线</b>　LSM 为写优化 → 四个坐标轴定位需求 → 真实系统是温度链，每层丢了从下一层重建 → 热点散点再合并 → Flink 算增量、Spark 算全量、OLAP 存结果 → Lambda 两套互校，Kappa 一套重放。</div>
+
+  <div class="block" id="s3-1">
+    <h3>LSM 树　Log-Structured Merge-tree</h3>
+    <pre>写入 → ① 追加 WAL → ② memtable（内存有序）→ 满了 ③ 顺序刷成不可变 SSTable
+                                                  → ④ 后台 compaction 合并、去重、清 tombstone
+读取 → memtable → L0 → L1 → ...（每个文件先看 bloom filter）→ 第一个匹配即返回</pre>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>B 树（MySQL、Postgres）</th><th>LSM（Cassandra、RocksDB、HBase）</th></tr></thead>
+      <tbody>
+        <tr><td>写</td><td>随机 IO，找到页改页</td><td>顺序追加，极快</td></tr>
+        <tr><td>点读</td><td>一次树遍历，稳定</td><td>可能查多个文件，靠 bloom filter</td></tr>
+        <tr><td>范围扫描</td><td>叶子有序链表，快</td><td>多文件归并，慢一些</td></tr>
+        <tr><td>后台开销</td><td>几乎没有</td><td>compaction 持续吃 IO，延迟抖动</td></tr>
+        <tr><td>事务</td><td>行锁、MVCC 成熟</td><td>单行原子，跨行弱</td></tr>
+        <tr><td>compaction</td><td>—</td><td>Size-tiered 写放大低读放大高（Cassandra）；Leveled 反之（RocksDB）</td></tr>
+      </tbody></table></div>
+    <p class="note">Cassandra 的 counter 类型最终一致且不幂等，超时重试可能多加，计费场景不能用。所以 Ad Click 存原始事件再聚合，而不是直接 +1。</p>
+  </div>
+
+  <div class="block" id="s3-2">
+    <h3>四个坐标轴</h3>
+    <h4>轴 1　温度（介质）：用钱换延迟</h4>
+    <pre>热 ◄──────────────────────────────────────────────────────────────► 冷
+  进程内存      分布式内存       本地 SSD 数据库      对象存储        归档
+  (HashMap)     (Redis)          (Postgres, Cassandra) (S3)           (Glacier)
+延迟   100 ns       0.5 ms           1 到 10 ms            50 到 100 ms   分钟到小时
+成本   最高         SSD × 10         基准                  SSD / 10       再 / 5
+持久   进程退出即失  可选，弱          强                    11 个 9        11 个 9</pre>
+    <h4>轴 2　负载：行式与列式互斥，同一份数据存两遍靠 CDC 同步</h4>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>OLTP　Online Transaction Processing</th><th>OLAP　Online Analytical Processing</th></tr></thead>
+      <tbody>
+        <tr><td>一次操作</td><td>读写几行，按主键</td><td>扫几百万到几十亿行，聚合出几行</td></tr>
+        <tr><td>布局</td><td>行式</td><td>列式，只读需要的列，高压缩，向量化</td></tr>
+        <tr><td>一致性</td><td>强，要事务</td><td>弱，批量灌入</td></tr>
+        <tr><td>产品</td><td>Postgres、MySQL、DynamoDB、Cassandra、Redis</td><td>ClickHouse、Snowflake、BigQuery、Redshift、Druid</td></tr>
+      </tbody></table></div>
+    <h4>轴 3　模型：表达力与可扩展性反比</h4>
+    <pre>简单 / 好扩展 ◄──────────────────────────────────────────► 表达力强 / 难扩展
+  键值          宽列             文档           关系型            图
+  (Redis)       (Cassandra,      (MongoDB,      (Postgres,        (Neo4j)
+                 DynamoDB)        JSONB)         MySQL)
+查询   按 key        分区键+排序键     按字段过滤      任意 SQL、JOIN     多跳
+分片   天然          天然             按 shard key    手工分库分表       很难
+事务   单 key        单分区           单文档          完整 ACID          完整</pre>
+    <p class="note">专用模型不在这条线上：搜索（Elasticsearch 倒排）、时序（TimescaleDB）、地理（PostGIS、Redis GEO）、向量。它们几乎从不做唯一真相，都是从主库同步的副本。</p>
+    <h4>轴 4　分布：一致性与可用性反比</h4>
+    <pre>强一致 / 单点 ◄──────────────────────────────────────────► 高可用 / 最终一致
+  单机          主从复制          分片 + 每片主从         多主 / 无主
+写扩展   无           无，只扩读         有，按分片              有
+一致性   强           从可能延迟          分片内强、跨片弱         最终一致，可调 quorum
+跨行事务 完整         完整               跨片难                  基本没有</pre>
+  </div>
+
+  <div class="block" id="s3-3">
+    <h3>产品定位</h3>
+    <div class="tbl wide"><table>
+      <thead><tr><th>产品</th><th>温度</th><th>负载</th><th>模型</th><th>引擎</th><th>一句话定位</th></tr></thead>
+      <tbody>
+        <tr><td>进程内缓存</td><td>最热</td><td>OLTP</td><td>KV</td><td>哈希</td><td>热 key 最后一道防线</td></tr>
+        <tr><td>Redis</td><td>热</td><td>OLTP</td><td>KV + 丰富结构</td><td>哈希</td><td>缓存、锁、计数、排行、GEO、Pub/Sub</td></tr>
+        <tr><td>Postgres / MySQL</td><td>温</td><td>OLTP</td><td>关系</td><td>B 树</td><td>默认选择，事务和复杂查询</td></tr>
+        <tr><td>Aurora / Spanner / TiDB</td><td>温</td><td>OLTP</td><td>关系</td><td>B 树 / LSM</td><td>关系型撑不住单机时</td></tr>
+        <tr><td>DynamoDB</td><td>温</td><td>OLTP</td><td>KV / 宽列</td><td>LSM 变体</td><td>写扩展、模式固定、零运维、Streams</td></tr>
+        <tr><td>Cassandra / Scylla</td><td>温</td><td>写密集</td><td>宽列</td><td>LSM</td><td>每秒几万写以上、按 key 查</td></tr>
+        <tr><td>Elasticsearch</td><td>温</td><td>检索</td><td>文档 + 倒排</td><td>倒排</td><td>搜索框，从主库同步，不当真相</td></tr>
+        <tr><td>Kafka</td><td>温</td><td>日志</td><td>追加流</td><td>顺序日志</td><td>带游标的持久缓冲</td></tr>
+        <tr><td>ClickHouse / Druid</td><td>温偏冷</td><td>OLAP 实时</td><td>列式表</td><td>列式 LSM</td><td>实时仪表盘、日志分析</td></tr>
+        <tr><td>Snowflake / BigQuery</td><td>冷</td><td>OLAP</td><td>列式表</td><td>列式</td><td>报表、数仓，按查询计费</td></tr>
+        <tr><td>S3</td><td>冷</td><td>—</td><td>对象</td><td>—</td><td>大文件、原始归档、数据湖底座</td></tr>
+      </tbody></table></div>
+    <pre>YouTube:      CDN ─► Redis(元数据缓存) ─► Postgres/DynamoDB(元数据) ─► S3(视频)
+WhatsApp:     Redis Pub/Sub(在线路由) ─► DynamoDB(Message/Inbox, 30 天) ─► S3(附件, 30 天)
+Ad Click:     Redis(去重, 1 天) ─► Kafka(原始事件, 7 天) ─► OLAP(聚合, 长期) ─► S3(原始归档)
+Ticketmaster: CDN(搜索结果) ─► Redis(锁, 演出缓存) ─► Postgres(票, 订单) ─► Elasticsearch(搜索副本)</pre>
+    <p class="note">越热的层数据越少、活得越短、越可以丢；越冷的层数据越多、活得越久、是真相。教程原则：默认 Postgres，换别的要说出理由；一个系统多个库正常，能力在于边界划在哪、怎么同步、不一致时谁是真相。</p>
+  </div>
+
+  <div class="block" id="s3-4">
+    <h3>热点读写</h3>
+    <div class="tbl wide"><table>
+      <thead><tr><th>热点类型</th><th>首选</th><th>代价</th><th>教程例子</th></tr></thead>
+      <tbody>
+        <tr><td>热写，可交换操作</td><td>生产端攒批 → 单分区串行 → 加盐 + 异步合并（Flink 去盐，读端看不到）</td><td>延迟或读时合并</td><td>Ad Click 加盐、Post Search 攒 30 秒</td></tr>
+        <tr><td>热写，带约束</td><td>把资源本身拆成独立单位，不拆计数器</td><td>假售罄需重试</td><td>Shopify 千行库存、Flash Sale 分桶</td></tr>
+        <tr><td>热读，静态</td><td>CDN</td><td>更新延迟</td><td>Ticketmaster 搜索、YouTube</td></tr>
+        <tr><td>热读，半静态</td><td>本地缓存 + 短 TTL + Pub/Sub 失效 + single-flight 防击穿；热 key 复制</td><td>秒级过时、每实例内存</td><td>Ticketmaster 演出详情</td></tr>
+        <tr><td>热读，高频变化</td><td>改成 push</td><td>长连接状态</td><td>Ticketmaster 座位图、Uber 司机位置</td></tr>
+      </tbody></table></div>
+    <p class="note">写和读用同一个思想：把一个点的压力散成多个点。写是散到多个分片再合并，读是散到多个副本。加盐只在单节点上限都不够时才需要；合并这一步一定有人做，但不一定是读的人。</p>
+  </div>
+
+  <div class="block" id="s3-5">
+    <h3>Flink · Spark · OLAP · Lambda / Kappa</h3>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>Spark（批）</th><th>Flink（流）</th></tr></thead>
+      <tbody>
+        <tr><td>输入</td><td>有边界，一天的文件</td><td>无边界，Kafka 持续来</td></tr>
+        <tr><td>生命周期</td><td>跑完退出</td><td>常驻 7×24</td></tr>
+        <tr><td>处理</td><td>整个数据集分 stage，shuffle 最贵</td><td>逐条流过算子，keyBy 状态</td></tr>
+        <tr><td>时间</td><td>数据里有时间列自己 groupBy</td><td>event time、watermark、窗口是一等公民</td></tr>
+        <tr><td>容错</td><td>task 失败重跑</td><td>checkpoint barrier 快照 + Kafka offset 重放，exactly-once</td></tr>
+        <tr><td>在 Ad Click</td><td>Good 方案定时聚合、Great 方案每日对账</td><td>Great 方案一分钟窗口</td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li><strong>watermark</strong>："时间戳 ≤ W 的事件我认为都到了"，常取最大事件时间减容忍度；越过窗口边界就关窗刷结果；更迟的靠 allowedLateness 或对账。</li>
+      <li><strong>状态大小决定容错策略</strong>：Ad Click 一分钟窗口状态小，教程说 checkpoint 可不开，重放即可；Top-K 一个月滑动窗口必须开，Kafka 也要留一个月。</li>
+      <li><strong>OLAP</strong> 列式只读需要的列、高压缩、向量化，扫十亿行秒级；写要批量、点查慢。按查询过滤维度分片（advertiser_id），多粒度预聚合（分钟 → 天 → 周）。</li>
+      <li><strong>Lambda</strong>：流快可能错、批慢但准，两套代码互相校验，服务层合并。<strong>Kappa</strong>：一套流代码，正确性靠引擎 exactly-once，需要时从 offset 0 重放到新表再切换。不是"两遍"，重算按需。</li>
+    </ul>
+  </div>
+
+  <div class="block" id="s3-6">
+    <h3>Ad Click Aggregator 全链路</h3>
+    <pre>用户点击  GET /click?imp=…&amp;ad=42&amp;exp=…&amp;kid=k3&amp;sig=…      ← 302 服务端跳转，与 Bitly 同构，必须 302 不能 301
+   ▼
+Click Processor（无状态）  验 HMAC → SET imp NX 去重 → 写 Kafka → 302
+   ▼
+Kafka（按 ad_id 分区，热广告加盐 ad_id:0..N，retention 7 天）
+   ├──► Flink：去盐，一分钟 event-time 窗口，watermark 30 秒 ──► OLAP（按 advertiser_id 分片，日/周表预聚合）
+   └──► Kafka Connect ──► S3 原始事件 ──► 每日 Spark 重算 ──► 对账修正 OLAP</pre>
+    <ul class="prose">
+      <li>Bad：写 DB 查时 GROUP BY。Good：Cassandra 原始事件 + 每 N 分钟 Spark + OLAP。Great：Kafka + Flink + OLAP，Cassandra 被 Kafka retention 取代。</li>
+      <li>去重按 impression 不按用户：重定向广告同一用户多次看到都是真实点击。先写 Kafka 再写缓存，重复有对账兜、丢失没有。</li>
+      <li>Kafka 之外的替代：DynamoDB Streams / Cassandra CDC 是 log 形状，可以；Cassandra + Pub/Sub 不行。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= PRINCIPLES ================= -->
+<section class="part" id="principles">
+  <div class="part-head"><h2>贯穿全部的原则</h2></div>
+  <div class="principles">
+    <div class="principle"><div class="k">01</div><h3>先写不可逆的真相，再做可失败的加速</h3><p>Inbox 再 PUBLISH，Kafka 再缓存，Message 再推送。加速层丢了只损失延迟。</p></div>
+    <div class="principle"><div class="k">02</div><h3>锁负责效率，条件写负责正确性</h3><p>Redis 锁挡掉大部分冲突，<code>UPDATE ... WHERE status = ?</code> 保证最后只有一个成功。fencing token 和乐观锁是同一个思想。</p></div>
+    <div class="principle"><div class="k">03</div><h3>游标决定能不能用 best effort</h3><p>消费者自己知道看到哪了、真相源能从那里顺序读，就可以用 at-most-once 的通道。否则要 Kafka。</p></div>
+    <div class="principle"><div class="k">04</div><h3>把一个点的压力散成多个点</h3><p>写加盐再合并，读复制多份，库存拆行，观众按直播聚合。合并的成本放到异步环节。</p></div>
+    <div class="principle"><div class="k">05</div><h3>每一层都要回答"丢了从哪恢复"</h3><p>热层从冷层重建，流从批修正或从日志重放，Pub/Sub 从 DB 补差。</p></div>
+    <div class="principle"><div class="k">06</div><h3>付了什么代价要说得出来</h3><p>默认站中间，需求推你才移动。用 NoSQL、用队列、用锁，都要能说出不用的话哪里撑不住。</p></div>
+  </div>
+</section>
+
+<!-- ================= INDEX ================= -->
+<section class="part" id="index">
+  <div class="part-head"><h2>案例索引</h2></div>
+  <div class="tbl wide"><table>
+    <thead><tr><th>案例</th><th>涉及概念</th><th>一句话</th></tr></thead>
+    <tbody>
+      <tr><td>Ticketmaster</td><td>Redis TTL 锁、条件更新、虚拟排队、CDN、Elasticsearch</td><td>四步缩短持锁时间，DB 条件写兜底，排队把并发挡在锁之前</td></tr>
+      <tr><td>Uber</td><td>司机锁、条件写、Kafka/SQS、delay queue、Temporal、Redis GEO</td><td>锁的是竞争方不是资源，超时要主动推进</td></tr>
+      <tr><td>Gopuff</td><td>单库 SERIALIZABLE 事务</td><td>跨库分布式锁是反例</td></tr>
+      <tr><td>Shopify（in the wild）</td><td>SKIP LOCKED、库存拆行、RC、加锁顺序</td><td>带约束的热点拆资源不拆计数器</td></tr>
+      <tr><td>Web Crawler</td><td>SQS visibility timeout、退避、DLQ、域名锁</td><td>选 SQS 不选 Kafka 的正面理由</td></tr>
+      <tr><td>LeetCode</td><td>SQS、轮询</td><td>一次性结果用轮询，WebSocket 过度设计</td></tr>
+      <tr><td>News Feed</td><td>SQS fan-out-on-write、大 V 读时合并</td><td>任何 at-least-once 队列都行</td></tr>
+      <tr><td>WhatsApp</td><td>Redis Pub/Sub、Message/Inbox、DynamoDB、JWT 握手、条件表达式</td><td>先落库再广播，Inbox 是游标</td></tr>
+      <tr><td>Live Comments</td><td>SSE、分频道 Pub/Sub、一致性哈希、游标分页</td><td>允许丢，连 Inbox 都不要</td></tr>
+      <tr><td>Ad Click Aggregator</td><td>302、HMAC、SET NX 去重、Kafka 加盐、Flink、OLAP、Lambda</td><td>消费者是全部事件的函数，必须 Kafka</td></tr>
+      <tr><td>Top-K</td><td>Kafka、Flink 大状态、checkpoint、一个月 retention</td><td>状态大小决定容错策略</td></tr>
+      <tr><td>Post Search</td><td>Kafka fan-out、点赞攒批、里程碑写入</td><td>消费端聚合的自由度</td></tr>
+      <tr><td>Bitly</td><td>Redis INCR、UNIQUE 约束、301 vs 302</td><td>302 才能统计点击</td></tr>
+      <tr><td>Rate Limiter / Tinder</td><td>Lua 原子脚本、单分区 LWT</td><td>把 read-modify-write 放进一个原子边界</td></tr>
+      <tr><td>YouTube / Dropbox</td><td>S3 直传、事件触发、Temporal DAG、WebSocket + 轮询兜底</td><td>大文件不经过应用服务器</td></tr>
+      <tr><td>Slack（in the wild）</td><td>Redis 队列 OOM、Kafka 持久缓冲</td><td>积压存储不能放有界内存</td></tr>
+    </tbody></table></div>
+  <p class="back" style="margin-top:1rem"><a href="#top">回到顶部</a></p>
+</section>
+
+</main>
+</div>
+
+<footer>整理自一次系统设计复习对话。案例来自 Hello Interview「System Design in a Hurry」免费部分与 in-the-wild 文章；付费部分只见标题。</footer>
+</div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('nav.toc ul a'));
+  var map = {};
+  links.forEach(function(a){ var id = a.getAttribute('href').slice(1); map[id] = a; });
+  var targets = Object.keys(map).map(function(id){ return document.getElementById(id); }).filter(Boolean);
+  if(!('IntersectionObserver' in window) || !targets.length) return;
+  var current = null;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        if(current) current.classList.remove('active');
+        current = map[e.target.id]; if(current) current.classList.add('active');
+      }
+    });
+  }, {rootMargin:'-10% 0px -75% 0px', threshold:0});
+  targets.forEach(function(t){ io.observe(t); });
+})();
+</script>
+
+</body>
+</html>

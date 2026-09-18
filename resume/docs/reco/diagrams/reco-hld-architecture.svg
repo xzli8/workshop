@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="780" viewBox="0 0 1200 780" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3B5BDB"/>
+    </marker>
+  </defs>
+
+  <!-- ======== band 1: online ======== -->
+  <rect x="20" y="20" width="1160" height="400" rx="8" fill="#EDF2FF" stroke="#BAC8FF"/>
+  <text x="600" y="52" text-anchor="middle" font-size="19" font-weight="700" fill="#364FC7">在线服务链路 (online)</text>
+
+  <!-- APP -->
+  <rect x="60" y="80" width="180" height="72" fill="#FFFFFF" stroke="#3B5BDB" stroke-width="1.5"/>
+  <text x="150" y="110" text-anchor="middle" font-size="14" font-weight="600" fill="#212529">前端/客户端</text>
+  <text x="150" y="132" text-anchor="middle" font-size="12" fill="#495057">(App/Web)</text>
+
+  <!-- ENG -->
+  <rect x="380" y="80" width="340" height="72" fill="#FFFFFF" stroke="#3B5BDB" stroke-width="1.5"/>
+  <text x="550" y="108" text-anchor="middle" font-size="14" font-weight="600" fill="#212529">推荐工程</text>
+  <text x="550" y="131" text-anchor="middle" font-size="12" fill="#495057">召回→排序→重排→混排→分页→组装</text>
+
+  <!-- ALGO -->
+  <rect x="880" y="80" width="250" height="72" fill="#FFFFFF" stroke="#3B5BDB" stroke-width="1.5"/>
+  <text x="1005" y="108" text-anchor="middle" font-size="14" font-weight="600" fill="#212529">推荐算法</text>
+  <text x="1005" y="131" text-anchor="middle" font-size="12" fill="#495057">打分排序（粗排/精排）</text>
+
+  <!-- APP <-> ENG -->
+  <line x1="240" y1="100" x2="376" y2="100" stroke="#3B5BDB" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="310" y="91" text-anchor="middle" font-size="11.5" fill="#4263EB">推荐请求</text>
+  <line x1="380" y1="134" x2="244" y2="134" stroke="#3B5BDB" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="310" y="125" text-anchor="middle" font-size="11" fill="#4263EB">Card 列表+埋点上下文</text>
+
+  <!-- ENG <-> ALGO -->
+  <line x1="720" y1="100" x2="876" y2="100" stroke="#3B5BDB" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="800" y="91" text-anchor="middle" font-size="11.5" fill="#4263EB">RankRequest</text>
+  <line x1="880" y1="134" x2="724" y2="134" stroke="#3B5BDB" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="800" y="125" text-anchor="middle" font-size="11.5" fill="#4263EB">RankResponse</text>
+
+  <!-- EXP (left, directly above Kafka) -->
+  <rect x="140" y="254" width="200" height="76" fill="#FFFFFF" stroke="#3B5BDB" stroke-width="1.5"/>
+  <text x="240" y="284" text-anchor="middle" font-size="13.5" font-weight="600" fill="#212529">实验平台</text>
+  <text x="240" y="306" text-anchor="middle" font-size="12" fill="#495057">分流/实验配置</text>
+
+  <!-- SRC cylinder (center, under ENG) -->
+  <path d="M420,268 v68 a100,14 0 0 0 200,0 v-68" fill="#FFFFFF" stroke="#3B5BDB" stroke-width="1.5"/>
+  <ellipse cx="520" cy="268" rx="100" ry="14" fill="#FFFFFF" stroke="#3B5BDB" stroke-width="1.5"/>
+  <text x="520" y="303" text-anchor="middle" font-size="13.5" font-weight="600" fill="#212529">召回源</text>
+  <text x="520" y="324" text-anchor="middle" font-size="12" fill="#495057">ES / DB / 运营配置…</text>
+
+  <!-- FS cylinder -->
+  <path d="M880,268 v68 a125,14 0 0 0 250,0 v-68" fill="#FFFFFF" stroke="#3B5BDB" stroke-width="1.5"/>
+  <ellipse cx="1005" cy="268" rx="125" ry="14" fill="#FFFFFF" stroke="#3B5BDB" stroke-width="1.5"/>
+  <text x="1005" y="303" text-anchor="middle" font-size="13.5" font-weight="600" fill="#212529">Feature Store</text>
+  <text x="1005" y="324" text-anchor="middle" font-size="12" fill="#495057">用户画像/商品画像</text>
+
+  <!-- ENG <-> SRC (straight, double arrow) -->
+  <line x1="520" y1="152" x2="520" y2="250" stroke="#3B5BDB" stroke-width="1.5" marker-start="url(#arr)" marker-end="url(#arr)"/>
+  <!-- ENG <-> EXP (orthogonal, double arrow) -->
+  <path d="M430,152 V210 H240 V250" fill="none" stroke="#3B5BDB" stroke-width="1.5" marker-start="url(#arr)" marker-end="url(#arr)"/>
+  <!-- ALGO -> FS -->
+  <line x1="1005" y1="152" x2="1005" y2="250" stroke="#3B5BDB" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="1016" y="205" font-size="11.5" fill="#4263EB">自取特征</text>
+
+  <!-- ======== band 2: data ======== -->
+  <rect x="20" y="460" width="1160" height="280" rx="8" fill="#EDF2FF" stroke="#BAC8FF"/>
+  <text x="600" y="492" text-anchor="middle" font-size="19" font-weight="700" fill="#364FC7">数据链路 (offline/nearline)</text>
+
+  <!-- KAFKA -->
+  <rect x="140" y="560" width="200" height="70" rx="10" fill="#FFFFFF" stroke="#3B5BDB" stroke-width="1.5"/>
+  <text x="240" y="601" text-anchor="middle" font-size="13.5" font-weight="600" fill="#212529">Kafka (MQ)</text>
+
+  <!-- FLINK dashed -->
+  <rect x="460" y="650" width="200" height="64" fill="#FFFFFF" stroke="#3B5BDB" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <text x="560" y="676" text-anchor="middle" font-size="13" font-weight="600" fill="#495057">流计算 Flink</text>
+  <text x="560" y="696" text-anchor="middle" font-size="11.5" fill="#868E96">(后续引入)</text>
+
+  <!-- LEARN -->
+  <rect x="800" y="550" width="240" height="80" fill="#FFFFFF" stroke="#3B5BDB" stroke-width="1.5"/>
+  <text x="920" y="581" text-anchor="middle" font-size="13.5" font-weight="600" fill="#212529">离线/在线学习</text>
+  <text x="920" y="604" text-anchor="middle" font-size="12" fill="#495057">模型训练/画像更新</text>
+
+  <!-- TrackingEvent: APP -> KAFKA -->
+  <path d="M90,152 V595 H136" fill="none" stroke="#3B5BDB" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="100" y="545" font-size="11.5" fill="#4263EB">TrackingEvent 上报</text>
+
+  <!-- BF: KAFKA -> ENG -->
+  <path d="M290,560 V360 H650 V156" fill="none" stroke="#3B5BDB" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="470" y="376" text-anchor="middle" font-size="11.5" fill="#4263EB">曝光消费·写曝光历史 ZSET</text>
+
+  <!-- KAFKA -> EXP dashed (future): experiment effect analysis -->
+  <line x1="240" y1="560" x2="240" y2="334" stroke="#3B5BDB" stroke-width="1.5" stroke-dasharray="7 5" marker-end="url(#arr)"/>
+  <text x="230" y="400" text-anchor="end" font-size="11.5" fill="#868E96">实验效果分析（后续）</text>
+
+  <!-- KAFKA -> LEARN -->
+  <line x1="340" y1="595" x2="796" y2="595" stroke="#3B5BDB" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="570" y="586" text-anchor="middle" font-size="11.5" fill="#4263EB">现阶段直接消费</text>
+
+  <!-- KAFKA -> FLINK dashed -->
+  <path d="M240,630 V682 H456" fill="none" stroke="#3B5BDB" stroke-width="1.5" stroke-dasharray="7 5" marker-end="url(#arr)"/>
+  <text x="330" y="674" text-anchor="middle" font-size="11.5" fill="#868E96">后续引入</text>
+
+  <!-- FLINK -> LEARN dashed -->
+  <path d="M660,682 H920 V634" fill="none" stroke="#3B5BDB" stroke-width="1.5" stroke-dasharray="7 5" marker-end="url(#arr)"/>
+
+  <!-- LEARN -> FS -->
+  <path d="M920,550 V354" fill="none" stroke="#3B5BDB" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="931" y="470" font-size="11.5" fill="#4263EB">冷启动/热更新</text>
+</svg>

@@ -1,0 +1,148 @@
+% !TEX program = xelatex
+
+\documentclass{resume}
+%\usepackage{zh_CN-Adobefonts_external} % Simplified Chinese Support using external fonts (./fonts/zh_CN-Adobe/)
+%\usepackage{zh_CN-Adobefonts_internal} % Simplified Chinese Support using system fonts
+
+\begin{document}
+\pagenumbering{gobble} % suppress displaying page number
+
+\name{Xingzhong Li}
+
+\basicInfo{
+    Gender: Male \textperiodcentered\
+    Age: 29 \textperiodcentered\
+    Phone: (+86) 13295609826 \textperiodcentered\
+    Email: xingzhongli8@gmail.com
+}
+
+\textbf{Professional Summary}: Results-driven backend and fullstack engineer with 6 years of industry experience building high-concurrency, high-availability distributed systems at leading internet companies including Meituan and Amazon. Proven track record as a technical leader and project lead, successfully delivering large-scale architecture refactoring projects that improved system performance by 30-50\% and development efficiency by 40-50\%. Specialized in user-facing systems, marketing technology, and API design, with deep expertise in GraphQL, microservices architecture, and performance optimization. Successfully built Meituan Healthcare's user marketing system from scratch, driving 12x DAU growth and 2.5x market share expansion.\\
+
+
+\section{\faGraduationCap\ Education}
+\datedsubsection{\textbf{University of Science and Technology of China (USTC)}, Hefei, AnHui, China}{2017.09 -- 2020.07}
+\textit{Master}
+\datedsubsection{\textbf{ChangAn University}, Xian, Shaanxi, China}{2013.09 -- 2017.07}
+\textit{Bachelor}
+
+\section{\faUsers\ Experience}
+\datedsubsection{\textbf{Mobius} Beijing, China}{2026.05 -- Now}
+\role{Senior Backend Engineer, Viavia Bnto team. Built the Bnto recommendation serving platform from 0 to 1 and develop the backend of Maya, the LLM-agent shopping assistant.}
+
+\datedsubsection{\textbf{Amazon} Beijing, China}{2024.04 -- 2026.03}
+\role{Fullstack Engineer(SDE II), JST Vamos team. In charge of system RD and requirement delivery for the VAMOS platform.}
+
+\datedsubsection{\textbf{Meituan} Beijing, China}{2020.07 -- 2024.04}
+\role{Mid-level Backend Engineer, User API Team – Meituan Healthcare Instant Retail Technology Department. Responsible for architecture reconstruction and upgrade of user API system.\\
+\\
+Junior Backend Engineer, User Marketing Team – Meituan Healthcare Instant Retail Technology Department. Responsible for the construction of user marketing system and end-to-end requirement delivery.}
+
+\section{\faCogs\ Technical Skills}
+\begin{itemize}
+    \item \textbf{Core Programming \& Frameworks}: Proficient in Java (JVM, concurrency programming), Spring, React.
+    \item \textbf{Distributed Systems}: Extensive experience in designing and maintaining large-scale distributed systems.
+    \item \textbf{Data \& Storage}: Expertise in relational databases (MySQL), NoSQL databases (Redis), message queues (Kafka), and database optimization techniques (sharding, indexing, query tuning).
+    \item \textbf{API Design \& Integration}: Deep knowledge of RESTful API design, GraphQL schema design and implementation, API gateway patterns, and service orchestration.
+    \item \textbf{Performance Optimization}: Proven track record in system performance tuning, including JVM optimization, database query optimization, caching strategies, and service startup acceleration.
+    \item \textbf{AI \& Productivity Tools}: Skilled in leveraging AI coding assistants (Claude, Cursor, Kiro) to accelerate development workflow and improve code quality.
+    \item \textbf{Soft Skills}: Strong leadership and project management abilities, excellent cross-team communication and collaboration skills, fast learner with a passion for exploring new technologies.
+\end{itemize}
+
+\newpage
+\section{\faInfo\ Projects}
+\datedsubsection{\textbf{Meituan Healthcare BFF Evolution: Hardcoded $\rightarrow$ DAG $\rightarrow$ GraphQL}}{Project Leader}
+
+\textbf{Project Background}: The Meituan Healthcare User API is the single entry point for all consumer-facing requests. It aggregates, orchestrates and shapes the capabilities of dozens of domain services for the front end (the BFF layer), handling peak traffic of 5,000 QPS across 5 isolated deployment sets of 10 servers each. Its hardcoded implementation could no longer keep up with business iteration; this six-month project rebuilt it in three phases.\\
+
+\textbf{Key Responsibilities \& Achievements}: Led a team of five as project leader: owned the upfront research, the three-phase roadmap, the overall design and project management, and personally implemented the Phase 3 integration of GraphQL with the DAG engine. Migrated with traffic comparison throughout: the legacy service forwarded each request to the new service and logged every mismatch between the two results; traffic was switched only after mismatches converged to zero, with zero user impact.\\
+
+\begin{itemize}
+    \item Phase 1: Urgent Bottleneck Resolution
+        \begin{itemize}
+            \item Problem: aggregation logic lived per page with no reusable unit beneath it, so rules, fault handling and timeouts were re-implemented per page and drifted apart
+            \item Decomposed the aggregation logic into reusable batch-style Units behind a uniform interface declaring dependencies, per-unit timeout, strong/weak dependency and fallback value, with thread pools isolated per downstream service
+            \item Built a layered parallel scheduling engine that derives layers from declared dependencies (Kahn's algorithm) and completes transitive dependencies, so page configuration only lists the Units it needs
+            \item Result: one implementation per piece of logic; development and iteration efficiency improved by about 30\% (measured as average requirement lead time)
+        \end{itemize}
+    \item Phase 2: General Capability Construction
+        \begin{itemize}
+            \item Problem: layer barriers made total latency the sum of the slowest Unit in each layer rather than the critical path
+            \item Built a DAG scheduling engine in which each Unit waits only on its own predecessors and is triggered as soon as they complete (CAS-driven node state machine, predecessor counting)
+            \item Failures propagate along edges: a strong-dependency failure skips only its downstream subgraph while sibling branches continue; the request-level deadline is pushed down into every Unit's RPC timeout; configuration gained per-page strong/weak and timeout overrides and conditional inclusion; Units and page configurations were untouched
+            \item Result: TP99 latency of core interfaces reduced by 30-40\% on average
+        \end{itemize}
+    \item Phase 3: Capability Limit Exploration
+        \begin{itemize}
+            \item Problem: response shape was fixed at design time in per-client, per-page configuration; every multi-client difference and every shape change required a backend config change and release, tightly coupling data capability to response shape
+            \item Introduced GraphQL with the schema as the shared contract: the front end decides response shape at request time, the DAG engine keeps owning data fetching
+            \item Implemented query analysis that maps the selected fields to a Unit subgraph with transitive dependencies and hands it to the DAG engine, so unselected Units never run; fetchers read from a request-scoped result store, and data between Units flows only along dependency edges (indexed by producer, written once, read only by declared dependents); parse, validation and analysis results are cached by query hash, backed by persisted-query allow-listing and query depth/complexity limits. Evaluated and rejected the DataLoader route: it fixes only hanging chained loads, not the barrier or cross-branch dependencies
+            \item Result: field changes, multi-client differences and new pages ship without a backend release, improving development efficiency by a further ~20\%; backend page configurations dropped to zero; latency unchanged
+        \end{itemize}
+\end{itemize}
+
+\datedsubsection{\textbf{BNTO Recommendation Serving Platform (0 $\rightarrow$ 1)}}{Technical Leader}
+
+\textbf{Project Background}: BNTO is a US fashion-rental e-commerce platform with no recommendation system before this project: product listing pages (PLP) used fixed ordering and the home page had no feed. The algorithm team was building recall and ranking models from scratch at the same time, so engineering needed a serving platform that could host the algorithms without being blocked by their schedule. Delivered in three months across three scenes (PLP, Feed, product close-up) over a catalog of ~8k products at hundreds of thousands of requests per day.\\
+
+\textbf{Key Responsibilities \& Achievements}: Technical leader of a team of three, collaborating with two algorithm engineers: owned the industry research, the HLD/LLD design freeze, the main pipeline, the state layer, the experiment framework, and the integration of blending and survey cards. One teammate built the data link (client tracking events $\rightarrow$ Kafka $\rightarrow$ ClickHouse), the other built survey targeting, frequency control and the submit loop. Shipped as four layered PRs (end-to-end skeleton $\rightarrow$ experiments $\rightarrow$ state layer $\rightarrow$ algorithm ranking), each validated by real requests before the next.\\
+
+\begin{itemize}
+    \item \textbf{Contract: the engineering/algorithm boundary.} Rank requests carry candidate identity only (type + id + recall sources); the algorithm fetches its own features by key, keeping training and serving consistent. Recall stays on the engineering side (indexes are infrastructure, candidate sets are eligibility control); algorithm output enters recall as offline artifacts. Both sides release independently and a model swap needs no engineering change.
+    \item \textbf{Pipeline: fixed orchestration, pluggable stages.} Parallel recallers (per-route timeout, failed routes skipped, sources merged) $\rightarrow$ dedup filter $\rightarrow$ ranker selection (falls back to recall order on timeout) $\rightarrow$ re-rank policy chain (sliding-window brand/category scatter) $\rightarrow$ blending (position planning, quotas, masonry column ledger; brand, collection, survey and stack cards) $\rightarrow$ batched per-type card fill. Hard filters belong to the recall source; fallback recall backfills the gap at merge time instead of running as a parallel route. A new route, policy or card type is one class plus one registration.
+    \item \textbf{State layer: paging never re-runs upstream, the page never fails.} Opaque versioned cursor + batch cache (Redis: full ordered list before pagination plus experiment snapshot) + three-layer dedup (in-batch merge, in-session served history as a sliding-TTL SET, cross-session exposure history as a 7-day ZSET). Rejected Bloom filters because the bounded catalog removes their memory advantage; a degradation matrix covers cursor, cache, dedup and total Redis failure.
+    \item \textbf{Experiments and data loop.} Flat experiment model (experiment id as salt, weights summing to 100, whitelists, Nacos hot reload keeping the last good config, frozen per request); explicit decision points so new strategies ship with code and new experiments are config only; eligibility evaluated inside assignment so treatment groups are never diluted. exp\_group travels with each card and returns with every tracking event; client events flow through Kafka into ClickHouse for T+1 features, exposure-history backflow and per-group analysis.
+    \item \textbf{Result}: first A/B test (model ranking vs recall order) lifted product-card CTR by 18\% and add-to-cart rate by 11\%; first-page P99 fell from 2.0s to 0.8s, paging P99 under 120ms, page success rate 99.95\%; four card types and three re-rank policies shipped in the first month at ~2 days each.
+\end{itemize}
+
+\newpage
+\datedsubsection{\textbf{SpringBoot Single Service Startup Acceleration}}{Technical Leader}
+
+\textbf{Project Background}: As business systems grew in complexity, service startup times had increased significantly, slowing down development and testing cycles and extending incident recovery times in production. This project aimed to develop a universal solution to accelerate SpringBoot service startup across the entire department.\\
+
+\textbf{Key Responsibilities}:
+\begin{itemize}
+    \item Conducted a comprehensive analysis of the SpringBoot startup process, breaking it down into discrete phases and instrumenting each phase to identify performance bottlenecks
+    \item Discovered that class loading accounted for 60-70\% of total startup time for services with large dependency trees
+    \item Identified the root cause: the native URLClassLoader implementation uses a linear search algorithm (O(N) time complexity) to locate classes across JAR files
+    \item Implemented the solution using reflection to replace the core data structure (UCP) in the URLClassLoader, reducing class lookup time complexity from O(N) to O(1)
+    \item Developed multiple index implementations (HashMap, TrieTree, multi-level Map) to optimize for different service characteristics
+    \item Packaged the solution as a pluggable, configurable library that could be easily integrated into any SpringBoot service
+\end{itemize}
+ 
+\textbf{Project Achievements}:
+\begin{itemize}
+    \item Achieved an average 30-50\% reduction in service startup time, with even more significant improvements (up to 60\%) for services with large dependency trees
+    \item The solution was successfully adopted by approximately 50 services across the department, receiving widespread recognition and significantly improving developer productivity
+\end{itemize}
+  
+\datedsubsection{\textbf{Meituan Healthcare User Marketing System Construction}}{Core Developer}
+
+\textbf{Project Background}: Meituan Healthcare was in its early growth phase and needed a robust, scalable user marketing system to support its business goals of user acquisition, conversion, and retention. The system needed to handle high-concurrency traffic during marketing activities and support rapid iteration of marketing activities.\\
+
+\textbf{Key Responsibilities}: Participated in the overall architecture design of the user marketing system, adopting a microservices architecture to ensure scalability and maintainability. Designed and implemented three core services: Configuration Service, Delivery Service, Marketing Service.
+\begin{itemize}
+    \item \textbf{Configuration Service}: 
+        \begin{itemize}
+            \item Developed a unified data model to support heterogeneous configuration data for different types of marketing activities.
+            \item Implemented a message queue-based batch processing system to handle large-scale configuration data uploads, verification, and result notifications.
+        \end{itemize}
+    \item \textbf{Delivery Service}:
+        \begin{itemize}
+            \item Designed a multi-level caching strategy to solve hot key problems and improve system performance.
+            \item Implemented large key splitting techniques to prevent performance degradation caused by oversized cache entries.
+        \end{itemize}
+    \item \textbf{Marketing Service}:
+        \begin{itemize}
+            \item Developed a flexible framework to support various marketing activity gameplay.
+            \item Implemented concurrency control mechanisms using distributed locks, database CAS operations, and state machines to prevent over-issuance of coupons and other concurrency issues.
+            \item Designed and implemented a sharding database and table strategy to support the storage and query of massive amounts of marketing data.
+        \end{itemize}
+\end{itemize}
+
+\textbf{Project Achievements}:
+\begin{itemize}
+    \item Successfully built the Meituan Healthcare user marketing system from scratch, providing a solid technical foundation for business growth.
+    \item Supported the business's rapid expansion, driving DAU growth from 500,000 to 6 million (12x), average daily order volume from 200,000 to 3 million (15x), and market share from 20\% to 50\% (2.5x)
+\end{itemize}
+
+\end{document}
