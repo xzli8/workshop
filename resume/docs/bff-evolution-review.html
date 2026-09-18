@@ -1,0 +1,821 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BFF 架构演进底稿</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F4F6F9; --surface:#FFFFFF; --text:#1A222D; --muted:#5B6673; --line:#D9DEE6;
+  --accent:#3949AB; --accent-soft:#E8EAF6; --warn:#B4541A; --warn-soft:#FBEEE4;
+  --ok:#2E7D57; --ok-soft:#E3F2EA; --code-bg:#EEF1F6; --shadow:0 1px 2px rgba(20,30,50,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10151C; --surface:#171E27; --text:#E6EAF0; --muted:#9AA6B4; --line:#2A3441;
+    --accent:#8C9CFF; --accent-soft:#232B4A; --warn:#E8955A; --warn-soft:#3A2618;
+    --ok:#6FCF97; --ok-soft:#173226; --code-bg:#1E2631; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10151C; --surface:#171E27; --text:#E6EAF0; --muted:#9AA6B4; --line:#2A3441;
+  --accent:#8C9CFF; --accent-soft:#232B4A; --warn:#E8955A; --warn-soft:#3A2618;
+  --ok:#6FCF97; --ok-soft:#173226; --code-bg:#1E2631; --shadow:none;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.75 "Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.layout{display:block;max-width:1200px;margin:0 auto;padding:40px 32px 96px}
+@media (max-width:900px){.layout{padding:56px 16px 64px}}
+.toc{position:fixed;top:0;left:0;height:100vh;width:280px;padding:56px 16px 24px 20px;background:var(--surface);border-right:1px solid var(--line);box-shadow:0 0 24px rgba(20,30,50,.12);overflow:auto;transform:translateX(-100%);transition:transform .2s ease;z-index:40;font-size:13px;line-height:1.6}
+body.toc-open .toc{transform:none}
+.toc-toggle{position:fixed;top:14px;left:14px;z-index:50;font:13px "Noto Sans SC",sans-serif;padding:6px 12px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer;box-shadow:var(--shadow)}
+.toc-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.toc-backdrop{position:fixed;inset:0;z-index:30;display:none}
+body.toc-open .toc-backdrop{display:block}
+.toc .kicker{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.toc a{display:block;color:var(--muted);padding:3px 0 3px 10px;border-left:2px solid transparent;margin-left:-1px}
+.toc a.sub{padding-left:22px;font-size:12.5px}
+.toc a.sub2{padding-left:34px;font-size:12px}
+.toc a.sub3{padding-left:46px;font-size:11.5px}
+.toc a.active{color:var(--accent);border-left-color:var(--accent)}
+main{max-width:1120px;min-width:0;margin:0 auto}
+h1,h2,h3,h4{font-family:"Noto Serif SC","Songti SC","STSong",serif;text-wrap:balance;line-height:1.3;margin:0}
+h1{font-size:30px;font-weight:700;margin-bottom:8px}
+h2{font-size:22px;font-weight:700;margin:56px 0 16px;padding-top:24px;border-top:1px solid var(--line)}
+h3{font-size:17px;font-weight:600;margin:32px 0 10px}
+h4{font-size:15px;font-weight:600;margin:20px 0 6px;font-family:"Noto Sans SC",sans-serif}
+h5{font-size:14px;font-weight:700;margin:18px 0 6px;font-family:"Noto Sans SC",sans-serif}
+.lead{font-weight:600;font-style:italic}
+td ul{margin:4px 0 0;padding-left:18px}
+td li{margin:2px 0}
+.lede{color:var(--muted);font-size:15px;margin:0 0 20px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:22px}
+li{margin:4px 0}
+li>ul{margin-top:4px}
+strong{font-weight:700}
+code{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;background:var(--code-bg);padding:1px 5px;border-radius:3px}
+pre{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;line-height:1.6;background:var(--code-bg);border:1px solid var(--line);border-radius:6px;padding:14px 16px;overflow-x:auto;margin:10px 0 16px}
+pre code{background:none;padding:0;font-size:inherit}
+.tbl{overflow-x:auto;margin:10px 0 18px}
+table.fc-nowrap th:first-child,table.fc-nowrap td:first-child{white-space:nowrap;width:1%}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:12.5px;letter-spacing:.02em;background:var(--surface)}
+tr:hover td{background:var(--surface)}
+.grid6{display:grid;grid-template-columns:110px 1fr;gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:12px 0 18px;background:var(--surface);box-shadow:var(--shadow)}
+.grid6>div{padding:10px 14px;border-bottom:1px solid var(--line)}
+.grid6>div:nth-last-child(-n+2){border-bottom:0}
+.grid6 .k{font-weight:600;color:var(--muted);font-size:13px;background:var(--bg)}
+.grid6 p:last-child,.grid6 ul:last-child{margin-bottom:0}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0 16px}
+.callout.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.callout.ok{border-left-color:var(--ok);background:var(--ok-soft)}
+.callout .tag{display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:4px}
+.callout.warn .tag{color:var(--warn)}
+.callout .tag{color:var(--accent)}
+.callout.ok .tag{color:var(--ok)}
+.callout p:last-child{margin-bottom:0}
+.qa{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0 18px;background:var(--surface);box-shadow:var(--shadow)}
+.qa h4{margin:0 0 8px;font-size:14px;color:var(--muted);letter-spacing:.04em}
+.qa dl{margin:0}
+.qa dt{font-weight:600;margin-top:10px}
+.qa dt:first-child{margin-top:0}
+.qa dd{margin:2px 0 0 0;color:var(--text)}
+.qa dd p{margin:6px 0}
+.qa dd .tbl{margin:8px 0}
+.qa dd pre{margin:8px 0}
+.check{list-style:none;padding:0;margin:0}
+.check li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line);margin:0}
+.check input{margin-top:6px;width:16px;height:16px;accent-color:var(--accent)}
+.check .n{color:var(--muted);font-size:12px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13px;color:var(--muted);margin-bottom:28px}
+.pill{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);vertical-align:middle;margin-left:4px}
+.pill.warn{border-color:var(--warn);color:var(--warn)}
+.draft{border:1px dashed var(--line);border-radius:8px;padding:14px 16px;margin:10px 0 18px;background:var(--surface)}
+.draft .lang{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px}
+.small{font-size:13px;color:var(--muted)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+
+<div class="layout">
+<button class="toc-toggle" type="button" aria-controls="toc" aria-expanded="false">目录</button>
+<div class="toc-backdrop"></div>
+<nav class="toc" id="toc" aria-label="目录">
+  <div class="kicker">目录</div>
+  <a href="#s0">0 总览</a>
+  <a href="#s0-1" class="sub">0.1 演进路线</a>
+  <a href="#s0-2" class="sub">0.2 主线</a>
+  <a href="#s1">1 阶段 0：硬编码 BFF</a>
+  <a href="#s1-1" class="sub">1.1 问题</a>
+  <a href="#s1-2" class="sub">1.2 方案</a>
+  <a href="#s1-2-1" class="sub2">1.2.1 方案选型</a>
+  <a href="#s1-2-2" class="sub2">1.2.2 三步走 + 流量对比迁移</a>
+  <a href="#s2">2 阶段 1：Unit 化 + 分层并行引擎</a>
+  <a href="#s2-1" class="sub">2.1 问题</a>
+  <a href="#s2-2" class="sub">2.2 方案</a>
+  <a href="#s2-2-1" class="sub2">2.2.1 取数 Unit：调下游取数，承载调度元数据</a>
+  <a href="#s2-2-2" class="sub2">2.2.2 装配 Unit：页面的入口</a>
+  <a href="#s2-2-3" class="sub2">2.2.3 执行引擎：从声明推导执行结构</a>
+  <a href="#s2-3" class="sub">2.3 效果</a>
+  <a href="#s2-4" class="sub">2.4 局限：层是 barrier</a>
+  <a href="#s3">3 阶段 2：DAG 调度</a>
+  <a href="#s3-1" class="sub">3.1 问题</a>
+  <a href="#s3-2" class="sub">3.2 方案</a>
+  <a href="#s3-2-1" class="sub2">3.2.1 方案选型</a>
+  <a href="#s3-2-2" class="sub2">3.2.2 节点级触发</a>
+  <a href="#s3-2-3" class="sub2">3.2.3 执行流程</a>
+  <a href="#s3-2-4" class="sub2">3.2.4 失败与超时</a>
+  <a href="#s3-3" class="sub">3.3 效果</a>
+  <a href="#s3-4" class="sub">3.4 局限：形状在设计期固定在后端</a>
+  <a href="#s4">4 阶段 3：GraphQL 契约</a>
+  <a href="#s4-1" class="sub">4.1 问题</a>
+  <a href="#s4-2" class="sub">4.2 方案：GraphQL schema 作为契约</a>
+  <a href="#s4-2-1" class="sub2">4.2.1 契约：schema 与字段到 Unit 的映射</a>
+  <a href="#s4-2-2" class="sub2">4.2.2 实现</a>
+  <a href="#s4-2-2-1" class="sub3">4.2.2.1 方案选型：谁来调度取数</a>
+  <a href="#s4-2-2-2" class="sub3">4.2.2.2 第一步：查询分析</a>
+  <a href="#s4-2-2-3" class="sub3">4.2.2.3 第二步：跑子图，结果进内存</a>
+  <a href="#s4-2-2-4" class="sub3">4.2.2.4 第三步：整形</a>
+  <a href="#s4-3" class="sub">4.3 效果</a>
+  <a href="#s4-4" class="sub">4.4 局限：GraphQL 的代价</a>
+  <a href="#s5">5 追问清单</a>
+</nav>
+
+<main>
+<h1>BFF 架构演进底稿</h1>
+<p class="lede">美团医药用户 API 系统重构三阶段：每一步的问题、方案、备选、取舍与面试追问。简历是从这份底稿里压缩出来的。</p>
+<div class="meta">
+  <span>项目角色：项目负责人，带 5 人</span>
+  <span>系统规模：5 个 set 各 10 台，共 50 台，峰值 5k QPS</span>
+</div>
+
+<!-- ===================== 0 ===================== -->
+<h2 id="s0">0 总览</h2>
+<div class="callout">
+<div class="tag">两分钟版本</div>
+<p>这个系统是美团医药 C 端的 BFF 层，聚合几十个领域服务给前端。我接手时是硬编码，我带 5 个人分三步重构。第一步把聚合逻辑拆成可复用的批式 Unit，接口内置超时、强弱依赖和降级，用分层并行引擎加配置化编排，先解决开发效率，这一步允许不是最优解。第二步发现分层的 barrier 拖长了延迟，把调度换成 DAG，每个 Unit 只等自己的前驱、前驱完成就触发，失败沿边传播，TP99 降了三成。第三步发现引擎再快也解决不了前后端耦合，因为响应形状仍在设计期由配置固定，于是引入 GraphQL schema 作为契约，把决定权交给前端请求期；取数调度不换，查询分析把选中字段翻译成 Unit 子图交给 DAG 引擎跑，fetcher 从内存读，没选的字段对应的 Unit 不执行。整个过程用流量对比灰度迁移，零停机。三步分别对应 BFF 的聚合、编排、整形三个职责。</p>
+</div>
+
+<h3 id="s0-1">0.1 演进路线</h3>
+<p>用户 API 层是美团医药 C 端所有请求的入口，负责把几十个领域服务的能力聚合、编排、整形后交给前端。这一层在架构语言里就是 BFF（Backend For Frontend）。BFF 做三件事，三个阶段正好按顺序各解决一件：</p>
+<div class="tbl"><table>
+<tr><th>BFF 职责</th><th>含义</th><th>解决它的阶段</th><th>核心动作</th></tr>
+<tr><td>聚合</td><td>把下游的能力拆成可复用的取数单元</td><td>阶段 1</td><td>Unit 化 + 分层并行引擎 + 依赖声明化</td></tr>
+<tr><td>编排</td><td>决定单元的执行顺序和并行度</td><td>阶段 2</td><td>DAG 调度：每个 Unit 只等自己的前驱，按前驱完成触发</td></tr>
+<tr><td>整形</td><td>决定响应长什么样、由谁决定</td><td>阶段 3</td><td>GraphQL schema 作为契约，决定权前置到前端请求期</td></tr>
+</table></div>
+
+<pre>硬编码 BFF ──► 阶段 1：Unit + 分层并行 ──► 阶段 2：DAG 调度 ──► 阶段 3：GraphQL 契约
+  可读性差        提效约 30%                 TP99 降 30-40%       前端形状变更不再发版，再提效 20%
+  复用性差        局限：层 barrier           局限：形状设计期固定在后端  性能持平
+  扩展性差
+迁移方式：全程流量对比灰度，零停机</pre>
+
+<h3 id="s0-2">0.2 主线</h3>
+<div class="tbl"><table>
+<tr><th>概念</th><th>阶段 1</th><th>阶段 2</th><th>阶段 3</th></tr>
+<tr><td>取数能力</td><td>Unit，批式接口</td><td>Unit，不变</td><td>Unit，不变，仍由 DAG 引擎调度</td></tr>
+<tr><td>依赖表达</td><td>dependsOn 声明，引擎分层</td><td>dependsOn 声明，引擎建 DAG</td><td>仍是 DAG，子图由查询决定</td></tr>
+<tr><td>谁挑 Unit</td><td>后端写装配 Unit</td><td>后端写装配 Unit</td><td>前端写查询</td></tr>
+<tr><td>并行</td><td>同层并行</td><td>节点级触发</td><td>节点级触发，无 barrier，子图由查询决定</td></tr>
+<tr><td>失败处理</td><td>定义在 Unit 接口上</td><td>沿边传播、取消、deadline</td><td>沿用 Unit 的策略</td></tr>
+<tr><td>胶水</td><td>装配 Unit 的 dependsOn</td><td>装配 Unit 的 dependsOn</td><td><ul><li>查询分析：字段 → Unit 映射</li><li>fetcher 读内存结果</li></ul></td></tr>
+</table></div>
+<ul>
+  <li><b class="lead">Unit 抽象从阶段 1 用到阶段 3：</b>，DAG 引擎从阶段 2 用到阶段 3。阶段 3 新增的只有查询分析和内存结果（Results），这是三阶段能连成一体的原因。</li>
+  <li><b class="lead">失败处理属于 Unit 而非调度器：</b>阶段 1 定义，阶段 2 细化传播，阶段 3 沿用。</li>
+  <li><b class="lead">和 API Gateway 的分工：</b>认证、限流、TLS 在公司统一网关做，这一层只做聚合、编排、整形。网关不该知道领域模型，所以聚合不放网关。</li>
+</ul>
+
+
+
+<!-- ===================== 1 ===================== -->
+<h2 id="s1">1 阶段 0：硬编码 BFF</h2>
+
+<h3 id="s1-1">1.1 问题</h3>
+<p>每个页面一个接口，接口内部各自组织并行调用、各自处理容错、各自拼装。两段代码都是合格工程师写的，问题全在两份之间（单元名和业务细节是示意，替换为真实的）：</p>
+<pre><code>// StoreDetailService
+CompletableFuture&lt;StoreDTO&gt; storeF = supplyAsync(() -&gt; storeRpc.getById(storeId), pool);
+CompletableFuture&lt;UserCtx&gt;  userF  = supplyAsync(() -&gt; userRpc.getCtx(userId), pool);
+
+CompletableFuture&lt;Delivery&gt; deliveryF = storeF.thenCombine(userF, (s, u) -&gt; {
+    Delivery d = deliveryRpc.estimate(s.getLocation(), u.getLocation());
+    if (u.isMember()) d.setFee(memberDiscount(d.getFee()));      // 会员减免规则写在这里
+    return d;
+});
+CompletableFuture&lt;List&lt;Promo&gt;&gt; promoF = storeF.thenCombine(userF, (s, u) -&gt; {
+    try { return promoRpc.listByStore(storeId, u.getMemberLevel()); }
+    catch (Exception e) { return emptyList(); }                   // 弱依赖降级，就地 try/catch
+});
+CompletableFuture&lt;List&lt;Sku&gt;&gt; skuF = supplyAsync(() -&gt; productRpc.listByStore(storeId), pool);
+CompletableFuture&lt;Map&lt;Long, Stock&gt;&gt; stockF = skuF.thenApply(skus -&gt; stockRpc.batchGet(ids(skus)));
+
+allOf(deliveryF, promoF, stockF).get(800, MILLISECONDS);         // 整个接口一个超时
+return assemble(storeF.join(), deliveryF.join(), promoF.join(), skuF.join(), stockF.join());
+
+// StoreListService
+List&lt;StoreDTO&gt; stores = storeRpc.batchGet(storeIds);
+UserCtx u = userRpc.getCtx(userId);
+Map&lt;Long, Delivery&gt; ds = deliveryRpc.batchEstimate(locations(stores), u.getLocation());
+                                                                  // 批量了，但忘了会员减免
+Map&lt;Long, List&lt;Promo&gt;&gt; ps = promoRpc.batchList(storeIds, u.getMemberLevel());
+                                                                  // 没有 try/catch，活动服务抖动列表页整页 500
+return stores.stream().map(s -&gt; assembleCard(s, ds.get(s.getId()), ps.get(s.getId()))).toList();</code></pre>
+<ul>
+  <li><b class="lead">根因：</b>聚合逻辑以页面为组织单位，页面之下没有可复用的单元，同一段规则、同一个下游的容错和超时、同一组依赖的调度在每个页面各有一份，正确性靠每个人在每处都仔细（代码里的毛病单看都能靠"仔细"避免，但都是这个根因的症状）。
+    <ul>
+      <li><b class="lead">症状一（多份副本漂移）：</b>同一段规则、降级、超时在 N 个页面各有一份副本，N 是页面数，改一处漏一处，副本之间逐渐不一致（e.g.: 会员减免、活动降级只在详情页有 etc.）。</li>
+      <li><b class="lead">症状二（调度手工推导）：</b>一个 thenCombine 同时表达业务逻辑、依赖关系、并行策略，并行结构由开发者从依赖手推，推得好坏看人，改一个依赖就要动结构，每个页面各推一遍。</li>
+      <li><b class="lead">症状三（新页面成本是全量）：</b>加一个页面，同一批调用再写一遍，第三份漂移开始（e.g.: 加购物车页，配送费、活动、库存的调用都要再写一遍）。</li>
+    </ul>
+  </li>
+  <li><b class="lead">结论：</b>要消掉的是"一个页面一份实现"，改成"一个逻辑一份实现"（规则、降级、超时、依赖声明随单元只写一处，单元带调度元数据，并行结构由引擎从声明推导）。</li>
+</ul>
+
+<h3 id="s1-2">1.2 方案</h3>
+<h4 id="s1-2-1">1.2.1 方案选型</h4>
+<div class="tbl"><table class="fc-nowrap">
+<thead><tr><th>方案</th><th>是什么</th><th>优点</th><th>缺点</th></tr></thead>
+<tbody>
+<tr><td>抽公共方法【不选】</td><td>把重复的规则、降级、超时抽成公共方法或工具类，页面接口继续各自编排 future</td><td>改动最小，不停业务，随手就能做</td><td>只解决规则复用，解决不了调度：同步方法表达不了"依赖 A、B 的输出，可与 C 并行，超时 200ms，弱依赖失败给空列表"，编排仍在方法外手写、每页一份（症状二、三原样保留）</td></tr>
+<tr><td>一次重写到最终形态【不选】</td><td>直接按目标架构（批式 Unit + DAG 引擎 + GraphQL 契约）重写整层，一次切换</td><td>只迁一次，没有中间形态</td><td><ul><li>DAG 引擎要做节点级触发、失败沿边传播、子图跳过、deadline 下推，周期长</li><li>GraphQL 要前端团队配合，不是后端单方面能推</li><li>长时间没有可上线的收益，风险集中在一次切换</li></ul></td></tr>
+<tr><td><strong>三步演进【选定】</strong></td><td>Unit 划分和依赖梳理做一次，分层引擎先上线止血，再换 DAG 引擎，最后引入 GraphQL，每步流量对比灰度</td><td><ul><li>每步有独立收益，分层几天能上</li><li>两代引擎读同一份 dependsOn 声明，前置工作不重做</li><li>风险分散，业务迭代不停</li></ul></td><td><ul><li>分层引擎是已知的非最优解，注定被替换</li><li>三次迁移、三次对比验证的工作量</li></ul></td></tr>
+</tbody>
+</table></div>
+
+<h4 id="s1-2-2">1.2.2 三步走 + 流量对比迁移</h4>
+<div class="grid6">
+  <div class="k">短期</div><div>棘手问题攻坚。目标是低成本快速止血，允许不是最优解。</div>
+  <div class="k">中期</div><div>通用能力建设。优化上一步的已知缺陷，构建当前最优解。</div>
+  <div class="k">长期</div><div>能力上限探索。继续优化架构，探索系统边界。</div>
+  <div class="k">迁移</div><div>流量对比：老服务收到请求后同时转发一份给新服务，对比两边的返回结果，不一致就记日志（时间戳这类非确定字段比对前排除或归一化）。线上真实流量做验证，用户始终拿老服务的结果，新服务有问题不影响用户。日志里的不一致收敛到零后再切流（可随时回切）。</div>
+</div>
+
+<!-- ===================== 2 ===================== -->
+<h2 id="s2">2 阶段 1：Unit 化 + 分层并行引擎</h2>
+
+<h3 id="s2-1">2.1 问题</h3>
+<p>硬编码方式下，聚合逻辑以页面为组织单位，页面之下没有可复用的单元，会导致多份副本漂移、调度手工推导、新页面成本是全量这三个问题。</p>
+
+<h3 id="s2-2">2.2 方案</h3>
+<p>把一个页面接口拆成三层，硬编码里混在一起的四样东西各归一层：业务逻辑和容错进取数 Unit，依赖变成 Unit 上的声明，页面变成装配 Unit，并行结构由执行引擎推导。</p>
+<div class="grid6">
+  <div class="k">取数 Unit</div><div>一个逻辑一份实现。调用下游服务完成取数逻辑，承载调度元数据（依赖、超时、强弱、降级值），只写一处。</div>
+  <div class="k">装配 Unit</div><div>和页面一一对应，图的汇点。从 dependsOn 的依赖中读中间结果，拼装最终结果返回；页面用哪些 Unit，由它的 dependsOn 定义。</div>
+  <div class="k">执行引擎</div><div>从装配 Unit 出发沿 dependsOn 推导出图并校验，运行时按图并行执行，超时、降级、线程池、埋点统一在这里做。</div>
+</div>
+
+<h4 id="s2-2-1">2.2.1 取数 Unit：调下游取数，承载调度元数据</h4>
+<ul>
+  <li><b class="lead">批式契约：</b>输入一批 key，输出一批 value（e.g.: 列表页传 20 个 storeId、详情页传 1 个 etc.），一份实现服务所有页面。</li>
+  <li><b class="lead">调度元数据：</b>容错不再写在方法里，而是随 Unit 声明在接口上、由引擎统一执行【单元级超时（不是整个接口一个超时）、强弱依赖（弱依赖失败给降级值继续跑，强依赖失败整个请求失败，是业务属性，e.g.: 库存是强的，推荐是弱的）、降级值（弱依赖失败时返回什么）、所属下游（引擎按下游建线程池）】。</li>
+  <li><b class="lead">粒度：</b>一个 Unit 对应一个下游的一次批式调用，输出是下游返回的字段全集（昂贵字段优先由下游入参开关控制取不取；下游没有开关的，拆成独立 Unit 让页面能不选它，e.g.: 评分要走评价服务聚合，就不放在 StoreBase 里）。</li>
+  <li><b class="lead">复用：</b>一个取数 Unit 只有一份实现，改一次所有声明了它的页面同时生效（e.g.: OpenStatus 的"临时休息"逻辑改一次，三个页面一起变）。</li>
+</ul>
+<pre><code>interface Unit&lt;K, V&gt; {
+    Set&lt;K&gt; inputKeys(RequestContext ctx);     // 推导本次要传给 fetch 的输入 key：来自请求参数或上游结果，空集则不执行
+    Map&lt;K, V&gt; fetch(Set&lt;K&gt; keys, RequestContext ctx);
+    Set&lt;Class&lt;? extends Unit&gt;&gt; dependsOn();   // 依赖声明
+    Duration timeout();                        // 单元级超时
+    boolean isStrong();                        // 强弱依赖
+    V fallback(K key);                         // 弱依赖失败时的降级值
+    Downstream downstream();                   // 所属下游，引擎按下游建线程池
+}</code></pre>
+<div class="tbl"><table>
+<tr><th>Unit</th><th>输入</th><th>输出</th><th>依赖</th><th>强弱</th></tr>
+<tr><td>StoreBase</td><td>storeIds</td><td>名称、logo、评分、经纬度</td><td>无</td><td>强</td></tr>
+<tr><td>UserCtx</td><td>userId</td><td>位置、会员等级</td><td>无</td><td>强</td></tr>
+<tr><td>OpenStatus</td><td>storeIds</td><td>营业中 / 休息中 / 已打烊</td><td>StoreBase</td><td>强</td></tr>
+<tr><td>DeliveryEstimate</td><td>storeIds</td><td>距离、预计送达、配送费</td><td>StoreBase、UserCtx</td><td>强</td></tr>
+<tr><td>PromoTags</td><td>storeIds</td><td>活动标签列表</td><td>StoreBase、UserCtx</td><td>弱，失败给空列表</td></tr>
+<tr><td>SkuList</td><td>storeId</td><td>分类和商品列表</td><td>无</td><td>强</td></tr>
+<tr><td>Stock</td><td>skuIds</td><td>库存</td><td>SkuList</td><td>强</td></tr>
+<tr><td>FinalPrice</td><td>skuIds</td><td>划线价、到手价</td><td>SkuList、PromoTags、UserCtx</td><td>强</td></tr>
+</table></div>
+
+<h4 id="s2-2-2">2.2.2 装配 Unit：页面的入口</h4>
+<pre><code>class StoreListAssembler implements Unit&lt;Request, StoreListDTO&gt; {
+    dependsOn = { StoreBase, UserCtx, OpenStatus, DeliveryEstimate, PromoTags }
+    fetch: 读上面五个 Unit 的结果，只取页面要的字段，拼成 StoreListDTO
+}
+StoreDetailAssembler: dependsOn = { StoreBase, UserCtx, OpenStatus, DeliveryEstimate, PromoTags, SkuList, Stock, FinalPrice }
+CartAssembler:        dependsOn = { UserCtx, Stock, FinalPrice }        // SkuList 不用声明，引擎沿 Stock 的依赖补齐</code></pre>
+<p>装配 Unit 和取数 Unit 是同一个接口，区别只在数据来源：取数 Unit 的 fetch 调下游，装配 Unit 的 fetch 读前驱的结果，key 是请求本身。它承担两件事：</p>
+<ul>
+  <li><b class="lead">定义页面用哪些 Unit：</b>dependsOn 只列直接要读的 Unit，中间依赖由引擎沿取数 Unit 自己的 dependsOn 补齐（e.g.: CartAssembler 只声明 UserCtx、Stock、FinalPrice，SkuList 由引擎补进）。读未声明的前驱抛异常，页面用了什么和声明了什么不可能不一致。</li>
+  <li><b class="lead">整形：</b>取数 Unit 的输出是下游返回的字段全集，装配 Unit 只取页面要的字段拼响应（e.g.: 列表页只取 StoreBase 的名称和 logo；多取回的字段只是一次内存拷贝，不多一次 RPC）。</li>
+</ul>
+<h4 id="s2-2-3">2.2.3 执行引擎：从声明推导执行结构</h4>
+<ul>
+  <li><b class="lead">建图：</b>从装配 Unit 出发沿 dependsOn 做传递闭包，补上中间依赖（e.g.: 给 CartAssembler 补进 SkuList），校验未注册的 Unit，得到以 Unit 为节点、dependsOn 为边、装配 Unit 为汇点的图。</li>
+  <li><b class="lead">分层：</b>Kahn 算法逐轮摘入度为零的节点，每轮一层，同层并行、层间串行（摘不完就是有环，环检测顺带就有了；层号由依赖推出，不手写）。
+<pre>Layer 1:  StoreBase   UserCtx   SkuList                 ← 互不依赖，并行
+Layer 2:  OpenStatus  DeliveryEstimate  PromoTags  Stock
+Layer 3:  FinalPrice</pre>
+  </li>
+  <li><b class="lead">执行：</b>同层的 Unit 按所属下游提交到各自的线程池并行跑（舱壁隔离，一个下游慢不拖死别的下游），一层全部完成再进下一层；超时、降级、埋点按 Unit 的声明由引擎统一执行。</li>
+</ul>
+
+<h3 id="s2-3">2.3 效果</h3>
+<ul>
+  <li><b class="lead">开发效率：</b>开发迭代效率提升约 30%（口径是需求平均交付周期）。</li>
+  <li><b class="lead">稳定性：</b>弱依赖故障由引擎统一降级，不再拖垮整页（非核心下游故障期间页面成功率保持 99.9% 以上，之前随下游一起跌）。</li>
+</ul>
+
+<h3 id="s2-4">2.4 局限：层是 barrier</h3>
+<p>下一层要等上一层全部完成才能开始。一个慢 Unit 拖住整层，总延迟是各层最慢之和，而不是关键路径（依赖链上最长的一条）之和。</p>
+<pre>时间轴（ms）   0        30       50                         180              260
+Layer 1        StoreBase ─┤
+               UserCtx ───────┤
+               SkuList ───────────────────────────────────────┤
+Layer 2                                                       DeliveryEstimate ─────┤   ← 只依赖 StoreBase+UserCtx，
+                                                              OpenStatus ──┤             却陪 SkuList 等了 150ms
+                                                              Stock ─────────┤</pre>
+
+<!-- ===================== 3 ===================== -->
+<h2 id="s3">3 阶段 2：DAG 调度</h2>
+
+<h3 id="s3-1">3.1 问题</h3>
+<p>层是 barrier：下一层要等上一层全部完成才能开始，一个慢 Unit 拖住整层，总延迟是各层最慢之和，而不是关键路径之和。</p>
+
+<h3 id="s3-2">3.2 方案</h3>
+<h4 id="s3-2-1">3.2.1 方案选型</h4>
+<p>要换的是一个进程内、请求级的取数调度引擎：一次请求扇出十几到几十个下游 RPC，总预算几百毫秒，引擎自身开销要在毫秒以下，请求结束状态即丢。</p>
+<div class="tbl"><table class="fc-nowrap">
+<thead><tr><th>方案</th><th>是什么</th><th>优点</th><th>缺点</th></tr></thead>
+<tbody>
+<tr><td>LiteFlow【不选】</td><td>2020 年开源的组件式规则引擎。业务写成组件，流程用表达式显式编排：THEN 串行、WHEN 并行、SWITCH/IF/FOR 分支循环，规则可热更新，组件间不传参，靠每请求一个共享上下文读写</td><td><ul><li>成熟、社区大</li><li>规则热更新和多脚本适合业务规则频繁变化的场景</li><li>表达式可读</li></ul></td><td><ul><li>并行结构由开发者手写，不是从依赖声明推导，改一个依赖要动表达式</li><li>WHEN 是 fork-join，所有分支完成才进下一步，等价于分层加 barrier，只能到阶段 1 的形态</li><li>共享上下文就是黑板，数据线程安全由使用方负责，隐式依赖无法校验</li><li>没有按边的强弱依赖，节点级超时 v2.11（2023-08）才提供，且语义是停止等待而非 deadline 下推</li><li>定位是规则引擎，取数调度不是它的问题域</li></ul></td></tr>
+<tr><td>京东 asyncTool【不选】</td><td><ul><li>2020 年公开的多线程编排框架，出自京东主 App 后台。每个任务包成 WorkerWrapper，代码里用 builder 声明 depend/next</li><li>节点完成后触发后继，must 区分强弱依赖</li><li>失败或超时返回默认值，依赖失败快速失败</li></ul></td><td><ul><li>节点级触发、无 barrier，强弱依赖和默认值降级的思路与阶段 2 一致</li><li>无锁、轻量，京东生产验证</li></ul></td><td><ul><li>超时只有全组一个，没有节点级超时和 deadline 沿边下推</li><li>线程池只有一个且默认无界，做不了按下游舱壁隔离</li><li>编排靠每请求现场拼装 wrapper，没有静态的依赖声明、传递闭包和环校验</li><li>结果按字符串 id 从 Map 取，依赖未执行时为 null，没有类型化输入契约，也没有批式抽象</li><li>它是 CompletableFuture 上的薄封装，缺的这几件都是调度器内部行为，外面补不上</li></ul></td></tr>
+<tr><td>阿里 compileflow【不选】</td><td>2020 年开源的 BPM 流程引擎，淘宝 TBBPM 的演进，流程用 TBBPM/BPMN 2.0 描述，编译成 Java 代码执行，纯内存无状态</td><td>面向交易、履约类业务流程建模成熟，有可视化设计器，编译执行开销低</td><td><ul><li>解决的是业务流程编排，节点是流程步骤，不是数据依赖驱动的取数调度</li><li>没有批式单元、强弱依赖、deadline 这些概念，用它要在流程节点里再手写一层并行取数</li></ul></td></tr>
+<tr><td>保留分层引擎，按分支拆流水线【不选】</td><td>把图按分支拆成多条独立的分层流水线并行跑，最后汇总</td><td>改动小，复用分层引擎</td><td><ul><li>只去掉跨分支的等待，每条链内部仍是层加 barrier，最慢的 Unit 还是决定整层何时结束</li><li>正确拆分支先得算出哪些 Unit 属于同一条链，这一步就是在建 DAG，建好再折回分层跑等于走一半停下</li></ul></td></tr>
+<tr><td><strong>自研 DAG 引擎【选定】</strong></td><td><ul><li>Unit 是"一批 key 到一批 value"的批式取数单元，接口上声明 dependsOn、强弱依赖、超时、降级、所属下游</li><li>引擎从声明做传递闭包和环校验，事件驱动 Kahn 按节点触发，失败沿边传播，deadline 下推，按下游建线程池</li></ul></td><td><ul><li>依赖声明和引擎解耦，分层与 DAG 两代引擎读同一张图，可开关切换</li><li>失败语义、deadline、舱壁是调度器内部行为，与 Unit 契约一致</li></ul></td><td><ul><li>维护成本和 bus factor 在自己手里</li><li>需要配套节点级 trace、契约测试和文档才能让后来者接手</li></ul></td></tr>
+</tbody>
+</table></div>
+<h4 id="s3-2-2">3.2.2 节点级触发</h4>
+<ul>
+  <li><b class="lead">按前驱触发：</b>依赖关系直接建成有向无环图，每个 Unit 只等自己的前驱完成就立刻执行，不再等整层，延迟从"各层最慢之和"降到"关键路径之和"。</li>
+  <li><b class="lead">声明不变：</b>dependsOn 声明和装配 Unit 都不动，换的只是引擎消费图的方式。</li>
+  <li><b class="lead">边带属性：</b>强弱和超时的默认值仍在取数 Unit 上，装配 Unit 可以按边覆盖（e.g.: PromoTags 在列表页声明为弱依赖，在活动落地页声明为强依赖）；按条件不跑某个 Unit 不需要新机制，inputKeys 返回空集即不执行（e.g.: 未登录时会员价的 key 为空）。</li>
+</ul>
+<pre>时间轴（ms）   0        30       50        130                  180        260
+StoreBase ─────┤
+UserCtx ──────────────┤
+SkuList ───────────────────────────────────────────────────────┤
+DeliveryEstimate       ├────────────────────────┤                              ← 30ms 就开始，不等 SkuList
+OpenStatus             ├──────┤
+Stock                                                          ├──────┤
+FinalPrice                                                            ├──────┤
+
+分层总耗时 ≈ 180 + 80 + 60 = 320ms      DAG 总耗时 ≈ 180 + 60 + 60 = 300ms（关键路径 SkuList→Stock→FinalPrice）
+本例差距小，真实链路层数更多、慢 Unit 分布更散时差距放大到 30-40%</pre>
+
+<h4 id="s3-2-3">3.2.3 执行流程</h4>
+<ul>
+  <li><b class="lead">补依赖：</b>从装配 Unit 的 dependsOn 出发做传递闭包（工作队列：弹出一个 Unit，把它 dependsOn 里不在集合中的加入队列，直到队列空），未注册的 Unit 在这一步抛出。</li>
+  <li><b class="lead">建图：</b>节点是 Unit，边是 dependsOn，每个节点算入度，入度为零的是根（环检测不在请求期做：dependsOn 是静态的，进程启动时对全部注册 Unit 跑一遍 Kahn，有环直接启动失败）。</li>
+  <li><b class="lead">跑图：</b>事件驱动的 Kahn，每个节点一份请求级状态（state 五态 PENDING → RUNNING → DONE | FAILED | SKIPPED 用 CAS 迁移，remaining 是未完成前驱数、初值等于入度）；根节点直接触发，前驱每完成一个 remaining 减一，减到零立刻触发，同时归零的并行跑。fetch 提交到 Unit 所属下游的线程池，回调在完成线程上执行，没有调度线程（inputKeys 在触发时算，前驱结果已就位，返回空集直接完成、不发 RPC；被跳过的节点也写空结果，否则后继读不到值）。
+<pre><code>trigger(node):
+    if !CAS(node.state, PENDING → RUNNING) return          // 已被跳过或已触发
+    keys = node.unit.inputKeys(ctx)
+    if keys.isEmpty(): complete(node, emptyMap); return    // 上游为空、谓词过滤掉：不发 RPC
+    timeout = min(node.unit.timeout, deadline - now)
+    if timeout &lt;= 0: fail(node, TimeoutException); return
+    pool(node.unit.downstream).submit(() -&gt; node.unit.fetch(keys, ctx))
+        .orTimeout(timeout)
+        .whenComplete((v, e) -&gt; e == null ? complete(node, v) : fail(node, e))
+
+complete(node, value):
+    ctx.putResult(node.unit, value)                        // 写一次
+    node.state = DONE
+    for succ in node.successors:
+        if succ.remaining.decrementAndGet() == 0: trigger(succ)
+    checkFinished()                                        // 未完成节点计数归零或 deadline 到 → finish，迟到的结果丢弃</code></pre>
+  </li>
+</ul>
+<p>remaining 和 state 是两个原子量，不需要锁：remaining 归零只决定"要不要尝试启动"，最终裁决在 state 的 CAS 上。三处竞争都由它裁决：</p>
+<ul>
+  <li><b class="lead">trigger 对 skip：</b>前驱归零要 trigger 与另一分支强依赖失败要 skip 同时改一个节点，谁先 CAS 成功谁生效。</li>
+  <li><b class="lead">重复 trigger：</b>多个前驱同时归零只有一个线程看到零，一个节点最多发一次 fetch。</li>
+  <li><b class="lead">完成对 deadline：</b>deadline 到 finish 之后晚到的回调 CAS(RUNNING → DONE) 失败即丢弃。</li>
+</ul>
+
+<h4 id="s3-2-4">3.2.4 失败与超时</h4>
+<p>失败策略不变，强弱和降级值仍是取数 Unit 的声明；变的是传播粒度从层细到边，因此多了两件事：</p>
+<ul>
+  <li><b class="lead">deadline 下推：</b>请求进入时按页面预算（e.g.: 详情页 800ms）算出绝对截止时间放进 Context；每个 Unit 执行前算剩余预算，剩余为零直接降级、不发 RPC，否则本次 RPC 超时取"自身配置"和"剩余预算"的较小值。各层超时不会相加超过页面预算，上游已放弃的分支下游不会白跑。
+<pre>long remaining = ctx.deadlineNanos - System.nanoTime();
+if (remaining &lt;= 0) return fallbackOf(unit);              // 预算耗尽：直接降级，不发 RPC
+long timeout   = Math.min(unit.timeoutNanos, remaining);  // per-call 超时，而不是配置里的固定值
+return rpcClient.callAsync(req, timeout);</pre>
+  </li>
+  <li><b class="lead">子图取消：</b>一个 Unit 失败时沿出边传播
+    <ul>
+      <li>强边的后继 CAS 到 SKIPPED，不拿假数据继续算、不再发起 RPC，并继续向它的后继传播</li>
+      <li>弱边的后继拿降级值照常执行</li>
+      <li>兄弟分支不受影响</li>
+    </ul>
+    页面因此失败还是少一块，由装配 Unit 到该分支的边决定（e.g.: Stock 挂了 FinalPrice 被跳过，列表页到 FinalPrice 是弱边则少一块价格区，详情页是强边则整页失败；客户端断开时在 Servlet 异步回调 onError/onTimeout 里把整个请求标成取消，后续节点同样不再发 RPC；在途 RPC 不硬杀：cancel(true) 停不掉底层任务，中断线程池线程有状态风险，RPC 几十毫秒就返回且线程池已按下游隔离，让在途结果到了没人要更稳）。</li>
+</ul>
+
+<h3 id="s3-3">3.3 效果</h3>
+<ul>
+  <li><b class="lead">延迟：</b>核心接口 TP99 平均降低 30-40%（口径是节点级 trace：每个节点记录开始、结束、耗时、状态，整条请求输出甘特图式的时间轴，切换前后对比关键路径长度）。降的是长尾【barrier 取最大值，每层耗时等于该层最慢的 Unit，抖动逐层累加到接口尾部；DAG 拆掉 barrier 后一个 Unit 抖动只拖慢自己的后继（所以报 TP99 而不是平均，TP99 降幅大、平均降幅小）】。</li>
+  <li><b class="lead">稳定性：</b>强弱依赖从 Unit 级细到边级，中间数据缺失时后继被跳过而不是拿降级值算出错的结果，页面丢的是那一块而不是整页，丢哪一块由页面自己声明；deadline 下推后请求总耗时不再超过页面预算。</li>
+  <li><b class="lead">排障：</b>节点级 trace 随这一阶段的引擎上线，耗时问题定位从翻日志的小时级降到看时间轴的分钟级。</li>
+</ul>
+
+<h3 id="s3-4">3.4 局限：形状在设计期固定在后端</h3>
+<p>响应形状在设计期由后端的装配 Unit 定死：</p>
+<ul>
+  <li><b class="lead">每端每页一个装配 Unit：</b>Web 和 App 要不同字段就是两份，加一个端再加一套。</li>
+  <li><b class="lead">改一个字段就要后端发版：</b>前端的形状变更全部排队等后端迭代。</li>
+</ul>
+
+
+<!-- ===================== 4 ===================== -->
+<h2 id="s4">4 阶段 3：GraphQL 契约</h2>
+
+<h3 id="s4-1">4.1 问题</h3>
+<p>响应形状在设计期由后端的装配 Unit 定死：</p>
+<ul>
+  <li><b class="lead">每端每页一个装配 Unit：</b>Web 和 App 要不同字段就是两份，加一个端再加一套。</li>
+  <li><b class="lead">改一个字段就要后端发版：</b>前端的形状变更全部排队等后端迭代。</li>
+</ul>
+
+<h3 id="s4-2">4.2 方案：GraphQL schema 作为契约</h3>
+<ul>
+  <li><b class="lead">契约：</b>GraphQL schema 作为前后端契约，把形状的决定权从后端设计期挪到前端请求期【一份 schema 服务所有端，前端按页面写查询，只有数据能力变化才发版（GraphQL 不是替代 BFF，仍是 BFF 这一层；前两个阶段的契约都是一个页面一个 endpoint 一套固定形状，变的只是后端实现，这一阶段变的是契约本身）】。</li>
+  <li><b class="lead">实现：</b>请求进来分三步走
+    <ul>
+      <li><b class="lead">查询分析：</b>把查询里选中的字段翻译成 Unit 子图</li>
+      <li><b class="lead">跑子图：</b>交给阶段 2 的 DAG 引擎跑，结果写进内存（请求级生命周期）</li>
+      <li><b class="lead">整形：</b>GraphQL 执行器遍历字段树，fetcher 从内存结果读</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="s4-2-1">4.2.1 契约：schema 与字段到 Unit 的映射</h4>
+<p>契约层由 Schema、DataFetcher 和取数 Unit 三样东西组成，分工是：</p>
+<ul>
+  <li><b class="lead">Schema：</b>描述形状，不管数据从哪来。</li>
+  <li><b class="lead">取数 Unit：</b>取数能力，不管谁要。</li>
+  <li><b class="lead">DataFetcher：</b>胶水，每个字段一个函数，签名是"(父对象, 参数, 上下文) → 字段值"（规范和 JS 生态叫 resolver）。</li>
+</ul>
+<pre><code>type Store {
+  id: ID!
+  name: String!            # 来自 StoreBase，平凡字段，默认 fetcher 从父对象读
+  rating: Float!
+  openStatus: OpenStatus!  # → Unit OpenStatus
+  delivery: Delivery!      # → Unit DeliveryEstimate
+  promoTags: [Promo!]!     # → Unit PromoTags，弱依赖
+  skus(category: ID): [Sku!]!  # → Unit SkuList
+}
+type Sku { id: ID!  name: String!  stock: Int!  finalPrice: Price! }   # stock → Stock，finalPrice → FinalPrice
+type Query {
+  store(id: ID!): Store            # → StoreBase
+  stores(ids: [ID!]!): [Store!]!   # → StoreBase，批量
+}</code></pre>
+<p>字段到 Unit 的映射在 graphql-java 里叫 RuntimeWiring，每个非平凡字段配一个 fetcher，注册时顺手登记字段坐标到 Unit 的映射，两者同源不会漂移（平凡字段如 name、rating 不注册，默认从父对象读）。装配 Unit 消失，"页面 → Unit 清单"变成"字段 → Unit"，粒度从页面细到字段。</p>
+<pre><code>.type("Store", t -&gt; t.dataFetcher("delivery", unitField(DeliveryEstimateUnit.class)))
+// unitField()：向映射表登记 (Store.delivery → DeliveryEstimateUnit)，并返回一个从内存结果读值的 fetcher</code></pre>
+<p>列表页和详情页的差别变成两条查询，列表页没选 <code>skus</code>，SkuList、Stock、FinalPrice 三个 Unit 不会跑，哪些 Unit 执行由前端选的字段决定：</p>
+<pre><code># 列表页
+{
+  stores(ids: [...]) {
+    name
+    rating
+    openStatus
+    delivery {
+      fee
+      eta
+    }
+    promoTags {
+      label
+    }
+  }
+}
+
+# 详情页
+{
+  store(id: 1) {
+    name
+    rating
+    openStatus
+    delivery {
+      fee
+      eta
+    }
+    promoTags {
+      label
+    }
+    skus {
+      name
+      stock
+      finalPrice {
+        display
+      }
+    }
+  }
+}</code></pre>
+
+<h4 id="s4-2-2">4.2.2 实现</h4>
+<h5 id="s4-2-2-1">4.2.2.1 方案选型：谁来调度取数</h5>
+<div class="tbl"><table class="fc-nowrap">
+<thead><tr><th>方案</th><th>是什么</th><th>优点</th><th>缺点</th></tr></thead>
+<tbody>
+<tr><td>fetcher 直接调 Unit【不选】</td><td>每个字段的 fetcher 里调对应 Unit 的 fetch，执行器逐字段调用</td><td>零改造，写法直接</td><td>50 个 Sku 的 stock 字段就是 50 次 Stock.fetch 各传一个 key，N+1（Unit 本来是批式的，缺的只是攒 key 的时机控制）</td></tr>
+<tr><td>DataLoader + 层级 dispatch【不选】</td><td>fetcher 只把 key 放进桶、返回 future，桶满时一次批量调用；Java 没有事件循环，graphql-java 按字段树深度切 level，某层所有 fetcher 都调过一次就 dispatch 一次</td><td>GraphQL 生态的标准答案；Unit 的 Set&lt;K&gt; → Map&lt;K,V&gt; 和批加载函数形状一致，零改造注册</td><td><ul><li>barrier 回来了：往返轮数等于字段树深度，每层耗时等于该层最慢的 Unit，阶段 2 拆掉的东西被装回去</li><li>链式调用会悬挂：fetcher 先 load A 再用结果 load B，第二个 load 在本层 dispatch 之后，计数器只听"fetcher 被调用"一种事件，再没有事件触发第二次 dispatch</li><li>跨分支依赖表达不了：FinalPrice 需要父 SkuList 和叔叔分支 PromoTags 的输出，字段树是父到子的单向结构，fetcher 只拿得到 source</li></ul></td></tr>
+<tr><td>修 dispatch 触发逻辑【不选】</td><td>沿用层级计数加 DataLoader，只改"什么时候再发一次"：ticker 定时盲发、按上一轮结果动态算预期数、跟踪在途回调的静止检测，拟定的是静止检测</td><td>改动局部，生态不换</td><td>只修悬挂这一条，barrier 和跨分支依赖是字段树这个调度结构本身的问题，修不掉；往返数仍等于字段树深度，阶段 2 的收益全部吐回去</td></tr>
+<tr><td><strong>查询分析 + 阶段 2 的 DAG 引擎【选定】</strong></td><td>GraphQL 只管契约和整形，查询分析把选中字段翻译成 Unit 子图交给 DAG 引擎跑</td><td>无 barrier，依赖边天然表达跨分支，失败传播、deadline、子图跳过、节点级 trace 全是现成的</td><td>要自己写查询分析和内存结果两段胶水</td></tr>
+</tbody>
+</table></div>
+<p>选定方案下一次请求的流程，对应总述的三步：</p>
+<pre>查询文本
+  │ parse / validate（GraphQL 自带；结果按查询文本 hash 缓存，同一条查询只做一次）
+  ▼
+查询分析：遍历 selection set，按"字段 → Unit"映射表收集前端直接要的 Unit（只看 query）
+  │ 补依赖：沿 dependsOn 递归展开，和阶段 1 从装配 Unit 展开时是同一段代码
+  │   FinalPrice 被选中而 PromoTags 没被选中 → PromoTags 一起带上，执行但不返回
+  │ 环与未注册校验沿用阶段 1
+  ▼
+阶段 2 的 DAG 引擎：以查询参数为根输入，调度这张子图
+  │ 依赖边决定顺序：StoreBase → SkuList → Stock；PromoTags 与 SkuList 并行；FinalPrice 等两者
+  │ key 沿边传递：Stock 的输入是 SkuList 的输出
+  │ 失败沿边传播、deadline 下推、子图跳过，全部沿用
+  ▼
+请求级内存 Results：生产者 Unit → Map&lt;K, V&gt;，引擎写一次，值不可变
+  │ 下游 Unit 按 dependsOn 读；fetcher 按"字段 → Unit"映射读
+  ▼
+GraphQL 执行器正常遍历字段树，fetcher 变成 results.of(unit).get(key)，纯内存读</pre>
+
+<h5 id="s4-2-2-2">4.2.2.2 第一步：查询分析</h5>
+<p>按 schema 类型走 AST 加查表，不看数据，便宜且可缓存，五步：</p>
+<pre>1. 变量代入    把 variables 按 schema 类型强制转换，代进字段参数和 @include / @skip
+2. 展开        选定 operation，内联所有 fragment spread；@skip 为真的分支丢掉
+3. 带类型遍历  从 Query 类型出发递归 selection set，每个字段得到坐标 (父类型, 字段名)
+              查映射表：命中 → 加入 Unit 集合，并记下该字段的参数；未命中 → 平凡字段，跳过
+              union / interface：按 fragment 的 ... on Type 以各具体类型继续遍历
+              同一坐标多次出现（递归嵌套、别名）：递归嵌套每层一个节点，别名合并参数进同一节点
+4. 补依赖      沿 dependsOn 传递闭包，未注册校验（第 3 节的那段代码）
+5. 输出 Plan   { Unit 集合, 参数绑定 }，交给 DAG 引擎</pre>
+<ul>
+  <li><b class="lead">按类型走，不按实例走：</b>Store.skus 下的 Sku.stock 在 AST 里只出现一次，StockUnit 只登记一次，50 个 sku 的 key 由 StockUnit 的 inputKeys 在运行期从 SkuList 的输出推；分析复杂度只和查询文本大小有关，和数据量无关。</li>
+  <li><b class="lead">参数怎么落到 Unit：</b>参数挂在字段上，随字段坐标一起收集进 RequestEnv 的参数表，key 是字段路径。根字段参数变成根 Unit 的初始 key（<code>store(id: 1)</code> 收集为 Query.store.id，StoreBaseUnit 的 inputKeys 读它返回 {1}）。嵌套字段参数变成 Unit 的过滤条件（<code>skus(category: "drug")</code> 收集为 Store.skus.category，SkuListUnit 的 inputKeys 从前驱拿 storeId、从 env 拿 category，组成复合 key (storeId, category)，K 可以是任何值对象）。变量在第 1 步已代入，到这里都是字面值。别名 <code>a: skus(category: "drug")</code> 和 <code>b: skus(category: "food")</code> 映射到同一个 SkuListUnit，不拆节点，两组参数都记下，inputKeys 产出两个复合 key 一次批量发出，fetcher 按各自字段路径取对应 key。</li>
+  <li><b class="lead">缓存：</b>graphql-java 的 PreparsedDocumentProvider 按查询文本 hash 缓存 parse 和 validate 结果，查询分析的输出挂同一个 key（变量只影响 @include / @skip，缓存的是带条件节点的子图模板，请求期按变量裁一次）；线上查询几十条，稳态下三步都不花 CPU。</li>
+</ul>
+<p>详情页走一遍：</p>
+<pre>{
+  store(id: 1) {
+    name
+    openStatus
+    delivery {
+      fee
+    }
+    skus(category: "drug") {
+      name
+      stock
+    }
+  }
+}
+
+Query.store        → StoreBaseUnit         参数 id=1
+  Store.name       → 平凡字段
+  Store.openStatus → OpenStatusUnit
+  Store.delivery   → DeliveryEstimateUnit
+    Delivery.fee   → 平凡字段
+  Store.skus       → SkuListUnit           参数 category="drug"
+    Sku.name       → 平凡字段
+    Sku.stock      → StockUnit
+
+Unit 集合 = {StoreBase, OpenStatus, DeliveryEstimate, SkuList, Stock}
+补依赖：DeliveryEstimate 依赖 UserCtx → 加入
+Plan = 6 个 Unit，参数 {Query.store.id: 1, Store.skus.category: "drug"}</pre>
+<p>前端没选的字段在这一步就排除，SkuList 及其后继不进列表页的子图；嵌套深度在查询里显式写出（规范禁止 fragment 循环引用），子图总能在执行前确定，不需要惰性取数。</p>
+
+<h5 id="s4-2-2-3">4.2.2.3 第二步：跑子图，结果进内存</h5>
+<p>Plan 之后的补依赖、建图、跑图与阶段 2 完全相同，引擎不知道这组 Unit 是装配 Unit 展开来的还是查询来的。运行期还有两层裁剪：</p>
+<ul>
+  <li><b class="lead">key 级：</b>上游结果为空的，key 沿边传递，Stock 拿到空 key 集合不发 RPC。</li>
+  <li><b class="lead">数据级：</b>按数据内容取舍的写在 Unit 的 inputKeys 里，按类型路由（搜索结果里商家 id 给 StoreBase、商品 id 给 ProductBase）、谓词过滤（药店才进 PrescriptionInfo）、多上游联合判断；子图只要求候选 Unit 能事先枚举，谁真正执行由数据决定。</li>
+</ul>
+<p>子图跑完的输出写进请求级的内存结果 Results，它同时定下 Unit 之间传数据的规则：</p>
+<ul>
+  <li><b class="lead">按生产者索引：</b>外层 key 是生产者 Unit 的类型，内层是该 Unit 批式输出的 Map&lt;K,V&gt;，值类型由 Unit&lt;K,V&gt; 泛型带出，不用强转。</li>
+  <li><b class="lead">写一次，不可变：</b>引擎在 fetch 返回后写入一次。</li>
+  <li><b class="lead">只能读声明过的前驱：</b>下游只能读 dependsOn 里的 Unit，读未声明的抛异常；请求环境（userId、设备、locale、deadline、traceId）单独放只读的 RequestEnv，Unit 不能写（这是 GraphQL 父到子传参的推广：输入来源受限、有类型，但允许多个父，跨分支依赖就是多一条边）。</li>
+</ul>
+<pre><code>interface Unit&lt;K, V&gt; {
+    Set&lt;K&gt; inputKeys(RequestEnv env, Results in);         // 推导本次要传给 fetch 的输入 key：来自请求参数或前驱结果
+    Map&lt;K, V&gt; fetch(Set&lt;K&gt; keys, RequestEnv env, Results in);
+    Set&lt;Class&lt;? extends Unit&gt;&gt; dependsOn();
+    Duration timeout();  boolean isStrong();  V fallback(K key);
+}
+// in.of(SkuListUnit.class) → Map&lt;Long, List&lt;Sku&gt;&gt;，SkuListUnit 不在 dependsOn 里则抛异常</code></pre>
+<p>详情页跑完后：</p>
+<pre>Results
+├─ StoreBaseUnit  → { 1 → Store{name, rating, ...} }
+├─ SkuListUnit    → { 1 → [Sku 101, Sku 102, ...] }          key 是 storeId
+├─ StockUnit      → { 101 → Stock{...}, 102 → Stock{...} }   key 是 skuId
+└─ FinalPriceUnit → { 101 → Price{...}, 102 → Price{...} }
+
+下游 Unit 读：in.of(SkuListUnit.class).get(storeId)          前提 SkuListUnit ∈ dependsOn
+fetcher 读：   results.of(StockUnit.class).get(sku.getId())   Sku.stock 字段，父对象是 Sku</pre>
+<p>两条查询跑出来的差别：</p>
+<pre>列表页  子图 = {StoreBase, UserCtx, OpenStatus, DeliveryEstimate, PromoTags}
+        关键路径  StoreBase → DeliveryEstimate            2 轮往返
+详情页  子图 = 全部 8 个 Unit
+        关键路径  SkuList → Stock → FinalPrice           3 轮往返，OpenStatus 等不等 SkuList 无关</pre>
+
+<h5 id="s4-2-2-4">4.2.2.4 第三步：整形</h5>
+<p>GraphQL 执行器正常遍历字段树，fetcher 变成 <code>results.of(unit).get(key)</code>，纯内存读，没有 IO：</p>
+<ul>
+  <li><b class="lead">类型安全：</b><code>of</code> 的签名 <code>&lt;K,V&gt; Map&lt;K,V&gt; of(Class&lt;? extends Unit&lt;K,V&gt;&gt; producer)</code> 用泛型带出内层类型，取出来就是 Map&lt;Long, Stock&gt;，不用强转。</li>
+  <li><b class="lead">按节点存：</b>同一个 Unit 类在查询里多路径出现（递归嵌套）时按节点存，节点由字段路径标识，fetcher 按自己的路径读。</li>
+</ul>
+
+<h3 id="s4-3">4.3 效果</h3>
+<ul>
+  <li><b class="lead">开发效率：</b>开发效率再提高约 20%（口径是需求平均交付周期），前端改字段、加页面、多端差异都在查询里完成，不再等后端发版（阶段 1 的提效来自复用，这里来自解耦）。</li>
+  <li><b class="lead">后端逻辑简化：</b>后端不用再为每个页面维护一个装配 Unit，专注于 schema 维护和开发即可。</li>
+  <li><b class="lead">性能持平：</b>取数仍是阶段 2 的 DAG，关键路径不变；parse、validate、查询分析按 hash 缓存后稳态无额外 CPU，多的是一次内存遍历（阶段 2 已跑在关键路径上，这一阶段的目标是不变差）。</li>
+</ul>
+
+<h3 id="s4-4">4.4 局限：GraphQL 的代价</h3>
+<ul>
+  <li><b class="lead">N+1：</b>不存在，Unit 天然批式、由 DAG 按批调度。</li>
+  <li><b class="lead">每请求 parse + validate + 查询分析：</b>多几毫秒 CPU。按查询 hash 缓存三步的结果（见 4.2），再加 persisted query（前端构建期把查询注册到服务端换 hash，线上只传 hash 和变量，省掉查询文本的传输，保证缓存必命中，同时充当查询白名单）。</li>
+  <li><b class="lead">恶意深层查询：</b>前端能选字段就能写深度嵌套。加了查询深度和复杂度上限，超限在 validate 阶段直接拒绝；线上只放行已注册查询（未注册查询只在测试环境允许）。</li>
+  <li><b class="lead">HTTP 缓存失效：</b>POST 请求不走 HTTP 缓存，需要应用层缓存或 GET + persisted query。</li>
+  <li><b class="lead">schema 治理：</b>字段由谁拥有、废弃字段怎么下线、breaking change 怎么审，三件事都落在已有的两个机制上（字段到 Unit 的映射，和 persisted query 注册库）。
+    <ul>
+      <li><b class="lead">字段归属跟着 Unit 走：</b>每个字段注册时必须绑定一个 Unit（4.2 的 <code>unitField()</code>），字段的 owner 就是 Unit 的 owner，不另设归属表。schema 文件按业务域拆（商品、价格、营销、门店、评价），进 git，每个域文件配 CODEOWNERS，改字段必须该域后端审批。形状由前端提，字段由后端定义（前端在查询里选什么是自由的，往 schema 里加什么不是）。</li>
+      <li><b class="lead">废弃字段按引用计数下线：</b>线上只放行已注册查询，每个字段有哪些查询在用、属于哪些端和哪些客户端版本，注册库里是精确的。流程三步：
+        <ul>
+          <li>字段标 <code>@deprecated(reason)</code>，工具链在前端构建期对引用该字段的查询报 warning</li>
+          <li>注册库里引用该字段的查询归零，或引用它的客户端版本占比低于阈值且已停止维护，才允许删</li>
+          <li>删字段是一次 schema 变更，走下面的评审</li>
+        </ul>
+        不做 schema 版本号（GraphQL 的约定是单一 schema 持续演进，版本靠字段级废弃而不是 v1/v2）。
+      </li>
+      <li><b class="lead">breaking change 由 CI 用注册库判定：</b>合并 schema 变更前 CI 做两件事，破坏性变更要走废弃流程，不能直接合并：
+        <ul>
+          <li>schema diff 分级：加字段、加可选参数、加枚举值是安全的；删字段、改字段类型、输出字段 nullable 改 non-null 之外的方向、输入加必填参数是破坏性的，直接拦</li>
+          <li>拿注册库里所有仍在线的查询对新 schema 跑一遍 validate，任何一条不通过就是破坏性变更（这是主判据：一个变更是否 breaking，定义就是有没有线上查询会失效，注册库让这个定义可以机械执行）</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+
+<!-- ===================== 5 ===================== -->
+<h2 id="s5">5 追问清单</h2>
+<div class="qa">
+<dl>
+  <dt>1. 5k QPS 用 50 台机器，单机 100 QPS，够吗？为什么是 5 个 set？</dt>
+  <dd>一句水位账。部署单位是 4 核 8G 容器，同步 Thrift 加线程池模型，每请求扇出十几到几十个下游 RPC，单机压测极限约 400 QPS。日常峰值 100 QPS 是 25% 水位；5 个 set 是容灾隔离部署，任一 set 故障后其余 40 台承接全量是 125 QPS；大促按日常 3 倍预估到 300 QPS 才逼近极限。所以 50 台是日常水位、N-1 容灾和大促余量三者叠加后的数，不是按入口 QPS 直接算的。</dd>
+  <dt>2. 项目周期多长，怎么排的？</dt>
+  <dd>
+  <p>六个月，六个人，每个月一条主线一条并行线。</p>
+  <div class="tbl"><table>
+  <tr><th>月</th><th>主线</th><th>并行</th></tr>
+  <tr><td>1</td><td>调研、三阶段方案、Unit 划分和依赖梳理</td><td></td></tr>
+  <tr><td>2</td><td>Unit 整理，分层引擎开发，月末完成</td><td>DAG 引擎开始开发</td></tr>
+  <tr><td>3</td><td>分层上线，逐页流量对比切流</td><td><ul><li>DAG 继续开发</li><li>与前端启动 schema 设计</li></ul></td></tr>
+  <tr><td>4</td><td>DAG 引擎完成，分层切 DAG，流量对比</td><td>查询分析、Results、Unit 接口最终形态开发</td></tr>
+  <tr><td>5</td><td>GraphQL 试点页面上线，同页同端流量对比</td><td>前端逐页改查询</td></tr>
+  <tr><td>6</td><td>核心页面切完 GraphQL</td><td>效果复盘与技术总结</td></tr>
+  </table></div>
+  <p>复盘拿出四样东西。效果数字：需求交付周期（提效 30% 和再提 20% 的口径）、核心接口 TP99 切换前后、后端装配 Unit 归零、装配类线上问题数和下游故障期间的页面成功率（追问 6）。技术沉淀：Unit 接口规范、dependsOn 和 Results 的使用纪律、schema 治理规则（字段归属、废弃流程、breaking change 评审）、persisted query 注册流程。问题清单：黑板退化和隐藏依赖的复盘、DataLoader 路线的评估结论。后续规划：废弃字段引用统计和 schema diff 分级接入 CI、更多端接入、Unit 层向其他业务线推广。</p>
+  <p>效果数字的时间点：</p>
+  <ul>
+    <li>提效 30%：第三到第四个月的交付周期对比第一个月之前</li>
+    <li>TP99：第四个月切换前后的节点级 trace</li>
+    <li>再提 20%：第六个月</li>
+  </ul>
+  </dd>
+  <dt>3. 团队怎么分工，你个人具体做了什么？</dt>
+  <dd>六个人。我负责前期调研、三阶段规划、整体设计和项目管理，并亲自实现阶段 3 的 GraphQL 与 DAG 对接：查询分析、Results、Unit 接口最终形态、fetcher 注册。一位同学实现分层引擎，上线后转做流量对比工具和依赖声明的展开与校验；一位同学从项目开始就并行开发 DAG 引擎，这也是"先分层止血"成立的原因，分层几天能上，DAG 周期长，两条线同时开。三位同学负责 Unit 整理：拆分、迁移、各页面装配 Unit 和流量对比校验，这是工作量最大的部分。</dd>
+  <dt>4. 过程中遇到过什么问题？怎么解决的？</dt>
+  <dd>
+  <p><b class="lead">问题（上下文黑板退化，暴露成 DAG 阶段的偶发 null）：</b>阶段 1 的 Unit 通过一个共享的 RequestContext 交换数据（引擎把每个 Unit 的输出放进 ctx，Unit 自己从 ctx 取上游结果）。Unit 多了以后 ctx 变成黑板，有人往里塞派生值（会员标记、折扣率），有人读了上游的值却没在 dependsOn 里声明。分层阶段这个错被 barrier 掩盖，前面的层全跑完才进下一层，读到的总有值。换成 DAG 之后触发粒度细到节点，没声明的依赖不再被等待，线上出现只在特定时序下复现的偶发 null。根因一句话（ctx 里的真实依赖多于 dependsOn 声明的依赖，DAG 的边不再等于真实依赖）。</p>
+  <p><b class="lead">止血：</b>阶段 2 当时补齐缺失的 dependsOn，加一条 code review 规则（读 ctx 必须有对应声明）。能止住，但靠人。</p>
+  <p><b class="lead">结构性解决，在阶段 3：</b>引入 GraphQL 时要给 fetcher 一个读 Unit 结果的地方，这逼着回答"Unit 输出的权威存放处是什么"。GraphQL 父到子传参给了方向（输入来源受限且有类型）。于是把 ctx 拆成两样东西。请求环境放只读的 RequestEnv，字段数是常量，Unit 不能写。Unit 输出放按生产者索引的内存结果（Results），引擎写一次、值不可变，下游只能读 dependsOn 里声明的前驱，读未声明的直接抛异常。dependsOn 仍然是人写的，机制改变的是写漏之后的后果（从依赖时序、只在线上特定负载下复现的偶发 null，变成和时序无关、测试环境跑一遍必现的异常）。多声明不报错，只损失并行度，引擎记录每个 Unit 实际读过的前驱和 dependsOn 对比，声明了没读的打 warning。仓的大小等于子图的 Unit 数，请求结束即丢，不再膨胀。一条纪律（凡是要被两个 Unit 用的数据，就是某个 Unit 的输出，不是上下文字段）。</p>
+  <p>被追"为什么阶段 2 不直接这么改"，答当时优先级是止血，结构改动要动所有 Unit 的读输入方式，放到阶段 3 和 fetcher 的需求一起做，一次机械替换。</p>
+  </dd>
+  <dt>5. 上线过程中出过什么线上问题？怎么处理的？</dt>
+  <dd>
+  <p><b class="lead">切 DAG 灰度时把下游打限流：</b>阶段 2 切换按 set 灰度，先切一个 set 承接 20% 流量。切完当天高峰，库存 Unit 错误率上升，错误码是下游限流。节点级 trace 直接指到这个 Unit，几分钟内把该 set 的引擎开关切回分层，两代引擎读同一张图，切换不用发版，影响止在 20% 流量的十几分钟。根因是分层引擎里同一下游的几个 Unit 分散在不同层，被 barrier 隔开串行执行；DAG 让它们同时就绪，对该下游的瞬时并发翻倍。按下游建的线程池当时是按分层的并发峰值设的，下游按调用方配的限流阈值也是。barrier 一直在隐含地做流量整形，拆掉它等于给下游加压。处理（舱壁的线程池大小改成按下游给的容量设，语义从"隔离"变成"隔离加限流"；和主要下游逐个重新协商阈值；灰度节奏改成一个 set 观察一个完整高峰再切下一个）。上线前多了一步（DAG 切换前用分层阶段的 trace 算每个下游在 DAG 下的理论峰值并发，和下游确认）。</p>
+  <p><b class="lead">流量对比期抓到历史分叉：</b>阶段 1 逐页切流时，对比日志里有一类不一致收不到零（同一段逻辑的几份复制品早已行为不同，优惠价为零时一处返回 0、一处不返回字段，缺货商品一处过滤掉、一处保留并打标）。Unit 化后只能有一种行为，对比日志把这些分叉全部暴露出来。处理不是改代码，是逐条拉产品和前端判定以哪份为准，前端按判定结果改渲染，再切流。这一步耗时超过预期，也是"复用等于复制"最直接的证据（复制品的分叉在合并之前没有人知道它存在）。</p>
+  </dd>
+  <dt>6. 除了提效，稳定性上有什么效果？</dt>
+  <dd>
+  <p>三个数，都在第六个月复盘时从告警和 trace 系统里拉出来的。</p>
+  <div class="tbl"><table>
+  <tr><th>指标</th><th>口径</th><th>之前</th><th>之后</th><th>来源</th></tr>
+  <tr><td>装配类线上问题</td><td>因复制改漏或页面装配错误（漏读、错读 Unit）引发的线上问题数，按半年计</td><td>阶段 0 半年 5 起</td><td>阶段 3 之后 0 起</td><td><ul><li>阶段 1、2 的依赖校验把环、未注册 Unit 和未声明就读的前驱挡在第一次执行</li><li>阶段 3 装配 Unit 不存在了，这类问题没有载体</li></ul></td></tr>
+  <tr><td>下游故障期间页面成功率</td><td>非核心下游（推荐、营销、评价）触发故障告警期间，页面接口的成功率</td><td>随下游一起跌，取决于那段代码有没有 try/catch</td><td>保持 99.9% 以上</td><td>弱依赖降级由引擎统一执行，不再依赖每处代码各自处理</td></tr>
+  <tr><td>耗时问题定位时间</td><td>从接到"接口慢"到定位到具体下游</td><td>翻日志，小时级</td><td>看节点级 trace 的时间轴，分钟级</td><td>trace 随阶段 2 的引擎一起上线</td></tr>
+  </table></div>
+  <p>三个数的共同来源是同一件事：原来散在方法里的超时、容错、排错信息，Unit 化后变成接口上的声明和引擎里的统一执行。没有单独为稳定性做项目，它是结构变化的副产品。</p>
+  </dd>
+  <dt>7. GraphQL 阶段为什么没有性能提升？</dt>
+  <dd>因为没有空间。BFF 每个端本来就是定制接口，阶段 2 已经跑在关键路径上，GraphQL 换的是形状由谁决定，不是取数怎么跑。这一阶段的目标是解耦，性能约束是不变差，见 4.3。</dd>
+  <dt>8. 如果重来一次会怎么做？</dt>
+  <dd>两条。阶段 1 就把 Unit 输出按生产者索引、按依赖读，不给黑板留口子，隐藏依赖那次线上问题就不会有。前端更早拉进来：阶段 3 最长的一条是前端逐页改查询，schema 设计如果从第二个月就一起做，第五个月能切的页面会多一倍。</dd>
+  <dt>9. 怎么保证改依赖声明不出事？</dt>
+  <dd>启动时校验环和未注册 Unit，校验不过服务起不来；声明在代码里，随代码发版和回滚；流量对比不只用于服务迁移，改声明也走一遍新旧对比再切。</dd>
+  <dt>10. 为什么不直接用 DataLoader？评估过怎么修它吗？</dt>
+  <dd>
+  <p>三条，见 4.2：</p>
+  <ul>
+    <li>层级 dispatch 是 barrier 再现
+<pre>level 1   Query.store                        → StoreBase
+          ─── 层末 dispatch ───►
+level 2   Store.openStatus / delivery / skus  → 三个 Unit 并行
+          ─── 层末 dispatch ───►                 ← Stock 要等 DeliveryEstimate 返回，尽管它只依赖 SkuList
+level 3   Sku.stock × 50                      → Stock 一次批量</pre>
+    </li>
+    <li>链式 load 会悬挂</li>
+    <li>字段树表达不了跨分支依赖</li>
+  </ul>
+  <p>悬挂那条我们评估到了方案层面，被追问时按下面讲。</p>
+  <p><b class="lead">悬挂的根因：</b>Java 没有事件循环，DataLoader 自己不发批，graphql-java 按字段树层级计数，某层 fetcher 都调过一次就 dispatch 一次。链式 load 的第二个 load 发生在 dispatch 之后，计数器只听"fetcher 被调用"一种事件，再没有事件触发第二次。下面还有层就多一轮往返，是叶子就悬挂到超时。</p>
+  <p><b class="lead">三种修法：</b>共同前提是层级 dispatch 只发一次的机制不动，改的是"什么时候再发一次"。</p>
+  <div class="tbl"><table>
+<tr><th></th><th>ticker 定时<br><span class="small">官方做法</span></th><th>预期数动态化</th><th>静止检测</th></tr>
+<tr><td>思路</td><td>每隔几毫秒检查一次，有 pending key 就 dispatch。JS 版 DataLoader 按事件循环 tick 批处理、graphql-java 的 ScheduledDataLoaderRegistry 都是这个思路</td><td><ul><li>识别链有几步，每层 dispatch 多轮</li><li>每轮的预期 load 数按上一轮返回的数据量算，凑齐就发</li></ul></td><td><ul><li>不预测数量，跟踪在途的 fetcher 回调数</li><li>归零且有 pending key 时 dispatch</li></ul></td></tr>
+<tr><td>再发一次的依据</td><td>时间</td><td>计数到达预期</td><td>没有任何回调在跑</td></tr>
+<tr><td>往返数</td><td>不确定，取决于 tick 间隔与 RPC 耗时的关系</td><td>恰好等于链长</td><td>恰好等于链长</td></tr>
+<tr><td>批质量</td><td>可能碎：tick 到了但 key 还没到齐</td><td>满批</td><td>满批</td></tr>
+<tr><td>链长未知或动态</td><td>天然支持</td><td>不支持，必须能算出预期</td><td>天然支持</td></tr>
+<tr><td>条件性不发 load、异常</td><td>天然支持</td><td>预期算多了凑不齐，需改为按阶段完成计数</td><td>天然支持</td></tr>
+<tr><td>侵入</td><td>零，注册表配置</td><td>计数器扩展、链识别、结果感知</td><td>包装所有异步 hop，登记和注销在途数</td></tr>
+<tr><td>失败模式</td><td>延迟抖动、小批</td><td>悬挂，需层级超时兜底</td><td><ul><li>基本无</li><li>仍保留层级超时做最后一道网</li></ul></td></tr>
+<tr><td>额外延迟</td><td>平均半个 tick 每层</td><td>无</td><td>无</td></tr>
+</table></div>
+  <p><b class="lead">我们拟定的是静止检测：</b>只维护一个"在途"计数，记已被触发、正在执行、尚未完成的回调。规则三条（在途为零且某个桶非空则 dispatch；批返回唤醒回调在途加一，回调结束减一，回调期间发的新 load 让桶再次非空；在途为零且所有桶为空则本层结束）。</p>
+  <pre>50 个 fetcher 调完 → 在途 0，promo 桶 50 个 key → dispatch #1
+批返回 → 50 个回调被触发 → 在途 50
+每个回调执行 priceLoader.load(...) 后结束 → 在途逐个 -1
+在途归 0，price 桶 50 个 key → dispatch #2
+批返回 → 没有更多回调 → 在途 0，桶全空 → 本层结束</pre>
+  <p>全程没有 N 和 batchSize，因为它不预测（名字来自分布式终止检测）。三个细节决定漏不漏：</p>
+  <ul>
+    <li><b class="lead">事件来自包装类型：</b>fetcher 返回框架的 ChainedFuture，thenCompose、thenApply 包一层在此登记和注销，不碰 JDK 内部。</li>
+    <li><b class="lead">登记先于注销：</b>回调里再挂新 hop 时新 hop 的加一必须在当前回调的减一之前，否则瞬时归零误触发。</li>
+    <li><b class="lead">归零只触发一次：</b>多个回调线程同时减一，用 CAS 保证只有一个线程 dispatch。</li>
+  </ul>
+  <p>兜底是层级超时（某层在超时内没静止，强制 dispatchAll，再按弱依赖降级或整体失败，防的是漏包装）。</p>
+  <p><b class="lead">为什么最终没走：</b>它只修悬挂。修完之后每层还是等最慢的 Unit，往返数还是字段树深度，跨分支还是要再 load 一次赌缓存。barrier 和跨分支是字段树这个调度结构的问题，换调度结构才能解，所以取数交回 DAG。这个方案的价值是让我们确认"DataLoader 路线的上限就是分层阶段的性能"，否决得有依据。</p>
+  </dd>
+  <dt>11. union 和 interface 按运行时类型选 Unit，子图执行前怎么确定？</dt>
+  <dd>能预取，三步。查询里的 fragment（<code>... on Store</code>、<code>... on Product</code>）已经声明了客户端关心的类型，查询分析把这几个类型对应的 Unit 都放进子图，客户端没写 fragment 的类型不进。父 Unit（如搜索）的输出每条带类型标记。key 沿边传递时按标记路由，商家 id 进 StoreBase、商品 id 进 ProductBase。这就是 StoreBase 和 ProductBase 各自的 key 推导：从搜索结果里按类型标记筛出自己的 id。前提是父 Unit 输出带类型，搜索、推荐这类混合列表的下游本来就返回类型字段。</dd>
+  <dt>12. 前端团队怎么配合的？schema 谁定？</dt>
+  <dd>schema 两边共同评审，字段归属后端（一个字段对应哪个 Unit 的哪个输出），查询归前端。前端按页面写查询，构建期注册成 persisted query 拿 hash，线上只放行已注册查询，注册流程就是前后端的接口评审流程。先用一个核心页面做试点，前端拿到"改字段不用等后端发版"的收益后，剩下页面是前端主动排期切的。</dd>
+  <dt>13. 阶段 3 的流量对比怎么做？老接口和 GraphQL 返回形状都不一样</dt>
+  <dd>不比响应体，比 Unit 结果。老服务和新服务跑的是同一批 Unit，老服务把每个 Unit 的输出也按 Unit 落一份，转发请求后对比两边每个 Unit 的 Map&lt;K,V&gt;，与响应形状无关。GraphQL 整形层是纯内存的确定性变换，Unit 结果一致响应就一致，只在试点页面用查询回放做一次端到端校验。</dd>
+</dl>
+</div>
+
+</main>
+</div>
+
+<script>
+(function(){
+  // TOC scrollspy
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var map = {};
+  links.forEach(function(a){ var id = a.getAttribute('href').slice(1); var el = document.getElementById(id); if (el) map[id] = a; });
+  var targets = Object.keys(map).map(function(id){ return document.getElementById(id); });
+  function setActive(id){ links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + id); }); }
+  if ('IntersectionObserver' in window) {
+    var visible = {};
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ visible[e.target.id] = e.isIntersecting; });
+      for (var i = 0; i < targets.length; i++) { if (visible[targets[i].id]) { setActive(targets[i].id); return; } }
+    }, { rootMargin: '-10% 0px -70% 0px', threshold: 0 });
+    targets.forEach(function(t){ io.observe(t); });
+  }
+})();
+</script>
+<script>
+(function(){
+  var btn=document.querySelector('.toc-toggle'),bd=document.querySelector('.toc-backdrop');
+  function set(open){document.body.classList.toggle('toc-open',open);btn.setAttribute('aria-expanded',open?'true':'false');}
+  btn.addEventListener('click',function(){set(!document.body.classList.contains('toc-open'));});
+  bd.addEventListener('click',function(){set(false);});
+  document.querySelectorAll('.toc a').forEach(function(a){a.addEventListener('click',function(){set(false);});});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')set(false);});
+})();
+</script>
+
+</body>
+</html>

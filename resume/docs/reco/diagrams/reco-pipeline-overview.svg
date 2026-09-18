@@ -1,0 +1,252 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 747" style="width:100%;height:auto;display:block" font-family="Helvetica, 'PingFang SC', sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#555"/>
+    </marker>
+    <marker id="arrowDash" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#999"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#4C9A63"/>
+    </marker>
+  </defs>
+
+  <!-- ===== AB experiment platform (directly above entry) ===== -->
+  <rect x="32" y="8" width="152" height="54" rx="6" fill="#F7F7F5" stroke="#999"/>
+  <text x="108" y="24" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#444">TrackingEvent（离线）</text>
+  <text x="108" y="38" text-anchor="middle" font-size="9" fill="#777">客户端埋点数据</text>
+  <text x="108" y="52" text-anchor="middle" font-size="9" fill="#777">关联出实验效果（后期）</text>
+  <line x1="188" y1="35" x2="214" y2="35" stroke="#999" stroke-width="1.2" marker-end="url(#arrowDash)"/>
+  <path d="M31,292 H8 V35 H28" fill="none" stroke="#999" stroke-width="1.2" marker-end="url(#arrowDash)"/>
+  <text x="13" y="76" font-size="9" fill="#777">行为数据采集上报</text>
+
+  <rect x="218" y="8" width="200" height="54" rx="6" fill="#EAF6EC" stroke="#4C9A63"/>
+  <text x="318" y="24" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#2F6B44">AB 实验平台</text>
+  <text x="318" y="38" text-anchor="middle" font-size="10" fill="#2F6B44">分流 / 实验配置</text>
+  <text x="318" y="52" text-anchor="middle" font-size="8.5" fill="#2F6B44">v0: Nacos JSON 配置 + SDK 分流</text>
+  <line x1="318" y1="62" x2="318" y2="94" stroke="#4C9A63" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+  <text x="310" y="84" text-anchor="end" font-size="9" fill="#2F6B44">请求实验配置 · variants 一次盖章写入 context</text>
+  <text x="430" y="26" font-size="9" fill="#777">下游环节读 context 冻结参数路由（Recaller 选路、Ranker 选型等）</text>
+  <text x="430" y="40" font-size="9" fill="#777">不再访问实验平台，请求中途配置刷新不影响本次请求</text>
+
+  <g transform="translate(0,18)">
+
+  <!-- ===== context annotation (left of entry) ===== -->
+  <rect x="16" y="76" width="210" height="178" rx="6" fill="#F7F7F5" stroke="#999"/>
+  <text x="26" y="94" font-size="11.5" font-weight="bold" fill="#444">RecommendContext</text>
+  <text x="26" y="112" font-size="9.5" font-weight="bold" fill="#444">客户端传入:</text>
+  <text x="26" y="126" font-size="9" fill="#444">· deviceId（始终传）</text>
+  <text x="26" y="140" font-size="9" fill="#444">· userId（登录用户加传）</text>
+  <text x="26" y="154" font-size="9" fill="#444">· cursor（首页为空）</text>
+  <text x="26" y="168" font-size="9" fill="#444">· pageSize（有缺省值）</text>
+  <text x="26" y="182" font-size="9" fill="#444">· sceneParams（PLP=池子查询，Feed=无）</text>
+  <text x="26" y="200" font-size="9.5" font-weight="bold" fill="#444">服务端确定:</text>
+  <text x="26" y="214" font-size="9" fill="#444">· scene（由端点决定）</text>
+  <text x="26" y="228" font-size="9" fill="#444">· requestId（入口生成）</text>
+  <text x="26" y="242" font-size="9" fill="#444">· variants（AB 实验平台分流）</text>
+  <line x1="226" y1="106" x2="258" y2="106" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ===== row 1: main stages ===== -->
+  <rect x="262" y="80" width="112" height="52" rx="6" fill="#EEF3FF" stroke="#4C6FBF"/>
+  <text x="318" y="102" text-anchor="middle" font-size="13" font-weight="bold" fill="#2B4A8C">入口</text>
+  <text x="318" y="120" text-anchor="middle" font-size="11" fill="#2B4A8C">Context 构建</text>
+
+  <!-- decision diamond -->
+  <line x1="374" y1="106" x2="402" y2="106" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <polygon points="410,106 452,88 494,106 452,124" fill="#FFFFFF" stroke="#555" stroke-width="1.2"/>
+  <text x="452" y="110" text-anchor="middle" font-size="9.5" fill="#444">缓存命中?</text>
+  <line x1="498" y1="106" x2="546" y2="106" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="504" y="100" font-size="9" fill="#444">否</text>
+  <text x="522" y="70" text-anchor="middle" font-size="9" fill="#444">无 cursor / 缓存 miss → 走全链路</text>
+
+  <!-- fast path: straight drop, bend below all containers -->
+  <path d="M452,124 L452,420 L888,420 L888,440" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="460" y="142" font-size="9" fill="#444">是</text>
+  <text x="672" y="434" text-anchor="middle" font-size="9" fill="#444">cursor 命中 → 直达分页 · 读缓存切片，不重跑上游</text>
+
+  <rect x="550" y="80" width="112" height="52" rx="6" fill="#EEF3FF" stroke="#4C6FBF"/>
+  <text x="606" y="102" text-anchor="middle" font-size="13" font-weight="bold" fill="#2B4A8C">Recaller</text>
+  <text x="606" y="120" text-anchor="middle" font-size="11" fill="#2B4A8C">多路并行召回</text>
+
+  <rect x="832" y="80" width="112" height="52" rx="6" fill="#F3EEFB" stroke="#7B5EA7"/>
+  <text x="888" y="102" text-anchor="middle" font-size="13" font-weight="bold" fill="#54418A">Ranker</text>
+  <text x="888" y="120" text-anchor="middle" font-size="11" fill="#54418A">排序 · 算法边界</text>
+
+  <rect x="1062" y="80" width="112" height="52" rx="6" fill="#EEF3FF" stroke="#4C6FBF"/>
+  <text x="1118" y="102" text-anchor="middle" font-size="13" font-weight="bold" fill="#2B4A8C">ReRanker</text>
+  <text x="1118" y="120" text-anchor="middle" font-size="11" fill="#2B4A8C">规则重排</text>
+
+  <line x1="662" y1="106" x2="828" y2="106" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="745" y="96" text-anchor="middle" font-size="10" fill="#4263EB">candidates[]</text>
+  <text x="745" y="124" text-anchor="middle" font-size="9" fill="#777">type + id + sources</text>
+
+  <line x1="944" y1="106" x2="1058" y2="106" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="1001" y="96" text-anchor="middle" font-size="10" fill="#4263EB">candidates[]</text>
+  <text x="1001" y="124" text-anchor="middle" font-size="9" fill="#777">已排序 · 顺序即结论</text>
+
+  <!-- ===== user + client ===== -->
+  <circle cx="40" cy="274" r="9" fill="none" stroke="#7A5320" stroke-width="1.5"/>
+  <line x1="40" y1="283" x2="40" y2="308" stroke="#7A5320" stroke-width="1.5"/>
+  <line x1="24" y1="294" x2="56" y2="294" stroke="#7A5320" stroke-width="1.5"/>
+  <line x1="40" y1="308" x2="28" y2="324" stroke="#7A5320" stroke-width="1.5"/>
+  <line x1="40" y1="308" x2="52" y2="324" stroke="#7A5320" stroke-width="1.5"/>
+  <text x="40" y="340" text-anchor="middle" font-size="11" fill="#7A5320">用户</text>
+  <line x1="60" y1="292" x2="258" y2="292" stroke="#7A5320" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="262" y="266" width="112" height="52" rx="10" fill="#FFF7EA" stroke="#C08A3E"/>
+  <text x="318" y="288" text-anchor="middle" font-size="13" font-weight="bold" fill="#7A5320">客户端</text>
+  <text x="318" y="306" text-anchor="middle" font-size="11" fill="#7A5320">Web / App</text>
+
+  <line x1="318" y1="266" x2="318" y2="136" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="310" y="200" text-anchor="end" font-size="9.5" fill="#4263EB">推荐请求</text>
+
+  <!-- ===== row 1 internals ===== -->
+  <line x1="606" y1="132" x2="606" y2="151" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="470" y="155" width="332" height="175" rx="8" fill="#FAFAF9" stroke="#E3E2DE"/>
+  <rect x="492" y="170" width="125" height="34" rx="5" fill="#FFFFFF" stroke="#999"/>
+  <text x="554" y="184" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#444">RecallerRegistry</text>
+  <text x="554" y="197" text-anchor="middle" font-size="9" fill="#777">scene → Recaller[]</text>
+  <line x1="617" y1="187" x2="633" y2="187" stroke="#555" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <rect x="637" y="170" width="130" height="34" rx="5" fill="#FFFFFF" stroke="#999"/>
+  <text x="702" y="184" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#444">RecallExecutor</text>
+  <text x="702" y="197" text-anchor="middle" font-size="9" fill="#777">并行 fan-out · 每路超时预算</text>
+  <line x1="702" y1="204" x2="534" y2="222" stroke="#555" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="702" y1="204" x2="642" y2="222" stroke="#555" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="702" y1="204" x2="745" y2="222" stroke="#555" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <rect x="480" y="226" width="104" height="26" rx="5" fill="#FFFFFF" stroke="#999"/>
+  <text x="532" y="243" text-anchor="middle" font-size="9" fill="#444">池子 Recaller（PLP）</text>
+  <rect x="592" y="226" width="100" height="26" rx="5" fill="#FFFFFF" stroke="#999"/>
+  <text x="642" y="243" text-anchor="middle" font-size="9" fill="#444">搜索历史 Recaller</text>
+  <rect x="700" y="226" width="94" height="26" rx="5" fill="#FFFFFF" stroke="#999"/>
+  <text x="747" y="243" text-anchor="middle" font-size="9" fill="#444">运营位 Recaller …</text>
+  <line x1="532" y1="252" x2="532" y2="262" stroke="#999" stroke-width="1" marker-end="url(#arrowDash)"/>
+  <line x1="642" y1="252" x2="642" y2="262" stroke="#999" stroke-width="1" marker-end="url(#arrowDash)"/>
+  <line x1="747" y1="252" x2="747" y2="262" stroke="#999" stroke-width="1" marker-end="url(#arrowDash)"/>
+  <rect x="480" y="266" width="314" height="26" rx="5" fill="#F2F1EE" stroke="#C9C7C2"/>
+  <text x="637" y="283" text-anchor="middle" font-size="9" fill="#666">物理存储：OpenSearch · MySQL · Redis · 配置 …（Recaller 按需访问）</text>
+  <text x="637" y="306" text-anchor="middle" font-size="9.5" fill="#777">合并去重：type+id 为 key · sources 取并集 · 单路失败跳过</text>
+  <text x="637" y="320" text-anchor="middle" font-size="9.5" fill="#777">合并后过滤：剔除已下发 / 已曝光，再进排序（详见 2.3）</text>
+
+  <!-- dedup stores (read at the post-merge filter) -->
+  <line x1="637" y1="330" x2="637" y2="340" stroke="#999" stroke-width="1" marker-end="url(#arrowDash)"/>
+  <rect x="537" y="344" width="200" height="56" rx="5" fill="#F2F1EE" stroke="#C9C7C2"/>
+  <text x="637" y="357" text-anchor="middle" font-size="10" font-weight="bold" fill="#555">去重存储（Redis）</text>
+  <text x="637" y="370" text-anchor="middle" font-size="8.5" fill="#666">下发历史 SET（返回前按页写入）</text>
+  <text x="637" y="383" text-anchor="middle" font-size="8.5" fill="#666">曝光历史 ZSET（埋点回流异步写入）</text>
+
+  <line x1="888" y1="132" x2="888" y2="151" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="805" y="155" width="170" height="167" rx="8" fill="#FAFAF9" stroke="#E3E2DE"/>
+  <rect x="813" y="170" width="154" height="34" rx="5" fill="#FFFFFF" stroke="#999"/>
+  <text x="890" y="184" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#444">Ranker 选型</text>
+  <text x="890" y="197" text-anchor="middle" font-size="9" fill="#777">context 实验参数 · N 选 1</text>
+  <rect x="813" y="212" width="154" height="34" rx="5" fill="#FFFFFF" stroke="#7B5EA7"/>
+  <text x="890" y="226" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#54418A">模型 Ranker</text>
+  <text x="890" y="239" text-anchor="middle" font-size="9" fill="#777">HTTP · RankRequest / Response</text>
+  <rect x="813" y="254" width="154" height="34" rx="5" fill="#FFFFFF" stroke="#999"/>
+  <text x="890" y="268" text-anchor="middle" font-size="10" font-weight="bold" fill="#444">DefaultRecallOrderRanker</text>
+  <text x="890" y="281" text-anchor="middle" font-size="9" fill="#777">召回序 · 默认 / 兜底</text>
+  <text x="890" y="308" text-anchor="middle" font-size="9.5" fill="#777">全量进 · 全量出</text>
+
+  <line x1="1118" y1="132" x2="1118" y2="151" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <rect x="1028" y="155" width="180" height="100" rx="8" fill="#FAFAF9" stroke="#E3E2DE"/>
+  <rect x="1036" y="170" width="164" height="34" rx="5" fill="#FFFFFF" stroke="#999"/>
+  <text x="1118" y="184" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#444">ReRankPolicy × N</text>
+  <text x="1118" y="197" text-anchor="middle" font-size="9" fill="#777">按 order 成链 · supports() 场景生效</text>
+  <rect x="1036" y="214" width="164" height="26" rx="5" fill="#FFFFFF" stroke="#999"/>
+  <text x="1118" y="231" text-anchor="middle" font-size="9.5" fill="#444">e.g. GiftCardExclude</text>
+
+  <!-- ===== wrap connector ===== -->
+  <path d="M1174,106 L1228,106 L1228,470 L1178,470" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="1222" y="434" text-anchor="end" font-size="9.5" fill="#777">重排后完整列表</text>
+
+  <!-- ===== row 2 ===== -->
+  <rect x="1062" y="444" width="112" height="52" rx="6" fill="#EEF3FF" stroke="#4C6FBF"/>
+  <text x="1118" y="466" text-anchor="middle" font-size="13" font-weight="bold" fill="#2B4A8C">Blender</text>
+  <text x="1118" y="484" text-anchor="middle" font-size="11" fill="#2B4A8C">混排（Feed）</text>
+
+  <rect x="832" y="444" width="112" height="52" rx="6" fill="#EEF3FF" stroke="#4C6FBF"/>
+  <text x="888" y="466" text-anchor="middle" font-size="13" font-weight="bold" fill="#2B4A8C">Pagination</text>
+  <text x="888" y="484" text-anchor="middle" font-size="11" fill="#2B4A8C">分页</text>
+
+  <rect x="472" y="444" width="112" height="52" rx="6" fill="#EEF3FF" stroke="#4C6FBF"/>
+  <text x="528" y="466" text-anchor="middle" font-size="13" font-weight="bold" fill="#2B4A8C">Assembler</text>
+  <text x="528" y="484" text-anchor="middle" font-size="11" fill="#2B4A8C">组装</text>
+
+  <line x1="1062" y1="470" x2="948" y2="470" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="1005" y="462" text-anchor="middle" font-size="9.5" fill="#777">完整有序列表</text>
+  <line x1="832" y1="470" x2="588" y2="470" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="710" y="462" text-anchor="middle" font-size="9.5" fill="#4263EB">当页切片（type+id）</text>
+
+  <path d="M472,470 L318,470 L318,322" fill="none" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="390" y="462" text-anchor="middle" font-size="9.5" fill="#4263EB">Card[] + tracking + nextCursor</text>
+
+  <!-- ===== row 2 internals ===== -->
+  <line x1="1118" y1="496" x2="1118" y2="510" stroke="#555" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <rect x="1004" y="514" width="232" height="144" rx="8" fill="#FAFAF9" stroke="#E3E2DE"/>
+  <rect x="1014" y="528" width="212" height="32" rx="5" fill="#FFFFFF" stroke="#999"/>
+  <text x="1120" y="541" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#444">BlendPolicy（坑位策略）</text>
+  <text x="1120" y="554" text-anchor="middle" font-size="9" fill="#777">插入位置 · 频控 · 打散</text>
+  <rect x="1014" y="568" width="212" height="32" rx="5" fill="#FFFFFF" stroke="#999"/>
+  <text x="1120" y="581" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#444">MaterialSupplier × N</text>
+  <text x="1120" y="594" text-anchor="middle" font-size="9" fill="#777">looks · collection · survey · 活动 …</text>
+  <rect x="1014" y="608" width="212" height="24" rx="5" fill="#F2F1EE" stroke="#C9C7C2"/>
+  <text x="1120" y="624" text-anchor="middle" font-size="9" fill="#666">物料来源：运营配置 · DB …（按需访问）</text>
+  <text x="1120" y="648" text-anchor="middle" font-size="9.5" fill="#777">仅 Feed 生效 · PLP 直通 · 不进排序</text>
+
+  <line x1="888" y1="496" x2="888" y2="510" stroke="#555" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <rect x="768" y="514" width="230" height="136" rx="8" fill="#FAFAF9" stroke="#E3E2DE"/>
+  <rect x="778" y="528" width="210" height="32" rx="5" fill="#FFFFFF" stroke="#999"/>
+  <text x="883" y="541" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#444">cursor 切片</text>
+  <text x="883" y="554" text-anchor="middle" font-size="9" fill="#777">解析 cursor（batch · offset）→ 取片</text>
+  <line x1="830" y1="562" x2="830" y2="578" stroke="#999" stroke-width="1" marker-end="url(#arrowDash)"/>
+  <text x="824" y="574" text-anchor="end" font-size="8.5" fill="#777">首次写入</text>
+  <line x1="940" y1="578" x2="940" y2="562" stroke="#999" stroke-width="1" marker-end="url(#arrowDash)"/>
+  <text x="946" y="574" font-size="8.5" fill="#777">翻页读取</text>
+  <rect x="778" y="582" width="210" height="56" rx="5" fill="#F2F1EE" stroke="#C9C7C2"/>
+  <text x="883" y="595" text-anchor="middle" font-size="10" font-weight="bold" fill="#555">结果缓存（Redis）</text>
+  <text x="883" y="608" text-anchor="middle" font-size="8.5" fill="#666">key: deviceId + scene + batch</text>
+  <text x="883" y="620" text-anchor="middle" font-size="8.5" fill="#666">value: 分页前全量 List（type+id）</text>
+  <text x="883" y="632" text-anchor="middle" font-size="8.5" fill="#666">TTL: 分钟级</text>
+
+  <line x1="528" y1="496" x2="528" y2="510" stroke="#555" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <rect x="360" y="514" width="350" height="156" rx="8" fill="#FAFAF9" stroke="#E3E2DE"/>
+  <rect x="445" y="528" width="180" height="32" rx="5" fill="#FFFFFF" stroke="#999"/>
+  <text x="535" y="541" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#444">CardAssembler</text>
+  <text x="535" y="554" text-anchor="middle" font-size="9" fill="#777">按 type 分组 · 批量派发（可并行）</text>
+  <line x1="535" y1="560" x2="429" y2="578" stroke="#555" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="535" y1="560" x2="540" y2="578" stroke="#555" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <line x1="535" y1="560" x2="652" y2="578" stroke="#555" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <rect x="372" y="582" width="110" height="26" rx="5" fill="#FFFFFF" stroke="#999"/>
+  <text x="427" y="599" text-anchor="middle" font-size="9" fill="#444">ProductCardFiller</text>
+  <rect x="492" y="582" width="100" height="26" rx="5" fill="#FFFFFF" stroke="#999"/>
+  <text x="542" y="599" text-anchor="middle" font-size="9" fill="#444">LookCardFiller</text>
+  <rect x="602" y="582" width="104" height="26" rx="5" fill="#FFFFFF" stroke="#999"/>
+  <text x="654" y="599" text-anchor="middle" font-size="9" fill="#444">SurveyCardFiller …</text>
+  <line x1="427" y1="608" x2="427" y2="618" stroke="#999" stroke-width="1" marker-end="url(#arrowDash)"/>
+  <line x1="542" y1="608" x2="542" y2="618" stroke="#999" stroke-width="1" marker-end="url(#arrowDash)"/>
+  <line x1="654" y1="608" x2="654" y2="618" stroke="#999" stroke-width="1" marker-end="url(#arrowDash)"/>
+  <rect x="372" y="622" width="334" height="24" rx="5" fill="#F2F1EE" stroke="#C9C7C2"/>
+  <text x="539" y="638" text-anchor="middle" font-size="9" fill="#666">数据来源：DB · OpenSearch · Redis …（CardFiller 按需访问）</text>
+  <text x="539" y="660" text-anchor="middle" font-size="9.5" fill="#777">按序重组 · 填不出即丢，页面不失败</text>
+
+  <!-- ===== rules platform (future) ===== -->
+  <rect x="1005" y="272" width="150" height="60" rx="6" fill="#FFFFFF" stroke="#999" stroke-dasharray="5,4"/>
+  <text x="1080" y="297" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#444">配置化规则平台（后期）</text>
+  <text x="1080" y="314" text-anchor="middle" font-size="8.5" fill="#777">重排 / 混排规则 · 运营参数化配置</text>
+  <line x1="1080" y1="272" x2="1080" y2="261" stroke="#999" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrowDash)"/>
+  <line x1="1080" y1="332" x2="1080" y2="438" stroke="#999" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrowDash)"/>
+
+  <!-- ===== legend ===== -->
+  <rect x="24" y="696" width="14" height="14" fill="#EEF3FF" stroke="#4C6FBF"/>
+  <text x="46" y="707" font-size="11" fill="#444">工程侧（进程内）</text>
+  <rect x="158" y="696" width="14" height="14" fill="#F3EEFB" stroke="#7B5EA7"/>
+  <text x="180" y="707" font-size="11" fill="#444">算法侧（HTTP）</text>
+  <rect x="288" y="696" width="14" height="14" fill="#EAF6EC" stroke="#4C9A63"/>
+  <text x="310" y="707" font-size="11" fill="#444">实验平台（横切）</text>
+  <rect x="440" y="696" width="14" height="14" fill="#FFFFFF" stroke="#999" stroke-dasharray="4,3"/>
+  <text x="462" y="707" font-size="11" fill="#444">虚线 = 后期规划</text>
+  <rect x="580" y="696" width="14" height="14" fill="#FAFAF9" stroke="#E3E2DE"/>
+  <text x="602" y="707" font-size="11" fill="#444">灰底 = 环节内部机制</text>
+
+  </g>
+</svg>

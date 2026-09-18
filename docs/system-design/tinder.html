@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Tinder 案例</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F5F7FA; --surface:#FFFFFF; --surface-2:#EEF2F6;
+  --text:#1B2430; --muted:#5B6673; --border:#D8DEE6; --border-strong:#B9C2CE;
+  --accent:#0F6E7A; --accent-soft:#DCEFF1; --amber:#A8691A; --amber-soft:#F7ECD9;
+  --code-bg:#F0F3F7; --code-text:#1E2A36;
+  --shadow: 0 1px 2px rgba(20,30,40,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12161C; --surface:#1A2029; --surface-2:#212934;
+    --text:#E6EAF0; --muted:#98A4B4; --border:#2B343F; --border-strong:#3B4652;
+    --accent:#5FBDC8; --accent-soft:#16333A; --amber:#DDA755; --amber-soft:#2E2618;
+    --code-bg:#161C24; --code-text:#DCE3EB;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12161C; --surface:#1A2029; --surface-2:#212934;
+  --text:#E6EAF0; --muted:#98A4B4; --border:#2B343F; --border-strong:#3B4652;
+  --accent:#5FBDC8; --accent-soft:#16333A; --amber:#DDA755; --amber-soft:#2E2618;
+  --code-bg:#161C24; --code-text:#DCE3EB;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  font-size:15px; line-height:1.8;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+h1,h2,h3,h4{font-family:"Noto Serif SC","Songti SC","STSong",Georgia,serif; text-wrap:balance; line-height:1.3; margin:0}
+h1{font-size:2.1rem; font-weight:700; letter-spacing:.01em}
+h2{font-size:1.5rem; font-weight:700; padding-top:.4rem}
+h3{font-size:1.12rem; font-weight:600; color:var(--text)}
+h4{font-family:"Noto Sans SC",system-ui,sans-serif; font-size:.95rem; font-weight:700; color:var(--muted); letter-spacing:.02em}
+p{margin:0}
+ul,ol{margin:0; padding-left:1.4em}
+li{margin:.15em 0}
+li::marker{color:var(--muted)}
+strong{font-weight:700}
+code,pre{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+code{font-size:.86em; background:var(--code-bg); color:var(--code-text); padding:.1em .4em; border-radius:4px}
+pre{
+  margin:0; background:var(--code-bg); color:var(--code-text);
+  border:1px solid var(--border); border-radius:6px;
+  padding:.9rem 1.1rem; font-size:.8rem; line-height:1.55;
+  overflow-x:auto; white-space:pre; tab-size:4;
+}
+pre code{background:none; padding:0; font-size:inherit}
+
+.eyebrow{font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:500}
+.page{max-width:1360px; margin:0 auto; padding:0 1.25rem 4rem}
+
+header.top{padding:2.6rem 0 1.8rem; border-bottom:1px solid var(--border)}
+header.top .lead{max-width:66ch; color:var(--muted); margin-top:.9rem; font-size:1rem}
+.threads{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin-top:1.6rem}
+.thread{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1rem 1.1rem; box-shadow:var(--shadow)}
+.thread .num{font-family:"JetBrains Mono",monospace; font-size:.75rem; color:var(--accent); letter-spacing:.08em}
+.thread h3{margin-top:.25rem; font-size:1.05rem}
+.thread p{margin-top:.5rem; font-size:.88rem; color:var(--muted); line-height:1.65}
+.thread a{display:inline-block; margin-top:.6rem; font-size:.85rem}
+
+.layout{display:grid; grid-template-columns:minmax(0,1fr); gap:2rem; margin-top:1.5rem}
+bodybody
+main{min-width:0}
+section.part{padding:2.2rem 0 1rem}
+section.part + section.part{border-top:1px solid var(--border)}
+.part-head{display:flex; align-items:baseline; gap:.9rem; margin-bottom:.4rem}
+.part-head .num{font-family:"JetBrains Mono",monospace; color:var(--accent); font-size:.85rem; letter-spacing:.08em}
+.mainline{
+  margin:.9rem 0 1.4rem; padding:.85rem 1.1rem; background:var(--accent-soft);
+  border-radius:6px; font-size:.92rem; line-height:1.7;
+}
+.mainline b{color:var(--accent)}
+.block{display:grid; gap:.8rem; margin-top:1.6rem}
+.block > h3{padding-bottom:.3rem; border-bottom:1px dashed var(--border)}
+.prose{max-width:none}
+.two{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem}
+
+.tbl{overflow-x:auto; border:1px solid var(--border); border-radius:6px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.86rem; line-height:1.55; min-width:560px}
+th,td{padding:.55rem .75rem; text-align:left; vertical-align:top; border-bottom:1px solid var(--border)}
+th{font-weight:700; color:var(--muted); font-size:.78rem; letter-spacing:.04em; background:var(--surface-2); white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:500; white-space:nowrap}
+table.wl td{white-space:normal; font-weight:400}
+td ul.pts{margin:0; padding-left:1.1em; white-space:normal}
+td ul.pts li{margin:.1em 0}
+table.wl td[rowspan]{font-weight:500}
+table.wl td[rowspan] b{display:block; font-size:1rem}
+.tbl.wide table{min-width:760px}
+.num-col{font-variant-numeric:tabular-nums}
+
+.aside{border:1px dashed var(--border-strong); border-radius:8px; padding:.8rem 1rem; background:var(--surface-2); color:var(--muted); font-size:.9rem; display:grid; gap:.5rem}
+.aside-title{font-weight:700; color:var(--text); font-size:.85rem; letter-spacing:.03em}
+.aside pre{margin:0}
+.aside-sub{font-weight:700; color:var(--text); font-size:.85rem; margin-top:.3rem}
+.aside ul{margin:0; padding-left:1.2em}
+.note{font-size:.88rem; color:var(--muted); padding-left:.9rem; border-left:2px solid var(--border-strong)}
+
+
+footer{margin-top:3rem; padding-top:1.2rem; border-top:1px solid var(--border); color:var(--muted); font-size:.8rem}
+.back{font-size:.8rem}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="top" id="top">
+  <h1>Tinder</h1>
+</header>
+
+<div class="layout">
+<main>
+
+<section class="part" id="fr">
+  <div class="part-head"><span class="num">1</span><h2>功能需求</h2></div>
+  <div class="block">
+    <h3>核心</h3>
+    <ul class="prose">
+      <li>用户创建资料，设置偏好（年龄范围、兴趣）和最大距离。</li>
+      <li>用户按偏好和当前位置的最大距离范围，看到一叠候选资料。</li>
+      <li>用户对资料逐个左滑或右滑，表示"不要"或"要"。</li>
+      <li>两人互相右滑时，收到匹配通知。</li>
+    </ul>
+  </div>
+  <div class="block">
+    <h3>范围外</h3>
+    <ul class="prose">
+      <li>图片上传。</li>
+      <li>匹配后的私信。</li>
+      <li>付费功能，如 super swipe。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="nfr">
+  <div class="part-head"><span class="num">2</span><h2>非功能需求</h2></div>
+  <div class="block">
+    <h3>核心</h3>
+    <ul class="prose">
+      <li><b>滑动强一致</b>：两人互相右滑必须且只能产生一次匹配。</li>
+      <li><b>规模</b>：2000 万日活，人均每天约 100 次滑动。</li>
+      <li><b>候选叠加载低延迟</b>：300 ms 内。</li>
+      <li><b>不重复展示</b>：滑过的人不再出现。</li>
+    </ul>
+  </div>
+  <div class="block">
+    <h3>范围外</h3>
+    <ul class="prose">
+      <li>假资料防护。</li>
+      <li>监控告警。</li>
+    </ul>
+  </div>
+  <div class="block">
+    <h3>落到答题框架的三个点</h3>
+    <ul class="prose">
+      <li><b>CAP</b>：滑动和匹配要 C，候选叠要 A（叠可以预先算好放缓存，晚几秒无所谓）。</li>
+      <li><b>延迟</b>：叠 300 ms 内，滑动记录要更快，用户不能等。</li>
+      <li><b>规模</b>：2000 万乘 100 等于每天 20 亿次滑动，除以 10 万秒约 2 万次每秒，峰值按 3 到 5 倍是 6 到 10 万次每秒，写密集。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="entities">
+  <div class="part-head"><span class="num">3</span><h2>核心实体</h2></div>
+</section>
+
+<section class="part" id="api">
+  <div class="part-head"><span class="num">4</span><h2>API</h2></div>
+</section>
+
+<section class="part" id="hld">
+  <div class="part-head"><span class="num">5</span><h2>高层设计</h2></div>
+</section>
+
+<section class="part" id="deep">
+  <div class="part-head"><span class="num">6</span><h2>深入</h2></div>
+</section>
+
+</main>
+</div>
+</div>
+</body>
+</html>

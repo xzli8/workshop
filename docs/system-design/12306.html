@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>12306 案例</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F5F7FA; --surface:#FFFFFF; --surface-2:#EEF2F6;
+  --text:#1B2430; --muted:#5B6673; --border:#D8DEE6; --border-strong:#B9C2CE;
+  --accent:#0F6E7A; --accent-soft:#DCEFF1; --amber:#A8691A; --amber-soft:#F7ECD9;
+  --code-bg:#F0F3F7; --code-text:#1E2A36;
+  --shadow: 0 1px 2px rgba(20,30,40,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12161C; --surface:#1A2029; --surface-2:#212934;
+    --text:#E6EAF0; --muted:#98A4B4; --border:#2B343F; --border-strong:#3B4652;
+    --accent:#5FBDC8; --accent-soft:#16333A; --amber:#DDA755; --amber-soft:#2E2618;
+    --code-bg:#161C24; --code-text:#DCE3EB;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12161C; --surface:#1A2029; --surface-2:#212934;
+  --text:#E6EAF0; --muted:#98A4B4; --border:#2B343F; --border-strong:#3B4652;
+  --accent:#5FBDC8; --accent-soft:#16333A; --amber:#DDA755; --amber-soft:#2E2618;
+  --code-bg:#161C24; --code-text:#DCE3EB;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  font-size:15px; line-height:1.8;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+h1,h2,h3,h4{font-family:"Noto Serif SC","Songti SC","STSong",Georgia,serif; text-wrap:balance; line-height:1.3; margin:0}
+h1{font-size:2.1rem; font-weight:700; letter-spacing:.01em}
+h2{font-size:1.5rem; font-weight:700; padding-top:.4rem}
+h3{font-size:1.12rem; font-weight:600; color:var(--text)}
+h4{font-family:"Noto Sans SC",system-ui,sans-serif; font-size:.95rem; font-weight:700; color:var(--muted); letter-spacing:.02em}
+p{margin:0}
+ul,ol{margin:0; padding-left:1.4em}
+li{margin:.15em 0}
+li::marker{color:var(--muted)}
+strong{font-weight:700}
+code,pre{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+code{font-size:.86em; background:var(--code-bg); color:var(--code-text); padding:.1em .4em; border-radius:4px}
+pre{
+  margin:0; background:var(--code-bg); color:var(--code-text);
+  border:1px solid var(--border); border-radius:6px;
+  padding:.9rem 1.1rem; font-size:.8rem; line-height:1.55;
+  overflow-x:auto; white-space:pre; tab-size:4;
+}
+pre code{background:none; padding:0; font-size:inherit}
+
+.eyebrow{font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:500}
+.page{max-width:1360px; margin:0 auto; padding:0 1.25rem 4rem}
+
+header.top{padding:2.6rem 0 1.8rem; border-bottom:1px solid var(--border)}
+header.top .lead{max-width:66ch; color:var(--muted); margin-top:.9rem; font-size:1rem}
+.threads{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin-top:1.6rem}
+.thread{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1rem 1.1rem; box-shadow:var(--shadow)}
+.thread .num{font-family:"JetBrains Mono",monospace; font-size:.75rem; color:var(--accent); letter-spacing:.08em}
+.thread h3{margin-top:.25rem; font-size:1.05rem}
+.thread p{margin-top:.5rem; font-size:.88rem; color:var(--muted); line-height:1.65}
+.thread a{display:inline-block; margin-top:.6rem; font-size:.85rem}
+
+.layout{display:grid; grid-template-columns:minmax(0,1fr); gap:2rem; margin-top:1.5rem}
+bodybody
+main{min-width:0}
+section.part{padding:2.2rem 0 1rem}
+section.part + section.part{border-top:1px solid var(--border)}
+.part-head{display:flex; align-items:baseline; gap:.9rem; margin-bottom:.4rem}
+.part-head .num{font-family:"JetBrains Mono",monospace; color:var(--accent); font-size:.85rem; letter-spacing:.08em}
+.mainline{
+  margin:.9rem 0 1.4rem; padding:.85rem 1.1rem; background:var(--accent-soft);
+  border-radius:6px; font-size:.92rem; line-height:1.7;
+}
+.mainline b{color:var(--accent)}
+.block{display:grid; gap:.8rem; margin-top:1.6rem}
+.block > h3{padding-bottom:.3rem; border-bottom:1px dashed var(--border)}
+.prose{max-width:none}
+.two{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem}
+
+.tbl{overflow-x:auto; border:1px solid var(--border); border-radius:6px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.86rem; line-height:1.55; min-width:560px}
+th,td{padding:.55rem .75rem; text-align:left; vertical-align:top; border-bottom:1px solid var(--border)}
+th{font-weight:700; color:var(--muted); font-size:.78rem; letter-spacing:.04em; background:var(--surface-2); white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:500; white-space:nowrap}
+table.wl td{white-space:normal; font-weight:400}
+td ul.pts{margin:0; padding-left:1.1em; white-space:normal}
+td ul.pts li{margin:.1em 0}
+table.wl td[rowspan]{font-weight:500}
+table.wl td[rowspan] b{display:block; font-size:1rem}
+.tbl.wide table{min-width:760px}
+.num-col{font-variant-numeric:tabular-nums}
+
+.aside{border:1px dashed var(--border-strong); border-radius:8px; padding:.8rem 1rem; background:var(--surface-2); color:var(--muted); font-size:.9rem; display:grid; gap:.5rem}
+.aside-title{font-weight:700; color:var(--text); font-size:.85rem; letter-spacing:.03em}
+.aside pre{margin:0}
+.aside-sub{font-weight:700; color:var(--text); font-size:.85rem; margin-top:.3rem}
+.aside ul{margin:0; padding-left:1.2em}
+.note{font-size:.88rem; color:var(--muted); padding-left:.9rem; border-left:2px solid var(--border-strong)}
+
+footer{margin-top:3rem; padding-top:1.2rem; border-top:1px solid var(--border); color:var(--muted); font-size:.8rem}
+.back{font-size:.8rem}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="top" id="top">
+  <h1>12306</h1>
+</header>
+
+<div class="layout">
+<main>
+
+<section class="part" id="fr">
+  <div class="part-head"><span class="num">1</span><h2>功能需求</h2></div>
+  <div class="block">
+    <h3>核心</h3>
+    <ul class="prose">
+      <li>按出发站、到达站、日期查车次和余票。</li>
+      <li>选车次、席别、乘车人下单，系统分配座位出票。</li>
+      <li>出票后在时限内支付，超时释放。</li>
+      <li>无票时登记候补，有退票自动兑现。</li>
+    </ul>
+  </div>
+  <div class="block">
+    <h3>范围外</h3>
+    <ul class="prose">
+      <li>实名核验、改签退票规则细节。</li>
+      <li>选座选铺、静音车厢这类附加选项。</li>
+      <li>线下窗口和代售点渠道。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="nfr">
+  <div class="part-head"><span class="num">2</span><h2>非功能需求</h2></div>
+  <div class="block">
+    <h3>核心</h3>
+    <ul class="prose">
+      <li><b>一个座位的一个区间只卖一次</b>：出票强一致。</li>
+      <li><b>规模</b>：春运单日售票 2000 万张，页面浏览近 900 亿次，出票峰值每秒 1000 多张。</li>
+      <li><b>余票查询低延迟</b>：几十毫秒，允许几秒过时。</li>
+      <li><b>下单允许等</b>：提交后排队，异步给结果。</li>
+    </ul>
+  </div>
+  <div class="block">
+    <h3>落到答题框架的三个点</h3>
+    <ul class="prose">
+      <li><b>CAP</b>：出票要 C，余票展示要 A，余票是派生值，查到有票下单失败是正常现象。</li>
+      <li><b>延迟</b>：查询几十毫秒，下单不要求同步返回，排队页显示排位和预计时间。</li>
+      <li><b>规模</b>：查询和出票差五个量级，900 亿次浏览对 2000 万张票，所以查询和交易必须分开部署，查询走内存和公有云，交易走排队。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="entities">
+  <div class="part-head"><span class="num">3</span><h2>核心实体</h2></div>
+  <div class="block">
+    <ul class="prose">
+      <li><b>Train</b>：车次、日期、停站序列。N 站就是 N−1 个区间。</li>
+      <li><b>Seat</b>：车次、日期、车厢座位号、席别、occupied 位图。库存，真相。</li>
+      <li><b>Order</b>：乘车人、区间、席别、状态 queued / ticketed / paid / failed / expired、分到的座位。</li>
+      <li><b>RemainingTickets</b>：每车次每日每席别一张区间对矩阵 count[i][j]。派生值，只服务展示。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="api">
+  <div class="part-head"><span class="num">4</span><h2>API</h2></div>
+  <div class="block">
+    <ul class="prose">
+      <li><code>GET /trains?from&amp;to&amp;date</code> → 车次列表，每车次各席别余票。</li>
+      <li><code>POST /orders</code>，body 带 trainId、date、from、to、席别、乘车人 → orderId，状态 queued。</li>
+      <li><code>GET /orders/{orderId}</code> → 状态，排队中时带排位和预计时间，出票后带座位。</li>
+      <li><code>POST /orders/{orderId}/pay</code> → 支付结果。orderId 做幂等键。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="hld">
+  <div class="part-head"><span class="num">5</span><h2>高层设计</h2></div>
+  <div class="block">
+    <pre>查余票  客户端 ──► 余票服务 ──► 内存里的余票矩阵（和交易隔离，可放公有云）
+
+下单    客户端 ──► 订单服务 ──写 Order queued──► 订单库
+                      └──► MQ（按车次分区）──► 出票 worker ──条件写──► 座位库（位图）
+                                                   └──更新 Order ticketed / failed，更新余票矩阵
+        客户端 ──轮询 GET /orders/{id}──► 订单库
+
+支付    客户端 ──► 支付 ──webhook──► 条件写 Order paid
+过期    定时任务把超时未付的 Order 置 expired，清座位位图，余票矩阵加回</pre>
+    <ul class="prose">
+      <li><b>查余票</b>：读内存矩阵，不碰座位库。</li>
+      <li><b>下单</b>：用户提交时车次席别乘车人都选好了，分座机器能做，所以订单当任务进 MQ，worker 出票，客户端轮询结果。</li>
+      <li><b>支付和过期</b>：和秒杀一样，条件写转正，超时释放。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="deep">
+  <div class="part-head"><span class="num">6</span><h2>深入</h2></div>
+
+  <div class="block">
+    <h3>区间库存：座位乘区间</h3>
+    <ul class="prose">
+      <li>库存单位不是座位，是座位乘区间。一列车停 10 站是 9 个区间，一个座位卖了北京到南京占前 7 段，南京到上海的 2 段还能卖给别人。</li>
+      <li>每个座位一个位图，区间 k 对应 bit k。买 [i, j) 的掩码是 <code>((1 &lt;&lt; (j−i)) − 1) &lt;&lt; i</code>，10 站的位图 2 个字节。</li>
+      <li>出票是一条条件写：<code>UPDATE seat SET occupied = occupied | :mask WHERE train=? AND date=? AND seat_no=? AND (occupied &amp; :mask) = 0</code>，影响行数为 0 换下一个座位。多个乘车人逐座出，一个出不来整单失败。</li>
+      <li>和秒杀的拆行同一个形状，"可用"的判断从一个状态位变成一段位的 AND。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>余票查询：派生矩阵</h3>
+    <ul class="prose">
+      <li>问的是 [i, j) 还有几个座位满足 <code>occupied &amp; mask == 0</code>。内存里现扫一千多个座位微秒级能算，但查询 QPS 几万时 CPU 不低。</li>
+      <li>预算：每车次每日每席别维护 count[i][j]，10 站 45 个数，查询读一个数。</li>
+      <li>增量维护：座位 s 卖出 [a, b) 位图从 old 变 new，对每个区间对，<code>old &amp; mask == 0</code> 且 <code>new &amp; mask != 0</code> 的 count 减一。每次出票最多算 45 个掩码。退票反过来加一。</li>
+      <li>余票是派生值不是真相，允许晚几秒，和交易分开部署，春运时 75% 的查询流量放在公有云。查到有票下单失败是正常现象，提示余票不足再查。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>排队出票：任务排队</h3>
+    <ul class="prose">
+      <li>为什么排订单不排人：用户提交时已经选好一切，分座是确定性的，机器替用户做完给结果，中间没有人要操作的步骤。和 Ticketmaster 放行后用户自己挑座不同，判据见<a href="system-design-knowledge-graph.html#s1-4b">知识图谱的排队</a>。</li>
+      <li>MQ 按车次分区，一个车次一个 worker 串行消费，同一时刻只有一个事务改这趟车的座位，条件写不会撞。消费速率按后端响应时间自适应，后端慢了就放慢。</li>
+      <li>排位用序号差：入队发单调递增序号，worker 更新已处理序号，差值就是排位，除以最近几分钟的处理速率就是预计时间。按车次单分区的 Kafka 直接用 offset 差。</li>
+      <li>出不了票的订单标 failed，引导候补。排队结果靠客户端轮询订单状态，不用长连接。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>候补</h3>
+    <ul class="prose">
+      <li>无票时登记需求并预付票款，记车次、席别、区间、乘车人。</li>
+      <li>退票和改签释放座位时发事件，候补服务按登记顺序撮合，出票成功通知用户，失败退款。</li>
+      <li>候补在排队里有优先级，排在普通下单前面，所以放票瞬间经常是开票即候补。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>扛流量</h3>
+    <ul class="prose">
+      <li>查询和交易隔离：余票服务独立集群，内存计算，公有云扩容，交易库看不到查询流量。</li>
+      <li>订单库按用户哈希分库分表，100 库 100 表。座位库按车次加日期分片，一趟车一天的座位在一片里，出票事务不跨片。</li>
+      <li>排队就是限流，MQ 消费速率是数据库能承受的速率，再多的提交都在队列里等。</li>
+    </ul>
+    <div class="aside">
+      <div class="aside-title">和 Ticketmaster、秒杀的对应</div>
+      <div class="tbl"><table style="table-layout:fixed; min-width:800px">
+        <colgroup><col style="width:16%"><col style="width:28%"><col style="width:28%"><col style="width:28%"></colgroup>
+        <thead><tr><th></th><th>Ticketmaster</th><th>秒杀</th><th>12306</th></tr></thead>
+        <tbody>
+          <tr><td>库存单位</td><td>座位</td><td>件，可互换</td><td>座位乘区间</td></tr>
+          <tr><td>可用判断</td><td>状态位</td><td>计数</td><td>一段位的 AND</td></tr>
+          <tr><td>排队</td><td>人排队发许可，放行后自己挑座</td><td>订单进 MQ</td><td>订单进 MQ，按车次串行</td></tr>
+          <tr><td>展示</td><td>座位图实时推</td><td>余量缓存</td><td>余票矩阵增量维护</td></tr>
+          <tr><td>正确性</td><td colspan="3">都靠数据库的条件写</td></tr>
+        </tbody></table></div>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+</div>
+</body>
+</html>

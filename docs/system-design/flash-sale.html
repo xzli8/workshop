@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Flash Sale 案例</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F5F7FA; --surface:#FFFFFF; --surface-2:#EEF2F6;
+  --text:#1B2430; --muted:#5B6673; --border:#D8DEE6; --border-strong:#B9C2CE;
+  --accent:#0F6E7A; --accent-soft:#DCEFF1; --amber:#A8691A; --amber-soft:#F7ECD9;
+  --code-bg:#F0F3F7; --code-text:#1E2A36;
+  --shadow: 0 1px 2px rgba(20,30,40,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12161C; --surface:#1A2029; --surface-2:#212934;
+    --text:#E6EAF0; --muted:#98A4B4; --border:#2B343F; --border-strong:#3B4652;
+    --accent:#5FBDC8; --accent-soft:#16333A; --amber:#DDA755; --amber-soft:#2E2618;
+    --code-bg:#161C24; --code-text:#DCE3EB;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12161C; --surface:#1A2029; --surface-2:#212934;
+  --text:#E6EAF0; --muted:#98A4B4; --border:#2B343F; --border-strong:#3B4652;
+  --accent:#5FBDC8; --accent-soft:#16333A; --amber:#DDA755; --amber-soft:#2E2618;
+  --code-bg:#161C24; --code-text:#DCE3EB;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  font-size:15px; line-height:1.8;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+h1,h2,h3,h4{font-family:"Noto Serif SC","Songti SC","STSong",Georgia,serif; text-wrap:balance; line-height:1.3; margin:0}
+h1{font-size:2.1rem; font-weight:700; letter-spacing:.01em}
+h2{font-size:1.5rem; font-weight:700; padding-top:.4rem}
+h3{font-size:1.12rem; font-weight:600; color:var(--text)}
+h4{font-family:"Noto Sans SC",system-ui,sans-serif; font-size:.95rem; font-weight:700; color:var(--muted); letter-spacing:.02em}
+p{margin:0}
+ul,ol{margin:0; padding-left:1.4em}
+li{margin:.15em 0}
+li::marker{color:var(--muted)}
+strong{font-weight:700}
+code,pre{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+code{font-size:.86em; background:var(--code-bg); color:var(--code-text); padding:.1em .4em; border-radius:4px}
+pre{
+  margin:0; background:var(--code-bg); color:var(--code-text);
+  border:1px solid var(--border); border-radius:6px;
+  padding:.9rem 1.1rem; font-size:.8rem; line-height:1.55;
+  overflow-x:auto; white-space:pre; tab-size:4;
+}
+pre code{background:none; padding:0; font-size:inherit}
+
+.eyebrow{font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:500}
+.page{max-width:1360px; margin:0 auto; padding:0 1.25rem 4rem}
+
+header.top{padding:2.6rem 0 1.8rem; border-bottom:1px solid var(--border)}
+header.top .lead{max-width:66ch; color:var(--muted); margin-top:.9rem; font-size:1rem}
+.threads{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin-top:1.6rem}
+.thread{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1rem 1.1rem; box-shadow:var(--shadow)}
+.thread .num{font-family:"JetBrains Mono",monospace; font-size:.75rem; color:var(--accent); letter-spacing:.08em}
+.thread h3{margin-top:.25rem; font-size:1.05rem}
+.thread p{margin-top:.5rem; font-size:.88rem; color:var(--muted); line-height:1.65}
+.thread a{display:inline-block; margin-top:.6rem; font-size:.85rem}
+
+.layout{display:grid; grid-template-columns:minmax(0,1fr); gap:2rem; margin-top:1.5rem}
+bodybody
+main{min-width:0}
+section.part{padding:2.2rem 0 1rem}
+section.part + section.part{border-top:1px solid var(--border)}
+.part-head{display:flex; align-items:baseline; gap:.9rem; margin-bottom:.4rem}
+.part-head .num{font-family:"JetBrains Mono",monospace; color:var(--accent); font-size:.85rem; letter-spacing:.08em}
+.mainline{
+  margin:.9rem 0 1.4rem; padding:.85rem 1.1rem; background:var(--accent-soft);
+  border-radius:6px; font-size:.92rem; line-height:1.7;
+}
+.mainline b{color:var(--accent)}
+.block{display:grid; gap:.8rem; margin-top:1.6rem}
+.block > h3{padding-bottom:.3rem; border-bottom:1px dashed var(--border)}
+.prose{max-width:none}
+.two{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem}
+
+.tbl{overflow-x:auto; border:1px solid var(--border); border-radius:6px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.86rem; line-height:1.55; min-width:560px}
+th,td{padding:.55rem .75rem; text-align:left; vertical-align:top; border-bottom:1px solid var(--border)}
+th{font-weight:700; color:var(--muted); font-size:.78rem; letter-spacing:.04em; background:var(--surface-2); white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:500; white-space:nowrap}
+table.wl td{white-space:normal; font-weight:400}
+td ul.pts{margin:0; padding-left:1.1em; white-space:normal}
+td ul.pts li{margin:.1em 0}
+table.wl td[rowspan]{font-weight:500}
+table.wl td[rowspan] b{display:block; font-size:1rem}
+.tbl.wide table{min-width:760px}
+.num-col{font-variant-numeric:tabular-nums}
+
+.aside{border:1px dashed var(--border-strong); border-radius:8px; padding:.8rem 1rem; background:var(--surface-2); color:var(--muted); font-size:.9rem; display:grid; gap:.5rem}
+.aside-title{font-weight:700; color:var(--text); font-size:.85rem; letter-spacing:.03em}
+.aside pre{margin:0}
+.aside-sub{font-weight:700; color:var(--text); font-size:.85rem; margin-top:.3rem}
+.aside ul{margin:0; padding-left:1.2em}
+.note{font-size:.88rem; color:var(--muted); padding-left:.9rem; border-left:2px solid var(--border-strong)}
+
+
+footer{margin-top:3rem; padding-top:1.2rem; border-top:1px solid var(--border); color:var(--muted); font-size:.8rem}
+.back{font-size:.8rem}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="top" id="top">
+  <h1>Flash Sale（秒杀）</h1>
+</header>
+
+<div class="layout">
+<main>
+
+<section class="part" id="fr">
+  <div class="part-head"><span class="num">1</span><h2>功能需求</h2></div>
+  <div class="block">
+    <h3>核心</h3>
+    <ul class="prose">
+      <li>用户查看秒杀商品和剩余库存。</li>
+      <li>活动期间用户预留一件，预留有时限。</li>
+      <li>预留成功的用户在时限内完成支付。</li>
+    </ul>
+  </div>
+  <div class="block">
+    <h3>范围外</h3>
+    <ul class="prose">
+      <li>商品目录浏览和搜索。</li>
+      <li>物流、退货、退款、订单历史。</li>
+      <li>后台创建和配置活动。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="nfr">
+  <div class="part-head"><span class="num">2</span><h2>非功能需求</h2></div>
+  <div class="block">
+    <h3>核心</h3>
+    <ul class="prose">
+      <li><b>不超卖</b>：1 万件就是 1 万件，预留和支付转正都要强一致。</li>
+      <li><b>规模</b>：几千万用户在开售几秒内涌入，请求数远超件数。</li>
+      <li><b>低延迟</b>：预留请求几百毫秒内返回成功或售罄。</li>
+      <li><b>公平</b>：先到先得，防脚本刷单。</li>
+    </ul>
+  </div>
+  <div class="block">
+    <h3>落到答题框架的三个点</h3>
+    <ul class="prose">
+      <li><b>CAP</b>：预留和支付转正要 C，库存展示要 A（余量是派生值，几秒过时可接受）。</li>
+      <li><b>延迟</b>：预留几百毫秒内，大部分请求在排队层或 Redis 就被挡回去，不碰数据库。</li>
+      <li><b>规模</b>：开售瞬间每秒几十万到百万请求，成功的只有 1 万，预留写入和成交写入差四五个量级，这个差距决定预留不能放数据库。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="entities">
+  <div class="part-head"><span class="num">3</span><h2>核心实体</h2></div>
+  <div class="block">
+    <ul class="prose">
+      <li><b>Item</b>：商品、总量、活动起止时间。</li>
+      <li><b>Inventory</b>：库存。单计数器方案是一行 sold / total，拆行方案是一件一行带 status。</li>
+      <li><b>Order</b>：用户、商品、状态 pending / paid / expired、预留到期时间，orderId 做幂等键。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="api">
+  <div class="part-head"><span class="num">4</span><h2>API</h2></div>
+  <div class="block">
+    <ul class="prose">
+      <li><code>GET /items/{itemId}</code> → 商品信息、剩余库存、活动状态。</li>
+      <li><code>POST /items/{itemId}/orders</code> → orderId 或售罄。用户 id 从认证取，不传参。</li>
+      <li><code>POST /orders/{orderId}/pay</code> → 支付结果。orderId 就是幂等键，重试不重复扣。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="hld">
+  <div class="part-head"><span class="num">5</span><h2>高层设计</h2></div>
+  <div class="block">
+    <pre>客户端 ──► 排队层（虚拟队列，按容量放行）──► API 服务器 ──预留──► 库存（Redis 计数器 或 DB 拆行）
+                                                    │                    │
+                                                    └──建 Order pending──► 订单库 ◄──支付 webhook：条件写转正
+客户端 ──看库存──► 缓存（余量，几秒刷一次）</pre>
+    <ul class="prose">
+      <li><b>看库存</b>：余量是派生值，从库存源定期算好放缓存，所有人读缓存，不打库存源。</li>
+      <li><b>预留</b>：排队层先把流量压到系统能承受的速率，放行的请求去库存源抢一件，抢到建 pending 订单带到期时间，抢不到返回售罄。</li>
+      <li><b>支付</b>：用户在时限内付款，webhook 回来用条件写把订单转正。到期没付，库存还回去。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="deep">
+  <div class="part-head"><span class="num">6</span><h2>深入</h2></div>
+
+  <div class="block">
+    <h3>极端争用下不超卖</h3>
+    <p>核心矛盾是所有请求争同一份库存。单行计数器 <code>UPDATE stock = stock - 1 WHERE stock &gt; 0</code> 所有请求争一行锁，串行，每秒几百到顶。热点行悲观乐观都不行，要把冲突散开。</p>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:1050px">
+      <colgroup><col style="width:11%"><col style="width:30%"><col style="width:20%"><col style="width:11%"><col style="width:28%"></colgroup>
+      <thead><tr><th>做法</th><th>预留</th><th>不超卖靠什么</th><th>吞吐</th><th>代价</th></tr></thead>
+      <tbody>
+        <tr><td>单行计数器</td><td>条件 UPDATE 减一</td><td>行锁加条件</td><td>每秒几百</td><td>热点行，基线</td></tr>
+        <tr><td>DB 拆行</td><td>一件一行，<code>SELECT ... FOR UPDATE SKIP LOCKED LIMIT 1</code> 随便锁一行没人用的</td><td>一行同一时刻只能被一个事务锁</td><td>每秒几千</td><td>只多扛一个数量级。假售罄要重试，补货单独锁，降到 RC 避 Gap 锁。好处是库存和订单在同一个事务里，不用对账</td></tr>
+        <tr><td>Redis 预扣</td><td><code>DECR stock:{sku}</code>，结果小于 0 就 INCR 回去</td><td>Redis 单线程原子，DB 落库时条件写兜底</td><td>每秒十万级</td><td>多一个组件，过期回补要延迟队列，两边要对账</td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li><b>拆行为什么用 SKIP LOCKED 不用乐观锁</b>：乐观锁是"我知道改哪行，赌没人抢"，拆行抢购是"我不在乎哪行，给我一行没人在用的"。乐观写法先查后改，高并发下大家查到同一行，999 个失败重试，拆了等于没拆。SKIP LOCKED 让数据库把不同的行分给不同的事务，一次往返零重试。持锁只有预留事务的几毫秒，符合"冲突多、事务短、必须成功"用悲观的规则。</li>
+      <li><b>怎么选</b>：默认 Redis 预扣，数据库只见到真正付钱的。拆行是备选，只在团队只有关系库、不想加组件、峰值每秒几千内、不想做两系统对账时用。量级更大或要公平，排队放行，见下一节。</li>
+      <li><b>和 Ticketmaster 的对应</b>：座位有身份，每座一个 key 用 <code>SET NX EX</code>，过期靠 TTL 自动消失。库存可互换，一个计数器 DECR，过期要主动 INCR 还回去。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>预留之后：等支付、过期、转正</h3>
+    <p>两种做法同一个形状：短事务占位，长时间等支付，到期回收，支付成功转正。</p>
+    <ul class="prose">
+      <li><b>DB 拆行</b>：
+        <ul>
+          <li>预留事务把行改 reserved 带 reserved_until 和 orderId，提交即释放锁，之后靠状态占位。</li>
+          <li>支付成功 <code>UPDATE unit SET status='sold' WHERE id=? AND status='reserved' AND order_id=?</code>，为 0 说明预留已过期被别人拿走，退款。</li>
+          <li>过期回收两种：cron 定期把过期行改回 available，有延迟。或者预留条件写成 <code>status='available' OR (status='reserved' AND reserved_until &lt; now())</code>，过期的行直接被下一个人拿走，不要回收任务。</li>
+        </ul>
+      </li>
+      <li><b>Redis 预扣</b>：
+        <ul>
+          <li>DECR 成功后建 pending 订单，同时发一条 10 分钟后到期的延迟消息。</li>
+          <li>支付成功 DB 事务 <code>UPDATE inventory SET sold = sold + 1 WHERE sku=? AND sold &lt; total</code>，为 0 说明 Redis 计数漂了已超卖，退款。这条是最终兜底，Redis 挂了也不超卖。</li>
+          <li>延迟消息到期查订单，没付就 INCR 还回去。不用 Redis 的 key 过期事件，它不可靠会丢。</li>
+        </ul>
+      </li>
+      <li><b>假售罄</b>：剩 3 件来 10 人，7 人看到售罄，但 3 人可能不付，货又回来。售罄提示留重试余地。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>锁还是排队（自己的判断）</h3>
+    <p>Redis 预扣和排队都挡在数据库前面，是二选一。排队的放行速率按数据库容量定，放行人数可以直接等于库存数，放进来的人直接条件写扣减，几乎没有争用，再加 Redis 预扣是重复建设。</p>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:900px">
+      <colgroup><col style="width:16%"><col style="width:42%"><col style="width:42%"></colgroup>
+      <thead><tr><th></th><th>Redis 预扣</th><th>排队</th></tr></thead>
+      <tbody>
+        <tr><td>管什么</td><td>争用，DECR 原子分胜负</td><td>过载，按数据库容量消费订单</td></tr>
+        <tr><td>预留存哪</td><td>Redis 计数器，过期要延迟消息 INCR 还回去</td><td>数据库 reserved 计数，worker 消费 MQ 时条件写，过期靠隐式状态或 cron</td></tr>
+        <tr><td>谁赢</td><td>DECR 先到先赢，网络竞速，脚本占便宜</td><td>按入队顺序消费，先到先得</td></tr>
+        <tr><td>用户体验</td><td>立刻知道抢到没有</td><td>显示抢购中，轮询结果</td></tr>
+        <tr><td>正确性</td><td colspan="2">都靠数据库支付时的条件写 <code>WHERE sold &lt; total</code></td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li><b>选法</b>：请求量数据库接得住，单行条件写或拆行；接不住又不想让用户等，Redis 预扣；量级大到 Redis 也要分片，订单进 MQ 任务排队。</li>
+      <li><b>和 Ticketmaster 的对应</b>：座位有身份，锁是每座一个 key，过期靠 TTL 自动消失；库存可互换，锁是一个计数器，过期要主动 INCR。排队也不同，座位要用户自己挑所以人排队发许可，库存点抢购时已选好所以订单进 MQ 当任务排队，判据见<a href="system-design-knowledge-graph.html#s1-4b">知识图谱的排队</a>。</li>
+    </ul>
+    <div class="aside">
+      <div class="aside-title">锁的做法：Redis 计数器</div>
+      <pre>预留   DECR stock:{sku}，结果 &gt;= 0 成功建 pending 订单并发一条 10 分钟延迟消息，&lt; 0 则 INCR 回去返回售罄
+支付   UPDATE inventory SET sold = sold + 1 WHERE sku = ? AND sold &lt; total，为 0 退款
+过期   延迟消息到期查订单没付就 INCR 还回去</pre>
+      <p>DECR 本身是原子的，不需要 NX 和 Lua。所有抢购请求都到 Redis，失败的在 Redis 就被挡回去，数据库只见到付钱的。</p>
+    </div>
+    <div class="aside">
+      <div class="aside-title">排队的做法：订单进 MQ</div>
+      <pre>入队   点抢购时商品已选好，订单直接进 MQ，返回 orderId，页面显示抢购中
+消费   worker 按数据库容量的速率消费，每单一条条件写
+       UPDATE inventory SET reserved = reserved + 1 WHERE sku = ? AND reserved + sold &lt; total
+       为 0 则订单标售罄
+结果   客户端轮询 GET /orders/{id}，成功进支付，失败显示售罄
+支付   条件写转正，为 0 退款
+过期   cron 或隐式状态把过期的 reserved 还回去</pre>
+      <p>用户点抢购时已经选好商品，剩下的扣件建单机器能替他做，所以排的是订单不是人，不需要放行许可那一套。</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>扛住开售瞬间的流量</h3>
+    <ul class="prose">
+      <li><b>排队层</b>：选排队方案时，订单进 MQ，worker 按库存源能承受的速率消费。几千万人点抢购，库存源每秒只见到几千条。</li>
+      <li><b>提前拒绝</b>：库存已经为 0 时在网关或缓存层直接返回售罄，请求不进排队。</li>
+      <li><b>库存展示不打源</b>：余量放缓存几秒刷一次，或者 SSE 推，几千万人刷页面不碰 Redis 计数器。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>公平与防刷</h3>
+    <ul class="prose">
+      <li>按到达时间排队的结果是脚本永远排最前。开售前开放候场，候场内随机排序，开售后才按到达顺序。</li>
+      <li>每用户限购一件：orderId 幂等键之外，预留时 <code>SET bought:{sku}:{userId} NX</code> 或订单表 (sku, userId) 唯一约束。</li>
+      <li>验证码、设备指纹、限流放在排队层之前，不进入正文。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>变体：12306 的区间库存</h3>
+    <ul class="prose">
+      <li>库存单位是车次 × 日期 × 座位 × 区间。一列车停 10 站是 9 个区间，一个座位卖了北京到南京占前 7 段，南京到上海的 2 段还能卖。</li>
+      <li>每座位一行一个位图记哪些区间被占。买 [i, j) 要求目标位全 0：<code>UPDATE seat SET occupied = occupied | :mask WHERE ... AND (occupied &amp; :mask) = 0</code>，为 0 换下一个座位。就是拆行加条件写，"可用"的判断从一个状态位变成一段位的 AND。</li>
+      <li>余票是派生的，每个区间对要扫所有座位算，放缓存定期刷，显示的只是参考，下单以条件写为准。</li>
+      <li>开售加排队系统，提交后异步出票、客户端轮询结果，没票可登记候补由后台撮合退票。</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+</div>
+</div>
+</body>
+</html>

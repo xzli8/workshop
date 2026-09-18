@@ -1,0 +1,143 @@
+% !TEX TS-program = xelatex
+% !TEX encoding = UTF-8 Unicode
+% !Mode:: "TeX:UTF-8"
+
+\documentclass{resume}
+\usepackage{zh_CN-Adobefonts_external} % Simplified Chinese Support using external fonts (./fonts/zh_CN-Adobe/)
+% \usepackage{NotoSansSC_external}
+% \usepackage{NotoSerifCJKsc_external}
+% \usepackage{zh_CN-Adobefonts_internal} % Simplified Chinese Support using system fonts
+\usepackage{linespacing_fix} % disable extra space before next section
+\usepackage{cite}
+
+\begin{document}
+\pagenumbering{gobble} % suppress displaying page number
+
+\name{李兴中}
+\basicInfo{
+  性别：男 \textperiodcentered\
+  年龄：29 \textperiodcentered\
+  电话：(+86) 13295609826 \textperiodcentered\
+  邮箱：xingzhongli8@gmail.com
+}
+ 
+\section{\faGraduationCap\  教育背景}
+\datedsubsection{\textbf{中国科学技术大学}}{2017.09 -- 2020.07}
+\textit{硕士}
+\datedsubsection{\textbf{长安大学}}{2013.09 -- 2017.07}
+\textit{学士}
+
+\section{\faUsers\ 工作经历}
+\datedsubsection{\textbf{Mobius}}{2026.05 -- 现在}
+\role{高级后端开发工程师, Viavia Bnto Team：负责Bnto推荐系统工程架构从0到1的搭建，以及AI导购助手Maya(LLM Agent)的后端开发与迭代}
+
+\datedsubsection{\textbf{Amazon}}{2024.04 -- 2026.03}
+\role{全栈开发工程师(SDE II), JST VAMOS Team：负责VAMOS系统研发和需求交付工作}
+
+\datedsubsection{\textbf{美团}}{2020.07 -- 2024.04}
+\role{中级后端开发工程师，到家医药技术部用户API组：负责用户API系统架构的重构升级\\
+      初级后端开发工程师，到家医药技术部用户营销组：负责用户营销体系的构建和需求交付}
+
+
+\section{\faCogs\ 工作技能}
+\begin{itemize}[parsep=0.5ex]
+  \item 熟悉常用设计模式、数据结构和算法，有大型分布式系统的设计开发和稳定性维护经验。
+  \item 熟悉Java技术体系(JVM、Spring、并发编程等)和常用中间件(数据库、缓存、消息中间件等)。
+  \item 熟练使用AI Coding工具(Claude, Cursor, Kiro等)进行业务需求开发交付的提效。
+  \item 沟通交流和团队协作能力优秀，曾作为负责人带领团队推动多个重大项目按时保质交付。
+  \item 学习能力强，乐于探索，有作为独立开发者的成功经验（独立开发运营一套ToB Saas系统）。
+\end{itemize}
+
+\section{\faInfo\ 项目经历}
+\datedsubsection{\textbf{美团医药C端BFF层架构演进：硬编码 $\rightarrow$ DAG编排 $\rightarrow$ GraphQL}}{项目负责人}
+\begin{onehalfspacing}
+\textbf{项目背景}：美团医药用户API是医药C端所有请求的统一入口，负责将几十个领域服务的能力聚合、编排、整形后交付前端，即BFF(Backend For Frontend)层，以分布式多set部署(5个set共50台机器)承接C端高并发流量(峰值QPS~5k)。初期以硬编码方式开发，随业务规模与场景复杂度增长已难以支撑迭代。本项目历时六个月，分三阶段将其重构为Unit化、DAG调度、GraphQL契约的新架构。\\
+
+\textbf{工作内容}：本人担任项目负责人(带5名同学)，负责前期调研、三阶段规划、整体设计与项目管理，并亲自实现第三阶段GraphQL与DAG引擎的对接。采用棘手问题攻坚、通用能力建设、能力上限探索三步走策略分段落地；迁移全程采用流量对比：老服务同步转发请求至新服务并对比两侧结果，不一致记录日志，收敛至零后切流，用户始终拿老服务结果，零影响平滑过渡。\\
+
+\begin{itemize}
+    \item \textbf{第一阶段：棘手问题攻坚}（目标是低成本快速止血，允许不是最优解）\\
+    \textbf{问题}：聚合逻辑以页面为组织单位，页面之下没有可复用单元，同一业务规则、容错、超时在各页面各有一份实现，改动需多处同步、极易漂移；并行结构由开发者从依赖手工推导，每个页面各推一遍。\\
+    \textbf{方案}：将聚合逻辑拆为可复用的批式逻辑单元(Unit)，构建分层并行调度引擎，编排配置化。\\
+    \textbf{行动}：划分Unit并抽象统一批式接口，接口内置依赖声明、单元级超时、强弱依赖与降级值，线程池按下游隔离；引擎按依赖用Kahn算法自动分层，同层并行、层间串行，加载时校验环与未注册Unit；页面配置只列所需Unit，中间依赖由引擎补全。\\
+    \textbf{效果}：一个逻辑一份实现，开发迭代效率提升约30\%（口径：需求平均交付周期）。\\
+    \item \textbf{第二阶段：通用能力建设}（目标是修正上一阶段的已知缺陷，构建当前最优解）\\
+    \textbf{问题}：分层模型存在层间barrier，总延迟为各层最慢之和而非关键路径之和。\\
+    \textbf{方案}：基于DAG的调度引擎，每个Unit只等待自身前驱，前驱完成即触发。\\
+    \textbf{行动}：开发DAG调度引擎（节点状态机CAS迁移、前驱计数触发）；失败沿边传播，强依赖失败仅跳过其下游子图、兄弟分支继续；请求级deadline下推至每个Unit的RPC超时；节点级trace输出请求时间轴；配置升级支持页面级强弱/超时覆盖与条件纳入。Unit与页面配置零改动，两代引擎消费同一张依赖图。\\
+    \textbf{效果}：核心接口TP99平均降低30-40\%。\\
+    \item \textbf{第三阶段：能力上限探索}（目标是解决架构层面的前后端耦合，探索能力上限）\\
+    \textbf{问题}：响应形状在设计期固定于配置，每端每页一份，多端差异与任何形状变更都需后端改配置发版，数据能力与响应形状强耦合。\\
+    \textbf{方案}：引入GraphQL，以schema作为前后端契约，将响应形状的决定权从设计期前置到前端请求期；schema管形状，DAG管取数。\\
+    \textbf{行动}：实现查询分析，将查询选中字段映射为Unit子图并补全传递依赖，交由DAG引擎执行，未选字段的Unit不执行；fetcher从请求级结果仓读取，Unit间数据仅沿依赖边传递（按生产者索引、写一次、按依赖读），消除共享上下文膨胀；parse/validate/查询分析结果按查询hash缓存，配合persisted query白名单与查询深度、复杂度限制；评估并否决了DataLoader+层级dispatch改造路线（仅修悬挂，barrier与跨分支依赖仍在）。\\
+    \textbf{效果}：前端字段变更、多端差异、新页面接入均在查询侧完成，不再依赖后端发版，开发效率再提升约20\%；后端页面配置归零；性能持平。\\
+\end{itemize}
+\end{onehalfspacing}
+
+\datedsubsection{\textbf{BNTO推荐系统工程架构从0到1：契约 $\cdot$ 主链路 $\cdot$ 状态层 $\cdot$ 实验归因 $\cdot$ 数据闭环}}{技术负责人}
+\begin{onehalfspacing}
+\textbf{项目背景}：BNTO是美国时尚租赁电商平台，此前没有推荐系统：商品列表页(PLP)按固定规则排序，首页无信息流。算法团队同期从零起步构建召回与排序模型，工程侧需要一套能承接算法、又不被算法进度绑住的推荐服务。本项目历时三个月上线，覆盖PLP、Feed、商品下钻三个场景，商品池约8k，日均推荐请求十万级。\\
+
+\textbf{工作内容}：本人担任技术负责人(带2名同学，与算法团队2人协作)，负责业内方案调研、HLD/LLD撰写、主链路+状态层+实验框架开发、混排与问卷卡接入，按端到端骨架$\rightarrow$实验框架$\rightarrow$状态层$\rightarrow$接入算法排序四个步骤逐层落地；一位同学负责客户端行为埋点$\rightarrow$Kafka$\rightarrow$ClickHouse/Flink的离线与实时特征数据链路，一位同学负责问卷卡的定向、频控与提交闭环。\\
+
+\begin{itemize}
+    \item \textbf{契约：定义工程与算法的边界}。排序请求只传候选身份(type+id+召回源)，特征由算法按key自取，保证训练与服务一致；召回归工程(索引是基建、候选集是资格控制)，算法以离线产物进入召回索引。两侧独立迭代，互不影响。
+    \item \textbf{主链路：编排固定、策略可插拔}。多路并行召回recall(每路独立超时与线程池隔离、单路失败跳过、按type+id合并去重并取召回源并集、下发/曝光历史过滤)$\rightarrow$算法模型排序rank(RPC调算法，超时或失败降级为召回原序)$\rightarrow$重排策略链rerank(品牌/品类滑动窗口打散、来源分段等)$\rightarrow$混排blend(坑位规划、配额、瀑布流高度账本，品牌/合集/问卷/堆叠四类卡片)$\rightarrow$按type批量填充fill(填不出即丢)。新增一路召回、一条策略、一类卡片均为一个类加一行注册，主链路零改动。
+    \item \textbf{状态层：cursor+cache}。首次请求跑全链路生成一个batch整体缓存(分页前全量有序的type+id列表与实验分组快照)，batch内翻页根据cursor查cache切片下发，不重跑全链路；去重按记忆时长分三层(batch内合并、session内已下发、跨session已曝光)，在召回合并后一次过滤；每层状态都有降级路径(cursor失效视为miss重建、缓存不可用走全链路、去重不可用放宽)。效果：batch内翻页不重跑上游，任何状态层故障只损失去重与缓存，页面永远有降级兜底。
+    \item \textbf{实验归因与数据闭环}。实验：扁平模型，实验间正交；分组与准入在入口一次判定并冻结，保证归因可信；策略挂固定分流点：代码只注册策略，实验配置决定各组走哪个策略，新实验不发版。归因：exp\_group随卡片下发、随埋点原样回流，按组比对效果。数据：客户端事件写一次Kafka三路消费——ClickHouse落明细供T+1离线特征与按组实验分析，Flink窗口聚合session内行为为实时特征供排序请求期读取，曝光事件回流做跨session去重。
+    \item \textbf{效果}：首个A/B实验(算法排序 vs 召回原序)商品卡点击率+18\%、加购率+11\%；首页全链路TP99约200ms，翻页TP99<50ms，页面成功率99.99\%；上线后一个月新增3类卡片(brand/collection/survey)、3条重排策略(品牌/品类打散、来源分段、下钻路径剔除)，平均2天上线。
+\end{itemize}
+\end{onehalfspacing}
+
+\datedsubsection{\textbf{Springboot服务单机启动加速}}{技术负责人}
+\begin{onehalfspacing}
+\textbf{项目背景}：服务的依赖越多启动速度越慢，当业务系统随着迭代的进行依赖越来越多启动速度会越来越慢，极大影响开发测试时的部署速度从而降低迭代效率，同时在线上出事故需要回滚的时候，服务启动时间越长，事故时间越长影响越大，所以提升服务单机启动速度对于开发和生产都有着重大意义。\\
+
+\textbf{工作内容}：
+\begin{itemize}
+  \item 梳理启动流程：启动JVM -> 类加载 -> 创建ApplicationContext -> Bean初始化 -> 启动内置Web服务器。
+  \item 定位性能瓶颈：通过在启动流程各阶段打点上报耗时的方式，定位到类加载这一步骤占整个启动流程的大部分。
+  \item 分析瓶颈原因：JVM在URLClassLoader类加载过程中会调用findClass方法查找类属于哪个jar包，原生实现的查找方式会依次在所有jar包中查找目标类，是线性时间复杂度，对于依赖较多的服务而言这部分耗时长。
+  \item 制定解决方案：借鉴用空间换时间的思想，我们在类加载之前首先构建JarIndex(ClassName -> JarPath)，然后在类加载时直接根据构建的JarIndex查找定位目标类(用反射替换URLClassLoader中的核心数据结构UCP)，将时间复杂度由O(N)降低为O(1)，同时我们提供了多种不同类型的索引结构供不同服务使用（Map, TrieTree, 多级Map）。
+  \item 打包解决方案：将服务启动加速的解决方案打包供不同业务服务即插即用，同时提供配置化参数的能力让不同业务服务能根据自己需求选用不同的JarIndex数据类型。\\
+\end{itemize}
+
+\textbf{项目成果}：
+\begin{itemize}
+  \item 启动加速效果：经过测试，在引入服务启动加速方案后，服务启动的平均耗时减小30\%到50\%（与服务所加载类的多少有关，服务加载类越多启动加速越明显）。
+  \item 方案推广应用：服务加速启动方案通过打包的方式成功推广到部门各个团队的～50个服务，都取得了不错的效果，获得广泛好评。\\
+\end{itemize}
+\end{onehalfspacing}
+
+\newpage
+\datedsubsection{\textbf{美团医药用户营销体系建设}}{核心开发者}
+\begin{onehalfspacing}
+\textbf{项目背景}：美团医药用户营销依托本地生活的流量入口，负责用户拉新获客、转换激活、留存变现等一系列核心目标。技术侧面临的问题是如何构建高并发高可用的系统来支持业务运行，以及如何支持营销活动的快速迭代。\\
+
+\textbf{工作内容}：采用微服务架构将营销系统拆分为配置、投放、活动、触达、会员等独立服务，通过缓存、消息队列、多级降级和熔断机制保证系统核心功能在极端情况下可用，通过抽象统一数据模型、构建可扩展服务架构来支持业务需求的快速迭代。
+\begin{itemize}
+    \item 配置：负责营销活动相关配置信息的管理，通过抽象统一数据模型来实现不同活动异构化数据的统一存储与管理，基于MQ实现批处理系统来处理大批量配置数据的校验上传和结果通知。
+    \item 投放：负责商品等营销物料的投放和渲染，通过多级缓存解决热点key问题，同时对大key进行拆分避免性能下降。
+    \item 活动：负责营销活动玩法的搭建与运行，通过分布式锁+数据库CAS机制+状态机来避免并发问题，同时通过分库分表来解决大量数据存储和查询问题。\\
+\end{itemize}
+
+\textbf{项目成果}：完成了美团医药用户营销系统从0到1的构建，支持了营销业务的快速迭代发展，DAU从~50w -> ~600w(12倍), 日均订单量从~20w -> ~300w(15倍), 市场份额从~20\% -> 50\%(2.5倍)。
+\end{onehalfspacing}
+
+%\datedsubsection{\textbf{ToB Saas系统}}{独立开发者}
+%\begin{onehalfspacing}
+%乡镇中小微企业对于生产资料的管理还处于人工手动管理的原始状态，效率低下且容易出错，迫切需要进行数字化升级。
+%\begin{itemize}
+%   \item 需求调研论证：与真实用户交流获取需求，深入了解业务流程与细节，抽象业务模型，分析可行性与收益。
+%   \item 方案设计选型：
+%     \begin{itemize}
+%       \item 后台网站：系统的核心组成部分，由用户管理、商品管理、销售管理、工人管理等模块组成。
+%       \item 微信小程序：负责输入商品信息手动创建商品，连接蓝牙热敏打印机为商品生成二维码，同时支持扫码识别操作商品。
+%     \end{itemize}
+%   \item 代码开发测试：后台网站采用java+react，微信小程序参考官方文档并参考打印机厂家提供的sdk接入打印机。
+%   \item 服务部署上线：在腾讯云租赁服务器并购买域名，然后在工信部和公安部进行域名认证和备案，最后上线服务。
+%   \item 后期维护升级：用户手册编写，现场指导使用，后期功能升级。
+%\end{itemize}
+%\end{onehalfspacing}
+
+\end{document}

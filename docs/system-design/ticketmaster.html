@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Ticketmaster 案例</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F5F7FA; --surface:#FFFFFF; --surface-2:#EEF2F6;
+  --text:#1B2430; --muted:#5B6673; --border:#D8DEE6; --border-strong:#B9C2CE;
+  --accent:#0F6E7A; --accent-soft:#DCEFF1; --amber:#A8691A; --amber-soft:#F7ECD9;
+  --code-bg:#F0F3F7; --code-text:#1E2A36;
+  --shadow: 0 1px 2px rgba(20,30,40,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12161C; --surface:#1A2029; --surface-2:#212934;
+    --text:#E6EAF0; --muted:#98A4B4; --border:#2B343F; --border-strong:#3B4652;
+    --accent:#5FBDC8; --accent-soft:#16333A; --amber:#DDA755; --amber-soft:#2E2618;
+    --code-bg:#161C24; --code-text:#DCE3EB;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12161C; --surface:#1A2029; --surface-2:#212934;
+  --text:#E6EAF0; --muted:#98A4B4; --border:#2B343F; --border-strong:#3B4652;
+  --accent:#5FBDC8; --accent-soft:#16333A; --amber:#DDA755; --amber-soft:#2E2618;
+  --code-bg:#161C24; --code-text:#DCE3EB;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  font-size:15px; line-height:1.8;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+h1,h2,h3,h4{font-family:"Noto Serif SC","Songti SC","STSong",Georgia,serif; text-wrap:balance; line-height:1.3; margin:0}
+h1{font-size:2.1rem; font-weight:700; letter-spacing:.01em}
+h2{font-size:1.5rem; font-weight:700; padding-top:.4rem}
+h3{font-size:1.12rem; font-weight:600; color:var(--text)}
+h4{font-family:"Noto Sans SC",system-ui,sans-serif; font-size:.95rem; font-weight:700; color:var(--muted); letter-spacing:.02em}
+p{margin:0}
+ul,ol{margin:0; padding-left:1.4em}
+li{margin:.15em 0}
+li::marker{color:var(--muted)}
+strong{font-weight:700}
+code,pre{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+code{font-size:.86em; background:var(--code-bg); color:var(--code-text); padding:.1em .4em; border-radius:4px}
+pre{
+  margin:0; background:var(--code-bg); color:var(--code-text);
+  border:1px solid var(--border); border-radius:6px;
+  padding:.9rem 1.1rem; font-size:.8rem; line-height:1.55;
+  overflow-x:auto; white-space:pre; tab-size:4;
+}
+pre code{background:none; padding:0; font-size:inherit}
+
+.eyebrow{font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:500}
+.page{max-width:1360px; margin:0 auto; padding:0 1.25rem 4rem}
+
+header.top{padding:2.6rem 0 1.8rem; border-bottom:1px solid var(--border)}
+header.top .lead{max-width:66ch; color:var(--muted); margin-top:.9rem; font-size:1rem}
+.threads{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin-top:1.6rem}
+.thread{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1rem 1.1rem; box-shadow:var(--shadow)}
+.thread .num{font-family:"JetBrains Mono",monospace; font-size:.75rem; color:var(--accent); letter-spacing:.08em}
+.thread h3{margin-top:.25rem; font-size:1.05rem}
+.thread p{margin-top:.5rem; font-size:.88rem; color:var(--muted); line-height:1.65}
+.thread a{display:inline-block; margin-top:.6rem; font-size:.85rem}
+
+.layout{display:grid; grid-template-columns:minmax(0,1fr); gap:2rem; margin-top:1.5rem}
+bodybody
+main{min-width:0}
+section.part{padding:2.2rem 0 1rem}
+section.part + section.part{border-top:1px solid var(--border)}
+.part-head{display:flex; align-items:baseline; gap:.9rem; margin-bottom:.4rem}
+.part-head .num{font-family:"JetBrains Mono",monospace; color:var(--accent); font-size:.85rem; letter-spacing:.08em}
+.mainline{
+  margin:.9rem 0 1.4rem; padding:.85rem 1.1rem; background:var(--accent-soft);
+  border-radius:6px; font-size:.92rem; line-height:1.7;
+}
+.mainline b{color:var(--accent)}
+.block{display:grid; gap:.8rem; margin-top:1.6rem}
+.block > h3{padding-bottom:.3rem; border-bottom:1px dashed var(--border)}
+.prose{max-width:none}
+.two{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem}
+
+.tbl{overflow-x:auto; border:1px solid var(--border); border-radius:6px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.86rem; line-height:1.55; min-width:560px}
+th,td{padding:.55rem .75rem; text-align:left; vertical-align:top; border-bottom:1px solid var(--border)}
+th{font-weight:700; color:var(--muted); font-size:.78rem; letter-spacing:.04em; background:var(--surface-2); white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:500; white-space:nowrap}
+table.wl td{white-space:normal; font-weight:400}
+td ul.pts{margin:0; padding-left:1.1em; white-space:normal}
+td ul.pts li{margin:.1em 0}
+table.wl td[rowspan]{font-weight:500}
+table.wl td[rowspan] b{display:block; font-size:1rem}
+.tbl.wide table{min-width:760px}
+.num-col{font-variant-numeric:tabular-nums}
+
+.aside{border:1px dashed var(--border-strong); border-radius:8px; padding:.8rem 1rem; background:var(--surface-2); color:var(--muted); font-size:.9rem; display:grid; gap:.5rem}
+.aside-title{font-weight:700; color:var(--text); font-size:.85rem; letter-spacing:.03em}
+.aside pre{margin:0}
+.aside-sub{font-weight:700; color:var(--text); font-size:.85rem; margin-top:.3rem}
+.aside ul{margin:0; padding-left:1.2em}
+.note{font-size:.88rem; color:var(--muted); padding-left:.9rem; border-left:2px solid var(--border-strong)}
+
+footer{margin-top:3rem; padding-top:1.2rem; border-top:1px solid var(--border); color:var(--muted); font-size:.8rem}
+.back{font-size:.8rem}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="top" id="top">
+  <h1>Ticketmaster</h1>
+</header>
+
+<div class="layout">
+<main>
+
+<section class="part" id="fr">
+  <div class="part-head"><span class="num">1</span><h2>功能需求</h2></div>
+  <div class="block">
+    <h3>核心</h3>
+    <ul class="prose">
+      <li>用户查看演出。</li>
+      <li>用户搜索演出。</li>
+      <li>用户订票。</li>
+    </ul>
+  </div>
+  <div class="block">
+    <h3>范围外</h3>
+    <ul class="prose">
+      <li>用户订票历史。</li>
+      <li>后台创建演出。</li>
+      <li>动态定价。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="nfr">
+  <div class="part-head"><span class="num">2</span><h2>非功能需求</h2></div>
+  <div class="block">
+    <h3>核心</h3>
+    <ul class="prose">
+      <li><b>搜索和浏览优先可用，订票优先一致</b>：绝不双卖。</li>
+      <li><b>规模</b>：单场热门演出 1000 万并发用户。</li>
+      <li><b>搜索延迟</b>：500 ms 内。</li>
+      <li><b>读多写少</b>：读写比约 100:1。</li>
+    </ul>
+  </div>
+  <div class="block">
+    <h3>落到答题框架的三个点</h3>
+    <ul class="prose">
+      <li><b>CAP</b>：同一系统两种取舍，搜索和演出详情要 A，预留和支付转正要 C。</li>
+      <li><b>延迟</b>：搜索 500 ms 内，座位图要实时变化。</li>
+      <li><b>规模</b>：1000 万并发是同时在线，不是每秒请求。真正的写压力在预留，预留次数远大于成交，这个差距决定预留写入不能直接打数据库。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="entities">
+  <div class="part-head"><span class="num">3</span><h2>核心实体</h2></div>
+  <div class="block">
+    <ul class="prose">
+      <li><b>Event</b>：日期、描述、类型、演出者。<b>Performer</b>：名字、简介。<b>Venue</b>：地址、容量、座位图。</li>
+      <li><b>Ticket</b>：eventId、座位、价格、状态 available / reserved / booked。库存。</li>
+      <li><b>Booking</b>：userId、ticketIds、总价、状态 in_progress / confirmed。订单。</li>
+      <li><b>为什么 Ticket 和 Booking 分开</b>：票是库存，订单是一次购买行为。一单买多张票，总价和支付流水是订单级属性；bookingId 是支付的句柄和幂等键；一张票可能被尝试购买很多次，放弃的记录要留在订单里不能覆盖掉。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="api">
+  <div class="part-head"><span class="num">4</span><h2>API</h2></div>
+  <div class="block">
+    <ul class="prose">
+      <li><code>GET /events/:eventId</code> → Event、Venue、Performer、Ticket[]。</li>
+      <li><code>GET /events/search?keyword&amp;start&amp;end&amp;page</code> → Event[]。</li>
+      <li><code>POST /bookings/:eventId</code>，body 带 ticketIds → bookingId。用户 id 从认证取。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="hld">
+  <div class="part-head"><span class="num">5</span><h2>高层设计</h2></div>
+  <div class="block">
+    <pre>客户端 ──► API Gateway ──┬─► Event Service ──► Redis 缓存 ──► PostgreSQL（Event / Venue / Performer / Ticket）
+                          ├─► Search Service ──► Elasticsearch（CDC 从 PostgreSQL 同步）
+                          └─► Booking Service ──► 预留层 ──► PostgreSQL（Ticket / Booking）──► Stripe</pre>
+    <ul class="prose">
+      <li><b>看演出</b>：Event Service 查库返回演出、场馆、座位，读多改少，前面放缓存。</li>
+      <li><b>搜演出</b>：Search Service 查 Elasticsearch，PostgreSQL 是真相，CDC 同步过去。</li>
+      <li><b>订票</b>：Booking Service 先预留再支付，支付成功在 PostgreSQL 事务里转正。预留层是什么见深入。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="deep">
+  <div class="part-head"><span class="num">6</span><h2>深入</h2></div>
+
+  <div class="block">
+    <h3>预留：填完支付发现票没了</h3>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:1050px">
+      <colgroup><col style="width:14%"><col style="width:34%"><col style="width:14%"><col style="width:38%"></colgroup>
+      <thead><tr><th>方案</th><th>做法</th><th>预留存在哪</th><th>问题</th></tr></thead>
+      <tbody>
+        <tr><td>长事务行锁</td><td><code>SELECT ... FOR UPDATE</code> 开着事务等用户付完</td><td>未提交的事务</td><td>连接独占几分钟，服务有状态，B 是阻塞等待不是立刻被拒，不可用</td></tr>
+        <tr><td>状态 + 过期 + cron</td><td>Ticket 加 reserved 状态和 expires_at，cron 定期改回 available</td><td>已提交的数据</td><td>过期到 cron 跑到之间票空置，cron 是单点</td></tr>
+        <tr><td>隐式状态</td><td>预留条件写成 <code>status='available' OR (status='reserved' AND expires_at &lt; now())</code>，过期的直接被覆盖</td><td>已提交的数据</td><td>读路径多一个 OR 条件。纯数据库的最优解</td></tr>
+        <tr><td>Redis 锁</td><td><code>SET seat:{id} {bookingId} NX EX 600</code>，TTL 到期自动释放</td><td>Redis key</td><td>多一套组件，座位图要合并两个源，Redis 故障时预留退化</td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li><b>教程选 Redis 锁</b>，理由是预留次数远大于成交，大量选座后放弃的写入不该打数据库。流程：拿锁 → 建 in_progress 的 Booking → 客户端用 Stripe.js tokenize 卡号 → webhook 回来开事务 <code>UPDATE tickets SET status='booked' WHERE id IN (...) AND status='available'</code>，bookingId 做幂等键 → Lua 比对 value 再 DEL 锁。</li>
+      <li><b>多座位</b>：多个 key 的 SET NX 不原子，用 Lua 先全部 EXISTS 检查再逐个 SET，Cluster 下 key 带 hash tag 落同一 slot。SET NX 是非阻塞 try-lock，没有等待就没有死锁，最坏是部分成功要清理。</li>
+      <li><b>三个坑</b>：座位图要合并数据库的 booked 和 Redis 的 reserved，用 sorted set 按过期时间做索引一次取出，或把 reserved 写穿到数据库；Redis 挂了预留停摆但不双卖，数据库那条 <code>AND status='available'</code> 兜底；TTL 在支付中途过期会让两人都付成功然后一个被退款，点支付时续期 EXPIRE。</li>
+      <li><b>正确性永远在数据库</b>：四个方案最终都靠支付时那条条件 UPDATE 只让一个成功，锁和状态只决定体验和效率。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>热门场次：几百万人同时抢</h3>
+    <ul class="prose">
+      <li><b>问题</b>：座位图是静态快照，用户点的座位已经没了，反复失败，同时预留请求把 Redis 和后端打满。</li>
+      <li><b>SSE 实时座位图</b>：座位被订走就推给所有看这一场的客户端。Taylor Swift 量级下座位瞬间消失，实时也救不了体验，而且不解决过载。</li>
+      <li><b>虚拟排队</b>（教程选择）：请求购票页先进 Redis sorted set 按时间排队，SSE 推排位，调度按容量定期放行，放行的拿带 TTL 的 admitted 标记，预留接口校验标记。机制见<a href="system-design-knowledge-graph.html#s1-4b">知识图谱的排队</a>。</li>
+      <li><b>公平</b>：按到达时间排队脚本永远在前，开售前候场随机排序，开售后才按到达时间。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>锁还是排队（自己的判断，教程没有合起来比）</h3>
+    <p>教程把 Redis 锁和虚拟排队放在两个 deep dive 里分别回答"预留怎么做"和"热门场次怎么扛"，没有合起来看。合起来看，两者都挡在数据库前面，是二选一。</p>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:900px">
+      <colgroup><col style="width:16%"><col style="width:42%"><col style="width:42%"></colgroup>
+      <thead><tr><th></th><th>Redis 锁</th><th>排队</th></tr></thead>
+      <tbody>
+        <tr><td>管什么</td><td>争用，同一个座位谁拿到</td><td>过载，总共放多少人进来</td></tr>
+        <tr><td>预留存哪</td><td>Redis，座位图读两个源</td><td>数据库隐式状态条件写，座位图读一个源</td></tr>
+        <tr><td>谁赢</td><td>SET NX 先到先赢，网络竞速，脚本占便宜</td><td>按放行顺序，可以先到先得也可以随机</td></tr>
+        <tr><td>用户体验</td><td>立刻知道抢到没有</td><td>先等，知道排第几</td></tr>
+        <tr><td>正确性</td><td colspan="2">都靠数据库支付时的条件 UPDATE</td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li><b>放行速率本来就按数据库容量定</b>，放进来的人直接条件写预留，偶尔撞同一座位的重试代价可以忽略，再加锁是重复建设。</li>
+      <li><b>选法</b>：请求量数据库接得住，隐式状态条件写；接不住又不想让用户等，Redis 锁；量级大到 Redis 也要分片或要公平，排队。</li>
+    </ul>
+    <div class="aside">
+      <div class="aside-title">锁的做法：每座一个 key</div>
+      <pre>预留   SET seat:{eventId}:{seatId} {bookingId} NX EX 600，多座位用 Lua 先全部 EXISTS 再逐个 SET
+       同时在 bookings 表插一条 in_progress，票表不动
+支付   webhook 回来开事务 UPDATE tickets SET status='booked' WHERE id IN (...) AND status='available'
+       影响行数等于座位数才提交，否则回滚退款
+释放   Lua 比对 value 是自己的 bookingId 再 DEL
+过期   TTL 到了 key 自己消失，座位自然可用
+读     座位图合并两个源：数据库给 booked，Redis 给正在锁着的</pre>
+      <p>预留期间数据库一笔预留写入都没有，几十万人选座放弃全在 Redis 里消化。</p>
+    </div>
+    <div class="aside">
+      <div class="aside-title">排队的做法：放行后条件写预留</div>
+      <pre>排队   ZADD queue:{eventId}，按数据库容量放行，放行的拿带 TTL 的 admitted 标记
+预留   放行的人直接 UPDATE tickets SET status='reserved', booking_id=?, expires_at=now()+10min
+       WHERE id=? AND (status='available' OR (status='reserved' AND expires_at &lt; now()))
+支付   UPDATE tickets SET status='booked' WHERE id=? AND status='reserved' AND booking_id=?，为 0 退款
+过期   不用回收任务，过期的票被下一个人的预留条件直接覆盖
+读     座位图只读数据库</pre>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>读扩展：1000 万人看详情</h3>
+    <ul class="prose">
+      <li>演出、场馆、演出者信息读多改少，Redis 缓存 read-through，key 用 eventId，失效靠数据库触发器通知加 TTL 兜底。</li>
+      <li>Event Service 无状态，负载均衡后横向扩。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>搜索：500 ms 内</h3>
+    <ul class="prose">
+      <li>加索引和 SQL 优化：<code>LIKE '%keyword%'</code> 走不了索引，部分匹配仍然慢。</li>
+      <li>数据库全文索引：PostgreSQL tsvector 加 GIN，比 LIKE 快很多，维护成本高。</li>
+      <li>Elasticsearch（教程选择）：倒排索引、模糊匹配，PostgreSQL 通过 CDC 同步过去，ES 只做读不当真相。</li>
+      <li>热门搜索词缓存：ES 自带 shard 级 filter 和 request cache，结果不带个性化可以再上 CDN。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>按级别的期望</h3>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:800px">
+      <colgroup><col style="width:12%"><col style="width:14%"><col style="width:74%"></colgroup>
+      <thead><tr><th>级别</th><th>广度 / 深度</th><th>达标线</th></tr></thead>
+      <tbody>
+        <tr><td>Mid</td><td>80 / 20</td><td>API 和数据模型清楚，高层图能跑通，双卖问题用状态 + 过期 + cron 即可</td></tr>
+        <tr><td>Senior</td><td>60 / 40</td><td>主动进 deep dive：ES 做搜索、锁或排队做预留，能讲清每个选择的取舍和瓶颈</td></tr>
+        <tr><td>Staff</td><td>40 / 60</td><td>基础部分一带而过，在两三个点上讲出面试官不知道的东西</td></tr>
+      </tbody></table></div>
+  </div>
+</section>
+
+</main>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 使用总结</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F4F6F9; --surface:#FFFFFF; --text:#1A222D; --muted:#5B6673; --line:#D9DEE6;
+  --accent:#3949AB; --accent-soft:#E8EAF6; --warn:#B4541A; --warn-soft:#FBEEE4;
+  --ok:#2E7D57; --ok-soft:#E3F2EA; --code-bg:#EEF1F6; --shadow:0 1px 2px rgba(20,30,50,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10151C; --surface:#171E27; --text:#E6EAF0; --muted:#9AA6B4; --line:#2A3441;
+    --accent:#8C9CFF; --accent-soft:#232B4A; --warn:#E8955A; --warn-soft:#3A2618;
+    --ok:#6FCF97; --ok-soft:#173226; --code-bg:#1E2631; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10151C; --surface:#171E27; --text:#E6EAF0; --muted:#9AA6B4; --line:#2A3441;
+  --accent:#8C9CFF; --accent-soft:#232B4A; --warn:#E8955A; --warn-soft:#3A2618;
+  --ok:#6FCF97; --ok-soft:#173226; --code-bg:#1E2631; --shadow:none;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.75 "Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.layout{display:block;max-width:1200px;margin:0 auto;padding:40px 32px 96px}
+@media (max-width:900px){.layout{padding:56px 16px 64px}}
+.toc{position:fixed;top:0;left:0;height:100vh;width:280px;padding:56px 16px 24px 20px;background:var(--surface);border-right:1px solid var(--line);box-shadow:0 0 24px rgba(20,30,50,.12);overflow:auto;transform:translateX(-100%);transition:transform .2s ease;z-index:40;font-size:13px;line-height:1.6}
+body.toc-open .toc{transform:none}
+.toc-toggle{position:fixed;top:14px;left:14px;z-index:50;font:13px "Noto Sans SC",sans-serif;padding:6px 12px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer;box-shadow:var(--shadow)}
+.toc-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.toc-backdrop{position:fixed;inset:0;z-index:30;display:none}
+body.toc-open .toc-backdrop{display:block}
+.toc .kicker{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.toc a{display:block;color:var(--muted);padding:3px 0 3px 10px;border-left:2px solid transparent;margin-left:-1px}
+.toc a.sub{padding-left:22px;font-size:12.5px}
+.toc a.active{color:var(--accent);border-left-color:var(--accent)}
+main{max-width:1120px;min-width:0;margin:0 auto}
+h1,h2,h3,h4{font-family:"Noto Serif SC","Songti SC","STSong",serif;text-wrap:balance;line-height:1.3;margin:0}
+.lead{font-weight:600;font-style:italic}
+td ul{margin:4px 0 0;padding-left:18px}
+td li{margin:2px 0}
+h1{font-size:30px;font-weight:700;margin-bottom:8px}
+h2{font-size:22px;font-weight:700;margin:56px 0 16px;padding-top:24px;border-top:1px solid var(--line)}
+h3{font-size:17px;font-weight:600;margin:32px 0 10px}
+h4{font-size:15px;font-weight:600;margin:20px 0 6px;font-family:"Noto Sans SC",sans-serif}
+.lede{color:var(--muted);font-size:15px;margin:0 0 20px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:22px}
+li{margin:4px 0}
+li>ul{margin-top:4px}
+strong{font-weight:700}
+code{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;background:var(--code-bg);padding:1px 5px;border-radius:3px}
+pre{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;line-height:1.6;background:var(--code-bg);border:1px solid var(--line);border-radius:6px;padding:14px 16px;overflow-x:auto;margin:10px 0 16px}
+pre code{background:none;padding:0;font-size:inherit}
+.tbl{overflow-x:auto;margin:10px 0 18px}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:12.5px;letter-spacing:.02em;background:var(--surface)}
+tr:hover td{background:var(--surface)}
+.grid6{display:grid;grid-template-columns:110px 1fr;gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:12px 0 18px;background:var(--surface);box-shadow:var(--shadow)}
+.grid6>div{padding:10px 14px;border-bottom:1px solid var(--line)}
+.grid6>div:nth-last-child(-n+2){border-bottom:0}
+.grid6 .k{font-weight:600;color:var(--muted);font-size:13px;background:var(--bg)}
+.grid6 p:last-child,.grid6 ul:last-child{margin-bottom:0}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0 16px}
+.callout.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.callout.ok{border-left-color:var(--ok);background:var(--ok-soft)}
+.callout .tag{display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:4px}
+.callout.warn .tag{color:var(--warn)}
+.callout .tag{color:var(--accent)}
+.callout.ok .tag{color:var(--ok)}
+.callout p:last-child{margin-bottom:0}
+.qa{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0 18px;background:var(--surface);box-shadow:var(--shadow)}
+.qa h4{margin:0 0 8px;font-size:14px;color:var(--muted);letter-spacing:.04em}
+.qa dl{margin:0}
+.qa dt{font-weight:600;margin-top:10px}
+.qa dt:first-child{margin-top:0}
+.qa dd{margin:2px 0 0 0;color:var(--text)}
+.qa dd p{margin:6px 0}
+.qa dd .tbl{margin:8px 0}
+.qa dd pre{margin:8px 0}
+.check{list-style:none;padding:0;margin:0}
+.check li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line);margin:0}
+.check input{margin-top:6px;width:16px;height:16px;accent-color:var(--accent)}
+.check .n{color:var(--muted);font-size:12px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13px;color:var(--muted);margin-bottom:28px}
+.pill{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);vertical-align:middle;margin-left:4px}
+.pill.warn{border-color:var(--warn);color:var(--warn)}
+.draft{border:1px dashed var(--line);border-radius:8px;padding:14px 16px;margin:10px 0 18px;background:var(--surface)}
+.draft .lang{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px}
+.small{font-size:13px;color:var(--muted)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+<div class="layout">
+<main>
+<h1>AI 使用总结</h1>
+
+<h2 id="s1">AI缺点</h2>
+<ol>
+<li><b class="lead">小任务能做，scope大了不行</b>：对于IO清晰，逻辑闭环的小任务能较好的完成（替代junior的角色），但一旦涉及到系统边界等scope更大的问题，AI还不行（业务了解程度、技术思考深度均不够）；</li>
+<li><b class="lead">代码经不住推敲，写完不回头review</b>：AI写的代码很多看起来很nice但禁不住细细推敲，有很多时候变量命名、并发控制、方法/类抽象等做不好（AI写完就是写完了，不会自己回去review和思考，不会将写过的东西联系起来抽象提取统一，比如：相同的公共逻辑抽象统一成util方法、用模板方法将相同逻辑抽象统一到基类等）；</li>
+<li><b class="lead">不深度思考，一反问就推翻</b>：AI缺乏深度思考的能力，不会问问题，也不会停，会带着自己的假设直接动手，有时候你反问它一句它立马就会把自己之前的结论推翻了；</li>
+<li><b class="lead">规则不落地</b>：说过的规则、甚至它自己记进记忆的规则，下一次生成照样违反；被指出后只改被点名的那一处，不会推广到同类（和第2点不同：那是一次产出内部不回头review，这是跨时间不长记性）；</li>
+<li><b class="lead">编造凑数，自我报告不可信</b>：没核实的理由直接写上，让它找问题它就凑问题，数字拍脑袋；"最终方案/没问题/完成"表达的是"我不打算再改了"，不是"我检查过了"，所以它的自我报告不能当信号用，人必须自己复核。</li>
+</ol>
+
+<h2 id="s2">AI优点</h2>
+<ol>
+<li><b class="lead">封闭任务快而准</b>：IO清晰、路径明确的任务基本一次做对，知识讲解（LangGraph对比、B-tree/LSM-tree、锁、pub/sub、JWT）几乎不用纠错；线上排查只给一句"看一下DM评估怎么查"，3分钟从Slack到代码到Redis key定位到根因，还能指出报障描述里和TTL矛盾的地方；查证会主动翻全量数据给硬证据（8127条商品里拆分结构占0.2%）；</li>
+<li><b class="lead">调研找得快找得准</b>：只要被要求，能反编译spring-context验证setQueueCapacity(0)的语义，能查到Hystrix/Dubbo/Sentinel、GrowthBook/Statsig/Unleash、Google AIP/Slack/Stripe各自怎么做，并把结论对到我们的场景上；问题只在于不要求它不查；</li>
+<li><b class="lead">产出快，返工比从零写便宜</b>：Reco 2.0四个PR的骨架、三篇LLD、两份HLD草稿、系统设计知识图谱页面都是数天成型，人的工作从写变成改和判；</li>
+<li><b class="lead">给了规则的机械活不出错</b>：统一措辞、改编号、同步目录和交叉引用、表格拆分点、SVG坐标调整，规则说清楚就能全文执行，不会漏也不会错；</li>
+<li><b class="lead">给了标准或依据就能坚持和纠错</b>：给了"跨组件契约/难反悔"的尺子后能分清HLD和LLD并且坚持对的那一项；有外部依据时能反驳我并且是对的（锁要加在被争夺的东西上不是争夺者身上；时间衰减不值得抽policy；lombok的@NoArgsConstructor不能一刀切；DynamoDB不是LSM会自己更正）。</li>
+</ol>
+<p>这五条和缺点是同一条边界的两面：判定标准和路径已定的事它做得好，定标准和定路径这件事它做不了。</p>
+</main>
+</div>
+</body>
+</html>

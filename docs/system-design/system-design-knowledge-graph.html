@@ -1,0 +1,1202 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>系统设计知识图谱</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F5F7FA; --surface:#FFFFFF; --surface-2:#EEF2F6;
+  --text:#1B2430; --muted:#5B6673; --border:#D8DEE6; --border-strong:#B9C2CE;
+  --accent:#0F6E7A; --accent-soft:#DCEFF1; --amber:#A8691A; --amber-soft:#F7ECD9;
+  --code-bg:#F0F3F7; --code-text:#1E2A36;
+  --shadow: 0 1px 2px rgba(20,30,40,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12161C; --surface:#1A2029; --surface-2:#212934;
+    --text:#E6EAF0; --muted:#98A4B4; --border:#2B343F; --border-strong:#3B4652;
+    --accent:#5FBDC8; --accent-soft:#16333A; --amber:#DDA755; --amber-soft:#2E2618;
+    --code-bg:#161C24; --code-text:#DCE3EB;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12161C; --surface:#1A2029; --surface-2:#212934;
+  --text:#E6EAF0; --muted:#98A4B4; --border:#2B343F; --border-strong:#3B4652;
+  --accent:#5FBDC8; --accent-soft:#16333A; --amber:#DDA755; --amber-soft:#2E2618;
+  --code-bg:#161C24; --code-text:#DCE3EB;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  font-size:15px; line-height:1.8;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+h1,h2,h3,h4{font-family:"Noto Serif SC","Songti SC","STSong",Georgia,serif; text-wrap:balance; line-height:1.3; margin:0}
+h1{font-size:2.1rem; font-weight:700; letter-spacing:.01em}
+h2{font-size:1.5rem; font-weight:700; padding-top:.4rem}
+h3{font-size:1.12rem; font-weight:600; color:var(--text)}
+h4{font-family:"Noto Sans SC",system-ui,sans-serif; font-size:.95rem; font-weight:700; color:var(--muted); letter-spacing:.02em}
+p{margin:0}
+ul,ol{margin:0; padding-left:1.4em}
+li{margin:.15em 0}
+li::marker{color:var(--muted)}
+strong{font-weight:700}
+code,pre{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+code{font-size:.86em; background:var(--code-bg); color:var(--code-text); padding:.1em .4em; border-radius:4px}
+pre{
+  margin:0; background:var(--code-bg); color:var(--code-text);
+  border:1px solid var(--border); border-radius:6px;
+  padding:.9rem 1.1rem; font-size:.8rem; line-height:1.55;
+  overflow-x:auto; white-space:pre; tab-size:4;
+}
+pre code{background:none; padding:0; font-size:inherit}
+
+.eyebrow{font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:500}
+.page{max-width:1360px; margin:0 auto; padding:0 1.25rem 4rem}
+
+header.top{padding:2.6rem 0 1.8rem; border-bottom:1px solid var(--border)}
+header.top .lead{max-width:66ch; color:var(--muted); margin-top:.9rem; font-size:1rem}
+.threads{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin-top:1.6rem}
+.thread{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1rem 1.1rem; box-shadow:var(--shadow)}
+.thread .num{font-family:"JetBrains Mono",monospace; font-size:.75rem; color:var(--accent); letter-spacing:.08em}
+.thread h3{margin-top:.25rem; font-size:1.05rem}
+.thread p{margin-top:.5rem; font-size:.88rem; color:var(--muted); line-height:1.65}
+.thread a{display:inline-block; margin-top:.6rem; font-size:.85rem}
+
+.layout{display:grid; grid-template-columns:minmax(0,1fr); gap:2rem; margin-top:1.5rem}
+.toc{position:fixed; top:0; left:0; height:100vh; width:280px; padding:56px 16px 24px 20px; background:var(--surface); border-right:1px solid var(--border); box-shadow:0 0 24px rgba(20,30,50,.12); overflow:auto; transform:translateX(-100%); transition:transform .2s ease; z-index:40; font-size:13px; line-height:1.6}
+body.toc-open .toc{transform:none}
+.toc .kicker{font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:8px}
+.toc a{display:block; color:var(--muted); padding:3px 0 3px 10px; border-left:2px solid transparent; margin-left:-1px}
+.toc a.part{color:var(--text); font-weight:700; margin-top:6px}
+.toc a.sub{padding-left:22px; font-size:12.5px}
+.toc a:hover{color:var(--text); text-decoration:none}
+.toc a.active{color:var(--accent); border-left-color:var(--accent)}
+.toc-toggle{position:fixed; top:14px; left:14px; z-index:50; font:13px "Noto Sans SC",sans-serif; padding:6px 12px; border-radius:6px; border:1px solid var(--border); background:var(--surface); color:var(--text); cursor:pointer; box-shadow:var(--shadow)}
+.toc-toggle:hover{border-color:var(--accent); color:var(--accent)}
+.toc-backdrop{position:fixed; inset:0; z-index:30; display:none}
+body.toc-open .toc-backdrop{display:block}
+
+main{min-width:0}
+section.part{padding:2.2rem 0 1rem}
+section.part + section.part{border-top:1px solid var(--border)}
+.part-head{display:flex; align-items:baseline; gap:.9rem; margin-bottom:.4rem}
+.part-head .num{font-family:"JetBrains Mono",monospace; color:var(--accent); font-size:.85rem; letter-spacing:.08em}
+.mainline{
+  margin:.9rem 0 1.4rem; padding:.85rem 1.1rem; background:var(--accent-soft);
+  border-radius:6px; font-size:.92rem; line-height:1.7;
+}
+.mainline b{color:var(--accent)}
+.block{display:grid; gap:.8rem; margin-top:1.6rem}
+.block > h3{padding-bottom:.3rem; border-bottom:1px dashed var(--border)}
+.prose{max-width:none}
+.two{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem}
+
+.tbl{overflow-x:auto; border:1px solid var(--border); border-radius:6px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.86rem; line-height:1.55; min-width:560px}
+th,td{padding:.55rem .75rem; text-align:left; vertical-align:top; border-bottom:1px solid var(--border)}
+th{font-weight:700; color:var(--muted); font-size:.78rem; letter-spacing:.04em; background:var(--surface-2); white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:500; white-space:nowrap}
+table.wl td{white-space:normal; font-weight:400}
+td ul.pts{margin:0; padding-left:1.1em; white-space:normal}
+td ul.pts li{margin:.1em 0}
+table.wl td[rowspan]{font-weight:500}
+table.wl td[rowspan] b{display:block; font-size:1rem}
+.tbl.wide table{min-width:760px}
+.num-col{font-variant-numeric:tabular-nums}
+
+.aside{border:1px dashed var(--border-strong); border-radius:8px; padding:.8rem 1rem; background:var(--surface-2); color:var(--muted); font-size:.9rem; display:grid; gap:.5rem}
+.aside-title{font-weight:700; color:var(--text); font-size:.85rem; letter-spacing:.03em}
+.aside pre{margin:0}
+.aside-sub{font-weight:700; color:var(--text); font-size:.85rem; margin-top:.3rem}
+.aside ul{margin:0; padding-left:1.2em}
+.note{font-size:.88rem; color:var(--muted); padding-left:.9rem; border-left:2px solid var(--border-strong)}
+
+footer{margin-top:3rem; padding-top:1.2rem; border-top:1px solid var(--border); color:var(--muted); font-size:.8rem}
+.back{font-size:.8rem}
+</style>
+</head>
+<body>
+<div class="page">
+<button class="toc-toggle" id="tocToggle" type="button" aria-controls="toc" aria-expanded="false">目录</button>
+<div class="toc-backdrop" id="tocBackdrop"></div>
+<nav class="toc" id="toc" aria-label="目录"><div class="kicker">目录</div></nav>
+<header class="top" id="top">
+  <h1>系统设计知识图谱</h1>
+</header>
+
+<div class="layout">
+
+<main>
+
+<!-- ================= PART 0 总体原则 ================= -->
+<section class="part" id="principles">
+  <div class="part-head"><span class="num">PART 0</span><h2>总览</h2></div>
+
+  <div class="block" id="s00-1">
+    <h3>答题框架</h3>
+    <p>流程约 40 分钟：需求 5 分钟，核心实体 2 分钟，API 5 分钟，高层设计 10 到 15 分钟，深入 10 分钟。</p>
+    <ul class="prose">
+      <li><b>非功能需求的落脚点</b>：
+        <ul>
+          <li>CAP（分布式系统 P 一定要保证，只在 C 和 A 之间取舍，两者不能同时满足）：同一个系统里不同功能点的取舍可以不一样（e.g.: Ticketmaster 搜索和浏览要 A、订票要 C，Tinder 卡片 feed 要 A、滑动配对要 C etc.）
+            <ul>
+              <li>大部分功能点要 A，保证最终一致就行（e.g.: Dropbox 多设备同步晚几秒、News Feed 新帖晚几秒出现、Ad Click 计数分钟级更新、Live Comments 评论允许丢、Ticketmaster 搜索结果走 CDN 缓存 etc.）。</li>
+              <li>少数功能点要 C（e.g.: Ticketmaster 不能双卖、Uber 一个司机只派一单、Tinder 一次互滑只产生一个 match、Gopuff 库存不超卖、竞拍出价、支付 etc.）。</li>
+            </ul>
+          </li>
+          <li>延迟：一般 200 到 500 ms（e.g.: feed 200 ms 内、搜索 500 ms 内 etc.），实时交互要更低（e.g.: Tinder 滑动 100 ms 内 etc.）。</li>
+          <li>规模：先问 DAU 和读写比，估 QPS 和存储量，决定读写扩展怎么做。</li>
+          <li>大部分系统上述三点就够，少数系统还要加：
+            <ul>
+              <li>持久性（e.g.: Dropbox 文件丢了要能恢复、WhatsApp 消息必须送达 etc.）。</li>
+              <li>容错（e.g.: WhatsApp 单个组件挂了不影响整体、Flink 挂了从 checkpoint 恢复 etc.）。</li>
+              <li>安全（e.g.: Ad Click 点击带 HMAC 签名防伪造 etc.）。</li>
+              <li>环境约束（e.g.: Uber 司机每 5 秒上报一次位置要省电省带宽、Dropbox 要传 50 GB 大文件 etc.）。</li>
+              <li>突发流量（e.g.: Ticketmaster 开售、Uber 同一地点 10 万请求、Flash Sale etc.）。</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><b>API 设计</b>：
+        <ul>
+          <li>按资源命名，动作交给 HTTP 方法（e.g.: <code>POST /bookings</code>、<code>GET /events/:id</code> etc.）。</li>
+          <li>分页用游标不用 offset，游标是上一页最后一条的 id 或时间戳，offset 深分页要扫过前面所有行。</li>
+          <li>写接口带幂等键，客户端重试不会重复下单（e.g.: bookingId、Stripe 的 idempotency key etc.）。</li>
+          <li>用户 id 从认证里取不从参数取，敏感信息不进 URL（e.g.: 支付信息在客户端 tokenize 后只传 token etc.）。</li>
+        </ul>
+      </li>
+      <li><b>服务划分</b>：
+        <ul>
+          <li>按领域：一个核心实体一个服务（e.g.: Ticketmaster 的 Event、Search、Booking etc.）。</li>
+          <li>按流量：读写比例悬殊或流量量级不同的拆开单独扩（e.g.: 搜索服务独立扩读 etc.）。</li>
+          <li>按状态：有状态的和无状态的分开，持连接的服务器独立成一层（e.g.: WhatsApp 的 chat server、Live Comments 的 SSE 服务器 etc.）。</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="block" id="s00-2">
+    <h3>总体原则</h3>
+    <ul class="prose">
+    <li><b>真相只有一份，其余都是派生</b>（缓存、ES 搜索副本、OLAP 聚合结果）：先写真相再写派生层，派生层丢了从真相重建。消费者能凭游标从真相补回的通道可以 best effort，否则要持久日志。</li>
+    <li><b>锁和数据不在同一个系统里时，锁负责效率，条件写负责正确性</b>：分布式锁（Redis、ZooKeeper/etcd）挡掉大部分冲突，让大流量不压垮数据库。存储端的条件写（数据库 WHERE 条件的乐观锁）保证最后只有一个成功。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= PART 数据存储 ================= -->
+<section class="part" id="p0">
+  <div class="part-head"><span class="num">PART 1</span><h2>数据存储</h2></div>
+
+  <div class="block" id="s0-0">
+    <h3>负载类型</h3>
+    <div class="tbl wide"><table class="wl" style="table-layout:fixed; min-width:1100px">
+      <colgroup><col style="width:11%"><col style="width:8%"><col style="width:27%"><col style="width:11%"><col style="width:9%"><col style="width:16%"><col style="width:18%"></colgroup>
+      <thead><tr><th>类</th><th>子类</th><th>特征</th><th>数据模型</th><th>布局</th><th>引擎</th><th>分布</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="4"><b>OLTP</b><br>线上请求路径，大量小请求，毫秒延迟</td><td>事务型</td><td>读写均衡，按主键读写几行，要事务</td><td>关系、文档</td><td>行式</td><td>B-tree</td><td>单机或主从，写超单机再分片</td></tr>
+        <tr><td>追加型</td><td>写多读少，只增不改，按分区键取一段，无界增长靠 TTL 过期</td><td>宽表</td><td>行式</td><td>LSM-tree（Log-Structured Merge-tree，键时间有序时 B-tree 也行）</td><td>按分区键分片，无主或单 leader</td></tr>
+        <tr><td>加速型</td><td>读多写少，点查，亚毫秒，丢了可从真相重建</td><td>KV</td><td>—</td><td>内存哈希</td><td><ul class="pts"><li>主从或 Cluster</li><li>本地缓存每实例一份</li></ul></td></tr>
+        <tr><td>检索型</td><td>按内容而非主键查，相关性排序，最终一致性（秒级可见）</td><td>搜索</td><td>—</td><td>不可变 segment 追加 + 合并</td><td>分片 + 副本</td></tr>
+        <tr><td rowspan="3"><b>OLAP</b><br>分析查询，少量大查询，扫海量行聚合出少数列</td><td>离线分析</td><td>批量灌入，T+1（报表和数仓）</td><td>关系（星型）</td><td>列式</td><td>不可变文件，按分区整批写入或替换，无原地更新</td><td>存算分离，文件放对象存储</td></tr>
+        <tr><td>实时分析</td><td>流式写入秒级可见（仪表盘）</td><td>关系</td><td>列式</td><td>追加不可变分片 + 后台合并（LSM 式）</td><td>分片 + 副本</td></tr>
+        <tr><td>时序指标</td><td>海量 series 高频写，时间范围内聚合和降采样（监控、行情）</td><td>时序</td><td>按 series 列式</td><td>追加 + 合并</td><td>按 series 或时间分片</td></tr>
+      </tbody></table></div>
+    <ul>
+      <li>OLTP（Online Transaction Processing）子类按<b>读写比和访问路径</b>分，OLAP（Online Analytical Processing）子类按<b>写入方式</b>分。</li>
+      <li>引擎列是负载偏爱的结构，同一负载配另一种引擎也能成立（DynamoDB 用 B-tree + WAL 做追加型，靠时间有序键让插入落在最右叶子、写先落 WAL 再应用到 B-tree、分区自动分裂扛吞吐）。</li>
+      <li><b>星型</b>是数仓的建模方式，故意让维度冗余，换查询只 join 一层，和 OLTP 的第三范式相反（ClickHouse 用户常把维度拍平进事实表做成一张大宽表）：
+        <ul>
+          <li>中间一张事实表记录每个事件，列是几个外键加可聚合的数值，行数巨大。</li>
+          <li>周围一圈维度表描述外键是谁，行少列多。</li>
+          <li>分析查询就是事实表按外键 GROUP BY，最多 join 一层小维度表。</li>
+        </ul>
+      </li>
+      <li>一份数据同时要 OLTP 和 OLAP，两种做法：
+        <ul>
+          <li><b>常用：存两份，CDC 同步。</b>OLTP 库是真相，变更流到 OLAP 库和搜索索引，各自用最优的布局和引擎，代价是同步延迟和多一套系统。</li>
+          <li><b>不常用：HTAP。</b>一个数据库同时接 OLTP 写和 OLAP 查，内部行式列式双存实时同步（TiDB、SingleStore）。省掉外部 CDC 链路，代价是两头都不是最优，分析查询和线上事务抢资源。</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="block" id="s0-1">
+    <h3>数据模型</h3>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:1100px">
+      <colgroup><col style="width:6%"><col style="width:17%"><col style="width:21%"><col style="width:21%"><col style="width:12%"><col style="width:23%"></colgroup>
+      <thead><tr><th>模型</th><th>抽象</th><th>擅长</th><th>不擅长</th><th>代表产品</th><th>一般用法</th></tr></thead>
+      <tbody>
+        <tr><td>关系</td><td>表、固定 schema、SQL、跨表 join、事务</td><td>结构稳定、多表关联、强一致的业务数据</td><td><ul class="pts"><li>频繁变 schema</li><li>超过单机后的水平扩展（能分片，但跨分片 join 和事务基本没了）</li></ul></td><td>PostgreSQL / MySQL</td><td>默认真相，业务核心数据（e.g.: Ticketmaster 票和订单、Gopuff 库存、Bitly 映射、Uber Ride etc.）</td></tr>
+        <tr><td>KV</td><td>按 key 存取 value</td><td>点查点写、低延迟、按 key 天然分片</td><td>按 value 内容查、范围扫描、当唯一真相</td><td><ul class="pts"><li>分布式缓存：Redis、Memcached</li><li>本地缓存：Caffeine、Guava</li></ul></td><td>加速层，很少当真相：缓存、锁、计数、排行、去重、排队（e.g.: Ticketmaster 锁和虚拟排队、Uber 司机位置、Rate Limiter etc.）</td></tr>
+        <tr><td>宽表</td><td>分区键 + 排序键定位一行，分区内有序，列稀疏可动态加</td><td>写入吞吐高、按分区键精确查询和分区内范围查询、水平扩展</td><td>按非主键字段查询（要靠 GSI 另存一份）、跨分区查询和事务、聚合统计</td><td>DynamoDB、Cassandra、HBase、Bigtable</td><td>写入量大、访问模式固定的真相：消息、日志、事件流、元数据（e.g.: WhatsApp Message / Inbox、Live Comments、Ad Click 原始事件、Dropbox 元数据 etc.）</td></tr>
+        <tr><td>搜索</td><td>用倒排索引建立词到文档的映射（加速用户根据词查文档）</td><td>全文搜索、模糊匹配、分词、多条件过滤和聚合</td><td>作为真相、一致性差（能保证最终一致性）、深分页、执行事务</td><td>Elasticsearch、OpenSearch</td><td>主库的副本，CDC 同步过来只做读：搜索框、多条件筛选（e.g.: Ticketmaster 搜演出、Yelp 搜商家、Post Search etc.）</td></tr>
+        <tr><td>文档</td><td>一条记录是一个 JSON，可嵌套，schema 灵活</td><td>记录字段各不相同、整条读写、嵌套结构</td><td>跨文档 join 和事务</td><td>MongoDB、DocumentDB</td><td>schema 灵活的真相：商品详情、用户配置、CMS 内容（other option: 关系库的 JSON 列）</td></tr>
+        <tr><td>时序</td><td>按时间分桶的度量值，时间戳高压缩</td><td>时间范围查、降采样、自动过期</td><td>按非时间维度查</td><td>Prometheus、InfluxDB、TimescaleDB</td><td>指标真相：监控、IoT、行情（e.g.: Metrics Monitoring、Robinhood 行情、Ad Click 分钟到天的降采样 etc.）</td></tr>
+        <tr><td>图</td><td>节点和边，查询是遍历</td><td>多跳关系</td><td>大规模分片、聚合、扫描</td><td>Neo4j、Neptune</td><td>多跳关系：社交图、知识图谱、反欺诈关联（News Feed 的关注关系用普通表加索引就够）</td></tr>
+      </tbody></table></div>
+    <ul>
+      <li>角色不同（真相只有一份，加速层和副本丢了从真相重建）：
+        <ul>
+          <li>关系、宽表、文档、时序当真相。</li>
+          <li>KV 当加速层。</li>
+          <li>搜索当副本。</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="block" id="s0-2">
+    <h3>存储布局</h3>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:1000px">
+      <colgroup><col style="width:7%"><col style="width:22%"><col style="width:26%"><col style="width:26%"><col style="width:19%"></colgroup>
+      <thead><tr><th>布局</th><th>怎么放</th><th>优点</th><th>缺点</th><th>代表产品</th></tr></thead>
+      <tbody>
+        <tr><td>行式</td><td>一行的所有列连续存在一起，一页放若干行</td><td><ul class="pts"><li>一次 IO 拿全一行</li><li>改一行改一处</li><li>插入删除按行操作简单</li></ul></td><td><ul class="pts"><li>只要两列也得读全行，扫大表带宽浪费</li><li>同一页里类型混杂，压缩率低</li></ul></td><td><ul class="pts"><li>关系：PostgreSQL / MySQL</li><li>宽表：DynamoDB、Cassandra</li><li>文档：MongoDB</li></ul></td></tr>
+        <tr><td>列式</td><td>一列的值连续存，一张表拆成若干列文件或列块</td><td><ul class="pts"><li>只读需要的列</li><li>同列类型相同、值相近，压缩率高</li><li>连续同类型值可向量化计算</li></ul></td><td><ul class="pts"><li>拼一行要去多处取，点查慢</li><li>改一条要重写整块，写要攒批</li><li>事务弱</li></ul></td><td><ul class="pts"><li>关系：ClickHouse、Snowflake、BigQuery、Redshift</li><li>文件格式：Parquet</li></ul></td></tr>
+      </tbody></table></div>
+  </div>
+  <div class="block" id="s0-3">
+    <h3>存储引擎</h3>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:1150px">
+      <colgroup><col style="width:8%"><col style="width:20%"><col style="width:11%"><col style="width:13%"><col style="width:12%"><col style="width:18%"><col style="width:18%"></colgroup>
+      <thead><tr><th>引擎</th><th>怎么组织</th><th>写</th><th>点读</th><th>范围扫描</th><th>代价</th><th>代表产品</th></tr></thead>
+      <tbody>
+        <tr><td>哈希表</td><td>key 哈希到桶，全在内存</td><td>极快</td><td>极快</td><td>不支持，key 无序</td><td><ul class="pts"><li>容量受内存限制</li><li>持久化弱</li></ul></td><td>Redis、Memcached</td></tr>
+        <tr><td>B-tree</td><td>按 key 有序的页组成平衡树，原地更新</td><td>随机 IO，找到页改页</td><td>一次树遍历，稳定</td><td>叶子有序链表，快</td><td><ul class="pts"><li>页有空洞，写放大</li><li>行锁、MVCC 建在页上，事务成熟</li></ul></td><td><ul class="pts"><li>关系：PostgreSQL / MySQL</li><li>宽表：DynamoDB</li><li>文档：MongoDB</li></ul></td></tr>
+        <tr><td>LSM-tree</td><td>先追加 WAL 再写内存有序表，满了刷成不可变有序文件，后台合并去重、清删除标记</td><td>顺序追加，极快</td><td>可能查多个文件，靠 bloom filter 跳过</td><td>多文件归并，慢一些</td><td><ul class="pts"><li>compaction 持续吃 IO，延迟抖动</li><li>单行原子，跨行事务弱</li></ul></td><td><ul class="pts"><li>宽表：Cassandra、HBase</li><li>嵌入式：RocksDB、LevelDB</li><li>分布式 SQL 底层：TiKV</li></ul></td></tr>
+        <tr><td>追加日志</td><td>只在文件尾部追加，按 offset 定位</td><td>顺序追加，极快</td><td>按 offset 快，按内容不行</td><td>从 offset 顺序读，快</td><td><ul class="pts"><li>不能改不能按内容查</li><li>靠保留期删旧段</li></ul></td><td>Kafka、数据库的 WAL</td></tr>
+        <tr><td>倒排索引</td><td>词到文档列表，按不可变 segment 追加 + 合并</td><td>中，攒批建 segment</td><td>按词快，按主键一般</td><td>按词快</td><td><ul class="pts"><li>写后要等 segment 刷新才可见</li><li>segment 合并吃 IO</li></ul></td><td>Elasticsearch、Lucene</td></tr>
+      </tbody></table></div>
+    <ul>
+      <li>compaction 两种策略：
+        <ul>
+          <li>Size-tiered：攒够几个差不多大的文件合并成一个，写放大低读放大高（Cassandra 默认）。</li>
+          <li>Leveled：每层容量是上层 10 倍、层内 key 不重叠，写放大高读放大低（RocksDB 默认）。</li>
+        </ul>
+      </li>
+      <li>列式几乎总配追加 + 合并，因为列式文件改一条要重写整块，和原地更新的 B-tree 天生不合。行式两种都常见，按读写比选（DynamoDB 是 B-tree，Cassandra 是 LSM-tree，同模型不同引擎）。</li>
+    </ul>
+  </div>
+  <div class="block" id="s0-4">
+    <h3>分布</h3>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:1150px">
+      <colgroup><col style="width:10%"><col style="width:20%"><col style="width:8%"><col style="width:8%"><col style="width:12%"><col style="width:13%"><col style="width:11%"><col style="width:18%"></colgroup>
+      <thead><tr><th>分布</th><th>怎么放</th><th>写扩展</th><th>读扩展</th><th>一致性</th><th>可用性</th><th>跨行事务</th><th>代表产品</th></tr></thead>
+      <tbody>
+        <tr><td>单机</td><td>一台机器全部数据</td><td>无</td><td>无</td><td>强</td><td>主挂即停</td><td>完整</td><td>单机 PostgreSQL、SQLite</td></tr>
+        <tr><td>主从复制</td><td>一主写，多从异步或半同步复制，从只读</td><td>无，只扩读</td><td>有，读打从库</td><td>主强，从可能延迟</td><td>主挂需切换，几秒到几十秒</td><td>完整</td><td>PostgreSQL / MySQL 主从、Redis 主从</td></tr>
+        <tr><td>分片 + 每片主从</td><td>按 key 切成多片，每片一主多从</td><td>有，按分片</td><td>有</td><td>分片内强，跨片弱</td><td>单片挂只影响那片</td><td>分片内完整，跨片难</td><td>MySQL 分库分表、Citus、MongoDB、DynamoDB、Redis Cluster</td></tr>
+        <tr><td>多主 / 无主</td><td>每个节点都能写，写多副本，读多副本，靠 quorum 取交集</td><td>有</td><td>有</td><td>最终一致，quorum 可调</td><td>任一节点挂不影响读写</td><td>基本没有</td><td>Cassandra、DynamoDB global tables、CRDT</td></tr>
+      </tbody></table></div>
+    <ul>
+      <li>分布不由模型决定，同一模型可配不同分布（模型只决定分片的代价：关系和图要牺牲 join 和事务，KV、宽表、文档天然按 key 分）：
+        <ul>
+          <li>PostgreSQL 同一个关系模型，可以单机、主从或 Citus 分片。</li>
+          <li>DynamoDB 和 Cassandra 同是宽表，前者每分区单 leader、Paxos 选主、三 AZ 复制，后者无主、一致性哈希环、可调 quorum（Dynamo 2007 论文对应无主这格，Cassandra 继承了它，DynamoDB 只继承了名字和分区模型）。</li>
+        </ul>
+      </li>
+      <li>事务范围取模型上限和分布限制中较小的那个（模型决定事务上限，分片破坏跨片事务，Spanner、TiDB 用 2PC 加共识买回来，付延迟）。</li>
+    </ul>
+  </div>
+  <div class="block" id="s0-5">
+    <h3>产品</h3>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:1100px">
+      <colgroup><col style="width:17%"><col style="width:11%"><col style="width:7%"><col style="width:16%"><col style="width:15%"><col style="width:34%"></colgroup>
+      <thead><tr><th>产品</th><th>模型</th><th>布局</th><th>引擎</th><th>分布</th><th>常见角色</th></tr></thead>
+      <tbody>
+        <tr><td>本地缓存（Caffeine、Guava）</td><td>KV</td><td>—</td><td>哈希表，堆内</td><td>无，每实例一份</td><td>最热一层，热 key 最后一道防线</td></tr>
+        <tr><td>Redis</td><td>KV 加丰富结构</td><td>—</td><td>哈希表，内存</td><td>主从或 Cluster</td><td>缓存、锁、计数、排行、GEO、Pub/Sub</td></tr>
+        <tr><td>PostgreSQL / MySQL</td><td>关系</td><td>行式</td><td>B-tree</td><td>主从</td><td>默认真相，事务和复杂查询</td></tr>
+        <tr><td>Aurora / TiDB / Spanner</td><td>关系</td><td>行式</td><td>B-tree / LSM-tree</td><td>分片 + 共识</td><td>单机撑不住的真相</td></tr>
+        <tr><td>DynamoDB</td><td>宽表</td><td>行式</td><td>B-tree + WAL</td><td>每分区单 leader</td><td>托管真相，写扩展、模式固定</td></tr>
+        <tr><td>Cassandra / Scylla</td><td>宽表</td><td>行式</td><td>LSM-tree</td><td>无主</td><td>每秒几万写以上、按 key 查</td></tr>
+        <tr><td>MongoDB</td><td>文档</td><td>行式</td><td>B-tree</td><td>分片 + 副本集</td><td>模式灵活的真相</td></tr>
+        <tr><td>Elasticsearch</td><td>搜索</td><td>—</td><td>倒排 segment</td><td>分片 + 副本</td><td>搜索副本，从主库同步，不当真相</td></tr>
+        <tr><td>Kafka</td><td>分区日志</td><td>—</td><td>追加日志</td><td>分区 + leader</td><td>带游标的持久缓冲</td></tr>
+        <tr><td>ClickHouse / Druid</td><td>关系</td><td>列式</td><td>追加分片 + 合并</td><td>分片 + 副本</td><td>实时仪表盘、日志分析</td></tr>
+        <tr><td>Snowflake / BigQuery</td><td>关系</td><td>列式</td><td>不可变文件放对象存储</td><td>存算分离</td><td>报表、数仓，按查询计费</td></tr>
+        <tr><td>S3</td><td>对象</td><td>—</td><td>—</td><td>内部多副本</td><td>冷真相、原始归档、数据湖底座</td></tr>
+      </tbody></table></div>
+    <pre>热 ◄──────────────────────────────────────────────────────────────► 冷
+  进程内存      分布式内存       本地 SSD 数据库      对象存储        归档
+  (HashMap)     (Redis)          (PostgreSQL, Cassandra) (S3)           (Glacier)
+延迟   100 ns       0.5 ms           1 到 10 ms            50 到 100 ms   分钟到小时
+成本   最高         SSD × 10         基准                  SSD / 10       再 / 5
+持久   进程退出即失  可选，弱          强                    11 个 9        11 个 9</pre>
+    <pre>YouTube:      CDN ─► Redis(元数据缓存) ─► PostgreSQL/DynamoDB(元数据) ─► S3(视频)
+WhatsApp:     Redis Pub/Sub(在线路由) ─► DynamoDB(Message/Inbox, 30 天) ─► S3(附件, 30 天)
+Ad Click:     Redis(去重, 1 天) ─► Kafka(原始事件, 7 天) ─► OLAP(聚合, 长期) ─► S3(原始归档)
+Ticketmaster: CDN(搜索结果) ─► Redis(锁, 演出缓存) ─► PostgreSQL(票, 订单) ─► Elasticsearch(搜索副本)</pre>
+    <ul>
+      <li>温度不是数据库的分类，是组件在系统里的角色，先定角色再去前面几张表里挑（越热的层数据越少、活得越短、越可以丢，越冷的层数据越多、活得越久、是真相）。</li>
+    </ul>
+  </div>
+
+</section>
+
+<!-- ================= PART 2 读写扩展 ================= -->
+<section class="part" id="p1s">
+  <div class="part-head"><span class="num">PART 2</span><h2>读写扩展</h2></div>
+
+  <div class="block" id="s1s-0">
+    <h3>读扩展</h3>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:1000px">
+      <colgroup><col style="width:10%"><col style="width:28%"><col style="width:28%"><col style="width:34%"></colgroup>
+      <thead><tr><th>手段</th><th>解决什么</th><th>代价</th><th>什么时候上</th></tr></thead>
+      <tbody>
+        <tr><td>索引</td><td>单条查询从扫全表变成按索引定位</td><td>写变慢，存储变大</td><td>第一步，任何慢查询先看索引</td></tr>
+        <tr><td>去范式化</td><td>省掉 join，一次读拿全</td><td>冗余，写时多处更新</td><td>读远多于写、join 成了瓶颈</td></tr>
+        <tr><td>只读副本</td><td>读流量分到多台</td><td>主从延迟，读到旧值</td><td>单机读吞吐到顶，容忍秒级延迟</td></tr>
+        <tr><td>分片</td><td>读写都按 key 分到多台</td><td>跨片查询和事务难</td><td>数据量或写量单机放不下，见<a href="#s0-4">分布</a></td></tr>
+        <tr><td>应用缓存</td><td>热数据不碰库</td><td>失效一致性，击穿穿透雪崩</td><td>同一数据被反复读，容忍短暂过时</td></tr>
+        <tr><td>CDN</td><td>静态内容在边缘返回，请求不到源站</td><td>更新延迟，只适合非个性化</td><td>内容对所有人一样且变化慢</td></tr>
+      </tbody></table></div>
+  </div>
+
+  <div class="block" id="s1s-0b">
+    <h3>写扩展</h3>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:1000px">
+      <colgroup><col style="width:10%"><col style="width:28%"><col style="width:28%"><col style="width:34%"></colgroup>
+      <thead><tr><th>手段</th><th>解决什么</th><th>代价</th><th>什么时候上</th></tr></thead>
+      <tbody>
+        <tr><td>换引擎</td><td>写密集换 LSM-tree，顺序追加</td><td>读稍慢，compaction 抖动</td><td>单机每秒几万写以上，见<a href="#s0-3">存储引擎</a></td></tr>
+        <tr><td>分片</td><td>写按 key 分到多台，线性扩</td><td>跨片事务没了，热 key 仍打一片</td><td>单机写吞吐到顶</td></tr>
+        <tr><td>队列削峰</td><td>突发写先进队列，后端按自己的速度消费</td><td>写变异步，结果延迟可见</td><td>写有尖峰且不要求同步返回，见<a href="#p3">异步处理</a></td></tr>
+        <tr><td>负载丢弃</td><td>超过容量的请求直接拒绝</td><td>用户看到失败</td><td>削峰也扛不住，宁可拒绝不可拖垮</td></tr>
+        <tr><td>攒批 / 预聚合</td><td>把 N 次写合成 1 次，或在上游先按粒度聚合再往下写</td><td>延迟，进程崩了丢一小批</td><td>写入条数远大于必要的持久化次数（e.g.: 点赞攒 30 秒、Flink 分钟窗口、分钟到天到周预聚合 etc.）</td></tr>
+      </tbody></table></div>
+  </div>
+
+  <div class="block" id="s1s-0c">
+    <h3>缓存</h3>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:1050px">
+      <colgroup><col style="width:12%"><col style="width:22%"><col style="width:20%"><col style="width:20%"><col style="width:26%"></colgroup>
+      <thead><tr><th>模式</th><th>读路径</th><th>写路径</th><th>一致性</th><th>适用</th></tr></thead>
+      <tbody>
+        <tr><td>cache-aside</td><td>应用先查缓存，未命中查库并回填</td><td>应用写库，然后删缓存</td><td>写和删之间有窗口，读到旧值</td><td>默认选择，读多写少，缓存和库解耦</td></tr>
+        <tr><td>read-through</td><td>应用只查缓存，缓存自己去库加载</td><td>同 cache-aside</td><td>同上</td><td>想把加载逻辑收进缓存层，本地缓存库常用（e.g.: Caffeine 的 loader etc.）</td></tr>
+        <tr><td>write-through</td><td>同上</td><td>应用写缓存，缓存同步写库</td><td>缓存和库同时更新，强</td><td>写后立刻要读到，能接受写延迟变高</td></tr>
+        <tr><td>write-behind</td><td>同上</td><td>应用只写缓存，缓存异步批量刷库</td><td>缓存先于库，缓存挂了丢数据</td><td>写极多且允许丢一小批（e.g.: 计数、点赞 etc.）</td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li><b>失效</b>：TTL 兜底，写时主动删，本地缓存靠 Pub/Sub 广播失效。</li>
+      <li><b>先更新库再删缓存</b>：先删缓存再更新库，中间有人读未命中回填旧值，旧值一直留到 TTL。先更新库再删，窗口只有删之前那一瞬。要再压窗口就延迟双删，更新库后隔几百毫秒再删一次。</li>
+      <li><b>三个经典问题</b>：
+        <ul>
+          <li>击穿：一个热 key 过期，大量请求同时回源。single-flight 只放一个请求回源，其他等它的结果。</li>
+          <li>穿透：查不存在的 key，缓存永远不命中。缓存空值带短 TTL，或布隆过滤器挡在前面。</li>
+          <li>雪崩：大量 key 同时过期或缓存整体宕机。TTL 加随机抖动，多级缓存，限流保护库。</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="block" id="s1s-1">
+    <h3>热点读写</h3>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:1000px">
+      <colgroup><col style="width:14%"><col style="width:40%"><col style="width:18%"><col style="width:28%"></colgroup>
+      <thead><tr><th>热点类型</th><th>首选</th><th>代价</th><th>例子</th></tr></thead>
+      <tbody>
+        <tr><td>热写，可交换操作</td><td><ul class="pts"><li>生产端攒批</li><li>不够再单分区串行</li><li>再不够加盐分散写，异步合并（Flink 去盐，读端看不到）</li></ul></td><td>延迟或读时合并</td><td>Ad Click 加盐、Post Search 攒 30 秒</td></tr>
+        <tr><td>热写，带约束</td><td>把资源本身拆成独立单位，不拆计数器</td><td>假售罄需重试</td><td>Shopify 千行库存、Flash Sale 分桶</td></tr>
+        <tr><td>热读，静态</td><td>CDN</td><td>更新延迟</td><td>Ticketmaster 搜索、YouTube</td></tr>
+        <tr><td>热读，半静态</td><td><ul class="pts"><li>本地缓存 + 短 TTL + Pub/Sub 失效 + single-flight 防击穿</li><li>热 key 复制多份</li></ul></td><td>秒级过时、每实例内存</td><td>Ticketmaster 演出详情</td></tr>
+        <tr><td>热读，高频变化</td><td>改成 push</td><td>长连接状态</td><td>Ticketmaster 座位图、Uber 司机位置</td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li><b>读和写用同一个思想，把一个点的压力散成多个点</b>：读是散到多个副本，写是散到多个分片再合并（加盐分散写只在单节点上限都不够时才需要，但加盐分散写后读之前需要合并，最好异步合并）。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= PART 3 实时更新 ================= -->
+<section class="part" id="p2">
+  <div class="part-head"><span class="num">PART 3</span><h2>实时更新</h2></div>
+
+  <div class="block" id="s2-1">
+    <h3>流动路径</h3>
+    <pre>客户端 ◄──第一跳：server 到 client──── 服务器 ◄──第二跳：server 到 server──── 数据源
+        轮询 / 长轮询 / SSE / WebSocket              Redis Pub/Sub 广播 / 注册表或一致性哈希直连</pre>
+    <ul class="prose">
+      <li><strong>第一跳</strong> 按客户端需求分，问"等一个结果还是等一个流"：
+        <ul>
+          <li>一次性结果用轮询：秒级可接受用短轮询（e.g.: LeetCode 判题、上传进度 etc.），要更快又不想空转用长轮询。</li>
+          <li>持续变化、毫秒级、大扇出用 SSE 或 WebSocket（e.g.: 评论、聊天、座位图、司机位置 etc.）【短轮询在这类方案里另有一个固定角色是保底】。</li>
+        </ul>
+      </li>
+      <li><strong>第二跳</strong> 按服务器是否持连接分【长轮询、SSE、WebSocket 持连接，短轮询不持（客户端问无状态服务器、服务器查库即可）】：
+        <ul>
+          <li>为什么需要：持连接的服务器有状态，事件源不知道客户端连在哪台上，需要一条 server 到 server 的投递路径（服务器自己定时查库也行，但只在小规模可行）。</li>
+          <li>实现方式（三种，最后一种不可用）：
+            <ul>
+              <li>Redis Pub/Sub 广播：事件源发到频道，持连接的服务器各自订阅【频道零成本，订阅随客户端连接动态增减，服务器之间不需要知道彼此（最优选择，特别是大规模时是唯一选择）】。</li>
+              <li>注册表或一致性哈希直连：注册中心记用户在哪台（ZooKeeper/etcd、Redis），或一致性哈希按 key 算出来，事件源查到后直连投递【优点是省一层中间件，代价是服务器要互相可达、注册表每次连接变动都要写（小规模可行，大规模开销太大不可用）】。</li>
+              <li>Kafka: 每用户一个 Kafka topic【topic 是重量级对象，动态订阅触发 rebalance，按用户动态订阅不可用，后端固定 topic 可用】。</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="block" id="s2-1b">
+    <h3>第一跳：client ↔ server</h3>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:1200px">
+      <colgroup><col style="width:7%"><col style="width:17%"><col style="width:9%"><col style="width:10%"><col style="width:12%"><col style="width:12%"><col style="width:12%"><col style="width:21%"></colgroup>
+      <thead><tr><th>协议</th><th>怎么工作</th><th>延迟</th><th>服务器状态</th><th>扇出成本</th><th>断线</th><th>代理 / 负载均衡</th><th>适用</th></tr></thead>
+      <tbody>
+        <tr><td>短轮询</td><td>客户端定时发请求，服务器立即返回当前状态</td><td>等于轮询间隔，秒级</td><td>无状态</td><td>每个客户端每个间隔一次请求，空转多</td><td>无所谓，下次请求自然恢复</td><td>普通 HTTP，全兼容</td><td><ul class="pts"><li>一次性结果、秒级可接受、客户端少（e.g.: LeetCode 判题、上传进度 etc.）</li><li>push 方案的保底</li></ul></td></tr>
+        <tr><td>长轮询</td><td>客户端发请求，服务器挂住直到有数据或超时再返回，客户端立刻再发</td><td>数据到达即返回，接近实时</td><td>持连接，挂着的请求要被通知</td><td>每个客户端一条挂起连接，每次返回后重建</td><td>超时或断开后重发即可</td><td>普通 HTTP，但代理超时要调长</td><td>一次性结果但要快、不想空转、不能上长连接的环境</td></tr>
+        <tr><td>SSE</td><td>一条 HTTP 长连接，服务器单向持续推文本事件</td><td>实时</td><td>持连接</td><td>每个客户端一条连接，服务器推一次广播 N 条</td><td>浏览器自动重连，带 Last-Event-ID 可补差</td><td>走 HTTP，代理和 LB 兼容好，HTTP/2 可复用</td><td>服务器到客户端单向流（e.g.: 座位图、评论、行情 etc.）</td></tr>
+        <tr><td>WebSocket</td><td>握手后升级为双向长连接，任意一方随时发帧</td><td>实时</td><td>持连接</td><td>同 SSE</td><td>无自动重连，客户端自己重连并补差</td><td>需要 LB 和代理支持协议升级，有些企业网络拦</td><td>双向高频交互（e.g.: 聊天、协同编辑、游戏、司机位置上报 etc.）</td></tr>
+      </tbody></table></div>
+    <ul>
+      <li>SSE 和 WebSocket 的分界是方向：客户端只收不发用 SSE，收发都频繁用 WebSocket。客户端偶尔要发可以 SSE 收、普通 HTTP 发。</li>
+      <li>长连接方案都要配心跳检测死连接，和一条短轮询兜底路径（连接断了或推送丢了，客户端定期拉一次真相）。</li>
+    </ul>
+  </div>
+
+  <div class="block" id="s2-3">
+    <h3>第二跳：server ↔ server</h3>
+    <ul class="prose">
+      <li>持连接的服务器有状态：本地 map 记 userId 到连接（一人多设备就是多条），心跳 10 到 30 秒清死连接。这份状态临时、可重建，不是真相。</li>
+      <li>事件源不知道客户端连在哪台上，投递要先定位再送达，三种方式：</li>
+    </ul>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:1200px">
+      <colgroup><col style="width:11%"><col style="width:15%"><col style="width:14%"><col style="width:16%"><col style="width:13%"><col style="width:13%"><col style="width:18%"></colgroup>
+      <thead><tr><th>方式</th><th>谁记路由</th><th>事件源怎么找到目标</th><th>扩缩容</th><th>单台故障</th><th>每次连接变动的成本</th><th>适用</th></tr></thead>
+      <tbody>
+        <tr><td>Redis Pub/Sub 广播</td><td>没人记，服务器各自订阅自己持有的用户频道</td><td>不找，发到频道，谁订阅谁收</td><td>新服务器起来订阅即可，旧的下线频道自动消失</td><td>只丢它持有的连接，客户端重连到别台</td><td>一次 SUBSCRIBE 或 UNSUBSCRIBE，零成本</td><td>默认选择，大规模时唯一选择</td></tr>
+        <tr><td>注册表直连</td><td>注册中心记用户到服务器的映射（ZooKeeper/etcd、Redis）</td><td>查注册表，直接发给那台</td><td>新服务器要在注册表登记，客户端迁移要改映射</td><td>注册表里它的条目要清理，否则发给死机器</td><td>每次连接建立和断开都写一次注册表</td><td>服务器数量少、连接稳定</td></tr>
+        <tr><td>一致性哈希直连</td><td>没人记，成员列表加确定性函数</td><td>按 key 算出哪台，直接发</td><td>成员变动时 key 重新映射，新旧两台都订阅过渡</td><td>它的 key 段重新映射到邻居</td><td>零，不记录</td><td>同一 key 的客户端要聚到同一台（e.g.: Live Comments 同一直播的观众 etc.）</td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li>注册表和一致性哈希都要服务器互相可达，Pub/Sub 不需要。一致性哈希是优化不是正确性，它把同一 key 的客户端聚到一台减少广播量，送达仍靠 Pub/Sub。</li>
+      <li>投递允许丢，前提是先落库再发布，丢了这样补：
+        <ul>
+          <li>连接建立时先订阅再从库里拉增量，两步之间不留缝。</li>
+          <li>客户端凭序号检测漏消息，重连后从真相源拉增量（e.g.: WhatsApp 的 Inbox 表、Live Comments 的 lastSeenId、SSE 的 <code>Last-Event-ID</code> etc.）。</li>
+          <li>多台服务器各自推送，到达顺序不保证，客户端按 NTP 时间戳排序。</li>
+        </ul>
+      </li>
+    </ul>
+    <div class="aside">
+      <div class="aside-title">Redis Pub/Sub 的内部机制</div>
+      <pre>时间线                         pubsub_channels 字典内容
+───────────────────────────────────────────────────────────
+Redis 启动                      {}                         ← 没有任何 channel
+S1: PUBLISH user:B "hi"         {}                         ← 合法，返回 0，消息丢弃
+S2: SUBSCRIBE user:B            {"user:B": [conn_S2]}      ← channel 此刻"诞生"
+S1: PUBLISH user:B "hi"         {"user:B": [conn_S2]}      ← 返回 1，S2 收到
+S3 断线 / 最后一个退订           {}                         ← channel 消失</pre>
+      <ul>
+        <li>channel 只是字典 key，不需要创建，发布者和订阅者都是 Redis 客户端（<code>PUBSUB CHANNELS / NUMSUB</code> 能看实时内容）。</li>
+        <li>PUBLISH 查字典，把消息写进每个订阅连接的输出缓冲区，返回订阅者数。返回 0 可当作对方离线的信号，转走系统推送。</li>
+        <li>频道粒度按用户不按会话（一个用户约 250 个会话）。同一直播的观众按 <code>hash(videoId) % N</code> 分频道。</li>
+        <li>拓扑：单机。主从，PUBLISH 随复制流传播，订阅可连副本。Cluster 普通模式全集群广播，每次 N-1 条 bus 消息。Redis 7 sharded（<code>SSUBSCRIBE / SPUBLISH</code>）按 slot 路由，订阅方必须连对节点。</li>
+        <li>订阅端用专用连接进入订阅模式，断线后重新 SUBSCRIBE 全部本地用户，并让客户端从库里拉一次增量。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="block" id="s2-5">
+    <div class="aside">
+      <div class="aside-title">案例</div>
+      <ul>
+        <li><b>WhatsApp 聊天</b>：双向、毫秒级、每人几百个会话、多设备、离线要补
+          <ul>
+            <li>第一跳 WebSocket（首选）：收发都频繁，一条连接两个方向。SSE 收 + HTTP 发也能，发消息太频繁没必要拆。</li>
+            <li>第二跳 Redis Pub/Sub（首选）：按用户建频道，先写 Message 和 Inbox 再 PUBLISH <code>user:{id}</code>，对方服务器查本地 map 推给连接，ack 后删 Inbox，PUBLISH 返回 0 说明离线走系统推送。注册表直连要服务器互连，每用户一个 Kafka topic 太重。</li>
+            <li>补差：登录先 SUBSCRIBE 再拉 Inbox，两边不留缝，Inbox 就是游标。</li>
+            <li>存储：Chat、ChatParticipant（含 GSI）、Message（按 chatId，存内容，TTL 30 天）、Inbox（按 clientId，存还欠哪条，ack 即删）、Client（多设备）、LastSeen（只在断线时条件写）。</li>
+          </ul>
+        </li>
+        <li><b>Live Comments 直播评论</b>：单向、大扇出、观众频繁切直播、允许丢
+          <ul>
+            <li>第一跳 SSE（首选）：只收不发，发评论走 POST。WebSocket 多付双向和状态的代价。</li>
+            <li>第二跳 Redis Pub/Sub 按直播分频道（首选）：<code>hash(videoId) % N</code>，加一致性哈希把同一直播的观众聚到同一台减少广播。Kafka 扛不住观众切直播的动态订阅，Dispatcher 注册表是替代方案。</li>
+            <li>补差：允许丢，连 Inbox 都不要，刷新从库里读。重连和翻页走独立 GET，游标分页。</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PART 4 异步处理 ================= -->
+<section class="part" id="p3">
+  <div class="part-head"><span class="num">PART 4</span><h2>异步处理</h2></div>
+
+  <div class="block" id="s3-0">
+    <h3>同步与异步</h3>
+    <pre>请求 ──► API 服务器 ──┬─ 同步处理，直接返回
+                      └─ 异步处理 ──┬─ SQS 任务队列 ──► worker
+                                   ├─ Kafka 事件流 ──► Flink / 多个消费方
+                                   └─ 定时批处理 ──► Spark</pre>
+    <p>消费者是后端程序，不是给客户端转发的服务器：</p>
+    <ul class="prose">
+        <li>同步处理：延迟约束紧的请求路径不引入队列（e.g.: Gopuff 下单、Bitly 跳转、抢票 etc.）。</li>
+        <li>异步处理，靠消息中间件卸载工作（中间件的另一用途是扇出通知，Redis Pub/Sub，主要用于实时更新，也用于跨实例的缓存失效广播），<b>任务选 SQS、事件选 Kafka</b>（任务是每条消息独立处理完就结束，事件是消费者的结果由所有消息共同决定、少一条就错）：
+          <ul>
+            <li>SQS 任务队列：一个 worker 领走处理一次、确认删除、失败重试进死信（e.g.: LeetCode 判题、Web Crawler、News Feed 写扩散、Uber 延迟通知 etc.）。</li>
+            <li>Kafka 事件流：消费结果依赖每一条、多消费方各读一份、可重放（e.g.: Ad Click 计数、Top-K、Post Search 索引 etc.）。</li>
+            <li>定时批处理：按计划对全量数据跑一遍，结果允许晚到小时或天（e.g.: Ad Click 每日 Spark 对账 etc.）。</li>
+          </ul>
+        </li>
+      </ul>
+  </div>
+
+  <div class="block" id="s2-2">
+    <h3>消息中间件</h3>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:900px">
+      <colgroup><col style="width:14%"><col style="width:43%"><col style="width:43%"></colgroup>
+      <thead><tr><th></th><th>任务队列：SQS</th><th>事件流：Kafka</th></tr></thead>
+      <tbody>
+        <tr><td>模型</td><td>分布式队列，消息被领走即从队列消失</td><td>分区日志，消息按 offset 保留</td></tr>
+        <tr><td>消息的归宿</td><td>一个消费者处理一次，确认后删除</td><td>所有消费组各读一份，保留期后删</td></tr>
+        <tr><td>确认</td><td>DeleteMessage，逐条</td><td>commit offset，游标</td></tr>
+        <tr><td>重试和死信</td><td><ul class="pts"><li>visibility timeout 到期自动回队</li><li>ChangeMessageVisibility 做指数退避</li><li>超过 maxReceiveCount 进 DLQ</li></ul></td><td>自建 retry topic 和 DLQ</td></tr>
+        <tr><td>重放</td><td>无，删了就没</td><td>retention 内任意 offset</td></tr>
+        <tr><td>顺序</td><td><ul class="pts"><li>Standard 无序</li><li>FIFO 组内有序但吞吐低</li></ul></td><td>分区内有序</td></tr>
+        <tr><td>慢消息</td><td>不堵后面的，每条独立超时</td><td>堵同一分区</td></tr>
+        <tr><td>延迟投递</td><td>delay queue 内建</td><td>无</td></tr>
+        <tr><td>多消费方</td><td>配 SNS 扇出</td><td>consumer group 天然</td></tr>
+        <tr><td>背压</td><td>消费者控速，队列无界</td><td>消费者控速，日志靠 retention 有界</td></tr>
+        <tr><td>运维</td><td>全托管</td><td>重，topic 约 50KB、rebalance 秒级</td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li>RabbitMQ 是任务队列的另一个实现，自建的传统 broker：需要按 routing key 路由到不同队列、消息级优先级和 TTL、请求响应模式，或不在 AWS 上时选它，其余情况托管的 SQS 更省事。</li>
+      <li>轻量替代（小规模够用，积压不能放有界内存，e.g.: Slack 的 Redis 队列被塞满 etc.）：
+        <ul>
+          <li>Redis List：代替任务队列，<code>LPUSH / BRPOP</code>，无 ack。</li>
+          <li>Redis Streams：代替事件流，<code>XADD / XREADGROUP / XACK</code>，有消费组和 pending list。</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="block" id="s2-4">
+    <h3>投递语义与丢失恢复</h3>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:1000px">
+      <colgroup><col style="width:11%"><col style="width:17%"><col style="width:30%"><col style="width:20%"><col style="width:22%"></colgroup>
+      <thead><tr><th>语义</th><th>含义</th><th>怎么做到</th><th>代价</th><th>代表</th></tr></thead>
+      <tbody>
+        <tr><td>at-most-once</td><td>最多送一次，可能丢，不会重</td><td>发出去不等确认，不存</td><td>丢了通道自己不知道，必须配兜底</td><td>Redis Pub/Sub</td></tr>
+        <tr><td>at-least-once</td><td>至少送一次，不丢，可能重</td><td>存下来，消费者确认后才删或推进游标，没确认就重投</td><td>消费者必须幂等</td><td>SQS Standard、Kafka 默认</td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li><b>消费者能不能自行恢复决定用哪种语义</b>：能自行恢复用 at-most-once，不能就必须用 at-least-once（做聚合的消费者一定不能）。自行恢复要同时满足：
+        <ul>
+          <li>有游标，能发现丢了（e.g.: lastSeenId、Inbox 行、offset etc.）。</li>
+          <li>真相源能按游标补回，库里有完整历史或本身是 log（Cassandra 按 ad_id 分区就补不了按时间的缺失，DynamoDB Streams 是 log 可以）。</li>
+        </ul>
+      </li>
+      <li><b>at-most-once 必须有兜底</b>：先落库再发布，客户端凭游标从真相源补回丢的那条（e.g.: WhatsApp 的 Inbox 表、Live Comments 的 lastSeenId、SSE 的 <code>Last-Event-ID</code> etc.）。</li>
+      <li><b>at-least-once 必须有幂等</b>：重复投递靠消费端去重，用业务键做幂等键（e.g.: bookingId 做支付幂等键、impression id 做 SET NX 去重、条件 UPDATE etc.）。</li>
+    </ul>
+    <div class="aside">
+      <div class="aside-title">exactly-once 什么时候能用</div>
+      <ul>
+        <li><b>原理</b>：严格的"恰好投递一次"不存在，发送方永远无法确认对方收没收到。能做到的是处理结果恰好生效一次，条件是读消息、处理、写结果、推进游标能绑成一个事务，所以只在输入输出都受引擎控制时成立。</li>
+        <li><b>能用的场景</b>（输入输出都在事务边界内）：
+          <ul>
+            <li>Kafka 读、Flink 算、写回 Kafka 或支持事务的库（e.g.: Ad Click 一分钟计数写 OLAP，checkpoint 把算子状态和 offset 一起快照，sink 用两阶段提交，checkpoint 完成才对下游可见 etc.）。</li>
+            <li>Kafka 读、处理、写回 Kafka 的流水线（Kafka Streams 一个配置开事务，输出和 offset 提交在同一事务，下游只读已提交的）。</li>
+            <li>生产者重复发送去重（SQS FIFO 带 deduplication id，5 分钟窗口内重复丢弃，只管发送侧）。</li>
+          </ul>
+        </li>
+        <li><b>不能用的场景</b>（输出是引擎管不到的外部副作用，退回 at-least-once + 幂等）：
+          <ul>
+            <li>发邮件、推通知：重发就是重发，收件方不会回滚，靠消息 id 去重或接受偶尔重复。</li>
+            <li>调第三方支付接口：靠对方的幂等键（e.g.: Stripe 的 idempotency key etc.）。</li>
+            <li>写不支持事务的存储：靠条件写或业务键做幂等（e.g.: SET NX、UPDATE ... WHERE status = ? etc.）。</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="aside">
+      <div class="aside-title">两类消费者对照</div>
+    <div class="tbl"><table style="table-layout:fixed; min-width:800px">
+      <colgroup><col style="width:14%"><col style="width:43%"><col style="width:43%"></colgroup>
+      <thead><tr><th></th><th>实时更新的消费者：人，通过一条连接</th><th>异步处理的消费者：机器，一个聚合任务</th></tr></thead>
+      <tbody>
+        <tr><td>丢一条</td><td>延迟，人会重连或刷新</td><td>结果错，且自己不知道</td></tr>
+        <tr><td>游标</td><td>客户端 lastSeenId、Inbox 行</td><td>只有一个越来越不准的累加值</td></tr>
+        <tr><td>不在线时</td><td>本来就送不到，上线再补</td><td>重启那 30 秒的消息必须留着</td></tr>
+        <tr><td>重放</td><td>不需要，库就是历史</td><td>需要，修 bug 重算昨天</td></tr>
+        <tr><td>通道</td><td>at-most-once 够（Redis Pub/Sub）</td><td>要持久日志（Kafka）</td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+
+  <div class="block" id="s4-1">
+    <h3>批与流</h3>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:900px">
+      <colgroup><col style="width:12%"><col style="width:44%"><col style="width:44%"></colgroup>
+      <thead><tr><th></th><th>批：Spark</th><th>流：Flink</th></tr></thead>
+      <tbody>
+        <tr><td>输入</td><td>有边界，一天的文件或一张表</td><td>无边界，Kafka 持续到来</td></tr>
+        <tr><td>生命周期</td><td>跑完退出，定时调度</td><td>常驻 7×24</td></tr>
+        <tr><td>处理方式</td><td>整个数据集分 stage，shuffle 最贵</td><td>逐条流过算子，按 key 维护状态</td></tr>
+        <tr><td>时间</td><td>数据里有时间列自己 groupBy，晚到的数据下次跑自然包含</td><td>event time、watermark、窗口是一等公民</td></tr>
+        <tr><td>容错</td><td>task 失败重跑，输入不变结果一样</td><td>checkpoint 快照状态和 offset，失败从快照重放</td></tr>
+        <tr><td>延迟</td><td>小时到天</td><td>秒到分钟</td></tr>
+        <tr><td>结果</td><td>准，输入齐了才算</td><td>快，可能因晚到数据有误差</td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li><b>选择看结果允许晚多久</b>：T+1 报表用批，分钟级仪表盘用流，又要快又要准就两者都用。</li>
+      <li><b>批流都用的两种架构</b>：
+        <ul>
+          <li>Lambda：流算实时结果可能有误差，批定期全量重算覆盖，服务层合并两边。两套代码要保持语义一致（e.g.: Ad Click 的 Flink 一分钟窗口 + 每日 Spark 对账 etc.）。</li>
+          <li>Kappa：只有一套流代码，正确性靠引擎的 exactly-once 和 event time，要重算时从 offset 0 重放到新表再切换。前提是 Kafka 保留够久、流引擎够成熟。</li>
+        </ul>
+      </li>
+      <li><b>流处理比批处理需要多考虑的问题</b>：
+        <ul>
+          <li>时间：批的输入是完整的，一天的文件到齐了才跑，不存在数据晚到。流的输入没有边界，什么时候能认为一分钟的数据到齐了要自己定规则，而且<b>要用事件发生时间不用处理时间</b>，否则乱序和重放都会算错
+            <ul>
+              <li>watermark：时间戳小于等于 W 的事件我认为都到了，常取最大事件时间减容忍度。</li>
+              <li>窗口：watermark 越过窗口边界就关窗刷结果（e.g.: Ad Click 一分钟窗口，watermark 30 秒 etc.）。</li>
+              <li>更迟的：allowedLateness 内更新结果，超过的靠对账。</li>
+            </ul>
+          </li>
+          <li>状态：批把整个数据集读进来算一遍，中间结果是临时的。流逐条处理，一分钟的计数要一直攒在内存里等窗口关闭，这份攒着的东西就是状态，要管它多大、放哪
+            <ul>
+              <li>一分钟窗口状态小，丢了从 Kafka 重放即可，checkpoint 可以不开。</li>
+              <li>一个月滑动窗口状态大，必须开 checkpoint，Kafka 也要留一个月（e.g.: Top-K etc.）。</li>
+            </ul>
+          </li>
+          <li>容错：批失败了从头重跑，输入不变结果一样。流常驻运行，失败不能从头来，靠 checkpoint 定期把所有算子的状态和 Kafka offset 一起快照，失败从上一个快照恢复、从对应 offset 重放，结果和没失败一样。</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="block" id="s4-1b">
+    <h3>流处理链路</h3>
+    <pre>Kafka ──┬─ 直接灌 OLAP，靠物化视图在写入时预聚合
+        └─ Flink 算完再写 ──┬─ OLAP，给人分析
+                           └─ KV，给线上服务</pre>
+    <ul class="prose">
+      <li><b>要不要 Flink</b>：只按时间桶计数、量在 OLAP 写入能力内，Kafka 直接灌 OLAP 靠物化视图在写入时预聚合就够（源表每插一批，按维度和时间粒度自动累加到一张聚合表）。以下任一成立才上 Flink：
+        <ul>
+          <li>要窗口语义，滑动窗口、会话切分、晚到数据处理。</li>
+          <li>要多流 join 或补维表字段。</li>
+          <li>要 exactly-once 和去重。</li>
+          <li>原始事件量大到 OLAP 直接接写不进或存不起，先聚合再落。</li>
+        </ul>
+      </li>
+      <li><b>结果写到哪</b>：
+        <ul>
+          <li>写 OLAP 给人分析：按查询过滤维度分片（e.g.: advertiser_id etc.），多粒度预聚合（分钟到天到周），仪表盘直接查预聚合表。</li>
+          <li>写 KV 给线上服务：特征或计数写 Redis 这类加速层，在线请求毫秒级点查（e.g.: 推荐系统的用户最近 N 次点击、滑动窗口行为计数 etc.）。</li>
+          <li>同一个 Flink 作业可以分叉两路各写一份，前者是实时分析负载，后者是加速型负载。</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="block" id="s3-5">
+    <div class="aside">
+      <div class="aside-title">案例</div>
+      <ul>
+        <li><b>Uber 叫车匹配</b>：叫车请求量大且突发，匹配要按区域串行，匹配失败要重来，所以请求先进队列再由匹配 worker 消费
+          <ul>
+            <li>Kafka（首选）：按区域分区，区域内有序，匹配成功后才 commit offset，worker 挂了从上次 offset 重来。</li>
+            <li>SQS：FIFO 用 message group 当区域可保有序，但吞吐低。Standard 无序，同一区域并发匹配会冲突。</li>
+          </ul>
+        </li>
+        <li><b>News Feed 写扩散</b>：用户发帖要写进每个粉丝的 feed，粉丝多时写放大，不能在请求路径上做，扇出交给后台（粉丝极多的大 V 改为 fan-out on read，读时合并）
+          <ul>
+            <li>SQS（首选）：一条帖子扇出是一个独立任务，worker 做完即止，失败重试进死信，不需要重放和多消费方。</li>
+            <li>Kafka：也能，但保留、重放、消费组都用不上，topic 和 rebalance 白付。</li>
+          </ul>
+        </li>
+        <li><b>Web Crawler 抓取</b>：亿级 URL 分给成百上千 worker 抓，慢站点和失败站点要退避重试，抓取和解析节奏不同
+          <ul>
+            <li>SQS（首选）：每个 URL 独立任务，visibility timeout 到期自动回队，ChangeMessageVisibility 做退避，超次数进死信，慢页面不堵后面的。抓取和解析拆两个队列，抓下来先落 S3 再进解析队列。</li>
+            <li>Kafka：一个分区里慢消息堵队头，退避和死信要自建。</li>
+          </ul>
+        </li>
+        <li><b>Ad Click Aggregator 点击统计</b>：每秒上万次点击，广告主要看分钟级点击数，计费要准，原始点击先收下来再聚合
+          <ul>
+            <li>方案：
+              <ul>
+                <li>Kafka + Flink + OLAP（首选）：Click Processor 验签去重后写 Kafka，Flink 一分钟 event-time 窗口聚合写 OLAP，Kafka 保留 7 天就是原始事件存储，每日 Spark 从 S3 归档重算对账（Lambda）。</li>
+                <li>Cassandra 存原始事件 + 定时 Spark 聚合 + OLAP：能用，但 Cassandra 没有按时间全局顺序读，流丢了补不回来只能靠批修正，原始事件存储也被 Kafka retention 替代了。</li>
+                <li>直接写 DB 查时 GROUP BY：量级上去扫表撑不住。</li>
+              </ul>
+            </li>
+            <li>首选方案的细节：
+              <ul>
+                <li>去重按 impression id 不按用户，同一用户多次看到重定向广告都是真实点击。</li>
+                <li>先写 Kafka 再写去重缓存，重复有对账兜、丢失没有。</li>
+                <li>替代 Kafka 的只能是 log 形状的，DynamoDB Streams、Cassandra CDC 可以，Cassandra + Pub/Sub 不行（Flink 作为消费者要从真相源按游标顺序读，log 有游标，Pub/Sub 没有游标，按业务键分区的表也读不出顺序）。</li>
+              </ul>
+            </li>
+            <li>全链路：
+              <pre>用户点击  GET /click?imp=…&amp;ad=42&amp;exp=…&amp;kid=k3&amp;sig=…      ← 302 服务端跳转，与 Bitly 同构，必须 302 不能 301
+   ▼
+Click Processor（无状态）  验 HMAC → SET imp NX 去重 → 写 Kafka → 302
+   ▼
+Kafka（按 ad_id 分区，热广告加盐 ad_id:0..N，retention 7 天）
+   ├──► Flink：去盐，一分钟 event-time 窗口，watermark 30 秒 ──► OLAP（按 advertiser_id 分片，日/周表预聚合）
+   └──► Kafka Connect ──► S3 原始事件 ──► 每日 Spark 重算 ──► 对账修正 OLAP</pre>
+            </li>
+          </ul>
+        </li>
+        <li><b>Top-K 热门视频</b>：一个月滑动窗口内观看最多的 K 个
+          <ul>
+            <li>Kafka + Flink：窗口一个月状态大，checkpoint 必须开，Kafka 保留一个月以便重放。</li>
+            <li>近似算法：count-min sketch 用误差换空间和吞吐（固定大小的 d 行 w 列计数矩阵，每个元素用 d 个哈希各加一格，查询取 d 格中的最小值，只会多算不会少算，内存和元素总数无关）。</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PART 5 大文件处理 ================= -->
+<section class="part" id="p5b">
+  <div class="part-head"><span class="num">PART 5</span><h2>大文件处理</h2></div>
+
+  <div class="block" id="s5b-1">
+    <h3>上传与下载路径</h3>
+    <pre>上传  客户端 ──申请上传──► API 服务器 ──建元数据 status=uploading──► 元数据库
+      客户端 ──分块直传──► S3 ──完成事件──► API 服务器 ──status=uploaded──► 元数据库
+下载  客户端 ◄──签名 URL── CDN ◄──回源── S3</pre>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:1050px">
+      <colgroup><col style="width:10%"><col style="width:34%"><col style="width:26%"><col style="width:30%"></colgroup>
+      <thead><tr><th>步骤</th><th>做法</th><th>为什么</th><th>细节</th></tr></thead>
+      <tbody>
+        <tr><td>申请上传</td><td>客户端向 API 要预签名 URL，服务端先在元数据库建一条记录</td><td>应用服务器只管元数据，不碰字节</td><td>URL 约 5 分钟过期，只对一个 key 有效</td></tr>
+        <tr><td>分块直传</td><td>客户端按 5 到 10 MB 切块，每块独立上传、可重试、可并行</td><td>大文件不占服务器带宽，失败只重传一块</td><td>S3 multipart，单次 PUT 上限 5 GB，整文件 5 TB</td></tr>
+        <tr><td>断点续传</td><td>每块算指纹，元数据记每块状态和 ETag，重连后查元数据跳过已传的</td><td>移动网络不稳定</td><td>整文件指纹可做秒传去重</td></tr>
+        <tr><td>完成通知</td><td>S3 事件通知到后端，后端用 ListParts 核对后调 CompleteMultipartUpload，再把状态改 uploaded</td><td>不信任客户端回调，元数据和真实字节一致</td><td>事件恰好一次，用它触发后续处理</td></tr>
+        <tr><td>下载</td><td>后端签 CDN URL，客户端从边缘节点拿，CDN 回源 S3</td><td>读流量不到源站</td><td>Range 请求支持续传，签名 URL 做权限</td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li><b>元数据和字节分开存</b>：元数据（名字、大小、类型、状态、每块的状态）放关系库或宽表（e.g.: Dropbox 用 DynamoDB、YouTube 用 Cassandra etc.），字节放 S3。状态机 uploading 到 uploaded 到 processed，权限用单独的共享表记 userId 到 fileId。</li>
+      <li><b>上传完成后的处理是一个 DAG</b>，由工作流引擎编排（e.g.: Temporal etc.）：视频切成 3 到 5 秒的段，每段并行转多种码率，生成 HLS 或 DASH 的 manifest，标记可播放。播放端按带宽在 manifest 里选码率。</li>
+    </ul>
+    <div class="aside">
+      <div class="aside-title">案例</div>
+      <ul>
+        <li><b>Dropbox 文件同步</b>：50 GB 大文件、多设备同步、优先可用
+          <ul>
+            <li>上传下载按上面的路径，签名 URL 5 分钟过期。</li>
+            <li>同步：SSE 推变更（只收不发），客户端每几分钟带上次同步时间戳轮询一次兜底，连接断了漏的靠它补。</li>
+            <li>省流量：按内容切块（CDC，滚动哈希定边界，小改动只重传附近几块）、整文件指纹去重（同一文件第二人上传直接指向已有对象）、只压文本（媒体压缩比太低不值得）。</li>
+          </ul>
+        </li>
+        <li><b>YouTube 视频</b>：每天 100 万上传、1 亿播放
+          <ul>
+            <li>上传按上面的路径，S3 完成事件触发转码 DAG。</li>
+            <li>元数据 Cassandra 按 videoId 分区，段和 manifest 放 S3，CDN 分发。</li>
+            <li>自适应码率：客户端拿 manifest，按网络状况逐段选格式。</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PART 6 长任务与多步流程 ================= -->
+<section class="part" id="p6w">
+  <div class="part-head"><span class="num">PART 6</span><h2>长任务与多步流程</h2></div>
+
+  <div class="block" id="s6w-1">
+    <h3>长任务</h3>
+    <pre>客户端 ──请求──► API 服务器 ──写 job(status=queued)──► 任务表
+                     │ 返回 jobId                 ▲
+                     └──入队──► 队列 ──► worker ──更新 status / progress / result
+客户端 ──轮询 GET /jobs/{id} 或 SSE 推──► 任务表</pre>
+    <ul class="prose">
+      <li><b>形状</b>：请求先落一条任务记录并立刻返回 jobId，活交给队列和 worker，客户端拿 jobId 查进度（e.g.: LeetCode 判题、YouTube 转码、Web Crawler 抓取 etc.）。</li>
+      <li><b>任务表是真相</b>：jobId、status、progress、result、尝试次数。队列只是传输，丢了按表重投。</li>
+      <li><b>worker 挂了</b>：队列（SQS）的可见性超时让任务回队被别人领走，所以每个任务要幂等，用 jobId 做幂等键。</li>
+      <li><b>进度</b>：worker 定期写 progress，客户端轮询或 SSE 推，见<a href="#p2">实时更新</a>。</li>
+    </ul>
+  </div>
+
+  <div class="block" id="s6w-2">
+    <h3>多步流程</h3>
+    <p>一个业务要跨多个服务、跨几分钟到几天，中间任何一步可能失败、超时、要等外部回调（e.g.: 下单扣款、锁库存、生成运单、发确认邮件 etc.）。</p>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:1050px">
+      <colgroup><col style="width:12%"><col style="width:34%"><col style="width:28%"><col style="width:26%"></colgroup>
+      <thead><tr><th>方式</th><th>怎么做</th><th>中途崩了</th><th>适用</th></tr></thead>
+      <tbody>
+        <tr><td>单服务器串行</td><td>一个进程按顺序调各服务</td><td>状态在内存，丢了不知道走到哪</td><td>步骤少、全在一个事务里能回滚</td></tr>
+        <tr><td>Saga</td><td>每步一个本地事务，失败则按反序执行补偿（退款、释放库存）</td><td>要自己持久化走到第几步</td><td>跨服务但步骤固定</td></tr>
+        <tr><td>事件驱动</td><td>每步完成发事件，下一步的服务订阅事件自己触发</td><td>事件在队列里不丢，但流程散在各服务，没人知道全貌</td><td>步骤松耦合、各服务独立演进</td></tr>
+        <tr><td>工作流引擎</td><td>流程写成一段代码，引擎持久化每步结果，崩了从断点续跑（Temporal、Step Functions）</td><td>引擎重放历史恢复到崩溃前的状态</td><td>步骤多、要等外部事件、要超时推进、要看全貌</td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li><b>每步幂等</b>：引擎重放时已完成的步不会再执行，但一步执行到一半崩了会重跑，步内的外部调用要带幂等键（e.g.: 支付用 bookingId、发邮件用消息 id etc.）。</li>
+      <li><b>超时是流程的一部分</b>：等不到外部回应要主动推进，不能永远挂着（e.g.: Uber 司机 10 秒不接单换下一个、Ticketmaster 预留 10 分钟过期 etc.）。</li>
+      <li><b>等外部事件</b>：流程挂起等 webhook 或人工操作，事件到了按 id 找回对应的流程实例继续（e.g.: 支付 webhook etc.）。</li>
+      <li><b>流程版本</b>：流程代码改了，跑到一半的老实例按老版本跑完，新实例用新版本。</li>
+    </ul>
+    <div class="aside">
+      <div class="aside-title">案例</div>
+      <ul>
+        <li><b>Uber 叫车匹配</b>：找司机、通知、等 10 秒、没接就换下一个，直到成功或超时失败。每轮一步，司机锁加接单条件写保证只派一个，超时推进用 SQS delay queue 或 Temporal 定时器。</li>
+        <li><b>YouTube 转码</b>：切段、每段并行多码率转码、生成 manifest、标记可播放，是一个 DAG，Temporal 编排，段级任务独立重试。</li>
+        <li><b>电商下单</b>：扣款、锁库存、生成运单、发邮件，Saga 补偿是退款和释放库存，或者 Temporal 一段代码写完。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PART 7 并发控制 ================= -->
+<section class="part" id="p1">
+  <div class="part-head"><span class="num">PART 7</span><h2>并发控制</h2></div>
+
+  <div class="block" id="s1-2">
+    <h3>悲观锁和乐观锁</h3>
+    <p>进程内的锁（mutex、synchronized）只管一个实例，服务多实例部署后共享状态都在数据库或 Redis 里，所以分布式并发控制不讨论单机锁。</p>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:900px">
+      <colgroup><col style="width:14%"><col style="width:43%"><col style="width:43%"></colgroup>
+      <thead><tr><th></th><th>悲观锁</th><th>乐观锁</th></tr></thead>
+      <tbody>
+        <tr><td>思路</td><td>先锁住再改，别人等</td><td>先改再验，冲突了重试</td></tr>
+        <tr><td>实现</td><td><code>SELECT ... FOR UPDATE</code>，或直接 UPDATE 隐式加锁</td><td><code>UPDATE ... WHERE version = ?</code>，或直接用业务字段 <code>WHERE stock &gt; 0</code>，看 affected rows</td></tr>
+        <tr><td>冲突检测时机</td><td>事前阻塞</td><td>事后校验</td></tr>
+        <tr><td>持锁时长</td><td>整个事务</td><td>只有那条 UPDATE 的几毫秒，底层仍是行锁</td></tr>
+        <tr><td>适合</td><td>冲突多、事务短、必须成功（e.g.: 余额扣减、状态机流转 etc.）</td><td>冲突少、读多写少、跨请求（e.g.: 后台编辑表单、配置修改 etc.）</td></tr>
+        <tr><td>注意</td><td><ul class="pts"><li>命中索引，否则锁全表</li><li>不持锁做 RPC</li><li>固定加锁顺序防死锁</li></ul></td><td><ul class="pts"><li>重试上限</li><li>版本号用自增整数防 ABA</li><li>多行校验退回悲观</li></ul></td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li><b>本质区别不是有没有锁，是持锁时长和冲突检测时机</b>。乐观锁的那条 UPDATE 底层照样拿行锁，只是几毫秒就放。</li>
+      <li><b>条件写就是把业务字段当版本号的 CAS</b>：<code>UPDATE ... WHERE status = 'requested'</code> 拿到行锁后用最新值匹配 WHERE，第二个事务 affected_rows 一定为 0。能用一条原子语句就不显式加锁（e.g.: Redis INCR、SET NX、Lua、DynamoDB 条件表达式 etc.）。</li>
+      <li><b>高冲突下乐观锁反而更差</b>，999 个失败重试白烧 DB。热点行两种锁都不行，把冲突挪出 DB（分桶、拆行、攒批，见<a href="#p1s">读写扩展</a>）。</li>
+    </ul>
+  </div>
+
+  <div class="block" id="s1-1">
+    <h3>数据库中的锁</h3>
+    <p>InnoDB 读不加锁靠多版本，写加行锁持到提交，应用层的乐观锁是一条带条件的 UPDATE 在语句内原子完成。</p>
+    <ul class="prose">
+      <li><b>读：MVCC，快照读不加锁</b>
+        <ul>
+          <li>每行隐藏列 <code>DB_TRX_ID</code>、<code>DB_ROLL_PTR</code>，旧版本进 undo log 串成链。</li>
+          <li>Read View 记当前活跃事务集合，沿链找第一个可见版本。RC 每条 SELECT 新建 Read View，RR 整个事务复用第一个。</li>
+          <li>长事务卡住 purge，undo 膨胀，是线上最常见的危害。</li>
+        </ul>
+      </li>
+      <li><b>写：2PL 行锁，当前读</b>
+        <ul>
+          <li>UPDATE、DELETE、<code>SELECT ... FOR UPDATE</code> 是当前读，加 X 锁。锁的是索引记录不是物理行，WHERE 不走索引等于锁全表。</li>
+          <li>两阶段：扩张阶段只加不放，收缩阶段只放不加。InnoDB 用 Rigorous 2PL，所有锁持到提交，把加锁操作放事务最后能缩短持锁。</li>
+          <li>为什么锁要跨操作持有：单条操作各自加放，会读到转账中间态、丢失更新。</li>
+          <li>隔离级别决定锁范围：
+            <ul>
+              <li>RC 只有 Record Lock，死锁少但有幻读，很多公司线上默认 RC。</li>
+              <li>RR 用 Next-Key Lock 防幻读，锁范围大。</li>
+            </ul>
+          </li>
+          <li>死锁靠 wait-for graph 找环，回滚代价小的事务。锁等待默认 50 秒（排查用 <code>performance_schema.data_locks</code>、<code>SHOW ENGINE INNODB STATUS</code>）。</li>
+        </ul>
+      </li>
+      <li><b>条件 UPDATE 的原子性：CAS</b>
+        <ul>
+          <li>语句内拿 X 锁、用最新值匹配 WHERE、改、放，比较和写入在一条语句里完成。</li>
+          <li>对应 CPU 的 <code>LOCK cmpxchg</code>、Java 的 Atomic*。坑：ABA 靠版本号防，高竞争自旋空转靠分段累加（e.g.: LongAdder、库存分桶 etc.）。</li>
+        </ul>
+      </li>
+    </ul>
+    <div class="tbl"><table>
+      <thead><tr><th>类型</th><th>锁什么</th><th>目的</th></tr></thead>
+      <tbody>
+        <tr><td>Record Lock</td><td>单条索引记录</td><td>防止别人改这行</td></tr>
+        <tr><td>Gap Lock</td><td>两条记录之间的开区间</td><td>防止往区间插入，解决幻读</td></tr>
+        <tr><td>Next-Key Lock</td><td>Record + 前面的 Gap，左开右闭</td><td>RR 下的默认加锁单位</td></tr>
+        <tr><td>Insert Intention Lock</td><td>插入前在 gap 上打的意向标记</td><td>多个事务往同一 gap 不同位置插入不互斥</td></tr>
+      </tbody></table></div>
+  </div>
+
+  <div class="block" id="s1-4">
+    <h3>分布式锁</h3>
+    <p>单库的行锁出不了这个库，锁要跨服务、跨请求持有，或者持有时间长到不能挂在数据库事务上，就需要一把所有参与方都看得见的锁，有三个要求：互斥，不死锁（要能过期），不误删（释放时比对持有者）。（过期和互斥天然矛盾，持有者没做完锁先过期，别人就进来了，整个设计都在这两条之间找平衡。）</p>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:1150px">
+      <colgroup><col style="width:13%"><col style="width:16%"><col style="width:16%"><col style="width:14%"><col style="width:19%"><col style="width:22%"></colgroup>
+      <thead><tr><th>实现</th><th>互斥靠什么</th><th>过期</th><th>防误删</th><th>故障时</th><th>适用</th></tr></thead>
+      <tbody>
+        <tr><td>DB 唯一索引</td><td>插入唯一键，第二个插入失败</td><td>没有，要自己清</td><td>删除时带持有者条件</td><td>和业务库同生死</td><td>低频任务、已有 DB 不想加组件</td></tr>
+        <tr><td>Redis <code>SET NX EX</code></td><td>单线程，key 不存在才设置</td><td>TTL 自动过期，Redisson watchdog 可续期</td><td>value 存 token，Lua 比对再 DEL</td><td>主从异步复制，主挂了锁可能丢。Redlock 靠多数派但依赖时钟</td><td>效率型场景，默认选择（e.g.: Ticketmaster 选座、Uber 司机匹配 etc.）</td></tr>
+        <tr><td>ZooKeeper 临时顺序节点</td><td>序号最小者持锁</td><td>会话断了节点自动消失</td><td>节点归会话所有</td><td>多数派共识，不丢</td><td>正确性要求高、锁数量少，只 watch 前一个防惊群</td></tr>
+        <tr><td>etcd lease</td><td>key 带 lease，revision 最小者持锁</td><td>lease 到期自动删</td><td>同上</td><td>Raft 共识，不丢</td><td>同 ZooKeeper，云原生环境</td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li><b>锁负责效率，条件写负责正确性</b>：锁和数据不在同一个系统里时（分布式锁），锁判定的互斥传不到写数据那一刻，中间任何环节都可能让两个人同时进来（过期、GC 停顿、主从切换丢锁、脑裂、锁服务宕机降级、客户端绕过），所以数据写入必须自带条件校验只让一个成功（乐观锁），锁只是把大部分冲突提前挡掉省掉无效工作（单库行锁和写在同一事务里原子，不需要这层）
+        <ul>
+          <li>常用形式是用业务状态做条件（e.g.: Redis 锁加 <code>UPDATE ... WHERE status = ?</code>、Ticketmaster 的 bookingId 幂等键 etc.）。</li>
+          <li>fencing token 是把条件换成单调递增的数字，锁服务发号，存储拒绝比见过的更小的，等于把分布式锁降级成乐观锁。</li>
+        </ul>
+      </li>
+      <li><b>锁和分布式事务是两件事</b>：锁管谁能进这段代码，2PC 管多库要么全成要么全败，2PC 是 2PL 的分布式延伸。能用单库事务就不用分布式锁（e.g.: Gopuff 跨库锁换成单库 SERIALIZABLE etc.）。</li>
+    </ul>
+    <div class="aside">
+      <div class="aside-title">ZooKeeper/etcd 是什么</div>
+      <ul>
+        <li>小容量、强一致、支持 watch 的 KV，存集群元数据，所有用法从这三个特性推出来。</li>
+        <li>用法：服务注册发现（临时节点）、leader 选举（临时顺序节点）、分布式锁、配置与开关、分片归属、成员列表（一致性哈希环的输入）。</li>
+        <li>红线：不在数据路径上（存有哪些服务器，不存用户在哪台，后者由哈希函数算或由 Pub/Sub 订阅隐式维护）。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="block" id="s1-4b">
+    <h3>排队</h3>
+    <p>流量过大数据库无法扛住时（e.g.: 商品秒杀、演唱会抢票、12306 放票 etc.），除了用锁还可以排队：按容量放行，放行的人拿一张带 TTL 的许可再去操作。</p>
+    <div class="aside">
+      <div class="aside-title">按量级选方案</div>
+      <ul>
+        <li>请求量数据库接得住：什么都不加，数据库 <code>UPDATE ... WHERE</code> 条件写。</li>
+        <li>超过数据库极限（分库分表能解决总量问题，解决不了热点问题）：锁和排队二选一，都挡在数据库前面。</li>
+      </ul>
+    </div>
+    <div class="aside">
+      <div class="aside-title">锁和排队</div>
+      <ul>
+        <li><b>相同点</b>：都挡在数据库前面扛流量，正确性都靠数据库的条件写。</li>
+        <li><b>不同点</b>：
+          <ul>
+            <li>锁是竞速，SET NX 先到先赢，网络近的、脚本快的占便宜，用户立刻知道结果。</li>
+            <li>排队是排序，按放行顺序，可以先到先得也可以候场随机，用户先等、知道排第几。</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <pre>入队  ZADD queue:{id} NX &lt;时间戳&gt; &lt;userId&gt;
+排位  每几秒 ZRANK 算前面多少人，除以放行速率估等待时间，SSE 推给客户端
+放行  调度进程每秒 ZPOPMIN queue:{id} N，对每人 SET admitted:{id}:{userId} EX 600，SSE 通知进入
+门禁  业务接口先 EXISTS admitted:{id}:{userId}，没有就拒绝回排队页（防绕过前端直接调接口，许可只认服务端写的 key，不认客户端参数）
+离场  许可 TTL 到了没操作就失效，重新排</pre>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:900px">
+      <colgroup><col style="width:30%"><col style="width:35%"><col style="width:35%"></colgroup>
+      <thead><tr><th>命令</th><th>做什么</th><th>排队里的含义</th></tr></thead>
+      <tbody>
+        <tr><td><code>ZADD key NX score member</code></td><td>加成员，已存在不动</td><td>入队，刷新不重排</td></tr>
+        <tr><td><code>ZRANK key member</code></td><td>成员按 score 升序的排名，O(log N)</td><td>前面排了多少人</td></tr>
+        <tr><td><code>ZPOPMIN key N</code></td><td>弹出 score 最小的 N 个并删除</td><td>放行队头 N 人</td></tr>
+        <tr><td><code>ZREM key member</code></td><td>删成员</td><td>用户放弃排队</td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li><b>人排队用 sorted set，任务排队用 MQ</b>：判据是排队之后的动作系统能不能替用户做。
+        <ul>
+          <li>不能替用户做就人排队（e.g.: Ticketmaster 放行后用户自己挑座 etc.），要查每个人的位置、能中途退出、刷新不重复、候场随机、放行后用户继续操作（List 查位置 O(N)，MQ 不支持删除或修改已入队的消息，都不行）。</li>
+          <li>能替用户做就任务排队，处理完给结果，没有复杂的中间过程（e.g.: 12306 提交订单后系统分座出票、秒杀点抢购后系统扣一件建订单，队列里是订单，页面显示排位或抢购中 etc.）。</li>
+        </ul>
+      </li>
+      <li><b>放行量和预计时间</b>：
+        <ul>
+          <li>放行量按数据库容量定，和库存多少无关（上限是数据库能承担的最大流量，可以小于也可以大于库存，条件写兜底不会超卖）。</li>
+          <li>后面的人等两种空位：数据库一次接不完就分批，等下一批；库存已全部放出去，等预留过期和放弃的回流。</li>
+          <li>预计时间按最近几分钟的实际放行速率估，排位除以速率，定期重算（排位是准的，时间是估的）。</li>
+        </ul>
+      </li>
+      <li><b>排队层自身扛不住时</b>：排队 key 按活动分片到不同节点，单活动再按 userId 哈希分多个队列、排位用各分片排名加总估算，网关层限流让超出入队能力的请求退避重试。</li>
+    </ul>
+  </div>
+
+  <div class="block" id="s1-5">
+    <div class="aside">
+      <div class="aside-title">案例</div>
+      <ul>
+        <li><b>Ticketmaster 选座</b>：锁的对象是一张票，用户填支付要持有 10 分钟
+          <ul>
+            <li>方案：
+              <ul>
+                <li>Redis <code>SET NX EX 600</code>（首选）：预留不碰数据库，TTL 到期自动释放。</li>
+                <li>隐式状态条件更新 <code>WHERE status='available' OR (status='reserved' AND expired)</code>：纯 DB 的最优解，不引入新组件。</li>
+                <li>status + expiration + cron 回收：有回收延迟，cron 是单点。</li>
+                <li>长事务 <code>FOR UPDATE</code>：连接占几分钟，不可用。</li>
+              </ul>
+            </li>
+            <li>兜底：支付 webhook 事务里 <code>WHERE status='available'</code>，bookingId 做幂等键。TTL 过期与支付完成竞争时 DB 只让一个成功，另一个退款。</li>
+          </ul>
+        </li>
+        <li><b>Uber 司机匹配</b>：锁的对象是一个司机，10 秒
+          <ul>
+            <li>方案：
+              <ul>
+                <li>Redis <code>SET lock:driver:{id} {requestId} EX 10 NX</code>（首选）。</li>
+                <li>DB status outstanding_request + cron：有回收延迟。</li>
+                <li>内存锁：多实例不互斥，不可用。</li>
+              </ul>
+            </li>
+            <li>兜底：接单 <code>UPDATE ride SET status='accepted' WHERE id=? AND status='requested'</code>。超时推进用 SQS delay queue 或 Temporal。</li>
+          </ul>
+        </li>
+        <li><b>Web Crawler 域名礼貌间隔</b>：锁的对象是域名
+          <ul>
+            <li>Redis <code>SET NX</code>，TTL 等于爬取间隔（首选）。</li>
+            <li>SQS visibility timeout 当租约。</li>
+          </ul>
+        </li>
+        <li><b>Gopuff 下单扣库存</b>：反例，跨库分布式锁崩在中间、重叠库存死锁，换成单库 SERIALIZABLE 事务。能用单库事务就不用分布式锁。</li>
+        <li><b>Shopify 抢购库存</b>：一件商品拆 1000 行，<code>SELECT ... FOR UPDATE SKIP LOCKED</code> 随便锁几行，降到 RC 避 Gap 锁，补货单独一把锁，所有路径固定加锁顺序防死锁（完整的秒杀方案见 <a href="flash-sale.html">Flash Sale</a>）。</li>
+        <li><b>无锁</b>：Rate Limiter、Tinder、Bitly、WhatsApp 用一条原子命令代替锁，Lua 把 read-modify-write 做成一步、Redis INCR 单线程、DynamoDB 条件表达式。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PART 8 认证与安全 ================= -->
+<section class="part" id="p4">
+  <div class="part-head"><span class="num">PART 8</span><h2>认证与安全</h2></div>
+
+  <div class="block" id="s4-7">
+    <h3>认证方式</h3>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>Session</th><th>JWT</th><th>Opaque Token</th></tr></thead>
+      <tbody>
+        <tr><td>状态在哪</td><td>服务端存储（Redis）</td><td>token 自身</td><td>认证服务存储</td></tr>
+        <tr><td>每请求查库</td><td>要</td><td>不要，纯验签</td><td>要，introspection</td></tr>
+        <tr><td>即时撤销</td><td>能</td><td>不能，靠短 exp + refresh 补</td><td>能</td></tr>
+        <tr><td>多服务共享</td><td>连同一个 session 存储</td><td>分发公钥即可</td><td>都要调认证服务</td></tr>
+        <tr><td>典型</td><td>单体 Web、后台</td><td>微服务网关、移动端、WebSocket 握手</td><td>OAuth2 对外 API</td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li><b>选择规则</b>：单体和后台用 Session，微服务和移动端用 JWT，对外 API 用 OAuth2 的 opaque token。</li>
+      <li><b>Gateway 统一鉴权后内部传 <code>X-User-Id</code></b>，网关做认证、服务做授权。前提是内网可信、所有入口经网关（长连接、异步任务、服务间自发调用三种情况网关管不到）。</li>
+    </ul>
+  </div>
+
+  <div class="block" id="s4-7b">
+    <h3>JWT 怎么设计</h3>
+    <ul class="prose">
+      <li><b>结构与签名</b>：<code>header.payload.signature</code>，payload 明文只防篡改不防偷看，验证不查库。</li>
+      <li><b>过期与刷新</b>：
+        <ul>
+          <li>access token 短期，15 分钟。</li>
+          <li>refresh token 随机串、服务端存哈希、30 天，只在换 access 时用一次，放 HttpOnly cookie。</li>
+        </ul>
+      </li>
+      <li><b>登出与撤销</b>：删 refresh 断续期，要立刻生效就把 jti 放进 Redis 黑名单。</li>
+      <li><b>密钥与防攻击</b>：
+        <ul>
+          <li>RS256 私签公验，kid + JWKS 轮换，公钥泄露无害。</li>
+          <li>算法白名单防 <code>alg:none</code> 和算法混淆。</li>
+          <li>HTTPS、SameSite。</li>
+          <li>refresh rotation 加重放检测，同一 refresh 第二次使用即吊销整条链。</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="block" id="s4-7c">
+    <h3>请求签名</h3>
+    <ul class="prose">
+      <li>签名回答"是不是我发的"。签验同方、高频、签名要进 URL 用 HMAC，跨组织验签用非对称。</li>
+      <li>签名、去重、反作弊是三个问题，分别回答"是不是我发的""是不是第一次""点的人是不是真的"。</li>
+    </ul>
+    <div class="aside">
+      <div class="aside-title">案例</div>
+      <ul>
+        <li><b>Ad Click 的 impression ID</b>：投放服务用 HMAC 签 <code>imp_id | ad_id | exp</code>，点击时验签失败照跳转不计数，<code>SET imp_id NX EX</code> 原子去重，先写 Kafka 再写缓存宁重不丢。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PRINCIPLES ================= -->
+
+<!-- ================= INDEX ================= -->
+<section class="part" id="numbers">
+  <div class="part-head"><span class="num">附录</span><h2>估算数字</h2></div>
+  <div class="tbl wide"><table style="table-layout:fixed; min-width:1000px">
+    <colgroup><col style="width:18%"><col style="width:50%"><col style="width:32%"></colgroup>
+    <thead><tr><th>项目</th><th>量级</th><th>备注</th></tr></thead>
+    <tbody>
+      <tr><td>单机硬件上限</td><td>128 vCPU、内存 512 GB 到 24 TB、本地 SSD 60 TB、机械盘 336 TB</td><td>先想单机够不够，再谈分布式。S3 容量无限</td></tr>
+      <tr><td>网络延迟</td><td>同 AZ 1 ms 内、跨 AZ 1 到 2 ms、跨区域 50 到 150 ms</td><td>带宽常见 25 Gbps，高配 100 Gbps</td></tr>
+      <tr><td>应用服务器</td><td>简单请求每秒几万，每个请求带库调用的每秒几千</td><td>无状态，横向扩</td></tr>
+      <tr><td>PostgreSQL / MySQL 单机</td><td>读每秒几万，写每秒几千到一万。单表几千万到一亿行正常，十亿行要分</td><td>前提是 SSD 和索引命中</td></tr>
+      <tr><td>Redis 单节点</td><td>简单命令每秒 10 万，pipelining 到几十万。内存几十到几百 GB</td><td>Lua 脚本每秒几万</td></tr>
+      <tr><td>Kafka</td><td>单分区每秒几 MB，单 broker 每秒几十到上百 MB，集群每秒百万条</td><td>加分区线性扩</td></tr>
+      <tr><td>Cassandra / DynamoDB</td><td>单节点每秒几万写。DynamoDB 单分区每秒 1000 写单位、3000 读单位</td><td>超了自动分裂</td></tr>
+      <tr><td>Elasticsearch 单节点</td><td>查询每秒几千，写入每秒万级文档</td><td>写后约 1 秒可见</td></tr>
+    </tbody></table></div>
+  <ul class="prose">
+    <li><b>估算套路</b>：一天约 10 万秒，DAU 乘以人均请求数除以 10 万得平均 QPS，峰值按 3 到 5 倍。一条记录按 1 KB 算，一亿条 100 GB。UUID 16 字节、时间戳 8 字节、整数 4 到 8 字节。</li>
+  </ul>
+</section>
+
+<section class="part" id="index">
+  <div class="part-head"><span class="num">附录</span><h2>案例索引</h2></div>
+  <div class="tbl wide"><table style="table-layout:fixed; min-width:1000px">
+    <colgroup><col style="width:16%"><col style="width:28%"><col style="width:56%"></colgroup>
+    <thead><tr><th>案例</th><th>出现在</th><th>要点</th></tr></thead>
+    <tbody>
+      <tr><td><a href="ticketmaster.html">Ticketmaster</a></td><td><a href="#s0-1">数据模型</a>、<a href="#s1s-1">热点读写</a>、<a href="#s1-5">并发控制案例</a></td><td>票的预留用 Redis TTL 锁，支付 webhook 里条件写兜底，排队把并发挡在锁之前，搜索走 Elasticsearch 副本、详情走缓存、座位图走 push</td></tr>
+      <tr><td>Uber</td><td><a href="#s3-5">异步处理案例</a>、<a href="#s6w-2">多步流程</a>、<a href="#s1-5">并发控制案例</a></td><td>叫车进 Kafka 按区域分区、匹配成功才 commit，司机锁 10 秒 TTL，接单条件写兜底，超时用 delay queue 推进</td></tr>
+      <tr><td>WhatsApp</td><td><a href="#s2-5">实时更新案例</a>、<a href="#s1-5">并发控制案例</a></td><td>WebSocket 加按用户频道的 Redis Pub/Sub，先写 Message 和 Inbox 再 PUBLISH，Inbox 就是游标，条件表达式代替锁</td></tr>
+      <tr><td>Live Comments</td><td><a href="#s2-5">实时更新案例</a></td><td>SSE 单向推，按直播分频道，一致性哈希聚观众，允许丢、刷新从库里读</td></tr>
+      <tr><td>Ad Click Aggregator</td><td><a href="#s1s-1">热点读写</a>、<a href="#s3-5">异步处理案例</a>、<a href="#s4-7c">请求签名</a></td><td>HMAC 签 impression、SET NX 去重、Kafka 加盐、Flink 分钟窗口写 OLAP、每日 Spark 对账，消费者结果由全部事件决定所以必须持久日志</td></tr>
+      <tr><td>Top-K</td><td><a href="#s3-5">异步处理案例</a></td><td>一个月窗口状态大，checkpoint 必开、Kafka 留一个月，count-min sketch 做近似</td></tr>
+      <tr><td>News Feed</td><td><a href="#s3-5">异步处理案例</a></td><td>SQS 写扩散是独立任务，大 V 改 fan-out on read</td></tr>
+      <tr><td>Web Crawler</td><td><a href="#s3-5">异步处理案例</a>、<a href="#s1-5">并发控制案例</a></td><td>选 SQS 不选 Kafka，退避和死信内建，抓取和解析拆两个队列，域名礼貌间隔用 Redis SET NX</td></tr>
+      <tr><td>Gopuff</td><td><a href="#s0-1">数据模型</a>、<a href="#s1-5">并发控制案例</a></td><td>跨库分布式锁是反例，单库 SERIALIZABLE 事务</td></tr>
+      <tr><td><a href="flash-sale.html">Shopify</a></td><td><a href="#s1s-1">热点读写</a>、<a href="#s1-5">并发控制案例</a></td><td>库存拆千行，SKIP LOCKED 随便锁几行，降 RC 避 Gap 锁，固定加锁顺序</td></tr>
+      <tr><td>Post Search</td><td><a href="#s1s-1">热点读写</a>、<a href="#s3-0">同步与异步</a></td><td>Kafka 扇出到索引，点赞攒 30 秒再写</td></tr>
+      <tr><td>Bitly</td><td><a href="#s0-1">数据模型</a>、<a href="#s1-5">并发控制案例</a></td><td>短码映射放关系库，Redis INCR 发号，跳转同步路径不进队列</td></tr>
+      <tr><td>Rate Limiter / Tinder</td><td><a href="#s1-5">并发控制案例</a></td><td>Lua 把 read-modify-write 做成一步，一条原子命令代替锁</td></tr>
+      <tr><td><a href="12306.html">12306</a></td><td><a href="#s1-4b">排队</a>、<a href="#s1s-1">热点读写</a></td><td>库存是座位乘区间，每座一个位图，出票条件写要求目标位全 0；余票是派生矩阵增量维护，和交易隔离；订单当任务进 MQ 按车次串行出票，序号差算排位</td></tr>
+      <tr><td>LeetCode</td><td><a href="#s2-1b">第一跳</a>、<a href="#s6w-1">长任务</a></td><td>判题进 SQS 任务队列，客户端每秒短轮询拿结果</td></tr>
+      <tr><td>YouTube / Dropbox</td><td><a href="#s5b-1">大文件处理</a>、<a href="#s1s-1">热点读写</a></td><td>预签名 URL 分块直传 S3，S3 事件通知完成，元数据和字节分开，CDN 下载，YouTube 转码 DAG 加自适应码率，Dropbox 内容定义切块加指纹去重</td></tr>
+    </tbody></table></div>
+  <p class="back" style="margin-top:1rem"><a href="#top">回到顶部</a></p>
+</section>
+
+</main>
+</div>
+
+</div>
+
+<script>
+(function(){
+  var toc=document.getElementById('toc'), btn=document.getElementById('tocToggle'), bd=document.getElementById('tocBackdrop');
+  var html='';
+  document.querySelectorAll('section.part').forEach(function(sec){
+    var h2=sec.querySelector('.part-head h2'); if(!h2||!sec.id) return;
+    var num=sec.querySelector('.part-head .num');
+    html+='<a class="part" href="#'+sec.id+'">'+(num?num.textContent+' ':'')+h2.textContent+'</a>';
+    sec.querySelectorAll('.block').forEach(function(b){ var h3=b.querySelector(':scope > h3'); if(h3&&b.id) html+='<a class="sub" href="#'+b.id+'">'+h3.textContent+'</a>'; });
+  });
+  toc.insertAdjacentHTML('beforeend',html);
+  function set(open){ document.body.classList.toggle('toc-open',open); btn.setAttribute('aria-expanded',open?'true':'false'); }
+  btn.addEventListener('click',function(){ set(!document.body.classList.contains('toc-open')); });
+  bd.addEventListener('click',function(){ set(false); });
+  toc.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',function(){ set(false); }); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') set(false); });
+  var links=Array.prototype.slice.call(toc.querySelectorAll('a.sub')), map={};
+  links.forEach(function(a){ var id=a.getAttribute('href').slice(1); if(document.getElementById(id)) map[id]=a; });
+  var targets=Object.keys(map).map(function(id){ return document.getElementById(id); });
+  if(!('IntersectionObserver' in window)||!targets.length) return;
+  var visible={};
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ visible[e.target.id]=e.isIntersecting; });
+    for(var i=0;i<targets.length;i++){ if(visible[targets[i].id]){ links.forEach(function(a){ a.classList.toggle('active', a===map[targets[i].id]); }); return; } }
+  },{rootMargin:'-10% 0px -70% 0px',threshold:0});
+  targets.forEach(function(t){ io.observe(t); });
+})();
+</script>
+</body>
+</html>
