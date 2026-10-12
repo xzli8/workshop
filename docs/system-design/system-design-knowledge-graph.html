@@ -1145,7 +1145,7 @@ Kafka（按 ad_id 分区，热广告加盐 ad_id:0..N，retention 7 天）
     <colgroup><col style="width:16%"><col style="width:28%"><col style="width:56%"></colgroup>
     <thead><tr><th>案例</th><th>出现在</th><th>要点</th></tr></thead>
     <tbody>
-      <tr><td><a href="ticketmaster.html">Ticketmaster</a></td><td><a href="#s0-1">数据模型</a>、<a href="#s1s-1">热点读写</a>、<a href="#s1-5">并发控制案例</a></td><td>票的预留用 Redis TTL 锁，支付 webhook 里条件写兜底，排队把并发挡在锁之前，搜索走 Elasticsearch 副本、详情走缓存、座位图走 push</td></tr>
+      <tr><td><a href="ticketmaster/ticketmaster.html">Ticketmaster</a></td><td><a href="#s0-1">数据模型</a>、<a href="#s1s-1">热点读写</a>、<a href="#s1-5">并发控制案例</a></td><td>票的预留用 Redis TTL 锁，支付 webhook 里条件写兜底，排队把并发挡在锁之前，搜索走 Elasticsearch 副本、详情走缓存、座位图走 push</td></tr>
       <tr><td>Uber</td><td><a href="#s3-5">异步处理案例</a>、<a href="#s6w-2">多步流程</a>、<a href="#s1-5">并发控制案例</a></td><td>叫车进 Kafka 按区域分区、匹配成功才 commit，司机锁 10 秒 TTL，接单条件写兜底，超时用 delay queue 推进</td></tr>
       <tr><td>WhatsApp</td><td><a href="#s2-5">实时更新案例</a>、<a href="#s1-5">并发控制案例</a></td><td>WebSocket 加按用户频道的 Redis Pub/Sub，先写 Message 和 Inbox 再 PUBLISH，Inbox 就是游标，条件表达式代替锁</td></tr>
       <tr><td>Live Comments</td><td><a href="#s2-5">实时更新案例</a></td><td>SSE 单向推，按直播分频道，一致性哈希聚观众，允许丢、刷新从库里读</td></tr>

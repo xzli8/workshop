@@ -143,6 +143,7 @@ tr:hover td{background:var(--surface)}
   <a href="#s2-2-4-2" class="sub3">观测评测链路图</a>
   <a href="#s2-3" class="sub">2.3 迁移方案</a>
   <a href="#s2-3-1" class="sub2">批次划分</a>
+  <a href="#s3">3 追问清单</a>
 </nav>
 
 
@@ -695,6 +696,76 @@ tr:hover td{background:var(--surface)}
 <tr><td>扩展</td><td>8 弹窗</td><td>弹窗终态接 Context Hub 的判定</td><td>2</td><td>consent 与问卷的展示率与旧链路一致</td></tr>
 </tbody>
 </table></div>
+
+<!-- ===================== 3 ===================== -->
+<h2 id="s3">3 追问清单</h2>
+<div class="qa">
+<dl>
+  <dt>1. WSGI 和 ASGI 是什么？</dt>
+  <dd>
+  <p>两个都是 Python 的 Web 协议，规定「服务器怎么把 HTTP 请求交给应用、应用怎么把响应交回去」。它们只是接口约定，不是软件。</p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th></th><th>WSGI</th><th>ASGI</th></tr>
+  <tr><td>全称</td><td>Web Server Gateway Interface</td><td>Asynchronous Server Gateway Interface</td></tr>
+  <tr><td>年代</td><td>2003（PEP 333 / 3333）</td><td>2018</td></tr>
+  <tr><td>接口</td><td><code>app(environ, start_response)</code>，同步调用，返回即结束</td><td><code>async app(scope, receive, send)</code>，协程，<code>receive</code> / <code>send</code> 可反复调用</td></tr>
+  <tr><td>能做什么</td><td>一问一答的 HTTP</td><td>HTTP、SSE、WebSocket、长连接</td></tr>
+  </table></div>
+  <p>区别的根源是接口形态：WSGI 一次调用一个请求，中途不能让出控制权；ASGI 的 <code>receive</code> 和 <code>send</code> 是两个协程，一个连接上可以分多次收发，连接期间还能让出控制权去处理别的连接。</p>
+  </dd>
+  <dt>2. Flask 和 FastAPI 怎么比？</dt>
+  <dd>
+  <p>两个都是框架，是写业务代码的地方。Flask 说 WSGI，FastAPI 说 ASGI。</p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>维度</th><th>Flask</th><th>FastAPI</th></tr>
+  <tr><td>并发模型</td><td>一个请求占一个线程，等 IO 时线程空转</td><td>一个事件循环，等 IO 时切去处理别的请求</td></tr>
+  <tr><td>流式响应</td><td>能做，但一个 SSE 连接占死一个线程</td><td>原生，一个进程可挂几千个 SSE 连接</td></tr>
+  <tr><td>参数校验</td><td>手动取 <code>request.json</code>、自己判空</td><td>声明 pydantic 模型，自动校验，错了返回 422</td></tr>
+  <tr><td>类型</td><td>弱</td><td>全类型标注，自动生成 OpenAPI 文档</td></tr>
+  <tr><td>适合</td><td>简单 CRUD、内部工具</td><td>高并发 IO、长等待（调 LLM）、流式推送</td></tr>
+  </table></div>
+  </dd>
+  <dt>3. gunicorn 和 uvicorn 怎么比？</dt>
+  <dd>
+  <p>两个都是服务器，负责监听端口、解析 HTTP、按协议调应用。</p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th></th><th>gunicorn</th><th>uvicorn</th></tr>
+  <tr><td>协议</td><td>WSGI</td><td>ASGI</td></tr>
+  <tr><td>形态</td><td>主进程 fork N 个 worker 进程，兼做进程管理器：守护、重启、平滑重载</td><td>单进程异步服务器，基于 uvloop 和 httptools</td></tr>
+  <tr><td>配对</td><td>Flask</td><td>FastAPI</td></tr>
+  </table></div>
+  <p>不是严格一对一。gunicorn 可以通过 <code>UvicornWorker</code> 把每个 worker 换成 uvicorn，于是也能跑 FastAPI。这是容器化之前的常见部署形态，uvicorn 官方现在已不推荐，建议直接 <code>uvicorn --workers N</code> 或交给容器编排。</p>
+<pre>Flask    → gunicorn
+FastAPI  → uvicorn
+FastAPI  → gunicorn 管进程 + UvicornWorker 跑请求   （过渡形态）</pre>
+  </dd>
+  <dt>4. 进程、线程、协程，并发到底靠哪个？</dt>
+  <dd>
+  <p>三层各管一件事，一个 Python 服务里可能同时存在。</p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>层</th><th>单位</th><th>解决什么</th><th>代价</th></tr>
+  <tr><td>进程</td><td>gunicorn worker / uvicorn <code>--workers</code> / 容器副本</td><td>利用多核。GIL 限制一个进程同时只有一个线程执行 Python 字节码，多核只能靠多进程</td><td>内存按份复制，进程间不共享状态</td></tr>
+  <tr><td>线程</td><td>线程池</td><td>把同步阻塞代码挪出事件循环，让它不卡住别人</td><td>线程切换有开销，受 GIL 约束不能并行算</td></tr>
+  <tr><td>协程</td><td>事件循环上的 <code>async def</code></td><td>IO 等待时切换。一个线程同时挂成千个连接</td><td>只对 IO 等待有效；循环上出现一次同步阻塞，所有连接一起卡</td></tr>
+  </table></div>
+  <p>追问常见的两条：</p>
+  <ul>
+    <li>异步能加速 CPU 密集任务吗？不能。协程是单线程切换，CPU 活还是要多进程。</li>
+    <li>在 <code>async def</code> 里调了同步 IO（<code>requests</code>、同步数据库驱动）会怎样？事件循环停下来等它返回，这个进程里所有正在服务的连接全部卡住。这是异步框架最常见的线上事故。修法是换异步客户端，或显式 <code>asyncio.to_thread()</code> 包到线程池。</li>
+  </ul>
+  </dd>
+  <dt>5. Maya 选什么，依据是什么？</dt>
+  <dd>
+  <p>选 <strong>FastAPI + uvicorn</strong>，一个容器一个进程，全异步。</p>
+  <ul>
+    <li><strong>场景决定协议。</strong>一轮对话要等 LLM 几秒到几十秒，期间持续向前端推 SSE。这是 IO 等待加长连接，ASGI 的协程模型正好对上。同步模型下一个连接占死一个线程，并发撑不起。</li>
+    <li><strong>边界决定框架。</strong>设计里每个外部数据源一个 pydantic 边界模块、每个 LLM 节点一个输出 schema（<a href="#s2-2-3">2.2.3</a>），FastAPI 的请求校验和 LangGraph 的结构化输出用的是同一套 pydantic，入口到图内部类型一路贯通。</li>
+    <li><strong>部署决定服务器。</strong>跑在 ECS Fargate 上，进程守护和水平扩展由平台做：挂了平台重启，要并发就加副本。gunicorn 的多进程和守护功能是多余的一层，去掉。</li>
+    <li><strong>一条纪律。</strong>所有 IO 一律异步：HTTP 用 <code>httpx.AsyncClient</code>，LangGraph 节点写 <code>async def</code>，模型调用走 <code>ainvoke</code> / <code>astream</code>。确实要跑同步库或 CPU 活时，显式 <code>asyncio.to_thread()</code>。不允许在 <code>async def</code> 里直接调同步 IO。</li>
+  </ul>
+  </dd>
+</dl>
+</div>
 
 </main>
 
