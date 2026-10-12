@@ -231,7 +231,7 @@ footer{margin-top:3rem; padding-top:1.2rem; border-top:1px solid var(--border); 
     <ul class="prose">
       <li><b>问题</b>：座位图是静态快照，用户点的座位已经没了，反复失败，同时预留请求把 Redis 和后端打满。</li>
       <li><b>SSE 实时座位图</b>：座位被订走就推给所有看这一场的客户端。Taylor Swift 量级下座位瞬间消失，实时也救不了体验，而且不解决过载。</li>
-      <li><b>虚拟排队</b>（教程选择）：请求购票页先进 Redis sorted set 按时间排队，SSE 推排位，调度按容量定期放行，放行的拿带 TTL 的 admitted 标记，预留接口校验标记。机制见<a href="system-design-knowledge-graph.html#s1-4b">知识图谱的排队</a>。</li>
+      <li><b>虚拟排队</b>（教程选择）：请求购票页先进 Redis sorted set 按时间排队，SSE 推排位，调度按容量定期放行，放行的拿带 TTL 的 admitted 标记，预留接口校验标记。机制见<a href="../system-design-knowledge-graph.html#s1-4b">知识图谱的排队</a>。</li>
       <li><b>公平</b>：按到达时间排队脚本永远在前，开售前候场随机排序，开售后才按到达时间。</li>
     </ul>
   </div>

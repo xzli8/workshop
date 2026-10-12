@@ -143,6 +143,13 @@ tr:hover td{background:var(--surface)}
   <a href="#s2-2-4-2" class="sub3">观测评测链路图</a>
   <a href="#s2-3" class="sub">2.3 迁移方案</a>
   <a href="#s2-3-1" class="sub2">批次划分</a>
+  <a href="#s3">3 追问清单</a>
+  <a href="#s3-1" class="sub">3.1 运行时与并发</a>
+  <a href="#s3-2" class="sub">3.2 流式输出</a>
+  <a href="#s3-3" class="sub">3.3 Maya 选型</a>
+  <a href="#s3-4" class="sub">3.4 Prompt 工程</a>
+  <a href="#s3-5" class="sub">3.5 工具调用</a>
+  <a href="#s3-6" class="sub">3.6 评测</a>
 </nav>
 
 
@@ -426,6 +433,7 @@ tr:hover td{background:var(--surface)}
     <ul>
       <li>Router 是一次结构化输出：意图枚举，多步时带顺序；走哪条边由代码映射，不解析自由文本。</li>
       <li>agent 子图内部是工具循环，模型每步只输出结构化决定：调哪个工具、给出结果、还是需要澄清；条件边按字段判定。</li>
+      <li>首批 Fashion 文本路径的实际实现是节点内代码循环：计数由代码调，模型不决定调不调，只给条件；模型决定调哪个工具留给路径开放的子图（图片、FAQ）。取舍见 <a href="#s3-5">3.5.1</a> 与 <a href="#s3-3">3.3.2</a>。</li>
       <li>工具调用是结构化输出，参数经 schema 校验后由代码执行；工具报错压缩成一条结果写回 state，不把 stack trace 喂给模型。</li>
     </ul>
   </li>
@@ -695,6 +703,369 @@ tr:hover td{background:var(--surface)}
 <tr><td>扩展</td><td>8 弹窗</td><td>弹窗终态接 Context Hub 的判定</td><td>2</td><td>consent 与问卷的展示率与旧链路一致</td></tr>
 </tbody>
 </table></div>
+
+<!-- ===================== 3 ===================== -->
+<h2 id="s3">3 追问清单</h2>
+
+<h3 id="s3-1">3.1 运行时与并发</h3>
+<div class="callout">
+<div class="tag">纪律（出处见末尾）</div>
+<ol>
+  <li><strong>事件循环单线程，同一时刻只跑一个 Task，只在 <code>await</code> 处切换。</strong>几乎所有 asyncio 对象不是线程安全的，跨线程要用 <code>call_soon_threadsafe</code> / <code>run_coroutine_threadsafe</code>。[Python]</li>
+  <li><strong>不要在事件循环上跑阻塞代码。</strong>一段 1 秒的 CPU 计算让所有并发 Task 和 IO 一起延迟 1 秒；阻塞的东西交给 executor（<code>asyncio.to_thread</code>）。[Python]</li>
+  <li><strong>FastAPI 的选择规则：</strong>库支持 <code>await</code> 用 <code>async def</code>；库是阻塞的用普通 <code>def</code>，框架放线程池；纯计算用 <code>async def</code>；不确定用 <code>def</code>。[FastAPI]</li>
+  <li><strong>并发解决 IO 等待，并行解决 CPU。</strong>Web 应用大部分时间在等 IO，异步合适；CPU 密集靠多进程。[FastAPI]</li>
+  <li><strong>多进程用 <code>uvicorn --workers</code>，</strong>内置进程管理器会重启异常退出的子进程；<code>gunicorn</code> 的 <code>uvicorn.workers</code> 已标记弃用。[uvicorn]</li>
+  <li><strong>调试开 <code>PYTHONASYNCIODEBUG=1</code>：</strong>记录超过 100ms 的回调，从错误线程调非线程安全 API 直接抛异常；「coroutine was never awaited」警告是忘了 <code>await</code>。[Python]</li>
+</ol>
+<p style="color:var(--muted);font-size:13px">出处：<a href="https://docs.python.org/3/library/asyncio-dev.html">Python · Developing with asyncio</a>；<a href="https://fastapi.tiangolo.com/async/">FastAPI · Concurrency and async / await</a>；<a href="https://uvicorn.dev/deployment/">uvicorn · Deployment</a></p>
+</div>
+<div class="qa">
+<dl>
+  <dt>3.1.1 WSGI 和 ASGI 是什么？</dt>
+  <dd>
+  <p>两个都是 Python 的 Web 协议，规定「服务器怎么把 HTTP 请求交给应用、应用怎么把响应交回去」。它们只是接口约定，不是软件。</p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th></th><th>WSGI</th><th>ASGI</th></tr>
+  <tr><td>全称</td><td>Web Server Gateway Interface</td><td>Asynchronous Server Gateway Interface</td></tr>
+  <tr><td>年代</td><td>2003（PEP 333 / 3333）</td><td>2018</td></tr>
+  <tr><td>接口</td><td><code>app(environ, start_response)</code>，同步调用，返回即结束</td><td><code>async app(scope, receive, send)</code>，协程，<code>receive</code> / <code>send</code> 可反复调用</td></tr>
+  <tr><td>能做什么</td><td>一问一答的 HTTP</td><td>HTTP、SSE、WebSocket、长连接</td></tr>
+  </table></div>
+  <p>区别的根源是接口形态：WSGI 一次调用一个请求，中途不能让出控制权；ASGI 的 <code>receive</code> 和 <code>send</code> 是两个协程，一个连接上可以分多次收发，连接期间还能让出控制权去处理别的连接。</p>
+  </dd>
+  <dt>3.1.2 Flask 和 FastAPI 怎么比？</dt>
+  <dd>
+  <p>两个都是框架，是写业务代码的地方。Flask 说 WSGI，FastAPI 说 ASGI。</p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>维度</th><th>Flask</th><th>FastAPI</th></tr>
+  <tr><td>并发模型</td><td>一个请求占一个线程，等 IO 时线程空转</td><td>一个事件循环，等 IO 时切去处理别的请求</td></tr>
+  <tr><td>流式响应</td><td>能做，但一个 SSE 连接占死一个线程</td><td>原生，一个事件循环（一个线程）可挂几千个 SSE 连接</td></tr>
+  <tr><td>参数校验</td><td>手动取 <code>request.json</code>、自己判空</td><td>声明 pydantic 模型，自动校验，错了返回 422</td></tr>
+  <tr><td>类型</td><td>弱</td><td>全类型标注，自动生成 OpenAPI 文档</td></tr>
+  <tr><td>适合</td><td>简单 CRUD、内部工具</td><td>高并发 IO、长等待（调 LLM）、流式推送</td></tr>
+  </table></div>
+  </dd>
+  <dt>3.1.3 gunicorn 和 uvicorn 怎么比？</dt>
+  <dd>
+  <p>两个都是服务器，负责监听端口、解析 HTTP、按协议调应用。</p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th></th><th>gunicorn</th><th>uvicorn</th></tr>
+  <tr><td>协议</td><td>WSGI</td><td>ASGI</td></tr>
+  <tr><td>形态</td><td>主进程 fork N 个 worker 进程，兼做进程管理器：守护、重启、平滑重载</td><td>单进程异步服务器，基于 uvloop 和 httptools</td></tr>
+  <tr><td>配对</td><td>Flask</td><td>FastAPI</td></tr>
+  </table></div>
+  <p>不是严格一对一。gunicorn 可以通过 <code>UvicornWorker</code> 把每个 worker 换成 uvicorn，于是也能跑 FastAPI。这是容器化之前的常见部署形态，uvicorn 官方现在已不推荐，建议直接 <code>uvicorn --workers N</code> 或交给容器编排。</p>
+<pre>Flask    → gunicorn
+FastAPI  → uvicorn
+FastAPI  → gunicorn 管进程 + UvicornWorker 跑请求   （过渡形态）</pre>
+  </dd>
+  <dt>3.1.4 进程、线程、协程，并发到底靠哪个？</dt>
+  <dd>
+  <p>三层各管一件事，一个 Python 服务里可能同时存在。</p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>层</th><th>单位</th><th>解决什么</th><th>代价</th></tr>
+  <tr><td>进程</td><td>gunicorn worker / uvicorn <code>--workers</code> / 容器副本</td><td>利用多核。GIL 限制一个进程同时只有一个线程执行 Python 字节码，多核只能靠多进程</td><td>内存按份复制，进程间不共享状态</td></tr>
+  <tr><td>线程</td><td>线程池</td><td>把同步阻塞代码挪出事件循环，让它不卡住别人</td><td>线程切换有开销，受 GIL 约束不能并行算</td></tr>
+  <tr><td>协程</td><td>事件循环上的 <code>async def</code></td><td>IO 等待时切换。一个线程同时挂成千个连接</td><td>只对 IO 等待有效；循环上出现一次同步阻塞，所有连接一起卡</td></tr>
+  </table></div>
+  <p>协程的运行方式：事件循环是一个死循环，看哪些 IO 就绪（底层 epoll / kqueue），把对应协程从上次 <code>await</code> 处恢复，跑到下一个 <code>await</code> 再挂起。切换只发生在 <code>await</code> 处，是协作式的；线程是操作系统抢占式切换。所以两个 <code>await</code> 之间的代码不会被打断，大多数场景不用锁。</p>
+  <p>追问常见的两条：</p>
+  <ul>
+    <li>异步能加速 CPU 密集任务吗？不能。协程是单线程切换，CPU 活还是要多进程。</li>
+    <li>在 <code>async def</code> 里调了同步 IO（<code>requests</code>、同步数据库驱动）会怎样？事件循环停下来等它返回，这个进程里所有正在服务的连接全部卡住。这是异步框架最常见的线上事故。修法是换异步客户端，或显式 <code>asyncio.to_thread()</code> 包到线程池。</li>
+  </ul>
+  </dd>
+</dl>
+</div>
+
+<h3 id="s3-2">3.2 流式输出</h3>
+<div class="callout">
+<div class="tag">纪律（出处见末尾）</div>
+<ol>
+  <li><strong>SSE 协议就四个字段：</strong><code>event</code> / <code>data</code> / <code>id</code> / <code>retry</code>，<code>text/event-stream</code>，UTF-8，空行分帧；冒号开头的行是注释，用来做心跳。[MDN]</li>
+  <li><strong>原生 <code>EventSource</code> 只能 GET，</strong>自动重连并带 <code>Last-Event-ID</code>；要 POST 带 body 就用 <code>fetch</code> 读流，重连自己做。[MDN]</li>
+  <li><strong>HTTP/1.1 下每个域名的 SSE 连接上限 6 个，跨标签页共享；</strong>HTTP/2 默认 100。[MDN]</li>
+  <li><strong>服务端每帧写完即 flush，</strong>响应头 <code>Cache-Control: no-cache</code>，并检测客户端是否已断开。[MDN]</li>
+  <li><strong>反向代理默认缓冲上游响应</strong>（nginx <code>proxy_buffering on</code>）。关法两种：配置 <code>off</code>，或响应头 <code>X-Accel-Buffering: no</code>，后者可被 <code>proxy_ignore_headers</code> 屏蔽，配置更可靠。[nginx]</li>
+  <li><strong><code>proxy_read_timeout</code> 默认 60 秒，是两次读之间的超时，</strong>不是整个响应的。模型思考超过一分钟没吐帧，连接就被代理掐断，所以长等待要发心跳。[nginx]</li>
+  <li><strong>响应后的收尾用 <code>BackgroundTasks</code>：</strong>响应返回之后执行、同进程、不持久化不重试；要可靠就上任务队列。[FastAPI]</li>
+</ol>
+<p style="color:var(--muted);font-size:13px">出处：<a href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events">MDN · Using server-sent events</a>；<a href="https://nginx.org/en/docs/http/ngx_http_proxy_module.html">nginx · ngx_http_proxy_module</a>；<a href="https://fastapi.tiangolo.com/tutorial/background-tasks/">FastAPI · Background Tasks</a></p>
+</div>
+<div class="qa">
+<dl>
+  <dt>3.2.1 LLM 流式输出到前端是怎么实现的？</dt>
+  <dd>
+  <p>三层接力：模型 SDK 返回一个 async iterator；服务端用 async generator 把每个 chunk 包成 SSE 事件 <code>yield</code> 出去；<code>StreamingResponse</code> 边产边发。</p>
+<pre>async def run_turn(turn, req):
+    yield turn.start()
+    async for chunk in graph.astream(...):   # 每轮内部 await 一个 token
+        yield turn.text(chunk)               # 到一块吐一块
+    yield turn.end()</pre>
+  <p>两个关键字各管一个方向：<code>await</code> 向内等上游（LLM、HTTP、数据库）给下一块；<code>yield</code> 向外把这一块交给下游（服务器写 socket）。generator 是夹在中间的一根管子，两头都不攒。</p>
+  <p>为什么必须是 async generator：普通 generator 里不能 <code>await</code>，等 LLM 只能同步阻塞，整个事件循环卡住；普通 <code>async def</code> 只能 <code>return</code> 一次，前端要等整段生成完才看到第一个字。</p>
+  </dd>
+  <dt>3.2.2 为什么用 SSE 不用 WebSocket？</dt>
+  <dd>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th></th><th>SSE</th><th>WebSocket</th></tr>
+  <tr><td>方向</td><td>服务端到客户端单向</td><td>双向</td></tr>
+  <tr><td>协议</td><td>普通 HTTP 长响应，<code>text/event-stream</code></td><td>HTTP 升级后的独立协议</td></tr>
+  <tr><td>基建</td><td>CDN、网关、鉴权中间件原样通过</td><td>需要网关支持升级，部分 CDN 不透传</td></tr>
+  <tr><td>重连</td><td>浏览器原生，带 <code>Last-Event-ID</code></td><td>自己实现</td></tr>
+  <tr><td>请求方式</td><td>原生 <code>EventSource</code> 只支持 GET；用 <code>fetch</code> 读流可以 POST 带 body</td><td>连接建立后任意收发</td></tr>
+  </table></div>
+  <p>对话产品是「用户发一句，服务端推一段」，单向够用，SSE 更省事。需要双向实时（语音、打断生成）再上 WebSocket。</p>
+  </dd>
+  <dt>3.2.3 用户中途关掉页面，后端会怎样？</dt>
+  <dd>
+  <p>这题考的是：generator 由消费方推动。服务器每 <code>async for</code> 一次，函数体才往前跑一段。客户端断开后服务器停止迭代，generator 停在上一个 <code>yield</code> 处，后面的代码不再执行。</p>
+  <p>由此两条纪律：落库、埋点这类收尾逻辑不能写在 <code>end</code> 事件之后，要放 <code>try/finally</code> 或 <code>BackgroundTask</code>；上游的 LLM 调用要跟着取消，否则模型还在生成，token 照样计费。</p>
+  </dd>
+  <dt>3.2.4 多步 Agent 的中间状态要不要推给前端？</dt>
+  <dd>
+  <p>要。先路由、再调工具、再生成，每步可能几秒，用户盯着空白会以为挂了。用独立的 <code>processing</code> 事件推进度，和正文的 <code>chat_message</code> 分开，前端按事件类型渲染，不混进消息历史。</p>
+  </dd>
+  <dt>3.2.5 反向代理后面流式不生效，怎么排查？</dt>
+  <dd>
+  <p>Nginx 之类的反向代理默认缓冲上游响应，攒够一块才转发，流式就变成一次性返回。两个修法：代理侧关 <code>proxy_buffering</code>；或应用侧响应头加 <code>X-Accel-Buffering: no</code>，Nginx 看到就对这个响应不缓冲。顺带加 <code>Cache-Control: no-cache</code>，并确认 gzip 没对 <code>text/event-stream</code> 生效，压缩也会攒块。另一个常见症状是流到一分钟左右被掐断：nginx 的 <code>proxy_read_timeout</code> 默认 60 秒，算的是两次读之间的间隔，模型长时间不吐帧就超时，解法是调长超时或每隔几十秒发一行冒号开头的心跳注释。</p>
+  </dd>
+  <dt>3.2.6 流式中途模型报错，前端已经收到一半内容，怎么处理？</dt>
+  <dd>
+  <p>服务端不能直接断连，要发一个 <code>error</code> 事件再正常收尾。关键是一轮的所有事件共用同一个 <code>messageId</code>，前端据此知道出错的是哪条消息，自己决定保留已收到的半段还是回滚。这是把「一轮」作为契约单位的原因：错误处理依赖轮的身份，不能每个事件各发各的。</p>
+  </dd>
+</dl>
+</div>
+
+<h3 id="s3-3">3.3 Maya 选型</h3>
+<div class="qa">
+<dl>
+  <dt>3.3.1 Maya 选什么，依据是什么？</dt>
+  <dd>
+  <p>选 <strong>FastAPI + uvicorn</strong>，一个容器一个进程，全异步。</p>
+  <ul>
+    <li><strong>场景决定协议。</strong>一轮对话要等 LLM 几秒到几十秒，期间持续向前端推 SSE。这是 IO 等待加长连接，ASGI 的协程模型正好对上。同步模型下一个连接占死一个线程，并发撑不起。</li>
+    <li><strong>边界决定框架。</strong>设计里每个外部数据源一个 pydantic 边界模块、每个 LLM 节点一个输出 schema（<a href="#s2-2-3">2.2.3</a>），FastAPI 的请求校验和 LangGraph 的结构化输出用的是同一套 pydantic，入口到图内部类型一路贯通。</li>
+    <li><strong>部署决定服务器。</strong>跑在 ECS Fargate 上，进程守护和水平扩展由平台做：挂了平台重启，要并发就加副本。gunicorn 的多进程和守护功能是多余的一层，去掉。</li>
+    <li><strong>一条纪律。</strong>所有 IO 一律异步：HTTP 用 <code>httpx.AsyncClient</code>，LangGraph 节点写 <code>async def</code>，模型调用走 <code>ainvoke</code> / <code>astream</code>。确实要跑同步库或 CPU 活时，显式 <code>asyncio.to_thread()</code>。不允许在 <code>async def</code> 里直接调同步 IO。</li>
+  </ul>
+  </dd>
+  <dt>3.3.2 子图里的循环放图上还是节点里？</dt>
+  <dd>
+  <div class="callout">
+  <div class="tag">原则（出处见末尾）</div>
+  <ol>
+    <li><strong>两种写法都是官方写法。</strong>Graph API 用条件边把节点连成环；Functional API 用普通 while 循环加 <code>@task</code>。[LangGraph]</li>
+    <li><strong>节点（或 task）是 checkpoint 和重放的单位。</strong>恢复不是从中断的那一行继续，而是从节点开头重放；所以副作用和非确定操作要放在节点或 task 里，恢复时直接取持久化的结果不重跑；一个节点里多个副作用各包一个 task。[LangGraph]</li>
+    <li><strong>步数要有上限。</strong><code>recursion_limit</code> 默认 25 超步，超限抛 <code>GraphRecursionError</code>；一圈 ReAct 占两步。[LangGraph]</li>
+    <li><strong>声明式图和代码优先各有代价。</strong>图清晰可视，但流程一复杂就笨重；代码优先灵活，但循环不可见。框架是抽象层，用它要理解底层。[OpenAI, Anthropic]</li>
+    <li><strong>interrupt 在节点内暂停</strong>，state 持久化，同一 thread 恢复后继续。要这个能力，暂停点必须落在节点边界上。[LangGraph]</li>
+  </ol>
+  <p style="color:var(--muted);font-size:13px">出处：<a href="https://docs.langchain.com/oss/python/langgraph/workflows-agents">LangGraph · Workflows and agents</a>；<a href="https://docs.langchain.com/oss/python/langgraph/durable-execution">LangGraph · Durable execution</a>；<a href="https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf">OpenAI · A practical guide to building agents</a>（Declarative vs non-declarative graphs）；<a href="https://www.anthropic.com/engineering/building-effective-agents">Anthropic · Building effective agents</a>（框架一节）</p>
+  </div>
+  <p>一个「调模型、看结果、不满意再调」的循环，LangGraph 里有两种写法：拆成节点用条件边连成环，或者整个循环写在一个节点的函数体里。</p>
+  <div class="tbl"><table>
+  <colgroup><col style="width:14%"><col style="width:26%"><col style="width:30%"><col style="width:30%"></colgroup>
+  <tr><th>方案</th><th>是什么</th><th>优点</th><th>缺点</th></tr>
+  <tr><td><strong>图上循环</strong></td><td>循环的每一步是一个节点，条件边按 state 字段决定回头还是出口；圈数和中间结果存在 state 里，步数上限靠 <code>recursion_limit</code></td><td><ul><li>循环在图上可见，每圈每步一个 trace 节点</li><li>每步落 checkpoint，圈内可以 <code>interrupt</code> 等外部输入再续</li><li>圈内各步可以各自换模型、各自重试</li></ul></td><td><ul><li>循环的私有变量要进全局 state，别的子图也看得见</li><li>循环逻辑散在节点和建图两处</li><li>超限是 <code>GraphRecursionError</code>，异常做控制流，要在外层接住</li></ul></td></tr>
+  <tr><td><strong>节点内循环</strong></td><td>一个节点函数里 for 或 while，中间结果是局部变量，上限是常量，出口由函数返回值决定</td><td><ul><li>逻辑集中一处，state 不动</li><li>上限和退出条件是普通代码，不靠异常</li><li>单元测试只要替换循环里调的函数</li></ul></td><td><ul><li>图上看不到环，trace 里是一个节点内的多次调用</li><li>圈内不能 checkpoint 或 <code>interrupt</code>，节点一旦开始只能跑完；失败恢复时整个节点从头重放，圈内已完成的模型调用会重来</li><li>圈内各步共享同一个节点的配置和重试策略</li></ul></td></tr>
+  </table></div>
+  <p><strong>判断标准：</strong>循环中途需不需要停下来等外部输入或从断点恢复。需要就上图，图是为了可暂停可恢复而存在的；不需要，节点内循环更短更好测。</p>
+  <p><strong>Maya 的 Fashion 计数循环选节点内。</strong>上限 2，分叉只看一个整数，圈内没有要问用户的步骤，不需要断点恢复，图上循环的优点一个都用不上，缺点却实打实：state 要多两个只有 Fashion 用的字段，上限要靠接异常。</p>
+  <p>什么时候切回图上：循环体里出现要 <code>interrupt</code> 的步骤（在同一轮里暂停、等用户回答后从断点继续，已拒条件还在。澄清不是这种：它结束本轮，用户的回答是下一轮的新请求，重新过 Router）、需要按步 checkpoint 恢复、或者圈数多到要逐圈看 trace。迁移成本可控：把 for 拆成两个节点，中间变量搬进 state，加一条条件边。</p>
+  </dd>
+</dl>
+</div>
+
+<h3 id="s3-4">3.4 Prompt 工程</h3>
+<div class="qa">
+<dl>
+  <dt>3.4.1 Prompt 工程现在业界怎么做？</dt>
+  <dd>
+  <p>已经从「写一篇好 prompt」收敛成一条流水线，核心是<strong>用评测驱动迭代</strong>，不靠感觉：</p>
+  <ol>
+    <li><strong>格式交给 schema。</strong>输出结构用结构化输出钉死，prompt 里不写「只返回 JSON」「不要解释」这类话。</li>
+    <li><strong>从最短开始。</strong>先 zero-shot，只写任务和判断标准，跑评测集看错在哪。</li>
+    <li><strong>按错误补。</strong>误判样本变成 few-shot 例子或边界规则，一条条加，每加一条回归一次。</li>
+    <li><strong>prompt 当代码管。</strong>进版本库，改动走 PR，评测不过不合并。大了放 <code>prompts/</code> 目录或 prompt hub 做版本与对比。</li>
+    <li><strong>量大了换路。</strong>分类类任务 few-shot 堆多了又长又慢，有标注数据后换小模型微调或 embedding 分类器。</li>
+  </ol>
+  </dd>
+  <dt>3.4.2 结构化输出和 prompt 怎么分工？</dt>
+  <dd>
+  <p>结构化输出管「长什么样」，prompt 管「怎么判断」。</p>
+  <p>以 pydantic 模型调 <code>with_structured_output(Model)</code> 为例：模型类转成 JSON schema 随请求发给 OpenAI，服务端开 strict 模式，输出在解码阶段就被约束成合法 JSON，枚举字段只能取定义过的值；返回后 pydantic 再校验一遍转成对象。模型没有机会输出别的东西，所以 prompt 里格式相关的内容全部删掉，长度通常减一半以上。</p>
+  <p>追问「schema 能不能替代 prompt」：不能。schema 只保证形状合法，不保证选得对。三个意图选哪个，仍然要靠 prompt 里的定义和例子。</p>
+  </dd>
+  <dt>3.4.3 few-shot 什么时候加、加什么？</dt>
+  <dd>
+  <p>few-shot 是调优手段，不是起点。一开始凭想象写的例子往往不是真正的难点。正确顺序是 zero-shot 先跑评测集，把误判的句子拿出来当例子，例如「what's in my box」被判成 fashion，就把它作为 account 的例子加进去。</p>
+  <p>加例子的原则：覆盖边界而不是覆盖常见；每类不超过三五条；加了要回归，防止修一个坏一个。</p>
+  </dd>
+  <dt>3.4.4 prompt 怎么管理、怎么迭代？</dt>
+  <dd>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>阶段</th><th>放哪</th><th>怎么改</th></tr>
+  <tr><td>短、单节点</td><td>模块常量</td><td>改代码，走 PR</td></tr>
+  <tr><td>长、多段拼接</td><td><code>prompts/*.md</code>，代码读文件</td><td>改文件，走 PR，评测门禁</td></tr>
+  <tr><td>要 A/B、非工程师参与</td><td>LangSmith / Langfuse 的 prompt hub</td><td>平台上改版本，trace 里能看到每轮用的哪个版本</td></tr>
+  </table></div>
+  <p>不管放哪，底线是<strong>没有评测集就没法判断改好了还是改坏了</strong>。评测集先于 prompt 优化。</p>
+  </dd>
+  <dt>3.4.5 Maya 里怎么用的？</dt>
+  <dd>
+  <ul>
+    <li><strong>Router 是 zero-shot + 结构化输出。</strong>输出契约是 <code>RouterOutput(intent: Intent)</code>，枚举三值；prompt 六行，只写三类意图的定义，没有格式说明、没有例子。</li>
+    <li><strong>每个 LLM 节点一个输出 schema。</strong>Router、各子图的输出都是 pydantic 模型，边界在模型侧钉死（<a href="#s2-2-3">2.2.3</a>），图内部不再做字符串解析。</li>
+    <li><strong>prompt 现在是模块常量</strong>，子图 prompt 变长后迁到 <code>prompts/</code> 目录；版本与对比放到 LangSmith 和评测门禁一起做（<a href="#s2-2-4">2.2.4</a>）。</li>
+    <li><strong>few-shot 等评测集。</strong>迁移批次里评测骨架先于子图业务，有了误判样本再补例子。</li>
+  </ul>
+  </dd>
+  <dt>3.4.6 每次调用都要带 system prompt 吗？本轮产生的数据放哪个角色？</dt>
+  <dd>
+  <div class="callout">
+  <div class="tag">原则（出处见末尾）</div>
+  <ol>
+    <li><strong>调用无状态，每次全量发。</strong>prompt caching 缓存的是前缀算出的 KV，不是文本；前缀必须逐字节一致，低于最小长度（常见 1024 token）不缓存。[OpenAI, Anthropic]</li>
+    <li><strong>稳定内容前置，动态内容后置，追加不改写。</strong>前缀顺序 tools → system → messages，改前面的让后面全失效；改 tools、输出 schema、模型、reasoning 参数也会失效。[Anthropic, OpenAI]</li>
+    <li><strong>缓存只省钱不省传输。</strong>读约 0.1 倍输入价，写 1.25 倍；命中率要看 usage 里的缓存 token 数。[OpenAI, Anthropic]</li>
+    <li><strong>角色有权威层级：</strong>platform/system ＞ developer ＞ user ＞ guideline；assistant 和 tool 消息没有权威。[OpenAI Model Spec]</li>
+    <li><strong>引用的和不可信的内容是信息，不是指令。</strong>工具输出、粘贴的文档、检索结果里的指令一律当数据看。[OpenAI Model Spec]</li>
+  </ol>
+  <p style="color:var(--muted);font-size:13px">出处：<a href="https://developers.openai.com/api/docs/guides/prompt-caching">OpenAI · Prompt caching</a>；<a href="https://platform.claude.com/docs/en/docs/build-with-claude/prompt-caching">Anthropic · Prompt caching</a>；<a href="https://model-spec.openai.com/">OpenAI · Model Spec</a>（Chain of command）</p>
+  </div>
+  <p>要。模型调用是无状态的 HTTP 请求，服务端不记得上一次，每次都把全部消息发一遍。客户端缓存的是连接对象，不是对话。模型侧的 prompt caching 按相同前缀命中（OpenAI 对超过 1024 token 的前缀自动做），命中后那段按折扣计费，但只省钱不省传输。</p>
+  <p>由此得到一条摆放原则：<strong>固定的放前面做 system，每轮变的追加在尾部。</strong>四个角色各管一类内容：</p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>角色</th><th>放什么</th><th>特征</th></tr>
+  <tr><td>system</td><td>开发者定的规则：身份、任务、输出形状、允许的取值</td><td>每轮一样，是缓存前缀</td></tr>
+  <tr><td>user</td><td>本轮输入：用户的话，以及这一轮才产生、要让模型看到的事实</td><td>每轮不同</td></tr>
+  <tr><td>assistant</td><td>模型之前的输出，重放对话时才需要</td><td>可选，不重放就没有</td></tr>
+  <tr><td>tool</td><td>模型自己发起的 tool call 的结果</td><td>必须跟在对应的 tool call 后面，否则被拒</td></tr>
+  </table></div>
+  <p>把运行时得到的反馈（工具结果、校验失败、检索为空）回给模型有两种写法：<strong>重放</strong>，把模型上一次的输出当 assistant 消息放回去，再追加一条 user 说明问题；<strong>当数据</strong>，不放 assistant，只把上一次输出里有用的部分序列化进一条 user 消息。前者模型看到的是「自己说过的话被打回」，后者更短，也不用把结构化输出再还原成 assistant 消息的格式。只在模型主动调了工具时才用 tool 角色。</p>
+  <p><strong>Maya 里：</strong>词表和输出规则在 system，一千多 token 做固定前缀；用户原话是第一条 user；计数为 0 时的放宽反馈走「当数据」写法，作为第二条 user 追加；代码循环里没有先行 tool call，所以不用 tool 角色。</p>
+  </dd>
+</dl>
+</div>
+
+<h3 id="s3-5">3.5 工具调用</h3>
+<div class="qa">
+<dl>
+  <dt>3.5.1 工具谁来调：代码还是模型？</dt>
+  <dd>
+  <div class="callout">
+  <div class="tag">原则（出处见末尾）</div>
+  <ol>
+    <li><strong>先定义：</strong>workflow 是 LLM 和工具按预定义代码路径编排；agent 是 LLM 动态决定自己的流程和工具使用。[Anthropic, LangGraph]</li>
+    <li><strong>先找最简单的方案。</strong>很多场景一次调用加检索加示例就够；agent 增加延迟和成本、放大错误，只在需要时用。[Anthropic]</li>
+    <li><strong>该上 agent 的三个信号：</strong>判断复杂例外多、规则多到难维护、重度依赖非结构化输入。都不满足，确定性方案就够。[OpenAI]</li>
+    <li><strong>工具分三类：</strong>Data（取信息）、Action（改外部状态）、Orchestration（agent 当工具）。[OpenAI]</li>
+    <li><strong>先把单 agent 做满。</strong>prompt 分支过多或工具重叠导致选错时才拆多 agent；工具数不是问题，相似才是。[OpenAI]</li>
+    <li><strong>模型调工具的循环必须有退出条件：</strong>特定结构化输出、无 tool call、错误、最大轮数。[OpenAI]</li>
+    <li><strong>工具是给模型用的界面，</strong>和 UI 一样要设计：描述带例子和边界、参数防呆。[Anthropic]</li>
+  </ol>
+  <p style="color:var(--muted);font-size:13px">出处：<a href="https://www.anthropic.com/engineering/building-effective-agents">Anthropic · Building effective agents</a>；<a href="https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf">OpenAI · A practical guide to building agents</a>；<a href="https://docs.langchain.com/oss/python/langgraph/workflows-agents">LangGraph · Workflows and agents</a></p>
+  </div>
+  <p><strong>判断标准：</strong>固定流程代码调，开放流程模型调（固定流程指路径能提前枚举、用 if 和 for 写完；开放流程指调哪个、调几次取决于上一步的结果，事先写不完）。前者是 workflow，后者才是 agent。</p>
+  <div class="tbl"><table>
+  <colgroup><col style="width:14%"><col style="width:26%"><col style="width:30%"><col style="width:30%"></colgroup>
+  <tr><th>方式</th><th>是什么</th><th>优点</th><th>缺点</th></tr>
+  <tr><td><strong>代码调</strong></td><td>模型只给结构化结果，节点按固定流程调 clients 函数，结果进 state 或回填 prompt</td><td><ul><li>流程确定，每次都调，不会漏调或多调</li><li>出口一个 schema 就钉死，终态由类型保证</li><li>happy path 一趟模型加一次 HTTP</li><li>把函数换成假的就能测每条路径</li></ul></td><td><ul><li>路径要提前枚举，分支多了代码写不完</li><li>新工具要改节点代码</li></ul></td></tr>
+  <tr><td><strong>模型调</strong></td><td><code>bind_tools</code> 把工具描述给模型，模型吐 tool call，代码执行后以 ToolMessage 回传，模型再决定下一步</td><td><ul><li>路径开放，模型按上一步结果决定调哪个、调几次</li><li>加工具只加描述，不改流程</li></ul></td><td><ul><li>不确定：可能不调、重复调、看到结果也硬给答案，要靠步数上限兜底</li><li>最终回答和 tool call 是两种输出，终态要另加约束</li><li>至少两趟模型往返</li><li>测试要模拟整个对话，难钉住</li></ul></td></tr>
+  </table></div>
+  <p><strong>Maya 场景下按工具逐个选：</strong></p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>工具</th><th>谁调</th><th>理由</th></tr>
+  <tr><td>商品计数 search_products</td><td>代码</td><td>每次都要查，0 件放宽一次再 0 就澄清，分叉只看一个整数</td></tr>
+  <tr><td>订单 search_orders</td><td>代码</td><td>意图是 account 就一定要查，没有可选项</td></tr>
+  <tr><td>类目、品牌列表</td><td>代码</td><td>是静态词表，直接渲染进 prompt，不需要运行时调</td></tr>
+  <tr><td>products 还是 looks</td><td>模型选，代码调</td><td>二选一，选完路径固定。结构化输出多一个枚举值，和 Router 选 intent 同一套路</td></tr>
+  <tr><td>图片：看图、识别单品、框选</td><td>模型</td><td>问什么、框哪几个取决于识别结果，路径开放，枚举不完</td></tr>
+  <tr><td>FAQ：知识库检索配订单查询</td><td>模型</td><td>一个问题可能只查知识库，也可能先查订单再查知识库，顺序由问题定</td></tr>
+  </table></div>
+  </dd>
+</dl>
+</div>
+
+<h3 id="s3-6">3.6 评测</h3>
+<div class="callout">
+<div class="tag">原则（出处见末尾）</div>
+<ol>
+  <li><strong>评测驱动开发，尽早开始。</strong>20 到 50 条源自真实失败的样本就能起步，等得越久越难建。没有评测集的 prompt 调优是凭感觉。[Anthropic, OpenAI]</li>
+  <li><strong>指标要任务专属，跟着失败后果走。</strong>不用 BLEU 一类通用指标；评结果不评路径，不把 agent 的步骤顺序钉死。[OpenAI, Anthropic]</li>
+  <li><strong>不确定性出现在哪，评测就放在哪。</strong>工作流里的每次模型调用单独评；agent 再加工具选择和参数抽取；整条链路另评一层。[OpenAI, Hamel L1]</li>
+  <li><strong>能用代码判的不用模型判，模型判先和人对齐。</strong>代码评测器快、便宜、可复现；LLM judge 用最强模型、成对比较或通过/不通过、先推理再打分，和人工标注核对一致性后再放量。[Anthropic, OpenAI, Hamel]</li>
+  <li><strong>正负样本都要有。</strong>既测该做的，也测不该做的，否则会单边优化。[Anthropic]</li>
+  <li><strong>单次分数不可信。</strong>模型是概率性的，多次 trial 看 pass^k；0% 通过多半是样本或评测器有 bug；分数要配合读 transcript。[Anthropic]</li>
+  <li><strong>评测集从 trace 长大，持续更新。</strong>记录全部日志，错例进样本，线上问题转离线用例；样本分布要反映真实流量；通过率饱和后加难题。[OpenAI, LangSmith, Anthropic]</li>
+  <li><strong>永远要看数据。</strong>自动评测只是一层，配合生产监控、A/B、用户反馈和定期人工读 transcript，没有一层能兜住全部。[Hamel, Anthropic]</li>
+</ol>
+<p class="muted">出处：<a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents">Anthropic · Demystifying evals for AI agents</a>；<a href="https://developers.openai.com/api/docs/guides/evaluation-best-practices">OpenAI · Evaluation best practices</a>；<a href="https://hamel.dev/blog/posts/evals/">Hamel Husain · Your AI Product Needs Evals</a>；<a href="https://docs.langchain.com/langsmith/evaluation-concepts">LangSmith · Evaluation concepts</a>。hello-agents 第十二章侧重 BFCL / GAIA 一类公开基准，对产品评测只有「多指标组合、LLM judge 有偏见需人工校验」两条适用。</p>
+</div>
+<div class="qa">
+<dl>
+  <dt>3.6.1 怎么知道 prompt 改好了还是改坏了？</dt>
+  <dd>
+  <p>靠评测集，它是 LLM 应用的回归测试：一批固定样本，每条有期望输出，每次改动跑一遍比分数。没有评测集的 prompt 调优是凭感觉，改好一个常常改坏另一个而不自知。</p>
+  <p>两条和传统测试不同的纪律：</p>
+  <ul>
+    <li><strong>样本固定。</strong>两次实验跑同一批样本才可比。</li>
+    <li><strong>单次通过率不可信。</strong>模型是概率性的，24/25 可能下一次是 22/25。要跑 k 次看 pass^k，或至少同一数据集多次实验对比；每次实验标记这次改了什么，才能归因。</li>
+  </ul>
+  <p><strong>Maya 里：</strong>样本的真源是 LangSmith 上的数据集，实验跑它，新样本加在它上面；git 里的 jsonl 只是首批样本，用来在新环境一键重建。实验名用前缀标记改动（<code>--prefix fewshot</code>）。</p>
+  </dd>
+  <dt>3.6.2 评测分几层？</dt>
+  <dd>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>层</th><th>评什么</th><th>特点</th></tr>
+  <tr><td>单元级</td><td>一个 LLM 节点的结构化输出：分类对不对、字段抽得对不对</td><td>快、便宜、错了能定位到哪个 prompt</td></tr>
+  <tr><td>端到端</td><td>整轮从入口到出口：路由加工具加出口，以用户看到的结果为准</td><td>慢、贵，但能抓到各层接缝的问题</td></tr>
+  </table></div>
+  <p>两层都要有。只有单元级会漏掉接线错误，只有端到端会定位不到原因。</p>
+  <p><strong>Maya 里：</strong>router 和 fashion-criteria 是单元级，target 就是线上的 <code>route()</code> 和 <code>decide()</code>；fashion-terminal 是端到端，target 用 httpx 的 ASGITransport 直接打 FastAPI app，拆回 SSE 帧看最后一条是 button 还是 text。三个 target 都不 mock，评的是真实路径。</p>
+  </dd>
+  <dt>3.6.3 指标怎么定？</dt>
+  <dd>
+  <p>指标就是评测器怎么打分：拿输出和什么比，比到多严。选哪种看<strong>这个字段错了后果多大</strong>，同一条输出里不同字段可以用不同比法。常用的三种：</p>
+  <div class="tbl"><table>
+  <colgroup><col style="width:16%"><col style="width:30%"><col style="width:54%"></colgroup>
+  <tr><th>比法</th><th>什么时候用</th><th>Maya 的例子</th></tr>
+  <tr><td><strong>精确相等</strong></td><td>多一点少一点都算错</td><td>must 组。must 是硬过滤，多放一个 <code>Color: Red</code> 结果就只剩红色，所以期望 <code>{Category: [Dress]}</code> 就必须一模一样</td></tr>
+  <tr><td><strong>覆盖</strong></td><td>漏了算错，多了不算错</td><td>should 组。should 只影响排序，多加几个 Style 标签不伤害结果，只检查期望的 Occasion 有没有出现</td></tr>
+  <tr><td><strong>打真实数据</strong></td><td>对错不在标注里，要去真实系统验证</td><td>in_stock。条件对不对标注说了算，有没有货只有索引知道，拿条件去 core 数一下，大于 0 才过</td></tr>
+  </table></div>
+  <p><strong>评结果不评路径。</strong>把 agent 的步骤顺序钉死会惩罚合理但不同的解法。端到端评测因此常常只比<strong>形状</strong>不比内容：Maya 的终态评测只看最后一帧是 button 还是 text 与期望一致、帧序列 start 开头 end 收尾没有 error，不管 reply 写得好不好，也不管中间有没有放宽重试。</p>
+  </dd>
+  <dt>3.6.4 评测器用代码还是用模型？</dt>
+  <dd>
+  <p><strong>能用代码判的一律代码判</strong>：枚举相等、集合包含、schema 合法、序列形状。确定、免费、不会自己出错。</p>
+  <p><strong>模型判（LLM-as-judge）留给代码判不了的</strong>：回复的语气、有没有答到点上、两版回复哪个更好。judge 自己也是概率性的，用之前要校准：拿一小批人工标注核对它的一致性，不一致就改 judge 的 prompt 或换成成对比较（A 和 B 哪个好）而不是打绝对分。</p>
+  <p><strong>Maya 里：</strong>现在全是代码评测器。reply 的质量还没评，这是下一步要加 judge 的地方。</p>
+  </dd>
+  <dt>3.6.5 样本从哪来、怎么维护？</dt>
+  <dd>
+  <ul>
+    <li><strong>起步手写，正负都要。</strong>每类意图几条常规句，再加一组边界句单独分 split，边界句才是 prompt 迭代的抓手。该做的和不该做的都要有样本，只测「该搜」会把模型推向什么都搜。</li>
+    <li><strong>上线后从 trace 捞。</strong>用户点踩的、输出被 schema 拒掉的、人工抽检发现的，进标注队列变成样本。这是评测集长大的正路，手写的只是起点。</li>
+    <li><strong>防过拟合。</strong>评测句不能原样进 prompt 当 few-shot，否则是在考背答案。错例变 few-shot 时换一句同类的。</li>
+    <li><strong>评测集会腐坏。</strong>词表改了、库存变了、业务规则变了，标注就过期。打真实数据的指标尤其如此。谁改规则谁改样本。</li>
+  </ul>
+  <p><strong>Maya 里：</strong>三个集都是手写起步，clarify 样本就是「不该搜」的负例，hard split 放边界句（「what goes with wide leg jeans」第一次跑就抓到 must 里放了 Jeans）。还没有线上流量，从 trace 捞是下一阶段。</p>
+  </dd>
+  <dt>3.6.6 评测怎么进流程？</dt>
+  <dd>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>阶段</th><th>做法</th></tr>
+  <tr><td>本地</td><td>改完手动跑，看分数和没过的样本</td></tr>
+  <tr><td>CI 门禁</td><td>改 prompt、换模型、改路由的 PR 自动跑，低于阈值不合并</td></tr>
+  <tr><td>线上</td><td>抽样 trace 跑评测器，看指标随时间的变化，发现漂移</td></tr>
+  </table></div>
+  <p><strong>Maya 里：</strong>在第一阶段。CI 门禁是 HLD 的方向（<a href="#s2-2-4">2.2.4</a>），本批次不做。</p>
+  </dd>
+</dl>
+</div>
 
 </main>
 
