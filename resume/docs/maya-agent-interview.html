@@ -1,0 +1,1107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent 工程追问清单</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F4F6F9; --surface:#FFFFFF; --text:#1A222D; --muted:#5B6673; --line:#D9DEE6;
+  --accent:#3949AB; --accent-soft:#E8EAF6; --warn:#B4541A; --warn-soft:#FBEEE4;
+  --ok:#2E7D57; --ok-soft:#E3F2EA; --code-bg:#EEF1F6; --shadow:0 1px 2px rgba(20,30,50,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10151C; --surface:#171E27; --text:#E6EAF0; --muted:#9AA6B4; --line:#2A3441;
+    --accent:#8C9CFF; --accent-soft:#232B4A; --warn:#E8955A; --warn-soft:#3A2618;
+    --ok:#6FCF97; --ok-soft:#173226; --code-bg:#1E2631; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10151C; --surface:#171E27; --text:#E6EAF0; --muted:#9AA6B4; --line:#2A3441;
+  --accent:#8C9CFF; --accent-soft:#232B4A; --warn:#E8955A; --warn-soft:#3A2618;
+  --ok:#6FCF97; --ok-soft:#173226; --code-bg:#1E2631; --shadow:none;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.75 "Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.layout{display:block;max-width:1200px;margin:0 auto;padding:40px 32px 96px}
+.toc{position:fixed;top:0;left:0;height:100vh;width:280px;padding:56px 16px 24px 20px;background:var(--surface);border-right:1px solid var(--line);box-shadow:0 0 24px rgba(20,30,50,.12);overflow:auto;transform:translateX(-100%);transition:transform .2s ease;z-index:40}
+body.toc-open .toc{transform:none}
+.toc-toggle{position:fixed;top:14px;left:14px;z-index:50;font:13px "Noto Sans SC",sans-serif;padding:6px 12px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer;box-shadow:var(--shadow)}
+.toc-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.toc-backdrop{position:fixed;inset:0;z-index:30;display:none}
+body.toc-open .toc-backdrop{display:block}
+@media (max-width:900px){.layout{padding:56px 16px 64px}}
+.toc{font-size:13px;line-height:1.6}
+.toc .kicker{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.toc a{display:block;color:var(--muted);padding:3px 0 3px 10px;border-left:2px solid transparent;margin-left:-1px}
+.toc a.sub{padding-left:22px;font-size:12.5px}
+.toc a.sub2{padding-left:34px;font-size:12px}
+.toc a.sub3{padding-left:46px;font-size:11.5px}
+.toc a.active{color:var(--accent);border-left-color:var(--accent)}
+main{max-width:1120px;min-width:0;margin:0 auto}
+h1,h2,h3,h4,h5,h6{font-family:"Noto Serif SC","Songti SC","STSong",serif;text-wrap:balance;line-height:1.3;margin:0}
+h1{font-size:30px;font-weight:700;margin-bottom:8px}
+h2{font-size:22px;font-weight:700;margin:56px 0 16px;padding-top:24px;border-top:1px solid var(--line)}
+h3{font-size:17px;font-weight:600;margin:32px 0 10px}
+h4{font-size:15px;font-weight:600;margin:20px 0 6px;font-family:"Noto Sans SC",sans-serif}
+h5{font-size:14px;font-weight:700;margin:22px 0 6px;font-family:"Noto Sans SC",sans-serif}
+h6{font-size:13.5px;font-weight:700;margin:16px 0 4px;font-family:"Noto Sans SC",sans-serif}
+.lede{color:var(--muted);font-size:15px;margin:0 0 20px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:22px}
+li{margin:4px 0}
+li>ul{margin-top:4px}
+strong{font-weight:700}
+code{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;background:var(--code-bg);padding:1px 5px;border-radius:3px}
+pre{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;line-height:1.6;background:var(--code-bg);border:1px solid var(--line);border-radius:6px;padding:14px 16px;overflow-x:auto;margin:10px 0 16px}
+pre code{background:none;padding:0;font-size:inherit}
+figure.arch{margin:12px 0 18px;padding:12px;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+figure.arch svg{width:100%;height:auto;display:block}
+.tbl{overflow-x:auto;margin:10px 0 18px}
+td ul{margin:4px 0 0;padding-left:18px}
+table.cmp{table-layout:fixed}
+table.cmp td{font-size:13px;line-height:1.55}
+td li{margin:2px 0}
+table.fc-nowrap th:first-child,table.fc-nowrap td:first-child{white-space:nowrap;width:1%}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:12.5px;letter-spacing:.02em;background:var(--surface)}
+tr:hover td{background:var(--surface)}
+.grid6{display:grid;grid-template-columns:110px 1fr;gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:12px 0 18px;background:var(--surface);box-shadow:var(--shadow)}
+.grid6>div{padding:10px 14px;border-bottom:1px solid var(--line)}
+.grid6>div:nth-last-child(-n+2){border-bottom:0}
+.grid6 .k{font-weight:600;color:var(--muted);font-size:13px;background:var(--bg)}
+.grid6 p:last-child,.grid6 ul:last-child{margin-bottom:0}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0 16px}
+.callout.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.callout.ok{border-left-color:var(--ok);background:var(--ok-soft)}
+.callout .tag{display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:4px}
+.callout.warn .tag{color:var(--warn)}
+.callout .tag{color:var(--accent)}
+.callout.ok .tag{color:var(--ok)}
+.callout p:last-child{margin-bottom:0}
+.qa{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0 18px;background:var(--surface);box-shadow:var(--shadow)}
+.qa h4{margin:0 0 8px;font-size:14px;color:var(--muted);letter-spacing:.04em}
+.qa dl{margin:0}
+.qa dt{font-weight:600;margin-top:10px}
+.qa dt:first-child{margin-top:0}
+.qa dd{margin:2px 0 0 0;color:var(--text)}
+.qa dd p{margin:6px 0}
+.qa dd .tbl{margin:8px 0}
+.qa dd pre{margin:8px 0}
+.check{list-style:none;padding:0;margin:0}
+.check li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line);margin:0}
+.check input{margin-top:6px;width:16px;height:16px;accent-color:var(--accent)}
+.check .n{color:var(--muted);font-size:12px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13px;color:var(--muted);margin-bottom:28px}
+.pill{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);vertical-align:middle;margin-left:4px}
+.pill.warn{border-color:var(--warn);color:var(--warn)}
+.tbd{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;padding:0 6px;border-radius:4px;background:var(--warn-soft);color:var(--warn);vertical-align:middle;margin-right:5px}
+.draft{border:1px dashed var(--line);border-radius:8px;padding:14px 16px;margin:10px 0 18px;background:var(--surface)}
+.draft .lang{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px}
+.small{font-size:13px;color:var(--muted)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+
+<div class="layout">
+<button class="toc-toggle" type="button" aria-controls="toc" aria-expanded="false">目录</button>
+<div class="toc-backdrop"></div>
+<nav class="toc" id="toc" aria-label="目录">
+  <div class="kicker">目录</div>
+  <a href="#t0">总纲</a>
+  <a href="#t1">1 模型基础与调用</a>
+  <a href="#t2">2 Prompt 工程与指令</a>
+  <a href="#t3">3 工具调用</a>
+  <a href="#t4">4 MCP 与 Skills</a>
+  <a href="#t5">5 Agent 范式与控制流</a>
+  <a href="#t6">6 记忆与上下文工程</a>
+  <a href="#t7">7 RAG</a>
+  <a href="#t8">8 评测与可观测</a>
+  <a href="#t9">9 可靠性与安全</a>
+  <a href="#t10">10 服务底座与生产工程</a>
+  <a href="#t11">附 多模态输入</a>
+  <a href="maya-llm-agent-review.html">← Maya 重构设计</a>
+</nav>
+
+
+<main>
+<h1>Agent 工程追问清单</h1>
+
+<div class="callout" id="t0">
+<div class="tag">总纲</div>
+<ol>
+  <li><a href="#t1"><strong>LLM</strong></a>：概率性(评测验证+代码兜底)、自然语言接口(结构化输出)、无状态(代码每轮重建上下文)、慢且贵(少调模型+前缀缓存+按任务选模型+流式输出)</li>
+  <li><a href="#t2"><strong>Prompt</strong></a>：结构(角色+目标+规则+示例)、消息(system+human+ai+tool，不变在前→前缀缓存)</li>
+  <li><a href="#t3"><strong>工具调用</strong></a>：谁来调(固定流程代码调+开放流程模型调)、参数安全(身份系统注入，不靠模型填)、失败处理(工程偶发重试+模型错误回灌)</li>
+  <li><a href="#t4"><strong>MCP</strong></a>：用法(给别的AI应用/多Agent复用)、实质(普通HTTP服务+接口描述给模型读)、接入(部署Server+发布Registry+手动配URL+OAuth)</li>
+  <li><a href="#t4"><strong>Skill</strong></a>：构成(SKILL.md[name+description+指令]+scripts)、机制(渐进加载)、场景(低频长流程，按需加载)</li>
+  <li><a href="#t5"><strong>Agent</strong></a>：workflow(固定流程)&amp;agent(动态流程)、ReAct(Thought+Action+Observation)+Plan-and-Execute+Reflection、多agent(routing→manager)、LangGraph(checkpointer+interrupt)</li>
+  <li><a href="#t6"><strong>Context</strong></a>：prompt(system+profile+summary+recall+window+current)、recall(hybrid[vector+keyword]+RRF)、session</li>
+  <li><a href="#t7"><strong>RAG</strong></a>：offline(chunk+embedding+index)、online(rewrite+recall[hybrid]+merge[RRF]+rerank+generate[引用+拒答]+check)</li>
+  <li><a href="#t8"><strong>Test</strong></a>：layer(unit+链路+end2end)、data(覆盖维度+hard+失败反查标注)、judgement(code rules+model+human)、LangSmith</li>
+  <li><a href="#t9"><strong>安全</strong></a>：guardrail(输入+工具+输出)、防注入(身份代码注入+数据指令分离)</li>
+</ol>
+</div>
+
+
+
+<h2 id="t1">1 模型基础与调用</h2>
+<div class="qa">
+<dl>
+  <dt>1.1 LLM 是个什么样的组件，什么时候该用？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>概率性：同一输入不保证同一输出，有错误率，不能像函数那样靠单测证明正确，只能靠评测集量错误率。</li>
+    <li>慢且贵：一次调用几百毫秒到几秒，按 token 计费；多调一次就多一段延迟和一笔钱。</li>
+    <li>无状态：每次调用从零读上下文，记忆、历史、工具结果都要代码重新喂。</li>
+    <li>输入输出都是自然语言：既是优点（能处理规则写不完的输入）也是麻烦（输出要先变成程序能用的东西，见 1.2）。</li>
+  </ul>
+  <p>由此一条原则：<strong>能不用就不用。</strong>能用 if / for 写完的流程就写代码；只有规则枚举不完、或输入是非结构化文本时，才把那一步交给模型（展开见 3.1、5.1）。</p>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li>模型只在五处出场：主 agent 决定调哪些领域并汇总、Fashion 转检索条件、Account 定查哪几个接口、FAQ 读片段作答、Summarizer 压缩历史。</li>
+    <li>计数、放宽、澄清这些分叉全是代码。</li>
+  </ul>
+  </dd>
+  <dt>1.2 模型输出是自然语言，怎么变成程序能用的东西？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>中间每一步决策都走结构化输出，只有最终给用户看的文案出自然语言。</li>
+    <li>机制：pydantic 模型转 JSON schema 随请求发出，服务端 strict 模式在解码阶段就约束成合法 JSON，枚举只能取定义过的值；返回后 pydantic 再校验一遍转成对象。</li>
+    <li>分工：prompt 管「怎么判断」，schema 管「长什么样」。schema 不能替代 prompt，它只保证形状合法，不保证选得对。</li>
+  </ul>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li>FAQ、Summarizer 用 <code>with_structured_output</code>；主 agent 用工具调用分派子 agent；Fashion 用提交工具交结果，参数就是检索条件的 schema，代码校验后还能拒收；Account 的最终回复是给用户看的，出纯文本。</li>
+    <li>pydantic 校验器保证 search 和 outcome 一致；校验不过就是异常，chat.py 变成 error 帧，流不断。</li>
+  </ul>
+  </dd>
+</dl>
+</div>
+
+<h2 id="t2">2 Prompt 工程与指令</h2>
+<div class="qa">
+<dl>
+  <dt>2.1 system prompt 由哪几块组成？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>块</th><th>放什么</th><th>原则</th></tr>
+  <tr><td>角色与目标</td><td>你是谁、这次要完成什么</td><td>一两句，决定模型的默认行为</td></tr>
+  <tr><td>规则</td><td>判断标准、边界、禁止项、允许的取值</td><td>写在「合适的高度」：不把复杂逻辑硬编码进 prompt，也不笼统到默认模型懂你的业务；分 section 写</td></tr>
+  <tr><td>few-shot（可选）</td><td>典型样本</td><td>zero-shot 起步，评测出误判再加；少而典型，不堆边界</td></tr>
+  </table></div>
+  <p>正文只有这三块。另外三样走别的通道，不进 system prompt：</p>
+  <ul>
+    <li>工具：<code>bind_tools</code> 绑成请求的 tools 字段，名字、参数、说明都在工具定义上；正文最多写一句什么时候用。</li>
+    <li>输出形状：<code>with_structured_output</code> 把 schema 绑给模型，正文不写格式契约（见 1.2）。</li>
+    <li>用户输入、历史、检索结果、工具结果：按轮 append 成 user / tool 消息，不进 system。</li>
+  </ul>
+  <p>摆放顺序只有一条：每轮不变的在前，每轮变的在后（prompt caching 按前缀命中，前面改一个字后面全失效）。</p>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li>主 agent：角色一句；三个子 agent 各管什么、什么时候并行调、怎么汇总是规则。</li>
+    <li>Fashion：角色一句；规则是搜单品还是整套、何时查天气、何时澄清，以及 <code>search</code> 各字段怎么填（must / should / mustNot 语义、boost 分档、词表取值）。一千多 token，每轮不变。</li>
+    <li>Account：角色一句；规则是只说工具返回的事实。工具走 <code>bind_tools</code>，正文不列清单。</li>
+  </ul>
+  </dd>
+  <dt>2.2 prompt 怎么迭代？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>评测集先行：没有评测集就无法判断改好了还是改坏了。zero-shot 起步，只写任务和判断标准，跑评测看错在哪。</li>
+    <li>按错误补，规则优先于示例：误判样本变成一条规则或一个 few-shot，一条条加，每加一条回归。示例少而典型，覆盖边界不覆盖常见；评测句本身不进 prompt。</li>
+    <li>prompt 当代码管：进版本库，改动走 PR，评测不过不合并；换模型、改采样参数同样过评测。</li>
+    <li>量大了换路：分类任务例子堆多了又长又慢，有标注数据后换小模型微调或 embedding 分类器。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：照此做。prompt 都 zero-shot 起步，第一轮评测抓到「what goes with wide leg jeans」把 Jeans 放进了 must，补一条「问搭配 X 时 X 不进 must」再回归。</p>
+  </dd>
+</dl>
+</div>
+
+<h2 id="t3">3 工具调用</h2>
+<div class="callout">
+<div class="tag">原则（出处见末尾）</div>
+<ol>
+  <li><strong>固定流程代码调，开放流程模型调。</strong>路径能用 if / for 写完的是 workflow；调哪个、调几次取决于上一步结果的才交给模型。[Anthropic, LangGraph]</li>
+  <li><strong>工具的描述和参数签名是模型看到的全部。</strong>描述写查什么、什么时候用；参数形状让模型难填错，少而不重叠；身份类参数不暴露。[Anthropic]</li>
+  <li><strong>工具调用失败不抛异常，压成一句话当工具结果回给模型。</strong>说清是超时、参数不对还是服务没响应，不塞整个栈；模型看到后决定换参数重调还是直接作答。[12-factor, Anthropic]</li>
+</ol>
+<p class="muted">出处：<a href="https://www.anthropic.com/engineering/building-effective-agents">Anthropic · Building effective agents</a>；<a href="https://docs.langchain.com/oss/python/langgraph/workflows-agents">LangGraph · Workflows and agents</a>；<a href="https://github.com/humanlayer/12-factor-agents">12-factor agents</a>；<a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/handle-tool-calls">Anthropic · Handle tool calls（is_error）</a></p>
+</div>
+<div class="qa">
+<dl>
+  <dt>3.1 工具谁来调：代码还是模型？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>代码调：不会漏调多调，出口一个 schema 钉死，一趟模型加一次 HTTP，换假函数就能测。代价是路径要提前枚举，新工具要改代码。</li>
+    <li>模型调：路径开放，加工具只加描述不改流程。代价是可能该调不调、重复调、结果不够用也硬编答案，要步数上限和评测兜底；至少两趟往返；测试要模拟整个对话。</li>
+  </ul>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li>代码调：Fashion 提交检索时的计数，每次提交必数，0 件退回让模型放宽；FAQ 的向量检索，每问必检索再作答，模型不决定查不查。</li>
+    <li>模型调：Fashion 的天气，要不要查、查哪里由问题定；Account 的订阅、订单、收据，一句话可能查一个也可能查三个，组合由问题定；图片识别配订单，先识图还是先查单由上一步结果定。</li>
+  </ul>
+  </dd>
+  <dt>3.2 工具怎么定义，哪些参数能让模型给？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>一个工具一个函数：docstring 是给模型看的描述，写查什么、什么时候用，不写实现；参数签名转成 JSON schema。</li>
+    <li>身份、权限、租户这类参数不让模型填：从 state 注入，schema 里不出现，模型编不了别人的 id。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：工具是 clients 函数的薄包装，返回 JSON 字符串；<code>user_id</code> 标 <code>InjectedToolArg</code>，由 tools 节点从 state 注入。</p>
+  </dd>
+  <dt>3.3 工具调用失败分几种，各怎么处理？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>情况</th><th>处理</th></tr>
+  <tr><td>工程偶发：超时、429、5xx</td><td>指数退避加 jitter 重试，只重试幂等调用；重试耗尽回模型一句固定说明，让它说查不到，不编</td></tr>
+  <tr><td>模型用错：工具名不存在、参数不对</td><td>错误压成一条工具结果回灌，模型改参数或换工具重调；限轮数</td></tr>
+  </table></div>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li>工程偶发：LLM 用 OpenAI SDK 自带重试；core 在 <code>_request</code> 收口用 tenacity，最多 3 次，退避 0.2 秒起、上限 2 秒，单次超时 3 秒（接口全是读，可放心重试）。耗尽返回 None，Account 工具回固定句 CORE_UNAVAILABLE，评测断言模型不编。</li>
+    <li>模型用错：工具名不存在、工具内异常都压成一句 ToolMessage 回灌，<code>MAX_TOOL_ROUNDS</code> 限轮。</li>
+  </ul>
+  </dd>
+</dl>
+</div>
+
+<h2 id="t4">4 MCP 与 Skills</h2>
+<div class="callout">
+<div class="tag">原则（出处见末尾）</div>
+<ol>
+  <li><strong>MCP 是 AI 应用连接外部系统的标准协议，远程 MCP Server 本质是一个自描述的无状态 HTTP 服务。</strong>别人接入：配 URL → OAuth 登录 → <code>tools/list</code> 发现工具 → 模型决定调用 → <code>tools/call</code> 执行。[MCP]</li>
+  <li><strong>同一批工具要给多个 Agent 或 Host 用，才封装成 MCP Server。</strong>单应用进程内的工具直接定义，多一层协议只多一层开销。[MCP]</li>
+  <li><strong>MCP 管能连上什么，Skill 管拿到工具后按什么步骤做。</strong>Skill 平时只占名字和描述，用到才读全文。[Anthropic Skills]</li>
+</ol>
+<p class="muted">出处：<a href="https://modelcontextprotocol.io/docs/learn/architecture">MCP · Architecture overview</a>；<a href="https://modelcontextprotocol.io/specification/2026-07-28">MCP · Specification 2026-07-28</a>；<a href="https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization">MCP · Authorization</a>；<a href="https://modelcontextprotocol.io/registry/about">MCP · Registry</a>；<a href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills">Anthropic · Equipping agents with Agent Skills</a>；<a href="https://www.anthropic.com/engineering/code-execution-with-mcp">Anthropic · Code execution with MCP</a></p>
+</div>
+<div class="qa">
+<dl>
+  <dt>4.1 MCP 是什么，什么时候用？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>连接 AI 应用和外部系统的开放标准，类比 USB-C：系统按协议实现一次 Server，所有支持 MCP 的应用都能接，M 个应用接 N 个系统从 M×N 套适配变成 M+N。只管双方怎么交换能力，不管应用怎么用模型。</li>
+  </ul>
+  <div class="tbl"><table>
+  <tr><th></th><th>在哪一层</th><th>解决什么</th></tr>
+  <tr><td>Function Calling</td><td>模型 API</td><td>模型怎么输出一次结构化的工具调用</td></tr>
+  <tr><td>MCP</td><td>应用和工具之间</td><td>工具怎么被发现、连接、跨进程调用</td></tr>
+  <tr><td>A2A</td><td>Agent 和 Agent 之间</td><td>一个 Agent 怎么把任务委派给另一个 Agent</td></tr>
+  </table></div>
+  <ul>
+    <li>MCP 不替代 Function Calling：Server 暴露工具，Host 把工具定义转成 function 交给模型，模型输出调用，Host 再经 MCP 去执行。</li>
+    <li>什么时候用：工具只给自己的 Agent 用，Function Calling 就够；要给别人的 AI 应用用，或多个 Agent 复用同一套工具，才做成 MCP Server。</li>
+  </ul>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li>图内工具是 LangChain <code>@tool</code>，进程内直接调，不走 MCP。</li>
+    <li>同一套 Account 工具另起 <code>maya.mcp_server</code> 以 MCP 暴露，函数体直接复用 <code>agents/account.py</code>，Claude Code 等 Host 能直接接入。</li>
+  </ul>
+  </dd>
+  <dt>4.2 MCP 由哪几部分组成？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>角色：Host 是 AI 应用本身，模型在这里；Client 是 Host 里的连接组件，一个 Server 对应一个；Server 是对外提供能力的程序。</li>
+    <li>分层：数据层是 JSON-RPC 2.0，定义能力发现和原语；传输层有 stdio（Host 拉起的本地子进程）和 Streamable HTTP（远程），认证也在这一层。换传输不动数据层。</li>
+  </ul>
+  <div class="tbl"><table>
+  <tr><th>原语</th><th>谁控制</th><th>用途</th></tr>
+  <tr><td>Tools</td><td>模型</td><td>模型决定调的函数，最常用</td></tr>
+  <tr><td>Resources</td><td>应用</td><td>URI 标识的只读数据，应用决定放不放进上下文</td></tr>
+  <tr><td>Prompts</td><td>用户</td><td>用户主动选用的模板，比如斜杠命令</td></tr>
+  <tr><td>Elicitation</td><td>Server 发起</td><td>执行中途向用户追问或确认</td></tr>
+  </table></div>
+  <ul>
+    <li>版本按日期：2025-11-25 及以前先 initialize 握手协商版本和能力，连接有状态，Server 可以在调用中途向 Client 发请求；2026-07-28 起请求无状态、每个请求自带版本和能力，Server 要追问就返回 InputRequiredResult，Client 带着回答重发同一个调用；Sampling（Server 借 Host 的模型）同版废弃，Server 要模型直接调厂商 API。</li>
+    <li>核心之外是可选扩展：Tasks（长任务异步执行）、Skills over MCP、MCP Apps（对话里渲染交互 UI）。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：只暴露 Tools，elicitation 用于写操作确认；MCP Python SDK 2.3 的 <code>MCPServer</code>，同一个 Server 在 2025-11-25（握手）和 2026-07-28（无状态）两版协议下都测过，工具列表、调用、确认结果一致。</p>
+  </dd>
+  <dt>4.3 MCP Server 本质是什么，别人的 Host 怎么接入？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>远程 Server 是无状态 HTTP 服务：单一 <code>/mcp</code> 端点收 POST，消息是 JSON-RPC，每个请求自带版本和能力，能直接放负载均衡后面水平扩；认证上是 OAuth 2.1 资源服务器。</li>
+    <li>和普通 API 的区别不在 AI（Server 里通常没有模型），在接口自描述：工具名、说明、参数 schema 运行时可取，模型读了就会调，不用人写适配代码。</li>
+  </ul>
+  <ol>
+    <li>拿到地址：用户把 URL 配进自己的 Host；公开的 Server 发布到官方 MCP Registry（只存元数据，命名空间经 GitHub 或域名验证），由下游目录收录；按域名自动发现（Server Card）还是实验提案。</li>
+    <li>认证：首次请求返回 401，Host 读 <code>/.well-known/oauth-protected-resource</code> 找到授权服务器，走 OAuth（PKCE、resource 参数）让用户登录拿 token；Server 校验 token 的 audience 是自己，不把它转给下游。</li>
+    <li>发现：Host 调 <code>tools/list</code>，合并各 Server 的工具交给模型。</li>
+    <li>调用：模型选工具和参数，Host 发 <code>tools/call</code>。</li>
+  </ol>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li>stdio 形态用 <code>claude mcp add</code> 接进 Claude Code。</li>
+    <li>远程形态：Streamable HTTP 暴露 <code>/mcp</code>，<code>user_id</code> 的 resolver 改成从 access token 解析，工具签名不动。</li>
+  </ul>
+  </dd>
+  <dt>4.4 MCP 下身份和高风险操作怎么管？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>身份不进工具参数：stdio 下由 Host 启动 Server 时注入；远程用 OAuth 2.1，Server 是资源服务器，从 access token 解析用户；不把用户 token 原样转给下游（token passthrough），防 confused deputy。</li>
+    <li>annotations（readOnlyHint、destructiveHint、idempotentHint）只是提示：Host 可据此决定弹不弹审批，规范要求不可信 Server 的 annotations 按不可信处理，Server 也不能指望 Host 一定拦。</li>
+    <li>写操作由 Server 自己确认：发 elicitation，用户拒绝就不写，Client 不支持 elicitation 就拒绝执行。</li>
+    <li>Host 侧：调用工具前要用户同意；第三方 Server 先审再接；工具描述和返回值都可能夹带注入。</li>
+  </ul>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li><code>user_id</code> 用 SDK 的 <code>Resolve</code> 在服务端注入，工具的 inputSchema 里没有它，和图内 <code>InjectedToolArg</code> 是同一个约束；stdio 下取自启动环境 <code>MAYA_USER_ID</code>，换远程只改 resolver，工具签名不动。</li>
+    <li><code>pause_subscription</code> 标 destructiveHint、idempotentHint，同时用 <code>Resolve</code> 加 <code>Elicit</code> 发确认：拒绝回 DECLINED 不写；Client 没声明 elicitation 能力时调用直接报错，不执行。</li>
+    <li>测试时后端换假函数，覆盖确认、拒绝、不支持确认、未登录四种情况，后端只在确认后被写一次。</li>
+  </ul>
+  </dd>
+  <dt>4.5 接的工具多了，上下文装不下怎么办？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>两处占上下文：工具定义启动时全量预加载；每次调用的中间结果都要过一遍模型。</li>
+    <li>解法由轻到重：按场景只暴露子集；用 search_tools 按需取工具定义；让模型写代码调 MCP，大数据在执行环境里过滤，只把结果给模型（Anthropic 的例子 150k token 降到 2k）。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：主 agent 只看到三个子 agent 工具，每个子 agent 只挂自己那几个工具，不存在这个问题。</p>
+  </dd>
+  <dt>4.6 Skill 是什么，和 MCP、prompt 有什么区别？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>Skill 是一个文件夹：<code>SKILL.md</code>（frontmatter 里 name、description，正文是指令），加可选的脚本和参考文件。</li>
+    <li>渐进加载三层：启动时只把 name 和 description 放进系统提示；判断相关才读整份 <code>SKILL.md</code>；附带文件用到再读。</li>
+  </ul>
+  <div class="tbl"><table>
+  <tr><th></th><th>给的是什么</th><th>占上下文</th></tr>
+  <tr><td>system prompt</td><td>每轮都要遵守的规则</td><td>每轮全量</td></tr>
+  <tr><td>MCP</td><td>能连上的系统和工具</td><td>工具定义，默认全量</td></tr>
+  <tr><td>Skill</td><td>某类任务按什么步骤做，可带脚本</td><td>平时一行描述，用到才加载</td></tr>
+  </table></div>
+  <ul>
+    <li>Skill 能带脚本，等于装代码：只装可信来源，装前审依赖、脚本和外联指令。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：没用 Skill。每个 agent 的 system prompt 都短、每轮都要用，全量放更简单；Skill 适合低频、篇幅长、按需才用的流程知识。</p>
+  </dd>
+</dl>
+</div>
+
+<h2 id="t5">5 Agent 范式与控制流</h2>
+<div class="callout">
+<div class="tag">原则（出处见末尾）</div>
+<ol>
+  <li><strong>workflow 是代码定路径，agent 是模型定路径。</strong>agent 加延迟和成本、放大错误；单 agent 做满，工具重叠或 prompt 分支过多时才拆多 agent。[Anthropic, OpenAI]</li>
+  <li><strong>循环永远是代码在跑。</strong>模型每步只决定做什么，再来一圈、执行工具、回灌结果都是代码。[hello-agents, LangChain]</li>
+  <li><strong>步数要有上限，超限走确定的出口。</strong>recursion_limit 是最后一道，不是控制流。[LangGraph, OpenAI]</li>
+  <li><strong>节点是 checkpoint 和重放的单位。</strong>恢复从节点开头重放，副作用要放在节点里；interrupt 只能落在节点边界。[LangGraph]</li>
+</ol>
+<p class="muted">出处：<a href="https://www.anthropic.com/engineering/building-effective-agents">Anthropic · Building effective agents</a>；<a href="https://hello-agents.datawhale.cc/#/./chapter4/%E7%AC%AC%E5%9B%9B%E7%AB%A0%20%E6%99%BA%E8%83%BD%E4%BD%93%E7%BB%8F%E5%85%B8%E8%8C%83%E5%BC%8F%E6%9E%84%E5%BB%BA">hello-agents · 第四章</a>；<a href="https://docs.langchain.com/oss/python/langgraph/workflows-agents">LangGraph · Workflows and agents</a>；<a href="https://docs.langchain.com/oss/python/langgraph/durable-execution">LangGraph · Durable execution</a>；<a href="https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf">OpenAI · A practical guide to building agents</a>；<a href="https://www.anthropic.com/engineering/multi-agent-research-system">Anthropic · How we built our multi-agent research system</a>；<a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Anthropic · Effective context engineering for AI agents</a>；<a href="https://docs.langchain.com/oss/python/langchain/multi-agent">LangChain · Multi-agent</a>；<a href="https://docs.langchain.com/oss/python/langgraph/checkpointers">LangGraph · Checkpointers</a>；<a href="https://openai.github.io/openai-agents-python/multi_agent/">OpenAI Agents SDK · Multi-agent</a></p>
+</div>
+<div class="qa">
+<dl>
+  <dt>5.1 workflow 和 agent 怎么分，各有哪些模式？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li><strong>分界线是谁决定下一步</strong>：workflow 的路径由代码预先写死，模型只在节点里干活；agent 由模型在循环里根据工具结果决定下一步和何时结束。</li>
+    <li><strong>怎么选</strong>：先用最简单的。步骤能预先写清、要求稳定，用 workflow；步骤数事先定不下来，才用 agent。agent 成本更高、错误会累积，要设轮数上限、靠评测兜住。</li>
+    <li><strong>workflow 的五种模式</strong>（Anthropic 的分法）：</li>
+  </ul>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>模式</th><th>做法</th></tr>
+  <tr><td>prompt chaining</td><td>拆成固定几步，上一步输出喂下一步，中间可插代码检查</td></tr>
+  <tr><td>routing</td><td>先分类，再分到不同的处理流程</td></tr>
+  <tr><td>parallelization</td><td>多个调用同时跑再汇总，分切片和投票两种</td></tr>
+  <tr><td>orchestrator-workers</td><td>模型动态拆出子任务派给 worker，再合并结果</td></tr>
+  <tr><td>evaluator-optimizer</td><td>一个生成、一个评估，循环修改直到通过</td></tr>
+  </table></div>
+  <ul>
+    <li><strong>agent 的三种范式</strong>：</li>
+  </ul>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>范式</th><th>做法</th><th>适合</th></tr>
+  <tr><td>ReAct</td><td>想一步做一步，每步看工具结果再决定下一步（见 5.2）</td><td>步骤少、下一步依赖上一步结果</td></tr>
+  <tr><td>Plan-and-Execute</td><td>先让模型列出完整计划，再逐步执行，执行中发现不对就重新规划</td><td>步骤多的长任务：规划只调一次强模型，执行可换小模型，也不容易中途跑偏</td></tr>
+  <tr><td>Reflection</td><td>先产出，再由模型自评或外部反馈评审，按意见修改；Reflexion 还把失败教训写成文字留给下次尝试</td><td>质量要求高、评审标准写得出来的输出。和 evaluator-optimizer 是同一个思路</td></tr>
+  </table></div>
+  <ul>
+    <li><strong>多 agent 编排</strong>：按信号逐级加复杂度。单 agent 起步；领域之间 prompt、工具互相干扰，且每个请求只属于一个领域，拆成 routing（一次分类，代码分给专职 agent）；请求常跨多个领域，升到 manager（也叫 agents as tools、supervisor：主 agent 把子 agent 当工具调用，汇总后自己回复）。handoff 是另一条路：某个领域需要跨轮在岗的长流程时用。</li>
+  </ul>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li><strong>主 agent 是 manager</strong>：Fashion、Account、FAQ 三个子 agent 是它的工具，一句话涉及几个领域就并行调几个，再汇总成一句回复。Fashion 的检索条件由代码直接变成按钮，不经主 agent 转述；只调了一个子 agent 时直接透传，省掉汇总调用。</li>
+    <li><strong>子 agent</strong>：FAQ 是 prompt chaining，检索、rerank、作答三步固定；Fashion、Account 是 ReAct，查不查天气、搜单品还是整套、查哪几个接口都由模型定，出口由代码把关。</li>
+    <li><strong>按信号逐级演进</strong>：单 agent 起步；Fashion 的规则和词表变重、开始误调账户工具，按领域拆成 routing，prompt 和评测按领域隔离；之后跨领域问题变多（「下次扣费是哪天，顺便看看黑裙子」），routing 只能进一个领域，升到 manager。</li>
+  </ul>
+  </dd>
+  <dt>5.2 ReAct 是什么，由哪几部分组成？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li><strong>定义</strong>：推理和行动交替的循环。Thought 决定下一步，Action 调工具，Observation 把结果追加回上下文，直到模型不再要动作。</li>
+    <li><strong>组成</strong>：四部分，原论文用文本实现，现在用函数调用实现：</li>
+  </ul>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>组成</th><th>原论文</th><th>函数调用版</th></tr>
+  <tr><td>Thought</td><td>模型输出的文本</td><td>推理模型内化，不公开</td></tr>
+  <tr><td>Action</td><td>文本，正则切出动作和参数</td><td>类型化的 tool_call，不用解析</td></tr>
+  <tr><td>Observation</td><td>执行结果拼成文本</td><td>每个 tool_call 一条 ToolMessage，按 id 配对</td></tr>
+  <tr><td>出口</td><td>输出 Finish；超过 max_steps 强停</td><td>没有 tool_calls 就结束；轮数上限兜底</td></tr>
+  </table></div>
+  <ul>
+    <li><strong>推理回传</strong>：每步是一次新调用，上一步的推理项要回传，模型才能接着想；只在同一轮工具循环里必须带。要用 Responses 接口，chat completions 不返回推理项（存储时传 id，不存储时传密文）。</li>
+  </ul>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li><strong>Account</strong>：一条消息可并行要多个工具（「下次扣费和箱里有什么」一轮查两个）；要几轮由模型定，没有 tool_calls 就结束，轮数用完不绑工具，强制作答。</li>
+    <li><strong>Fashion</strong>：出口是提交工具，模型用它交检索结果，代码计数有货才结束；0 件作为 Observation 退回，模型自己放宽。</li>
+  </ul>
+  </dd>
+  <dt>5.3 循环怎么停？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li><strong>正常出口</strong>：模型不再要工具，或给出约定的结构化输出。</li>
+    <li><strong>兜底出口</strong>：轮数上限。到了不抛异常，走确定路径：不绑工具强制作答，或返回固定澄清。</li>
+    <li><strong>重复检测</strong>：同一工具同样参数连调几次就中断，防止在上限内空转。</li>
+    <li><strong>框架上限</strong>：LangGraph 的 recursion_limit、OpenAI Agents SDK 的 max_turns（默认 10）。LangGraph 老版本默认 25 步，1.x 改成 10007，基本等于不设防，要按图自己配。超限说明出口写漏了，是 bug 不是流程。</li>
+  </ul>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li>Fashion：工具调用最多 4 轮（查天气、提交、两次放宽），用完还没收下检索就回固定文案转澄清。</li>
+    <li>Account：<code>MAX_TOOL_ROUNDS = 3</code>，用完后不绑工具，最多四次模型调用、七步，用不着 recursion_limit。</li>
+  </ul>
+  </dd>
+  <dt>5.4 什么时候用 interrupt？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li><strong>机制</strong>：第一次调 <code>interrupt()</code> 抛异常，图存档后退出；恢复时传 <code>Command(resume=值)</code>，被中断的节点从头重跑，<code>interrupt()</code> 直接返回该值。</li>
+    <li><strong>何时用</strong>：写操作前要人批准、改参数或拒绝，处理的是存档里冻结的那次 tool_call，终态加下一轮做不到。澄清、登录引导这类能用终态收口的不用。</li>
+    <li><strong>落地要点</strong>：中断前的代码要能重跑；只恢复本人的、仍在等确认的那一轮；结果不确定时读回状态；工具按风险分级（只读还是写、能否撤销、是否涉钱），高风险的先预览代价再确认。</li>
+  </ul>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li><strong>机制</strong>：Account 的 tools 节点执行写工具前 interrupt，前端出确认按钮，点击带回 threadId，图从断点执行。</li>
+    <li><strong>何时用</strong>：只有暂停、取消订阅这类写操作停下确认，澄清和登录引导用终态。</li>
+    <li><strong>落地要点</strong>：写工具登记在一张表里（工具名 → 确认语）；取消订阅先调预览，把会失去的 bonus credits 写进确认语；失败时读回订阅状态再回复。</li>
+  </ul>
+  </dd>
+  <dt>5.5 为什么用 manager，不用多意图路由？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li><strong>多意图路由（multi-intent routing）</strong>：分类器识别多个意图，为每个意图生成子查询，并行扇出给对应 agent 后合成。局限是一次性分发，子任务在分类时已确定，不支持多跳串行调用。</li>
+    <li><strong>manager（agents as tools / orchestrator-workers）</strong>：主 agent 在循环中动态分解任务、委派子 agent、合成结果；子任务不预先定义，可依据中间结果追加调用。代价是多一次模型调用。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：跨领域请求中存在多跳依赖，如「我订阅暂停了吗？暂停了怎么恢复」，需先查账户状态，再依据结果检索 FAQ，一次性分发无法处理，因此升级为 manager。</p>
+  </dd>
+  <dt>5.6 主 agent 怎么分解和委派任务？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li><strong>任务委派</strong>：每个子任务明确目标、输出格式、可用工具和任务边界，描述含糊会导致重复劳动或遗漏。</li>
+    <li><strong>上下文隔离（context isolation）</strong>：子 agent 在干净的上下文窗口中只处理自己的子任务，不继承主对话全部历史。</li>
+    <li><strong>身份注入</strong>：身份与权限参数由代码注入，不暴露给模型。</li>
+  </ul>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li>三个子 agent 封装为工具，参数为主 agent 改写后的独立子查询（指代已消解）。</li>
+    <li>领域状态按需附加，如 Fashion 附上一轮检索条件；<code>user_id</code> 由 state 注入。</li>
+    <li>每个领域每轮最多调用一次、最多两轮：相互独立的子任务同轮并行，有依赖的放到下一轮。</li>
+  </ul>
+  </dd>
+  <dt>5.7 并行怎么执行，部分失败怎么处理？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li><strong>扇出/扇入（fan-out / fan-in）</strong>：一次输出多个 tool_call 并发执行，每路独立超时，总延迟取决于最慢的一路。</li>
+    <li><strong>部分失败与降级</strong>：单路失败时，将失败信息作为该路结果返回，其余路照常合成，不拖垮整轮。</li>
+  </ul>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li>用 LangGraph <code>Send</code> 将每个子任务分发到独立的子图节点，同一超步（super-step）内并行执行，结果经 reducer 合并。</li>
+    <li>不在单个节点内 gather：checkpoint 按超步保存，同一超步中已成功节点的写入作为 pending writes 持久化，Account 因人工审批中断后恢复时，已完成的 Fashion 分支不会重跑。</li>
+    <li>单路超时返回「该领域暂不可用」，先回答可回答的部分，不编造。</li>
+  </ul>
+  </dd>
+  <dt>5.8 结果怎么合成，额外成本怎么控？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li><strong>结果合成（synthesis）</strong>：子 agent 返回浓缩结果，由主 agent 合成最终回复。</li>
+    <li><strong>避免转述损耗</strong>：结构化产物写入外部状态，只向主 agent 回传轻量引用，减少信息损耗和 token 开销。</li>
+  </ul>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li>Fashion 检索条件由代码直接渲染为按钮，主 agent 只收到一句摘要；Account、FAQ 的事实在合成时保持不变。</li>
+    <li>只调用一个子 agent 时直接透传，跳过合成调用：单领域仍为 2 次 LLM 调用，仅跨领域请求多一次。</li>
+    <li>评测：分派结果（调用了哪些子 agent、子查询是否完整）单独评测，各领域原有评测集同时回归，确认单领域不退化。</li>
+  </ul>
+  </dd>
+</dl>
+</div>
+
+<h2 id="t6">6 记忆与上下文工程</h2>
+<div class="callout">
+<div class="tag">原则（出处见末尾）</div>
+<ol>
+  <li><strong>上下文是有限资源。</strong>窗口越满召回越差，目标是能达成任务的最小高信号 token 集。[Anthropic]</li>
+  <li><strong>自己掌握上下文窗口。</strong>历史存在自己手里，进模型的每一段都是自己拼的，不交给框架或供应商。[12-factor]</li>
+  <li><strong>短期记忆按会话重放，长期记忆按需检索。</strong>两者存储和取法都不同，不混在一张表里。[LangGraph, hello-agents]</li>
+  <li><strong>窗口外的历史靠压缩和召回，不靠加大窗口。</strong>摘要保事实、相似召回保相关、结构化笔记保进度。[Anthropic]</li>
+  <li><strong>历史按访问模式建模。</strong>按会话取最近 N 轮、按会话追加，就是分区键加排序键。[系统设计通则]</li>
+</ol>
+<p class="muted">出处：<a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Anthropic · Effective context engineering for AI agents</a>；<a href="https://github.com/humanlayer/12-factor-agents">12-factor agents</a>（Own your context window）；<a href="https://docs.langchain.com/oss/python/langgraph/memory">LangGraph · Memory</a>；<a href="https://hello-agents.datawhale.cc/">hello-agents · 第八、九章</a></p>
+</div>
+<div class="qa">
+<dl>
+  <dt>6.1 一轮的 prompt 由哪几层组成？</dt>
+  <dd>
+  <p><strong>通用做法</strong>：按在 prompt 里的位置从上到下，也是从稳定到易变。</p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>层</th><th>管什么</th><th>从哪来、怎么更新</th><th>怎么进 prompt</th></tr>
+  <tr><td>System</td><td>角色、规则、few-shot（可选）</td><td>代码常量，每轮一样</td><td>system 消息，缓存前缀</td></tr>
+  <tr><td>画像（长期记忆）</td><td>跨会话的稳定属性：尺码、风格、过敏</td><td>按用户存，模型从对话里抽或离线算</td><td>整份或命中的几条，放在历史之前</td></tr>
+  <tr><td>摘要</td><td>本会话窗口外的事实</td><td>掉出窗口的轮次攒够就调模型增量合并</td><td>一段概要，一条 user</td></tr>
+  <tr><td>召回</td><td>窗口外和本轮相关的旧轮</td><td>按本轮输入在会话内混合检索</td><td>几轮原文，和摘要同一条 user</td></tr>
+  <tr><td>窗口</td><td>最近几轮原文</td><td>按 token 预算取整轮</td><td>逐轮重放成 Human / AI</td></tr>
+  <tr><td>本轮输入</td><td>用户这句话</td><td>请求</td><td>最后一条 user</td></tr>
+  </table></div>
+  <ul>
+    <li>除 System 外全是数据，按权威层级放 user 不放 system。</li>
+    <li>摘要和召回互补不替代：摘要稳住「说过的约束」这类和当前问题措辞不像的事实，召回找「上次聊的那条裙子」这类有具体词的旧轮。</li>
+    <li>LangGraph 里摘要、召回、窗口属于 checkpointer（thread 内的 state），画像属于 Store（跨 thread 的命名空间）。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：<code>HistoryContext.as_messages</code> 按这个顺序拼：摘要和召回合成一条 user，窗口逐轮重放，三个 agent 共用；画像每轮从 Context Hub 拉。窗口 60 token 的评测：只有窗口 9/30，开摘要和召回 30/30。</p>
+  </dd>
+  <dt>6.2 摘要怎么做？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>调模型，增量式：旧摘要加新掉出窗口的轮次 → 新摘要，不重新总结全部历史。结构化输出钉形状，prompt 规定只留事实（偏好、尺码、约束、搜过什么和结果）、丢寒暄和已推翻的、长度上限。</li>
+    <li>触发按 token 不按轮数：掉出窗口且未进摘要的轮次累计超过阈值才调一次。LangChain 的 SummaryBufferMemory、langmem 的 SummarizationNode、Anthropic 的 compaction 都这样。</li>
+    <li>其他压缩手段：结构化笔记（长任务把进度写到上下文外的持久化存储）、子 agent（专门任务在干净上下文里做，只返回精炼结果）。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：<code>summaries</code> 表一会话一条，<code>covers_until</code> 是游标；轮末「掉出窗口且未进摘要」的轮次超过 1000 token（窗口预算的四分之一）调一次，150 词上限；失败不推进游标，下一轮重试。八轮手测看到摘要两次滚动，S 码、羊毛过敏、不要荧光色、预算逐条并入。</p>
+  </dd>
+  <dt>6.3 召回怎么做？混合检索与 RRF</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>按本轮输入从会话的全部历史里找相关的旧轮，两路：向量一路管语义（改写、同义），对精确词几乎没有分辨力，「不要羊毛」和「要羊毛」向量几乎一样；关键词一路（倒排索引加 BM25 或 ts_rank）管品牌、型号、数字、否定，但「返货」和「退货」对不上。两路各补对方的盲区。</li>
+    <li>两路各取 top-k，RRF（Reciprocal Rank Fusion）合并：一个结果在某一路排第 r 位记 1/(k+r) 分，k 取 60，几路出现加几份，按总分取前 k。只看名次不看分数，因为余弦距离和关键词分数量纲不同；k=60 压平前几名的差距，让两路叠加胜过单路的微小名次差。</li>
+    <li>例子：向量路 [m1, m4, m0]，关键词路 [m0, m2]。m0 得 1/63 + 1/61 ≈ 0.032，m1 只有 1/61 ≈ 0.016，m0 反超第一：关键词命中就能把向量排后面的结果捞回来。</li>
+    <li>局限：RRF 不知道名次之间差多少；没有阈值时总会凑满 k 条，prompt 里要写「可能相关」让模型自己判；两路返回条数要对称。</li>
+    <li>换成 DynamoDB 加 OpenSearch 时同一套逻辑搬到引擎里：turns 写 DynamoDB，Streams 或 zero-ETL 同步到 OpenSearch 的一个索引，文档里 user_text、reply 做 text 字段，embedding 做 knn_vector 字段（HNSW），session_id 做 keyword 字段。查询一条请求：<code>hybrid</code> 查询里放两个子查询，match（BM25）加 knn，外层 filter session_id，用 search pipeline 的 normalization-processor 做 RRF 或分数归一化，引擎直接返回融合后的 top-k。向量仍由客户端算好写入，或接 neural 插件让引擎算。应用层从「两条 SQL 加 Python 融合」变成「一条请求」，<code>recall</code> 的签名不变。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：两路都在 PostgreSQL，向量用 pgvector 的 <code>&lt;=&gt;</code> 余弦距离，关键词用生成列 <code>tsv</code>（<code>to_tsvector</code> 分词去停用词还原词干）加 gin 索引；各取 2k，Python 里 RRF 后去掉窗口里已有的取 3；会话还没说过话时跳过。FAQ 检索复用同一套 <code>retrieval.py</code>。</p>
+  </dd>
+  <dt>6.4 窗口怎么截、历史怎么重放？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>按 token 预算从最新往前取整轮，不截半轮；用 tokenizer 数，不用字符数。</li>
+    <li>重放成 Human / AI 消息放在本轮之前，不拼成一段文本：模型按角色理解对话，追加不改写也保住缓存前缀。</li>
+    <li>不同节点看到的历史可以不一样：需要上一轮结构化结果的节点，把结果附在那轮的 AI 消息后面。</li>
+  </ul>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li>预算 4000 token，tiktoken 计数；窗口预算、摘要阈值、召回条数三个旋钮进 Settings，评测时改环境变量跑对比。</li>
+    <li>三种形态：主 agent 纯文本重放，判「make it blue」交给 Fashion；Fashion 重放时附 <code>[criteria used: …]</code>，prompt 加一条「追问在上一轮条件上改，无关请求从头来」；Account 把历史放在子图 messages 最前面。</li>
+  </ul>
+  </dd>
+  <dt>6.5 历史消息存什么、怎么建模？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>自己存，不用供应商的 thread 或 previous_response_id：状态锁在供应商手里，换模型即丢，也做不了查询和裁剪。</li>
+    <li>一行一轮，不是一行一条消息：窗口按轮截、评测按轮算、追问要上一轮的结果，轮才是历史的单位。</li>
+    <li>只存对话事实：用户原话、回复、意图、结构化结果。工具消息、推理块、进度不存，下一轮重新来。没产出回复的轮次不存，那是 trace 的事。</li>
+    <li>主键是会话加时间，其余是普通字段：访问模式只有「按会话取最近 N 轮、按会话追加」，这就是分区键加排序键的形状。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：<code>turns(session_id, created_at, message_id, user_text, reply, intent, search jsonb)</code>，主键 (session_id, created_at)。库挂了读当没有历史、写只记 warning，最多等 2 秒，历史是增强不是前提。</p>
+  </dd>
+  <dt>6.6 会话怎么定义？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>会话键由服务端验证过的身份决定：登录用户用 userId，匿名用设备 id，一个人一个会话，上下文长度靠窗口和摘要控制。要做多会话时由后端建会话下发 id，前端只回传。</li>
+    <li>客户端传来的 id 只能用来选，不能用来证明身份。会话 id 从客户端来时服务端每次查归属，不属于当前用户就拒绝；漏掉就是 OWASP API Top 10 第一条 BOLA。id 要不可猜，但不可猜不能替代归属检查。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：照此做。userId 由 cookie 去 core 换来；匿名用请求头里的随机设备 id，游客历史不含账户数据。前端的页面级 sessionId 不存。</p>
+  </dd>
+  <dt>6.7 存储现在为什么这样，什么时候换？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>历史的访问模式是「按会话取最近 N 轮、按会话追加」，教科书答案是 KV 库的分区键加排序键；检索要向量加关键词混合，教科书答案是搜索引擎。完整体是 DynamoDB 存、Streams 做 CDC、OpenSearch 索引，AWS 有 zero-ETL 集成。</li>
+    <li>完整体的代价：最终一致（写入到可搜差几百毫秒到几秒）、同步链路要运维（断了、失败、重建索引）、两份 schema 要同步演进。量没到之前这些都是净成本。</li>
+    <li>关键词这一路 PostgreSQL 全文检索和 ES 的差距：ts_rank 只看词频和位置，BM25 有长度归一和逆文档频率；查询语法（minimum_should_match、短语、模糊、同义词）、原生混合检索、多语言分词 ES 都强。量小时差距靠 RRF 和向量路补得回来。</li>
+    <li>切换信号：写入到万级每秒或单表过亿、语料到十万段以上、要多语言分词、评测显示关键词一路的排序拖后腿。换的时候访问模式不变，两路取 top-k 再融合只是合成一条请求。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：一个 PostgreSQL 顶三件，历史、向量、全文同库，事务一致、零同步、一处 schema，本地 docker 一行起；表按 KV 的形状建（主键 session_id 加 created_at），迁 DynamoDB 不改访问模式。OpenSearch 的向量同样是客户端算好写进 knn_vector 字段，差别只在它默认建 HNSW 索引；它的 neural 插件可以服务端算，我们的 <code>embed</code> 函数不用动。</p>
+  </dd>
+  <dt>6.8 多轮和长上下文怎么评？</dt>
+  <dd>
+  <p><strong>通用做法</strong>：历史由样本直接给定，只评最后一句。不跑前几轮：省模型调用、不碰库，评的就是「给定这段历史，最后一句做对没有」。断言意图是否接上、结构化结果改得对不对、追问的工具和事实。</p>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li><code>maya-multiturn</code> 50 条，历史给在窗口里，覆盖换颜色、换品类、撤销条件、指代（the second one）、新请求从头来、意图切换、短追问、Account 追问。49/50。</li>
+    <li><code>maya-longcontext</code> 30 条，走真实链路（写临时会话、压缩、读上下文、跑图、删会话），早期一轮说了约束，后面六七轮无关对话把它挤出窗口。窗口 60 token 时只有窗口 9/30（早期说的排除项 0/8 带回），开摘要和召回 30/30；先用 150 跑时早期轮次根本没掉出窗口，对比无效，先确认实验条件触发了要测的机制。</li>
+  </ul>
+  </dd>
+</dl>
+</div>
+
+<h2 id="t7">7 RAG</h2>
+<div class="callout">
+<div class="tag">原则（出处见末尾）</div>
+<ol>
+  <li><strong>召回要宽，排序要准。</strong>便宜的检索先把范围缩到几十条，贵的模型只在候选里判断。[Huyen, Anthropic]</li>
+  <li><strong>向量和关键词各补盲区。</strong>语义靠向量，专名、数字、否定靠关键词，融合后再排。[Anthropic Contextual Retrieval]</li>
+  <li><strong>只按检索到的内容作答，答不了就拒答。</strong>出处可追溯，知识库外的问题不用常识补。[OpenAI, RAGAS]</li>
+  <li><strong>检索和生成分开评。</strong>答错了要分得清是没找到还是找到了没用对。[RAGAS, Hamel]</li>
+</ol>
+<p class="muted">出处：<a href="https://www.anthropic.com/news/contextual-retrieval">Anthropic · Contextual Retrieval</a>；<a href="https://github.com/chiphuyen/aie-book">Chip Huyen · AI Engineering 第六章</a>；<a href="https://docs.ragas.io/en/stable/concepts/metrics/">RAGAS · Metrics</a>；<a href="https://hamel.dev/blog/posts/evals/">Hamel Husain · Your AI Product Needs Evals</a></p>
+</div>
+<div class="qa">
+<dl>
+  <dt>7.1 RAG 由哪几段组成？</dt>
+  <dd>
+  <p><strong>通用做法</strong>：离线建库，在线检索加生成，按数据流向从左到右。</p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>段</th><th>管什么</th><th>常见做法</th><th>Maya</th></tr>
+  <tr><td>切块</td><td>文档切成可检索的单元</td><td>按结构切，过长再按 token 二分，块带元数据</td><td>一条 FAQ 一块</td></tr>
+  <tr><td>索引</td><td>每块存成可检索的形式</td><td>向量索引加倒排索引</td><td>pgvector 加 tsvector，同一张表</td></tr>
+  <tr><td>检索（粗排）</td><td>从全库捞候选</td><td>向量和关键词两路，RRF 融合</td><td>两路各 20 条，融合取 10</td></tr>
+  <tr><td>重排（精排）</td><td>候选里挑真正相关的</td><td>cross-encoder 或 LLM</td><td>LLM 一次排 10 条，取前 5</td></tr>
+  <tr><td>生成</td><td>按段落作答</td><td>只用段落、带出处、答不了拒答</td><td>结构化输出 reply 加 sources</td></tr>
+  <tr><td>评测</td><td>每段单独评</td><td>检索 hit@k、MRR；生成看事实、出处、拒答、忠实度</td><td>检索和回答两个数据集</td></tr>
+  </table></div>
+  </dd>
+  <dt>7.2 怎么切块？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>先按结构切（标题、问答对、段落），一块讲一件事；太长才按 token 切，常见 200 到 800，带 10% 到 20% 重叠。</li>
+    <li>块太小语义不完整，太大一块混几件事、向量被平均；固定长度硬切会把一个答案劈成两半。</li>
+    <li>块带元数据（编号、分类、来源、更新时间），用于过滤、出处和增量更新。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：FAQ 天然是问答对，一条一块，按编号 upsert。</p>
+  </dd>
+  <dt>7.3 embedding 当黑盒用，要知道什么？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>文本映射成固定长度向量，语义越近余弦越大。擅长同义改写，不擅长专名、数字、否定，所以要配关键词。</li>
+    <li>选模型看 MTEB 效果、维度（越大越准越贵）、上下文长度、语言。</li>
+    <li>纪律：索引和查询同一个模型，换模型全量重建；算一次存一次；失败降级到关键词一路。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：text-embedding-3-small，写入和查询共用一个句柄。</p>
+  </dd>
+  <dt>7.4 关键词一路怎么匹配？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>默认 OR：问题里出现任一个词就算候选，BM25 排序。BM25 有 idf，到处都有的词（find、work）权重低，罕见词（wool、allergic）权重高，所以 OR 不会被泛词带偏。</li>
+    <li>要收紧用 <code>minimum_should_match</code>（如四个词至少命中三个），纯 AND 只用在必须精确匹配的字段上，比如品牌名。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：FAQ 用 OR，36 个问法只用关键词时 AND 找对 13 个、OR 找对 27 个。历史召回用 AND（PostgreSQL 的 ts_rank 没有 idf，短文本加 OR 会让泛词结果挤掉相关的那轮，用更严的匹配补；迁到 OpenSearch 后改回 OR）。</p>
+  </dd>
+  <dt>7.5 为什么要 rerank？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>检索是粗排，只看像不像，看不出段落有没有回答问题；重排让读过原文的模型判断。粗排多取（要 k 条取 2k 以上），精排只在候选里排。</li>
+    <li>两种重排器：cross-encoder（bge-reranker、Cohere Rerank）快且便宜；LLM 重排更准，多一次调用。</li>
+    <li>重排只改顺序不改集合，失败退回粗排顺序。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：LLM 重排，混合检索取 10 条、排完取前 5。150 条问法前 3 命中：单路向量 134/150，混合 129/150，加 rerank 147/150。口语问法和 FAQ 原文关键词重合少，关键词一路把融合排序拉偏，重排拉回来；没过的 3 条是候选 10 条里就没有，问题在召回。</p>
+  </dd>
+  <dt>7.6 怎么防幻觉、怎么查忠实度？</dt>
+  <dd>
+  <p><strong>通用做法</strong>：忠实度（faithfulness / groundedness）指回答每句话都能在给定段落里找到依据。三道防线：</p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>防线</th><th>手段</th></tr>
+  <tr><td>生成前：约束</td><td>段落放 user 不放 system；prompt 规定只按段落答、答不了就拒答；要求报出处</td></tr>
+  <tr><td>生成时：guardrail</td><td>代码规则（出处编号必须在给定段落里）；高风险场景再加模型检查，判不忠实就重写或拒答</td></tr>
+  <tr><td>生成后：评测</td><td>离线跑评测集，线上抽样 trace；指标是事实子串和 faithfulness</td></tr>
+  </table></div>
+  <ul>
+    <li>出处只证明找对了段落，不证明照着说了，忠实度要靠模型判。</li>
+    <li>faithfulness 的标准做法（RAGAS）：先把回答拆成原子陈述，再逐条判断能否从段落推出，得分是有依据的比例。便宜的替代是 NLI 小模型。judge 要先拿人工标注校准。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：结构化输出带 sources，代码只保留真的给过模型的编号；评测查事实子串、出处、知识库外拒答，60 条（15 条该拒答）56/60。</p>
+  </dd>
+  <dt>7.7 RAG 怎么评？</dt>
+  <dd>
+  <p><strong>通用做法</strong>：分层评，答错了才知道错在哪一段。</p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>层</th><th>指标</th></tr>
+  <tr><td>检索：正确段落进没进前 k</td><td>hit@k、MRR</td></tr>
+  <tr><td>引用：依据的是不是对的段落</td><td>期望出处覆盖率</td></tr>
+  <tr><td>答案：说得对不对、有没有编</td><td>事实子串、faithfulness（见 7.6）</td></tr>
+  <tr><td>拒答：知识库外有没有硬答</td><td>拒答率</td></tr>
+  </table></div>
+  <p><strong>Maya 里</strong>：检索和回答两个数据集。检索层不调对话模型，适合大量问法做对比实验。</p>
+  </dd>
+  <dt>7.8 检索由代码调还是模型调？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>普通 RAG：每问都检索，代码调，不会该查不查。</li>
+    <li>agentic RAG：检索做成工具，模型决定查不查、查几次、换词再查；适合多跳问题，多一趟往返。</li>
+    <li>中间态是 query rewrite：检索前用历史把省略句改写完整。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：FAQ 一问一查，代码调（判断标准见 <a href="#t3">3.1</a>）。</p>
+  </dd>
+  <dt>7.9 用托管、pgvector 还是搜索引擎？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>托管（OpenAI FileSearch、Bedrock 知识库）：切块、召回、排序都在对方，快但不可调不可评。</li>
+    <li>pgvector：和业务数据同库，全链路可控，适合十万段以内。</li>
+    <li>OpenSearch / ES：BM25、混合检索、分词器原生，适合语料大、多语言，多一套组件和同步链路。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：pgvector，和历史同库（切换信号见 <a href="#t6">6.7</a>）。</p>
+  </dd>
+</dl>
+</div>
+
+<h2 id="t8">8 评测与可观测</h2>
+<div class="callout">
+<div class="tag">原则（出处见末尾）</div>
+<ol>
+  <li><strong>评测驱动开发，尽早开始。</strong>20 到 50 条源自真实失败的样本就能起步；没有评测集的 prompt 调优是凭感觉。[Anthropic, OpenAI]</li>
+  <li><strong>条数由覆盖决定。</strong>每个重要流程和已知失败都要有样本，回归集通常长到 100 条以上；样本越少，能分辨的差距越大。[Hamel, Anthropic]</li>
+  <li><strong>评结果不评路径。</strong>不把 agent 的步骤顺序钉死，否则惩罚合理但不同的解法。[Anthropic]</li>
+</ol>
+<p class="muted">出处：<a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents">Anthropic · Demystifying evals for AI agents</a>；<a href="https://developers.openai.com/api/docs/guides/evaluation-best-practices">OpenAI · Evaluation best practices</a>；<a href="https://hamel.dev/blog/posts/evals/">Hamel Husain · Your AI Product Needs Evals</a>；<a href="https://hamel.dev/blog/posts/evals-faq/how-many-examples-do-i-need-for-an-eval.html">Hamel Husain · How many examples do I need for an eval?</a>；<a href="https://arxiv.org/abs/2411.00640">Anthropic · Adding Error Bars to Evals</a>；<a href="https://docs.langchain.com/langsmith/evaluation-concepts">LangSmith · Evaluation concepts</a></p>
+</div>
+<div class="qa">
+<dl>
+  <dt>8.1 评测分几层？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>层</th><th>评什么</th><th>特点</th></tr>
+  <tr><td>单元级</td><td>一次模型调用的结构化输出：分类、字段抽取、工具选择</td><td>快、便宜，错了能定位到哪个 prompt</td></tr>
+  <tr><td>链路级</td><td>一段多步流程：检索加作答、带历史的多轮</td><td>能看到步骤之间的配合</td></tr>
+  <tr><td>端到端</td><td>整轮从入口到出口，以用户看到的结果为准</td><td>慢、贵，能抓到各层接缝的问题</td></tr>
+  </table></div>
+  <ul>
+    <li>只有单元级会漏接线错误，只有端到端定位不到原因。</li>
+    <li>被评的部分用线上同一个函数；它依赖的外部系统看评什么：评模型的决定就换假数据隔离，评结果质量就打真实系统。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：每个能力一个数据集：</p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>层</th><th>数据集</th></tr>
+  <tr><td>单元级</td><td>主 agent 分派（调哪些子 agent）；Fashion 条件、Fashion 行为（单品还是整套、查不查天气、0 件放宽）；Account 工具与事实、Account 写操作（确认、执行次数、不谎报）；FAQ 检索、FAQ 回答</td></tr>
+  <tr><td>链路级</td><td>多轮（给定历史评最后一句）、长上下文（真实写库、压缩、召回）</td></tr>
+  <tr><td>端到端</td><td>直接打 FastAPI app，拆 SSE 帧看终态和帧序列</td></tr>
+  </table></div>
+  </dd>
+  <dt>8.2 样本从哪来、怎么维护？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>起步手写，正负都要：该做的和不该做的都测，只测「该搜」会把模型推向什么都搜。边界句单独分组，它们才是迭代的抓手。</li>
+    <li>上线后从 trace 捞：用户点踩、输出被 schema 拒、人工抽检发现的，进标注队列变成样本。</li>
+    <li>防过拟合：评测句不原样进 prompt 当示例。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：手写起步，每个数据集带反例（该澄清不该搜、知识库外该拒答、不该调工具）和 hard 分组。样本真源在 LangSmith 数据集，git 里的 jsonl 只用来在新环境重建。</p>
+  </dd>
+  <dt>8.3 样本要多少条，怎么扩、怎么保证质量？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>多少条：起步 20 到 50 条；回归集按覆盖长到 100 条以上。条数少只能看出大退步：15 条错 1 条就差 6.7 分，要分辨 3 个点的差距大约要上千条，所以每次改动多跑几遍，并和改动前的代码对照。</li>
+    <li>怎么扩：先列覆盖维度（每个意图、每条知识、每个工具、每种失败），再按变体写：同义改写、口语短句、和原文没有关键词重合的场景描述、多条件组合、边界歧义；正反例都要，难样本单独分组，约占两成。上线后以真实 trace 和用户反馈为主。</li>
+    <li>保证质量：标签要有依据（词表、假数据、知识原文、prompt 里的定义）；自动检查查重、取值合法、分布；跑完逐条看没过的，先判标签错还是系统错，标签错改标签，系统错保留。</li>
+  </ul>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li>10 个数据集从 203 条扩到 760 条：Router、FAQ 检索各 150，Fashion 条件 100，Account 80，FAQ 回答 60，Fashion 行为、终态、多轮各 50，Account 写操作 40，长上下文 30。</li>
+    <li>维度举例：37 条 FAQ 每条至少 3 种问法；Router 三类意图各 50，重点补「问政策」和「查自己的账户」的边界（how long can I pause for 是 faq，pause my subscription 是 account）。</li>
+    <li>标签自动校验：Fashion 条件对照 <code>vocab.py</code> 词表，Account 的事实对照假数据，FAQ 的事实对照 <code>faq.md</code> 原文。</li>
+    <li>失败反查：改了 4 条过严的标签（比如要求答出假数据里没有的扣费金额）；剩下 14 条都是系统错，保留，比如召回没捞到、排除条件写成了偏好、知识库外说完不知道又补引用。总体 746/760。</li>
+  </ul>
+  </dd>
+  <dt>8.4 评测器怎么判？</dt>
+  <dd>
+  <p><strong>通用做法</strong>：按「这个字段错了后果多大」选比法，同一条输出不同字段可以不同比法。</p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>比法</th><th>什么时候用</th></tr>
+  <tr><td>精确相等</td><td>多一点少一点都算错，如硬过滤条件</td></tr>
+  <tr><td>覆盖</td><td>漏了算错、多了不算，如软偏好、必须调的工具、必须出现的事实</td></tr>
+  <tr><td>形状</td><td>端到端只看终态和序列，不看措辞</td></tr>
+  <tr><td>模型判（LLM judge）</td><td>代码判不了的语气、是否答到点上、两版哪个好；用成对比较或通过与否，先理由后结论，先和人工标注校准</td></tr>
+  </table></div>
+  <p><strong>Maya 里</strong>：全部代码评测器，可复现、零成本。例：Fashion 的 must 精确相等（多放一个 Color 结果就只剩那个颜色），should 只查覆盖；单品还是整套、该不该查天气用假数据单独评。</p>
+  </dd>
+  <dt>8.5 怎么用评测驱动迭代？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>样本固定，两次实验跑同一批才可比；每次实验标记改了什么，才能归因。</li>
+    <li>单次分数不可信：模型是概率性的，多跑几次看 pass^k，0% 通过多半是样本或评测器有 bug。</li>
+    <li>对比实验先确认实验条件真的触发了要测的机制，否则对比无效。</li>
+  </ul>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li>实验名用前缀标改动；对比实验靠环境变量切模式（检索单路与混合、窗口预算、开关摘要和召回），不改代码。</li>
+    <li>长上下文的对比把窗口压到 60 token，早期轮次才真正掉出窗口：只有窗口 9/30，开摘要和召回 30/30。</li>
+    <li>改完同一评测跑多遍，再用改动前的代码跑一遍对照；对照也挂的样本算波动，不归因于改动。</li>
+  </ul>
+  </dd>
+  <dt>8.6 trace 记什么？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>每一步的输入输出、模型和参数、token 用量、延迟、工具调用和返回、错误；按一轮串成一棵树，能从用户投诉一路下钻到哪次调用。</li>
+    <li>敏感数据脱敏或只记哈希，按比例采样，设留存期。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：LangSmith 自动 trace，配了 key 就开；每个节点、子图、模型调用、工具调用都是 trace 里的一个节点。FAQ 额外打一行检索命中和模型引用的编号，两者的差就是检索噪音。</p>
+  </dd>
+  <dt>8.7 评测怎么进流程？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>阶段</th><th>做法</th></tr>
+  <tr><td>本地</td><td>改完跑，看分数和没过的样本</td></tr>
+  <tr><td>CI 门禁</td><td>改 prompt、换模型、改路由的 PR 自动跑，低于阈值不合并</td></tr>
+  <tr><td>线上</td><td>抽样 trace 跑评测器，看指标随时间漂移</td></tr>
+  </table></div>
+  <p><strong>Maya 里</strong>：本地每个数据集一个脚本；CI 门禁按 <a href="maya-llm-agent-review.html#s2-2-4">2.2.4</a> 接入。</p>
+  </dd>
+</dl>
+</div>
+
+<h2 id="t9">9 可靠性与安全</h2>
+<p class="muted">出处：<a href="https://www.anthropic.com/engineering/building-effective-agents">Anthropic · Building effective agents</a>；<a href="https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf">OpenAI · A practical guide to building agents</a>（Guardrails）；<a href="https://model-spec.openai.com/">OpenAI · Model Spec</a>；<a href="https://docs.langchain.com/oss/python/langgraph/graph-api">LangGraph · Graph API</a>；<a href="https://github.com/humanlayer/12-factor-agents">12-factor agents</a></p>
+<div class="qa">
+<dl>
+  <dt>9.1 guardrail 分几层？</dt>
+  <dd>
+  <p><strong>通用做法</strong>：按一轮请求的流向，三道护栏叠在鉴权之上。</p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>层</th><th>拦什么</th><th>常见手段</th></tr>
+  <tr><td>输入</td><td>越界话题、注入、敏感信息</td><td>相关性分类器、注入检测、PII 脱敏、moderation API</td></tr>
+  <tr><td>输出</td><td>格式错、编造、不当内容</td><td>结构化输出、规则校验、忠实度检查（见 <a href="#t7">7.6</a>）</td></tr>
+  <tr><td>工具</td><td>越权、误操作</td><td>最小权限、身份参数不给模型、按风险分级，高危操作要人确认（见 <a href="#t5">5.4</a>）</td></tr>
+  </table></div>
+  <ul>
+    <li>便宜的规则放前面，模型检查只用在规则判不了的地方；guardrail 和主调用可以并行，命中再中断。</li>
+  </ul>
+  <p><strong>Maya 里</strong></p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>层</th><th>做法</th></tr>
+  <tr><td>鉴权</td><td>user_id 由 cookie 换取、代码注入工具，模型看不到也编不了；未登录直接引导登录</td></tr>
+  <tr><td>输入</td><td>主 agent 只能调三个子 agent；越界问题交给 FAQ，按检索段落作答，没有就说不知道</td></tr>
+  <tr><td>输出</td><td>全部结构化，校验不过退回模型改；词表外的标签、没给过模型的出处编号由代码丢弃；Account 只报工具返回的事实</td></tr>
+  <tr><td>工具</td><td>读写分开；写操作前人确认，恢复时校验本人和状态；结果不确定时读回状态（见 <a href="#t5">5.4</a>）</td></tr>
+  <tr><td>循环</td><td>轮数上限，用完强制作答或回固定文案（见 <a href="#t5">5.3</a>）</td></tr>
+  </table></div>
+  </dd>
+  <dt>9.2 prompt 注入怎么防？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>直接注入来自用户输入，间接注入藏在工具结果、检索段落、网页里，后者更危险，因为用户看不到。</li>
+    <li>没有一招防住，靠叠加：指令只放 system，外部内容放 user 或 tool，没有指令效力；工具最小权限、读写分开、高危要人确认；输出按 schema 校验；输入层加注入检测分类器。</li>
+    <li>评测集里放注入样本，看模型会不会照做。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：检索段落和用户问题放同一条 user，工具结果是 tool 消息，system 只放规则；user_id 由代码注入，被诱导也只能动当前用户自己的数据；写操作必须用户点确认（见 <a href="#t5">5.4</a>）。</p>
+  </dd>
+  <dt>9.3 幻觉怎么防？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>缩小判断面：枚举、schema、词表，模型只选不编。</li>
+    <li>事实只从工具和检索来，说不上来允许「不知道」。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：Account 只报工具返回的事实，core 不可用时如实说查不到，写操作结果不确定时读回状态再说；FAQ 见 <a href="#t7">7.6</a>。</p>
+  </dd>
+  <dt>9.4 依赖挂了怎么办？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>区分核心依赖和增强依赖：核心挂了明确报错，增强挂了降级继续。</li>
+    <li>每个外部调用设超时；单次工具失败怎么处理见 <a href="#t3">3.3</a>。</li>
+    <li>流式响应中途出错发 error 事件再正常收尾，不直接断连。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：只有模型是核心依赖，其余都降级。</p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>依赖</th><th>挂了怎么办</th></tr>
+  <tr><td>模型</td><td>图内异常变 error 帧，流不断</td></tr>
+  <tr><td>历史库</td><td>当没有历史，最多等 2 秒</td></tr>
+  <tr><td>摘要</td><td>这轮不压，下一轮再试</td></tr>
+  <tr><td>embedding</td><td>召回和检索只走关键词一路</td></tr>
+  <tr><td>rerank</td><td>用粗排顺序</td></tr>
+  <tr><td>core</td><td>返回 None：计数当「不知道」照常下发按钮，账户如实说查不到</td></tr>
+  <tr><td>天气</td><td>不用天气，照常检索</td></tr>
+  </table></div>
+  </dd>
+</dl>
+</div>
+
+<h2 id="t10">10 服务底座与生产工程</h2>
+<div class="callout">
+<div class="tag">原则（出处见末尾）</div>
+<ol>
+  <li><strong>并发解决 IO 等待，并行解决 CPU。</strong>LLM 应用大部分时间在等模型和网络，异步合适；CPU 密集靠多进程。[FastAPI]</li>
+  <li><strong>事件循环上不跑阻塞代码。</strong>一段 1 秒的同步调用让所有连接一起卡 1 秒；阻塞的交给线程池。[Python]</li>
+  <li><strong>流式要端到端不攒：</strong>服务端每帧即发，代理不缓冲，长等待发心跳。[MDN, nginx]</li>
+  <li><strong>一轮是契约单位。</strong>一轮的所有事件共用一个消息 id，开始、进度、正文、错误、结束都挂在它上面。</li>
+  <li><strong>成本按 token 算，不按请求算。</strong>先省掉不必要的调用，再谈换小模型。[Huyen]</li>
+</ol>
+<p class="muted">出处：<a href="https://docs.python.org/3/library/asyncio-dev.html">Python · Developing with asyncio</a>；<a href="https://fastapi.tiangolo.com/async/">FastAPI · Concurrency and async / await</a>；<a href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events">MDN · Using server-sent events</a>；<a href="https://nginx.org/en/docs/http/ngx_http_proxy_module.html">nginx · ngx_http_proxy_module</a>；<a href="https://github.com/chiphuyen/aie-book">Chip Huyen · AI Engineering 第九、十章</a></p>
+</div>
+<div class="qa">
+<dl>
+  <dt>10.1 Python Web 栈怎么选？</dt>
+  <dd>
+  <p><strong>通用做法</strong>：协议、框架、服务器三层，同步一套、异步一套。</p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th></th><th>同步</th><th>异步</th></tr>
+  <tr><td>协议</td><td>WSGI：<code>app(environ, start_response)</code>，一次调用一个请求，返回即结束</td><td>ASGI：<code>async app(scope, receive, send)</code>，一个连接可多次收发，期间能让出控制权</td></tr>
+  <tr><td>框架</td><td>Flask：一个请求占一个线程，SSE 连接占死线程</td><td>FastAPI：一个事件循环挂几千连接，pydantic 自动校验</td></tr>
+  <tr><td>服务器</td><td>gunicorn：fork 多进程兼进程管理</td><td>uvicorn：多进程用 <code>--workers</code>，或交给容器编排</td></tr>
+  <tr><td>适合</td><td>简单 CRUD</td><td>长等待、流式推送、高并发 IO</td></tr>
+  </table></div>
+  <p><strong>Maya 里</strong>：FastAPI 加 uvicorn，一个容器一个进程，进程守护和扩容交给 ECS Fargate。请求校验和模型的结构化输出用同一套 pydantic，类型从入口贯通到图内。</p>
+  </dd>
+  <dt>10.2 进程、线程、协程，并发靠哪个？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <div class="tbl"><table class="fc-nowrap">
+  <tr><th>层</th><th>解决什么</th><th>代价</th></tr>
+  <tr><td>进程</td><td>用多核（GIL 让一个进程同时只有一个线程跑字节码）</td><td>内存按份复制，不共享状态</td></tr>
+  <tr><td>线程</td><td>把同步阻塞代码挪出事件循环</td><td>受 GIL 约束不能并行算</td></tr>
+  <tr><td>协程</td><td>IO 等待时切换，一个线程挂成千个连接</td><td>只对 IO 有效，一次同步阻塞让全部连接一起卡</td></tr>
+  </table></div>
+  <ul>
+    <li>协程只在 <code>await</code> 处切换，两个 await 之间不会被打断，大多不用锁。</li>
+    <li>最常见的线上事故：在 <code>async def</code> 里调了同步 IO（requests、同步数据库驱动）。修法是换异步客户端，或 <code>asyncio.to_thread</code>。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：所有 IO 一律异步：httpx 异步客户端、psycopg 异步连接池、节点全是 <code>async def</code>、模型走 <code>ainvoke</code>。</p>
+  </dd>
+  <dt>10.3 LLM 流式输出怎么实现？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>三层接力：模型 SDK 返回 async iterator；服务端 async generator 把每块包成 SSE 事件 yield 出去；<code>StreamingResponse</code> 边产边发。</li>
+    <li><code>await</code> 向内等上游给下一块，<code>yield</code> 向外交给下游，两头都不攒。</li>
+    <li>必须是 async generator：普通 generator 里不能 await，普通 async 函数只能 return 一次。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：图用 <code>astream</code> 同时听两路：custom 是节点写的进度，原样交出；values 只留最后一份 state，包成结束事件。api 层把事件逐个映射成 SSE 帧，不碰 LangGraph 的接口。</p>
+  </dd>
+  <dt>10.4 为什么用 SSE 不用 WebSocket？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>SSE 是普通 HTTP 长响应，单向，CDN、网关、鉴权中间件原样通过，浏览器原生重连。WebSocket 双向，要网关支持协议升级，重连自己做。</li>
+    <li>对话是「用户发一句，服务端推一段」，单向够用；要双向实时（语音、打断生成）才上 WebSocket。</li>
+    <li>原生 EventSource 只能 GET；要 POST 带 body 就用 fetch 读流，重连自己做。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：SSE，POST 带 JSON body，前端用 fetch 读流。</p>
+  </dd>
+  <dt>10.5 多步 agent 的中间状态要不要推给前端？</dt>
+  <dd>
+  <p><strong>通用做法</strong>：要。路由、调工具、检索、生成每步几秒，用户盯着空白会以为挂了。用独立的进度事件，和正文事件分开，前端按类型渲染，不进消息历史。</p>
+  <p><strong>Maya 里</strong>：每个耗时步骤前发一帧 processing，文案统一一句 Thinking；子图里的进度也能穿到主图（<code>subgraphs=True</code>）。</p>
+  </dd>
+  <dt>10.6 反向代理后面流式不生效或被掐断，怎么排查？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>一次性返回：代理默认缓冲上游响应（nginx <code>proxy_buffering on</code>）。代理侧关缓冲，或响应头 <code>X-Accel-Buffering: no</code>；再确认 gzip 没对 <code>text/event-stream</code> 生效，压缩也会攒块。</li>
+    <li>一分钟左右断开：nginx <code>proxy_read_timeout</code> 默认 60 秒，算的是两次读之间的间隔。调长超时，或定期发心跳（冒号开头的注释行，或进度事件）。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：响应头带 <code>X-Accel-Buffering: no</code> 和 <code>Cache-Control: no-cache</code>，每步发进度帧。</p>
+  </dd>
+  <dt>10.7 用户中途关页面、模型中途报错，怎么办？</dt>
+  <dd>
+  <p><strong>通用做法</strong></p>
+  <ul>
+    <li>generator 由消费方推动：客户端断开后服务器停止迭代，generator 停在上一个 yield，后面的代码不再执行。落库、埋点不能写在最后一帧之后，要放 finally 或后台任务；上游模型调用要跟着取消，否则照样计费。</li>
+    <li>中途报错不直接断连：发一个 error 事件再正常收尾。一轮的事件共用同一个消息 id，前端据此决定保留半段还是回滚。</li>
+  </ul>
+  <p><strong>Maya 里</strong>：图内异常变 error 帧，end 帧照发，流不断；落库在图跑完之后，没跑完的轮次不存，历史里只有完整的轮。</p>
+  </dd>
+  <dt>10.8 成本和延迟怎么控？</dt>
+  <dd>
+  <p><strong>通用做法</strong>：按收益从大到小。</p>
+  <ul>
+    <li>省掉不必要的调用：路径固定的用代码不用模型，能跳过的步骤跳过。</li>
+    <li>控输入 token：窗口按 token 预算截，旧内容压摘要，只检索需要的段落。</li>
+    <li>吃缓存：稳定内容放前缀，命中 prompt caching 读价约一折。</li>
+    <li>按任务选模型：路由、分类、重排这类简单判断用小模型，生成用大模型；常见请求走缓存。</li>
+    <li>压感知延迟：流式和进度事件让首字节尽早到；独立的调用并行。</li>
+  </ul>
+  <p><strong>Maya 里</strong></p>
+  <ul>
+    <li>省调用：Fashion 计数和 FAQ 检索由代码调，不多一趟模型往返；会话还没说过话时跳过召回；rerank 只用在 FAQ。</li>
+    <li>控 token：窗口 4000 token 预算，摘要攒够 1000 token 才压一次。</li>
+    <li>吃缓存：system 只放固定的规则和词表，做缓存前缀。</li>
+  </ul>
+  </dd>
+</dl>
+</div>
+
+<h2 id="t11">附 多模态输入</h2>
+<ul>
+  <li><strong>按任务选模型</strong>：对话和主 agent 用 gpt-5.6-terra；看图给意见用便宜的 gpt-5.6-luna（<code>detail: low</code>）；多物件检测用 Gemini 2.5 flash，定位框更准；召回不用大模型，用时尚领域的 CLIP 图像向量做 kNN。</li>
+  <li><strong>意图分叉交给 agent</strong>：问「好不好看、怎么搭」调看图工具；要找同款直接调检测工具，不先看一遍图，省一次调用。</li>
+  <li><strong>图片和坐标不进对话上下文</strong>：只有识图模型看图，它出的检测框缓存在代码侧；对话模型只看到编号列表 <code>{idx, categoryCode, description}</code>，挑出要保留的编号，最终结果由代码按编号重建。省 token，对话模型也改不了坐标。</li>
+  <li><strong>两段式，选件是终态不是 interrupt</strong>：对话里检测出物件、在图上画出可点的框，本轮结束；用户点框后由前端裁剪，经 core 调召回接口，不再回到 agent。</li>
+</ul>
+
+</main>
+
+</div>
+<script>
+(function(){
+  // TOC scrollspy
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var map = {};
+  links.forEach(function(a){ var id = a.getAttribute('href').slice(1); var el = document.getElementById(id); if (el) map[id] = a; });
+  var targets = Object.keys(map).map(function(id){ return document.getElementById(id); });
+  function setActive(id){ links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + id); }); }
+  if ('IntersectionObserver' in window) {
+    var visible = {};
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ visible[e.target.id] = e.isIntersecting; });
+      for (var i = 0; i < targets.length; i++) { if (visible[targets[i].id]) { setActive(targets[i].id); return; } }
+    }, { rootMargin: '-10% 0px -70% 0px', threshold: 0 });
+    targets.forEach(function(t){ io.observe(t); });
+  }
+})();
+</script>
+
+<script>
+(function(){
+  var btn=document.querySelector('.toc-toggle'),bd=document.querySelector('.toc-backdrop');
+  function set(open){document.body.classList.toggle('toc-open',open);btn.setAttribute('aria-expanded',open?'true':'false');}
+  btn.addEventListener('click',function(){set(!document.body.classList.contains('toc-open'));});
+  bd.addEventListener('click',function(){set(false);});
+  document.querySelectorAll('.toc a').forEach(function(a){a.addEventListener('click',function(){set(false);});});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')set(false);});
+})();
+</script>
+</body>
+</html>
+

@@ -1,6 +1,6 @@
 # 多邻国 Duolingo — 高级后端开发（Monetization Pillar）
 
-来源：BOSS 直聘，北京·朝阳区·朝外，5-10 年，本科，联系人 林女士（Duolingo · Sourcer）。抓取日期 2026-09-20。
+来源：BOSS 直聘，北京·朝阳区·朝外，5-10 年，本科，60-85K，联系人 林女士（Duolingo · Sourcer）。正文抓取于 2026-09-20；2026-11-01 复核职位仍在、薪资已更新，正文未重抓。
 标签：Java / 分布式经验 / Docker / SpringCloud / MySQL / monetization / kotlin / Redis / 搜索/推荐/广告经验 / Python
 
 The Monetization Pillar focuses on Duolingo's key business drivers—subscriptions, ads, and in-app purchases. Our goal is to build the best premium experiences for our learners while ensuring the sustainability and success of our business model. As a senior backend Engineer, you will play an instrumental role in the strategic direction of Duolingo by developing and refining the methods that make our monetization efforts more effective and efficient. You'll work cross functionally with product, design, data science, machine learning, and ad operations.

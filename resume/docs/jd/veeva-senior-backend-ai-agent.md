@@ -1,6 +1,6 @@
 # Veeva — 资深后端开发工程师（SaaS 平台 + LLM Agent，Python）
 
-来源：BOSS 直聘，北京·朝阳区·亮马桥，5-10 年，本科，联系人 李维娇（Veeva · 开发经理）。抓取日期 2026-09-20。
+来源：官网 https://jobs.lever.co/veeva/9f186a91-90ba-4e38-b303-94bc392647e3 （Senior Engineer - Back End，China - Beijing，Engineering - APAC，内容与 BOSS 版一致）；BOSS 直聘，北京·朝阳区·亮马桥，5-10 年，本科，45-65K，联系人 李维娇（Veeva · 开发经理）。正文抓取于 2026-09-20；2026-11-01 复核职位仍在、薪资已更新，正文未重抓。
 标签：Golang / Java / Django / MySQL / 架构设计经验 / AI应用开发 / Python
 公司：纽交所上市，全球生命科学 SaaS，世界前 50 强制药企业 49 家为客户。
 
@@ -28,4 +28,3 @@
 - 熟悉 web 开发的相关技术和框架，如 Django/Flask/Spring 等
 - 对技术有持续热情，个性乐观开朗，逻辑性强，善于和各种背景的人合作
 
-同公司相关岗位：AI Agent 资深开发工程师（见 veeva-ai-agent-senior-engineer.md）、首席软件工程师（AI 应用方向）、高级后端开发工程师（Python）。

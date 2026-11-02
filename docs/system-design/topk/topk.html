@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Top-K YouTube Views</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F5F7FA; --surface:#FFFFFF; --surface-2:#EEF2F6;
+  --text:#1B2430; --muted:#5B6673; --border:#D8DEE6; --border-strong:#B9C2CE;
+  --accent:#0F6E7A; --accent-soft:#DCEFF1; --amber:#A8691A; --amber-soft:#F7ECD9;
+  --code-bg:#F0F3F7; --code-text:#1E2A36;
+  --shadow: 0 1px 2px rgba(20,30,40,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12161C; --surface:#1A2029; --surface-2:#212934;
+    --text:#E6EAF0; --muted:#98A4B4; --border:#2B343F; --border-strong:#3B4652;
+    --accent:#5FBDC8; --accent-soft:#16333A; --amber:#DDA755; --amber-soft:#2E2618;
+    --code-bg:#161C24; --code-text:#DCE3EB;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12161C; --surface:#1A2029; --surface-2:#212934;
+  --text:#E6EAF0; --muted:#98A4B4; --border:#2B343F; --border-strong:#3B4652;
+  --accent:#5FBDC8; --accent-soft:#16333A; --amber:#DDA755; --amber-soft:#2E2618;
+  --code-bg:#161C24; --code-text:#DCE3EB;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  font-size:15px; line-height:1.8;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+h1,h2,h3,h4{font-family:"Noto Serif SC","Songti SC","STSong",Georgia,serif; text-wrap:balance; line-height:1.3; margin:0}
+h1{font-size:2.1rem; font-weight:700; letter-spacing:.01em}
+h2{font-size:1.5rem; font-weight:700; padding-top:.4rem}
+h3{font-size:1.12rem; font-weight:600; color:var(--text)}
+h4{font-family:"Noto Sans SC",system-ui,sans-serif; font-size:.95rem; font-weight:700; color:var(--muted); letter-spacing:.02em}
+p{margin:0}
+ul,ol{margin:0; padding-left:1.4em}
+li{margin:.15em 0}
+li::marker{color:var(--muted)}
+strong{font-weight:700}
+code,pre{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+code{font-size:.86em; background:var(--code-bg); color:var(--code-text); padding:.1em .4em; border-radius:4px}
+pre{
+  margin:0; background:var(--code-bg); color:var(--code-text);
+  border:1px solid var(--border); border-radius:6px;
+  padding:.9rem 1.1rem; font-size:.8rem; line-height:1.55;
+  overflow-x:auto; white-space:pre; tab-size:4;
+}
+pre code{background:none; padding:0; font-size:inherit}
+
+.eyebrow{font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:500}
+.page{max-width:1360px; margin:0 auto; padding:0 1.25rem 4rem}
+
+header.top{padding:2.6rem 0 1.8rem; border-bottom:1px solid var(--border)}
+header.top .lead{max-width:66ch; color:var(--muted); margin-top:.9rem; font-size:1rem}
+.threads{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin-top:1.6rem}
+.thread{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1rem 1.1rem; box-shadow:var(--shadow)}
+.thread .num{font-family:"JetBrains Mono",monospace; font-size:.75rem; color:var(--accent); letter-spacing:.08em}
+.thread h3{margin-top:.25rem; font-size:1.05rem}
+.thread p{margin-top:.5rem; font-size:.88rem; color:var(--muted); line-height:1.65}
+.thread a{display:inline-block; margin-top:.6rem; font-size:.85rem}
+
+.layout{display:grid; grid-template-columns:minmax(0,1fr); gap:2rem; margin-top:1.5rem}
+bodybody
+main{min-width:0}
+section.part{padding:2.2rem 0 1rem}
+section.part + section.part{border-top:1px solid var(--border)}
+.part-head{display:flex; align-items:baseline; gap:.9rem; margin-bottom:.4rem}
+.part-head .num{font-family:"JetBrains Mono",monospace; color:var(--accent); font-size:.85rem; letter-spacing:.08em}
+.mainline{
+  margin:.9rem 0 1.4rem; padding:.85rem 1.1rem; background:var(--accent-soft);
+  border-radius:6px; font-size:.92rem; line-height:1.7;
+}
+.mainline b{color:var(--accent)}
+.block{display:grid; gap:.8rem; margin-top:1.6rem}
+.block > h3{padding-bottom:.3rem; border-bottom:1px dashed var(--border)}
+.prose{max-width:none}
+.two{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem}
+
+.tbl{overflow-x:auto; border:1px solid var(--border); border-radius:6px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.86rem; line-height:1.55; min-width:560px}
+th,td{padding:.55rem .75rem; text-align:left; vertical-align:top; border-bottom:1px solid var(--border)}
+th{font-weight:700; color:var(--muted); font-size:.78rem; letter-spacing:.04em; background:var(--surface-2); white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:500; white-space:nowrap}
+table.wl td{white-space:normal; font-weight:400}
+td ul.pts{margin:0; padding-left:1.1em; white-space:normal}
+td ul.pts li{margin:.1em 0}
+table.wl td[rowspan]{font-weight:500}
+table.wl td[rowspan] b{display:block; font-size:1rem}
+.tbl.wide table{min-width:760px}
+.num-col{font-variant-numeric:tabular-nums}
+
+.aside{border:1px dashed var(--border-strong); border-radius:8px; padding:.8rem 1rem; background:var(--surface-2); color:var(--muted); font-size:.9rem; display:grid; gap:.5rem}
+.aside-title{font-weight:700; color:var(--text); font-size:.85rem; letter-spacing:.03em}
+.aside pre{margin:0}
+.aside-sub{font-weight:700; color:var(--text); font-size:.85rem; margin-top:.3rem}
+.aside ul{margin:0; padding-left:1.2em}
+.note{font-size:.88rem; color:var(--muted); padding-left:.9rem; border-left:2px solid var(--border-strong)}
+
+footer{margin-top:3rem; padding-top:1.2rem; border-top:1px solid var(--border); color:var(--muted); font-size:.8rem}
+.back{font-size:.8rem}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="top" id="top">
+  <h1>Top-K YouTube Views</h1>
+</header>
+
+<div class="layout">
+<main>
+
+<div class="aside" style="margin-top:1.6rem">
+  <div class="aside-title">题外话：通用法则（从这道题提炼）</div>
+  <div class="aside-sub">需求</div>
+  <ul>
+    <li>先问 scale 来找出难点；精确与否、窗口语义这类产品问题单独澄清，不要用"所以"串起来。</li>
+    <li>新鲜度 SLA 就是批处理的时间预算（1 分钟可见 → 分钟级聚合）。</li>
+  </ul>
+  <div class="aside-sub">写</div>
+  <ul>
+    <li>写多时先聚合再落库；聚合之后的负载由 key 的基数决定，和原始流量无关。</li>
+    <li>满足交换律和结合律的操作（加法、max、CMS）可以拆开算、在任意位置合并，这是加盐和分片的前提。</li>
+    <li>按 key 分区保持局部性，只对热 key 加盐。</li>
+  </ul>
+  <div class="aside-sub">读</div>
+  <ul>
+    <li>结果对所有人相同时，预计算 + 缓存，读路径不做计算；定时预计算优于 cache-aside（避免过期击穿）。</li>
+    <li>小、热、能接受短暂过期的数据放进程内缓存，定期刷新。</li>
+    <li>发布结果时写带版本号的 key 再切换指针；故障时返回旧值。</li>
+  </ul>
+  <div class="aside-sub">数据结构</div>
+  <ul>
+    <li>频繁变化的列不要建索引。</li>
+    <li>只关心头部就维护 top K；只增不减可以用堆，有减法要维护全量顺序或候选缓冲。</li>
+    <li>可分解的聚合可以分片算再合并；高基数 + 只关心 heavy hitter，用概率数据结构换内存。</li>
+  </ul>
+  <div class="aside-sub">正确性</div>
+  <ul>
+    <li>日志是事实来源，状态和 offset 一起快照，通过重放恢复。</li>
+    <li>非幂等的写入要配去重，或改成覆盖写；加减必须对称（减掉的正是当初加上的）。</li>
+  </ul>
+</div>
+
+<section class="part" id="fr">
+  <div class="part-head"><span class="num">1</span><h2>功能需求</h2></div>
+  <div class="block">
+    <h3>核心</h3>
+    <ul class="prose">
+      <li>查询 1h / 1d / 1month / all-time 的 top K 视频（K ≤ 1000）。</li>
+      <li>时间窗口一律从当前时刻往回看。</li>
+    </ul>
+  </div>
+  <div class="block">
+    <h3>范围外</h3>
+    <ul class="prose">
+      <li>任意历史区间（比如 10 月份时查去年 6 月的 top K）。</li>
+      <li>任意起止时间。</li>
+    </ul>
+  </div>
+  <div class="block">
+    <h3>窗口语义：tumbling（和面试官澄清后确定）</h3>
+    <ul class="prose">
+      <li><b>tumbling</b>：10:06 查 last hour，得到的是 9:00–10:00。</li>
+      <li><b>sliding</b>：10:06 查 last hour，得到的是 9:06–10:06。放到深入部分讨论。</li>
+      <li><b>窗口语义和"1 分钟可见"是两回事</b>：选 tumbling 的理由是它更简单，而且面试官接受；不是由新鲜度要求推出来的。</li>
+      <li><b>tumbling 下的新鲜度</b>：hour / day / month 的结果分别只在整点、0 点、月初变化一次，1 分钟可见实际上只约束 all-time 窗口。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="nfr">
+  <div class="part-head"><span class="num">2</span><h2>非功能需求与估算</h2></div>
+  <div class="block">
+    <h3>核心</h3>
+    <ul class="prose">
+      <li><b>新鲜度</b>：一次 view 在 1 分钟内被计入。</li>
+      <li><b>精确</b>：先给出精确方案，近似放到深入部分。</li>
+      <li><b>延迟</b>：读取在几十 ms 内（需要预计算 + 缓存）。</li>
+    </ul>
+  </div>
+  <div class="block">
+    <h3>估算</h3>
+    <ul class="prose">
+      <li><b>写入</b>：70B views/天 ÷ 100k 秒 ≈ <b>700k TPS</b>。</li>
+      <li><b>视频数</b>：每秒上传 1 小时内容 ÷ 6 分钟/个 × 100k 秒 ≈ 每天 1M 个，10 年约 <b>3.6B</b>。</li>
+      <li><b>全量计数</b>：4B × (8B id + 8B count) ≈ 64GB。单机内存放得下，但写入扛不住。</li>
+      <li><b>核心难点</b>：<b>高写入 + 高基数</b>下的全局排序。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="entities">
+  <div class="part-head"><span class="num">3</span><h2>核心实体与 API</h2></div>
+  <div class="block">
+    <ul class="prose">
+      <li><b>Video</b>、<b>View</b>、<b>Time Window</b>（hour / day / month / all-time）。</li>
+      <li><code>GET /views/top-k?window={WINDOW}&amp;k={K}</code> → <code>{ videoId, views }[]</code>。K 最大 1000，不需要分页。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="hld">
+  <div class="part-head"><span class="num">4</span><h2>高层设计</h2></div>
+  <div class="block">
+    <pre>View Service ──► Kafka(view-events，按 videoId 分区)
+  ──► Flink 预聚合（1min tumbling，按 videoId 求和）
+  ──► Aggregator ─┬─► DB 计数（view_hour / view_day / view_month / view_total，RETURNING 新计数）
+                  └─► 每个窗口一个 min-heap(K)
+  ──► 每分钟写入 Redis（top-k:{window}）──► Top-K Service ──► Client</pre>
+  </div>
+
+  <div class="block">
+    <h3>① 扛写入：Flink 分钟级预聚合</h3>
+    <ul class="prose">
+      <li>输出：每分钟每个被看过的视频一条记录 <code>(minute_ts, videoId, count)</code>。</li>
+      <li>700k TPS 降到"每分钟被看过的不同视频数"（热门视频压缩比高，长尾接近 1:1）。</li>
+      <li>窗口长度 + 允许乱序 ≤ 1 分钟（比如窗口 30s、乱序 20s），或者改用 processing time。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>② 写入 DB：表只负责计数</h3>
+    <ul class="prose">
+      <li>每个窗口一张表，<b>不在 views 上建索引</b>（每次更新都要维护索引，代价太大；排序交给内存中的堆）。</li>
+      <li>时间列 = 把 <code>minute_ts</code> 截断到这张表的粒度：10:37 的分钟计数累加到 view_hour 的 10:00 那一行。</li>
+      <li>时间列的作用：已经封口的上一个窗口和正在累加的当前窗口是两行，互不覆盖。</li>
+    </ul>
+    <div class="aside">
+      <div class="aside-title">表结构与写入</div>
+      <pre>CREATE TABLE view_hour (
+  hour_ts  TIMESTAMP,          -- date_trunc('hour', minute_ts)
+  video_id BIGINT,
+  views    BIGINT,
+  PRIMARY KEY (hour_ts, video_id)
+);
+-- view_day(day_ts, ...) / view_month(month_ts, ...) 结构相同；view_total 没有时间列
+
+INSERT INTO view_hour VALUES (date_trunc('hour', :minute_ts), :vid, :count)
+ON CONFLICT (hour_ts, video_id)
+DO UPDATE SET views = view_hour.views + EXCLUDED.views
+RETURNING views;             -- 新计数交给堆</pre>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>③ 聚合：每个窗口一个堆</h3>
+    <ul class="prose">
+      <li>每个窗口（hour、day、month、all-time）维护一个大小为 K 的 min-heap。</li>
+      <li>拿到 <code>(window, videoId, newCount)</code> 后：已经在堆里就原地更新（hashmap + 带位置的堆，或者 TreeMap）；不在堆里且大于堆顶就替换堆顶；否则忽略。</li>
+      <li><b>为什么精确</b>：tumbling 窗口内计数只增不减，一个视频要进入 top K，必然是因为它被加了一次，而每次加都会经过堆。</li>
+      <li><b>窗口切换</b>：整点时冻结上一小时的堆并作为"last hour"发布，新的一小时从空堆开始；day / month 同理，all-time 永不切换。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>④ 扛读取：预计算 + 缓存</h3>
+    <ul class="prose">
+      <li>Aggregator 每分钟把每个窗口的 top 1000 写入 Redis <code>top-k:{window}</code>。</li>
+      <li>Top-K Service 读 Redis 后截取前 k 条，不访问 DB，也不做任何计算。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="deep">
+  <div class="part-head"><span class="num">5</span><h2>深入</h2></div>
+
+  <div class="block">
+    <h3>热点写：爆款视频（参考 Ad Click Aggregator）</h3>
+    <ul class="prose">
+      <li><b>按 videoId 分区，只给热门视频加盐</b>：分区键 <code>videoId:0-N</code>。普通视频保持局部性，不需要 shuffle。</li>
+      <li><b>Flink 按加盐后的 key 聚合，输出时去掉后缀</b>：同一个视频每分钟得到 N 条部分计数。</li>
+      <li><b>在 DB 里合并</b>：<code>views = views + :partial</code> 满足交换律，部分计数按任意顺序写入，结果都正确；RETURNING 的值单调递增，堆照样能正确更新。</li>
+      <li><b>识别热点</b>：静态名单（大 V 的新视频、历史播放量高的视频），或者动态检测（播放量超过阈值后发布"热点名单 + N"的配置）。N 在中途变化也没问题，因为 DB 端是累加。</li>
+      <li><b>不选"随机分区 + 两阶段聚合"</b>：每个 subtask 都会看到几乎所有视频，还要多一次全量 shuffle，等于让所有视频为少数热点买单。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>聚合分片</h3>
+    <ul class="prose">
+      <li><b>分片键</b>：<code>hash(videoId) % P</code>（先去掉盐），Aggregator 的分片和 DB 的分片对齐。</li>
+      <li><b>分片规模取决于每分钟的活跃视频数，和原始写入流量无关</b>：一个视频一分钟被看 100 万次，也只产生 1 条记录。假设一分钟约 49M 次 view，其中不同的视频有 10–20M 个，折合 170k–330k 条记录/秒，每条更新 4 张表。</li>
+      <li><b>全局合并必须保留</b>：每个分片的堆只是本分片的 top K。因为一个视频只属于一个分片，全局 top K 一定在 P×K 个候选里。</li>
+    </ul>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:900px">
+      <colgroup><col style="width:22%"><col style="width:39%"><col style="width:39%"></colgroup>
+      <thead><tr><th>合并方式</th><th>做法</th><th>问题</th></tr></thead>
+      <tbody>
+        <tr><td>Merger 定时合并（选这个）</td><td>每分钟读取 P 个分片的 top K，合并后写入 <code>top-k:{window}</code></td><td>多一个作业，要监控失败和延迟；故障时返回旧值</td></tr>
+        <tr><td>查询时合并 + 缓存</td><td>缓存未命中时 MGET P 个 key 并合并，写入缓存，TTL 约 1 分钟</td><td>过期瞬间大量请求同时去合并（缓存击穿），单次合并 10 万条数据，延迟偏高。加上 single-flight 和后台刷新后，就收敛成了左边的方案</td></tr>
+      </tbody></table></div>
+    <p class="note">版本对齐：分片按分钟写带版本号的 key <code>top-k:{window}:{minute}:shard:{i}</code>，合并时只取同一分钟的版本。</p>
+  </div>
+
+  <div class="block">
+    <h3>Sliding 窗口</h3>
+    <ul class="prose">
+      <li><b>步长</b>：比窗口低一级的粒度。hour 按 minute 滑动（60 个桶），day 按 hour 滑动（24 个），month 按 day 滑动（30 个）。</li>
+      <li><b>计数维护：两个消费者组</b>：一个消费最新数据做 <code>+</code>，另一个滞后一个窗口长度做 <code>−</code>（教程旧版的"两个指针"）。</li>
+      <li><b>两个组都消费 Flink 输出的聚合 topic，不消费原始事件</b>：减掉的正是当初加上的那条记录，对称性有保证；需要保留的数据量也远小于原始事件。Kafka 的保留时间 ≥ 最长的窗口。</li>
+      <li><b>top K 遇到减法会失效</b>：堆里的视频被减下去后，该补位的是一个这一分钟计数没有变化的视频，堆看不到它。</li>
+    </ul>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:900px">
+      <colgroup><col style="width:16%"><col style="width:42%"><col style="width:42%"></colgroup>
+      <thead><tr><th>窗口</th><th>top K 怎么维护</th><th>理由</th></tr></thead>
+      <tbody>
+        <tr><td>hour</td><td>每个分片一个 ZSET，<code>ZINCRBY</code> 正负增量，计数为 0 时 <code>ZREM</code></td><td>只包含近一小时的活跃视频（假设 1 亿量级 × 100B ≈ 10GB），不是 3.6B 全量。结果精确</td></tr>
+        <tr><td>day / month</td><td>候选缓冲 K' &gt; K + 定期全量重建；或者保持 tumbling</td><td>活跃视频可能到十亿级，ZSET 太重。候选缓冲是近似的，要和面试官确认</td></tr>
+      </tbody></table></div>
+  </div>
+
+  <div class="block">
+    <h3>热点读</h3>
+    <ul class="prose">
+      <li>所有请求只读 4 个 key，每个 1000 条，每分钟才变化一次。</li>
+      <li>Top-K Service 在进程内缓存，每 5–10s 刷新；Redis 加只读副本；结果对所有用户相同，可以再加 CDN。</li>
+      <li>Merger 先写带版本号的 key，再切换指针。Merger 延迟或故障时返回上一版结果。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>近似：Count-Min Sketch（面试官放宽"精确"时才适用）</h3>
+    <ul class="prose">
+      <li><b>为什么</b>：精确方案要为每个活跃视频保存一个计数（DB upsert 是写入的大头），而 top K 只关心 heavy hitter。</li>
+      <li><b>结构</b>：d × w 个计数器；add 时每一行加一次，estimate 时取 d 行中的最小值。只会多估，误差 ≤ εN 的概率为 1−δ；w = e/ε，d = ln(1/δ)。</li>
+      <li><b>估算（hour）</b>：N ≈ 2.9B；取 ε = 10⁻⁶、d = 5，约 1360 万个计数器 ≈ 54MB，误差 ≤ 2900 次 view，对 top 1000 的视频可以忽略。</li>
+      <li><b>流程</b>：<code>add(videoId, count)</code> → <code>estimate</code> → 更新大小为 K 的候选结构（低于当前第 K 名就跳过）。</li>
+      <li><b>全部放在内存里（Flink state），没有 DB</b>：分片和 Merger 的做法不变；相同 hash 函数的 CMS 可以逐格相加。</li>
+      <li><b>sliding</b>：只减当初加过的值（复用滞后的消费者组），不能用 conservative update。Redis 没有 <code>CMS.DECRBY</code>，所以不放在 Redis 里。</li>
+      <li><b>需要精确数据时</b>：另做一条离线链路 Kafka → S3 → Spark 计算精确计数（lambda 架构）。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>容错</h3>
+    <p>对每个有状态的组件回答三个问题：状态在哪、怎么恢复、重放会不会重复计数。Kafka 是可以重放的事实来源。</p>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:1000px">
+      <colgroup><col style="width:20%"><col style="width:22%"><col style="width:30%"><col style="width:28%"></colgroup>
+      <thead><tr><th>组件</th><th>状态</th><th>挂掉之后</th><th>防止重复计数</th></tr></thead>
+      <tbody>
+        <tr><td>View Service → Kafka</td><td>无</td><td>重试，<code>acks=all</code></td><td>Kafka 幂等 producer</td></tr>
+        <tr><td>Kafka</td><td>原始事件 / 聚合 topic</td><td>3 副本，保留时间 ≥ max(最长窗口, checkpoint 间隔)</td><td>—</td></tr>
+        <tr><td>Flink 预聚合</td><td>部分计数 + offset</td><td>从 checkpoint 恢复 + 重放</td><td>用事务写入聚合 topic</td></tr>
+        <tr><td>Aggregator（DB）</td><td>DB 计数 + 堆</td><td>计数不会丢；堆通过扫描本分片当前窗口的数据重建</td><td>在同一个事务里写 <code>applied(shard, minute)</code>，已处理过就跳过</td></tr>
+        <tr><td>Aggregator（CMS）</td><td>CMS + 候选 + offset</td><td>加载 S3 快照 → seek offset → 重放</td><td>状态和 offset 写在同一个快照里</td></tr>
+        <tr><td>Merger / Query Service</td><td>无 / 进程内缓存</td><td>重启，期间返回上一版结果</td><td>Redis 覆盖写（带版本号的 key）</td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li>为什么 CMS 方案必须做快照：tumbling hour 只重放一小时的数据还行，month / all-time 要从头重放，太慢。</li>
+      <li>扩缩容：CMS 不能按 videoId 拆分，所以用固定数量的逻辑分片（比如 128 个），按 shardId 做 keyBy，扩缩容时整片迁移。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>要不要 DB：Flink state + 堆 + checkpoint</h3>
+    <pre>Kafka ──► Flink 1min 预聚合 ──► keyBy(videoId)：每个窗口的计数存在 keyed state 里
+      ──► keyBy(window, shard)：每个窗口一个堆 ──► Merger ──► Redis
+checkpoint：计数 state + 堆 + Kafka offset 一起写到 S3</pre>
+    <ul class="prose">
+      <li><b>只看 top K 这个功能，OLTP DB 可以去掉</b>：省掉了每分钟"活跃视频数 × 4 张表"的 upsert，这本来是写入成本的大头。</li>
+      <li><b>精确计数放不进纯内存</b>：all-time 窗口约 3.6B 个计数，大约几百 GB，要用 RocksDB state backend（等于把 DB 嵌进了 Flink）。CMS 方案只要几十 MB，才是真正的纯内存。</li>
+      <li><b>用增量 checkpoint</b>：只上传变化的部分。故障恢复要先下载状态，需要几分钟，这段时间返回上一版结果。</li>
+      <li><b>保留一个廉价的兜底数据源</b>：把原始事件归档到 S3 数据湖。Flink 的 bug 写坏了状态，或者升级时状态结构不兼容，checkpoint 都救不回来；这时用 Spark 批量重算，再通过 State Processor API 初始化 Flink 状态。</li>
+    </ul>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:900px">
+      <colgroup><col style="width:16%"><col style="width:42%"><col style="width:42%"></colgroup>
+      <thead><tr><th></th><th>DB 计数 + 内存堆（主线）</th><th>Flink state + 堆 + checkpoint</th></tr></thead>
+      <tbody>
+        <tr><td>写入成本</td><td>每分钟 × 4 张表的 upsert</td><td>只更新本地的 RocksDB</td></tr>
+        <tr><td>组件</td><td>Flink + Aggregator + DB</td><td>只有 Flink（加上 S3）</td></tr>
+        <tr><td>恢复</td><td>计数在 DB 里不会丢，只需重建堆</td><td>下载 checkpoint，再重放一小段数据</td></tr>
+        <tr><td>兜底</td><td>DB 本身</td><td>S3 数据湖 + 批量重算</td></tr>
+        <tr><td>单个视频的播放量 / 对账</td><td>直接查 DB</td><td>离线计算，或者把聚合结果异步写入 OLAP</td></tr>
+        <tr><td>面试风险</td><td>低，容易讲清楚</td><td>要讲清楚 RocksDB、增量 checkpoint、状态迁移（教程认为面试里容易讲偏）</td></tr>
+      </tbody></table></div>
+    <p class="note">选法：熟悉 Flink 的话，主线可以直接用右边的方案，同时主动说明两点：精确计数要用 RocksDB，兜底靠 S3 数据湖。面试官不希望深入 Flink 时，就退回左边。</p>
+  </div>
+
+  <div class="block">
+    <h3>面试讲述顺序</h3>
+    <ol class="prose">
+      <li>需求与估算：难点是高写入 + 高基数。</li>
+      <li>主线：Flink 分钟级聚合 → DB 计数 → 每个窗口一个堆 → Redis。</li>
+      <li>深入：热点写 → 聚合分片 → sliding → 热点读 → 近似 → 容错 → 要不要 DB。</li>
+    </ol>
+    <p class="note">和教程当前版本的区别：Hello Interview 的主线是"Postgres 每个窗口一张表，在 views 上建索引 + cron 预计算"，内存聚合（Flink + 堆）只列为"Great，但不推荐在面试里讲"。这份笔记的主线换成了内存堆，DB 只负责计数。</p>
+  </div>
+</section>
+
+</main>
+</div>
+</div>
+</body>
+</html>
