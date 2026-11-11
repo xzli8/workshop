@@ -24,9 +24,9 @@
  
 \section{\faGraduationCap\  教育背景}
 \datedsubsection{\textbf{中国科学技术大学}}{2017.09 -- 2020.07}
-\textit{硕士}
+\textit{硕士，地球物理学}
 \datedsubsection{\textbf{长安大学}}{2013.09 -- 2017.07}
-\textit{学士}
+\textit{学士，勘察技术与工程}
 
 \section{\faUsers\ 工作经历}
 \datedsubsection{\textbf{Bnto}}{2026.05 -- 现在}
@@ -80,6 +80,32 @@
 \end{itemize}
 \end{onehalfspacing}
 
+\datedsubsection{\textbf{Amazon Vendor360供应商上下文系统}}{核心开发者}
+\begin{onehalfspacing}
+\textbf{项目背景}：Vendor360是Amazon零售的供应商上下文系统。供应商信息散落在Salesforce、Andes、SharePoint、会议纪要、外部网站等数十个数据源中，系统将其沉淀为每个供应商可追溯、可信的长期记忆，通过API与MCP提供给业务应用和AI Agent，用于JBP/QBR准备、经营分析等场景。难点在于：数据源多且多模态(仅日本站业务方就提出78个)；原始数据有噪声(会议摘要有幻觉、行动项不更新、文档互相矛盾)，要做到garbage-in, gold-out；推断须遵循业务分析框架且可解释；还要从日本站试点扩展到WW数百个数据源、十万级供应商。系统基于Python+AWS Serverless(Lambda、SQS、EventBridge、S3、DynamoDB)+Bedrock AgentCore+CDK构建。\\
+
+\textbf{工作内容}：本人作为核心开发者，参与日本站试点的数据接入、Agent编排与存储服务的设计与开发，并支撑系统推广至北美与欧洲。\\
+
+\begin{itemize}
+    \item \textbf{数据模型：强类型记录，事实与推断分离}。按Vendor$\rightarrow$Slot$\rightarrow$Record(Value/Metadata/Provenance)三层建模，事实(Fact)指向源证据，推断(Inference)指向所依据的事实；记录只追加、不覆盖，支持按时间点(asOf)回放供应商视图。读路径不调用模型，按每个slot声明的折叠策略(权威优先、取最新、并集去重、冲突上报)确定性组装，并逐slot返回状态码，区分无数据、无权限、未生成、出错。评估并否决了“每个供应商一份自由文档”与纯RAG方案：前者没有结构，冲突只能交给模型在读取时临时判断，结果不稳定且无历史；后者按相似度检索，无法保证内容属于该供应商，也做不到取最新值与按权威优先。
+    \item \textbf{信任边界：模型只写产物，代码守门入库}。抽取与综合Agent没有DynamoDB权限，编排器将已入库事实导出为快照经prompt传入；Agent只将结构化结果写为S3上的不可变产物，由唯一的Writer Lambda校验schema、grain、fid引用与证据门禁后，按来源整体替换写入。产物是唯一写入路径，Writer修复后可原样重放，无需重跑单次10--40分钟的Agent。
+    \item \textbf{Agent编排：异步派发，事件驱动}。Agent单次运行超过Lambda 15分钟上限，改为派发后立即返回202、监听S3产物事件推进流程；以dirty/in-flight标记做增量调度与全局并发上限(50)，只对数据有变化的供应商重新综合。
+    \item \textbf{数据接入：按访问模式抽象，配置即接入}。将日本站78个数据源归纳为Andes表、S3、SharePoint、指标API、网站爬虫5类访问模式，新增数据源只需加配置；处理器统一走哈希去重$\rightarrow$清洗并将多模态内容转为文本$\rightarrow$经Vendor Entity Taxonomy绑定供应商$\rightarrow$证据盖章，产物写入不可变、带版本的Artifact Pool，失败单元带原因进入隔离区。
+    \item \textbf{效果：资料准备提速约10倍，推广至北美与欧洲}。单家供应商JBP/QBR资料整理从约1周缩短至半天；从日本站11家供应商试点推广至北美与欧洲(各覆盖上百家供应商)，十余个业务方、上百个Agent通过API/MCP接入。定位并修复多起“部署成功、无告警、指标不变”的静默故障：会议纪要负责人字段错误率从30\%降至3\%以下(改为要求“是人”的正向证据)；运行日期混入变更检测哈希，导致6,297个未变化单元每日全部重跑、单轮积压约42小时，修复后恢复增量跳过，每月节省约10万美元模型调用成本；17次无证据的“状态改为已关闭”，以证据门禁全部拦截。
+\end{itemize}
+\end{onehalfspacing}
+
+\datedsubsection{\textbf{Amazon供应商账户管理系统全球化扩展}}{核心开发者}
+\begin{onehalfspacing}
+\textbf{项目背景}：VAMOS是Amazon电商供应商账户管理系统，首发于日本站，后续扩展至欧洲、巴西、墨西哥等站点。本人所在团队作为平台方，为各站点业务团队提供多租户的底层服务框架与前端核心交互，各站点在其上实现自己的业务逻辑。\\
+
+\begin{itemize}
+    \item \textbf{性能：批量拉取，内存聚合}。欧洲站上线按维度汇总视图后接口持续超时，经日志、监控与链路追踪定位：欧洲站维度数远多于日本站，按维度逐个调用下游导致RPC量暴增、线程池耗尽。先扩容线程池保障按期上线，再改为单次RPC批量拉取明细、内存聚合，下游调用从数十至上百次降为1次，超时清零；方案沉淀为框架能力，供后续站点复用。
+    \item \textbf{多租户：站点即租户，三层隔离}。以站点为租户，数据按站点分库分表，配置与部署按站点独立；各站点业务团队在同一套框架上实现自己的逻辑，互不影响。
+    \item \textbf{多站点前端：核心先行，快速迭代}。为多市场场景开发marketplace筛选组件。PM与UX方案含筛选模板、历史记录等附加功能，评估需10人日；提出先上线市场切换与精准筛选、预留扩展接口，4人日交付保障站点按期上线，上线后1周内补齐完整交互。
+\end{itemize}
+\end{onehalfspacing}
+
 \datedsubsection{\textbf{美团医药C端BFF层架构演进：硬编码 $\rightarrow$ DAG编排 $\rightarrow$ GraphQL}}{项目负责人}
 \begin{onehalfspacing}
 \textbf{项目背景}：美团医药用户API是医药C端所有请求的统一入口，负责将几十个领域服务的能力聚合、编排、整形后交付前端，即BFF(Backend For Frontend)层，以分布式多set部署(5个set共50台机器)承接C端高并发流量(峰值QPS约5k)。初期以硬编码方式开发，随业务规模与场景复杂度增长已难以支撑迭代。本项目历时六个月，分三阶段将其重构为Unit化、DAG调度、GraphQL契约的新架构。\\
@@ -114,17 +140,6 @@
     \item \textbf{投放：多级缓存，拆分大key}。营销物料投放与渲染以多级缓存解决热点key，拆分大key避免性能下降。
     \item \textbf{活动：并发安全，分库分表}。玩法搭建与运行以分布式锁+数据库CAS+状态机避免并发问题，分库分表承载大量数据的存储与查询。
     \item \textbf{效果：支撑业务高速增长}。DAU约50万$\rightarrow$600万(12倍)，日均订单约20万$\rightarrow$300万(15倍)，市场份额约20\%$\rightarrow$50\%(2.5倍)。
-\end{itemize}
-\end{onehalfspacing}
-
-\datedsubsection{\textbf{Amazon供应商账户管理系统全球化扩展}}{核心开发者}
-\begin{onehalfspacing}
-\textbf{项目背景}：VAMOS是Amazon电商供应商账户管理系统，首发于日本站，后续扩展至欧洲、巴西、墨西哥等站点。本人所在团队作为平台方，为各站点业务团队提供多租户的底层服务框架与前端核心交互，各站点在其上实现自己的业务逻辑。\\
-
-\begin{itemize}
-    \item \textbf{性能：批量拉取，内存聚合}。欧洲站上线按维度汇总视图后接口持续超时，经日志、监控与链路追踪定位：欧洲站维度数远多于日本站，按维度逐个调用下游导致RPC量暴增、线程池耗尽。先扩容线程池保障按期上线，再改为单次RPC批量拉取明细、内存聚合，下游调用从数十至上百次降为1次，超时清零；方案沉淀为框架能力，供后续站点复用。
-    \item \textbf{多租户：站点即租户，三层隔离}。以站点为租户，数据按站点分库分表，配置与部署按站点独立；各站点业务团队在同一套框架上实现自己的逻辑，互不影响。
-    \item \textbf{多站点前端：核心先行，快速迭代}。为多市场场景开发marketplace筛选组件。PM与UX方案含筛选模板、历史记录等附加功能，评估需10人日；提出先上线市场切换与精准筛选、预留扩展接口，4人日交付保障站点按期上线，上线后1周内补齐完整交互。
 \end{itemize}
 \end{onehalfspacing}
 

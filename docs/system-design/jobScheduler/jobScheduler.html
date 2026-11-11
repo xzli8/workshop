@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Job Scheduler</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F5F7FA; --surface:#FFFFFF; --surface-2:#EEF2F6;
+  --text:#1B2430; --muted:#5B6673; --border:#D8DEE6; --border-strong:#B9C2CE;
+  --accent:#0F6E7A; --accent-soft:#DCEFF1; --amber:#A8691A; --amber-soft:#F7ECD9;
+  --code-bg:#F0F3F7; --code-text:#1E2A36;
+  --shadow: 0 1px 2px rgba(20,30,40,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12161C; --surface:#1A2029; --surface-2:#212934;
+    --text:#E6EAF0; --muted:#98A4B4; --border:#2B343F; --border-strong:#3B4652;
+    --accent:#5FBDC8; --accent-soft:#16333A; --amber:#DDA755; --amber-soft:#2E2618;
+    --code-bg:#161C24; --code-text:#DCE3EB;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12161C; --surface:#1A2029; --surface-2:#212934;
+  --text:#E6EAF0; --muted:#98A4B4; --border:#2B343F; --border-strong:#3B4652;
+  --accent:#5FBDC8; --accent-soft:#16333A; --amber:#DDA755; --amber-soft:#2E2618;
+  --code-bg:#161C24; --code-text:#DCE3EB;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  font-size:15px; line-height:1.8;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+h1,h2,h3,h4{font-family:"Noto Serif SC","Songti SC","STSong",Georgia,serif; text-wrap:balance; line-height:1.3; margin:0}
+h1{font-size:2.1rem; font-weight:700; letter-spacing:.01em}
+h2{font-size:1.5rem; font-weight:700; padding-top:.4rem}
+h3{font-size:1.12rem; font-weight:600; color:var(--text)}
+h4{font-family:"Noto Sans SC",system-ui,sans-serif; font-size:.95rem; font-weight:700; color:var(--muted); letter-spacing:.02em}
+p{margin:0}
+ul,ol{margin:0; padding-left:1.4em}
+li{margin:.15em 0}
+li::marker{color:var(--muted)}
+strong{font-weight:700}
+code,pre{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+code{font-size:.86em; background:var(--code-bg); color:var(--code-text); padding:.1em .4em; border-radius:4px}
+pre{
+  margin:0; background:var(--code-bg); color:var(--code-text);
+  border:1px solid var(--border); border-radius:6px;
+  padding:.9rem 1.1rem; font-size:.8rem; line-height:1.55;
+  overflow-x:auto; white-space:pre; tab-size:4;
+}
+pre code{background:none; padding:0; font-size:inherit}
+
+.eyebrow{font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:500}
+.page{max-width:1360px; margin:0 auto; padding:0 1.25rem 4rem}
+
+header.top{padding:2.6rem 0 1.8rem; border-bottom:1px solid var(--border)}
+header.top .lead{max-width:66ch; color:var(--muted); margin-top:.9rem; font-size:1rem}
+.threads{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin-top:1.6rem}
+.thread{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1rem 1.1rem; box-shadow:var(--shadow)}
+.thread .num{font-family:"JetBrains Mono",monospace; font-size:.75rem; color:var(--accent); letter-spacing:.08em}
+.thread h3{margin-top:.25rem; font-size:1.05rem}
+.thread p{margin-top:.5rem; font-size:.88rem; color:var(--muted); line-height:1.65}
+.thread a{display:inline-block; margin-top:.6rem; font-size:.85rem}
+
+.layout{display:grid; grid-template-columns:minmax(0,1fr); gap:2rem; margin-top:1.5rem}
+bodybody
+main{min-width:0}
+section.part{padding:2.2rem 0 1rem}
+section.part + section.part{border-top:1px solid var(--border)}
+.part-head{display:flex; align-items:baseline; gap:.9rem; margin-bottom:.4rem}
+.part-head .num{font-family:"JetBrains Mono",monospace; color:var(--accent); font-size:.85rem; letter-spacing:.08em}
+.mainline{
+  margin:.9rem 0 1.4rem; padding:.85rem 1.1rem; background:var(--accent-soft);
+  border-radius:6px; font-size:.92rem; line-height:1.7;
+}
+.mainline b{color:var(--accent)}
+.block{display:grid; gap:.8rem; margin-top:1.6rem}
+.block > h3{padding-bottom:.3rem; border-bottom:1px dashed var(--border)}
+.prose{max-width:none}
+.two{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem}
+
+.tbl{overflow-x:auto; border:1px solid var(--border); border-radius:6px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.86rem; line-height:1.55; min-width:560px}
+th,td{padding:.55rem .75rem; text-align:left; vertical-align:top; border-bottom:1px solid var(--border)}
+th{font-weight:700; color:var(--muted); font-size:.78rem; letter-spacing:.04em; background:var(--surface-2); white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:500; white-space:nowrap}
+table.wl td{white-space:normal; font-weight:400}
+td ul.pts{margin:0; padding-left:1.1em; white-space:normal}
+td ul.pts li{margin:.1em 0}
+table.wl td[rowspan]{font-weight:500}
+table.wl td[rowspan] b{display:block; font-size:1rem}
+.tbl.wide table{min-width:760px}
+.num-col{font-variant-numeric:tabular-nums}
+
+.aside{border:1px dashed var(--border-strong); border-radius:8px; padding:.8rem 1rem; background:var(--surface-2); color:var(--muted); font-size:.9rem; display:grid; gap:.5rem}
+.aside-title{font-weight:700; color:var(--text); font-size:.85rem; letter-spacing:.03em}
+.aside pre{margin:0}
+.aside-sub{font-weight:700; color:var(--text); font-size:.85rem; margin-top:.3rem}
+.aside ul{margin:0; padding-left:1.2em}
+.note{font-size:.88rem; color:var(--muted); padding-left:.9rem; border-left:2px solid var(--border-strong)}
+
+footer{margin-top:3rem; padding-top:1.2rem; border-top:1px solid var(--border); color:var(--muted); font-size:.8rem}
+.back{font-size:.8rem}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="top" id="top">
+  <h1>Job Scheduler</h1>
+</header>
+
+<div class="layout">
+<main>
+
+<div class="aside" style="margin-top:1.6rem">
+  <div class="aside-title">题外话：通用法则（从这道题提炼）</div>
+  <div class="aside-sub">建模</div>
+  <ul>
+    <li>定义和实例分开：Job 是定义，Execution 是一次执行；状态、重试、幂等键都挂在实例上。</li>
+    <li>按时间触发的数据，按时间分桶做分区键，读取时只扫"当前桶 + 下一个桶"。</li>
+  </ul>
+  <div class="aside-sub">精度和持久分层</div>
+  <ul>
+    <li>DB 负责持久（低频扫描一个时间窗口），延迟队列负责精度（到点才可见）。</li>
+    <li>DB 是唯一数据源；队列、缓存里的东西丢了，都要能从 DB 补回（reconciler）。</li>
+  </ul>
+  <div class="aside-sub">可靠性</div>
+  <ul>
+    <li>at-least-once + 幂等，不追求 exactly-once。</li>
+    <li>状态迁移用条件写，带 attempt / epoch 做 fencing，挡住过期 worker 的回写。</li>
+    <li>失败先分类：不可重试的直接失败，可重试的指数退避 + 抖动，超过次数进 DLQ。</li>
+  </ul>
+  <div class="aside-sub">读写分离</div>
+  <ul>
+    <li>高频写的主表不挂查询索引；查询通过 change feed 异步同步到专门的查询表，查询侧故障不影响主链路。</li>
+  </ul>
+</div>
+
+<section class="part" id="fr">
+  <div class="part-head"><span class="num">1</span><h2>功能需求</h2></div>
+  <div class="block">
+    <h3>核心</h3>
+    <ul class="prose">
+      <li>提交任务：立即执行、指定时间执行、周期执行（cron，比如每天 10:00）。</li>
+      <li>查询任务状态：我提交的任务、某次执行的结果。</li>
+    </ul>
+  </div>
+  <div class="block">
+    <h3>范围外</h3>
+    <ul class="prose">
+      <li>取消、改期。</li>
+      <li>任务之间的依赖（DAG / workflow）。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="nfr">
+  <div class="part-head"><span class="num">2</span><h2>非功能需求与估算</h2></div>
+  <div class="block">
+    <h3>核心</h3>
+    <ul class="prose">
+      <li><b>准时</b>：计划时间后 2s 内开始执行。</li>
+      <li><b>吞吐</b>：峰值 10k 次执行/s。</li>
+      <li><b>可靠</b>：至少执行一次（at-least-once），已提交的任务不丢。</li>
+      <li><b>可用性优先于一致性</b>：调度和执行链路高可用；状态查询可以最终一致（延迟几秒）。</li>
+      <li><b>隔离</b>：一个任务慢或失败，不影响其他任务。</li>
+    </ul>
+  </div>
+  <div class="block">
+    <h3>估算</h3>
+    <ul class="prose">
+      <li><b>执行记录</b>：10k/s ≈ 每天 8.6 亿条 × 200B ≈ 170GB/天。单机 DB 扛不住，要分区，并设 TTL 或归档。</li>
+      <li><b>并发</b>：平均执行 2s × 10k/s ≈ <b>2 万个并发执行槽</b>，决定 Worker 集群的规模，必须能自动扩缩容。</li>
+      <li><b>核心难点</b>：<b>准时</b>（秒级精度）+ <b>高吞吐</b> + <b>不丢不重</b>（at-least-once 下的幂等）。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="entities">
+  <div class="part-head"><span class="num">3</span><h2>核心实体与 API</h2></div>
+  <div class="block">
+    <ul class="prose">
+      <li><b>Task</b>：可复用的任务类型（比如"发邮件"），对应一个 handler。</li>
+      <li><b>Job</b>：Task + 调度规则 + 参数，用户提交的就是它。</li>
+      <li><b>Execution</b>：Job 的一次具体执行，周期任务会有很多条。状态和重试都挂在 Execution 上。</li>
+      <li><b>User</b>：任务的提交者。</li>
+    </ul>
+    <pre>POST /jobs
+  body: { task_id, schedule: { type: IMMEDIATE | DATE | CRON, expression }, parameters }
+  → { job_id }
+
+GET /jobs                                     → 当前用户创建的 Job
+GET /executions?status=FAILED&amp;start=..&amp;end=..  → 当前用户的执行记录（状态查询主要用这个）
+GET /jobs/{job_id}/executions                 → 某个 Job 的每次执行：时间、状态、attempt、错误
+
+user_id 都从 token 取，不放在 body 或 path 里</pre>
+  </div>
+</section>
+
+<section class="part" id="hld">
+  <div class="part-head"><span class="num">4</span><h2>高层设计</h2></div>
+  <div class="block">
+    <pre>Client ──► API Gateway ─┬─► Job Write Service ──► DB（Jobs + Executions）
+                        │        └─ 当前窗口内的任务直接投递 ──────────────┐
+                        └─► Job Query Service ──► Execution 查询表         │
+                                                       ▲ change feed       │
+DB ──► Watcher × N（每 5 分钟扫未来 5 分钟）──► 延迟队列（Service Bus）◄─────┘
+                                                   ──► Workers（AKS + KEDA）──► 回写 DB
+                                                   └─► DLQ
+Reconciler：扫描已到期但长时间未进入终态的 Execution，重新投递</pre>
+  </div>
+
+  <div class="block">
+    <h3>① 提交：Job 和 Execution 分两张表</h3>
+    <ul class="prose">
+      <li>写入 Jobs，同时写入第一条 Execution（PENDING）。</li>
+      <li><b>Jobs 用 job_id 当 PK</b>：高频访问是 Watcher 和 Worker 按 job_id 点查；job_id 随机，写入均匀。"列出我的 Job"走 user_id 的 GSI。</li>
+      <li><b>Executions 按时间分桶</b>：调度层只查"当前小时和下一小时这两个桶里、时间 ≤ 某值"的记录，不扫全表。</li>
+      <li>Execution 冗余存 task_id 和参数，Worker 执行时不用再查 Jobs。</li>
+    </ul>
+    <div class="aside">
+      <div class="aside-title">表结构</div>
+      <pre>Jobs
+  PK  job_id
+  user_id, task_id, schedule, parameters
+  GSI user_id                                 -- 列出我的 Job
+
+Executions（调度用）
+  PK  time_bucket#shard                       -- 执行时间按小时取整 + hash(job_id) % N
+  SK  execution_time#job_id
+  status: PENDING | QUEUED | RUNNING | SUCCEEDED | FAILED
+  attempt, user_id, task_id, parameters
+
+Execution 查询表（状态查询用，change feed 异步写入）
+  PK  user_id#k                               -- 大租户拆成 k 片
+  SK  execution_time</pre>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>② 执行：Watcher → 队列 → Worker</h3>
+    <ul class="prose">
+      <li>最简版：Watcher 每隔几秒查一次已到期的 PENDING 记录 → 投进队列 → Worker 执行 → 回写状态。</li>
+      <li>问题：轮询间隔决定准时精度，高频轮询压垮 DB → 引出深入部分的两层调度。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>③ 查询：读写拆成两个服务</h3>
+    <ul class="prose">
+      <li><b>Job Write Service</b>：依赖 DB 和队列，必须持久化成功才返回。</li>
+      <li><b>Job Query Service</b>：只读查询表，可以最终一致。</li>
+      <li>各自按自己的 QPS 独立扩缩容，故障互相隔离。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="deep">
+  <div class="part-head"><span class="num">5</span><h2>深入</h2></div>
+
+  <div class="block">
+    <h3>2s 内准时执行</h3>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:900px">
+      <colgroup><col style="width:18%"><col style="width:44%"><col style="width:38%"></colgroup>
+      <thead><tr><th>方案</th><th>做法</th><th>问题</th></tr></thead>
+      <tbody>
+        <tr><td>差：轮询 DB</td><td>Worker 每秒查一次到期任务</td><td>DB 压力大，精度仍受轮询间隔限制</td></tr>
+        <tr><td>较好：Redis sorted set</td><td>score = execution_time；Watcher 预加载未来几分钟；Lua 原子取出到期任务</td><td>要高可用、能从 DB 重建；ack、重投、DLQ 都要自己实现</td></tr>
+        <tr><td>好：两层调度（选这个）</td><td>Watcher 每 5 分钟扫未来 5 分钟，按 <code>execution_time − now</code> 设延迟投进延迟队列，到点才可见</td><td>准时性还依赖 Worker 余量</td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li><b>延迟队列</b>：Service Bus scheduled message（<code>ScheduledEnqueueTimeUtc</code>）；SQS 用 <code>DelaySeconds</code>，最长 15 分钟，所以扫描窗口要小于 15 分钟。</li>
+      <li><b>新提交的任务</b>：落在当前窗口内的，由 Job Write Service 直接投队列，不等下一轮扫描。</li>
+      <li>Worker 通过长轮询或长连接等待，消息一到期就被取走。</li>
+      <li>监控"计划时间 → 实际开始"的延迟。</li>
+    </ul>
+    <div class="aside">
+      <div class="aside-title">题外话：MQ 的延迟能力</div>
+      <div class="tbl"><table style="min-width:640px">
+        <thead><tr><th>MQ</th><th>单条任意延迟</th><th>取消</th><th>ack / 重投 / DLQ</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>Service Bus</td><td>支持</td><td>支持（和激活有竞态）</td><td>自带</td><td>到点才入队，投递时间受负载影响</td></tr>
+          <tr><td>SQS</td><td>≤ 15 分钟</td><td>不支持</td><td>自带</td><td>FIFO 队列不支持单条延迟</td></tr>
+          <tr><td>RocketMQ 5.x</td><td>支持（时间轮）</td><td>有限</td><td>自带</td><td>4.x 只有 18 个固定级别</td></tr>
+          <tr><td>Pulsar</td><td>支持（deliverAt）</td><td>不支持</td><td>自带</td><td>只在 Shared 订阅下生效</td></tr>
+          <tr><td>Kafka</td><td>不支持</td><td>不支持</td><td>只有 offset</td><td>只追加、按 offset 顺序读，未到期消息会队头阻塞</td></tr>
+        </tbody></table></div>
+      <ul>
+        <li>Kafka 的时间轮在 broker 内部，用来管理 produce 等待副本确认、fetch 长轮询这类延迟操作，不对用户提供延迟消息。变通做法：按固定延迟分 topic，队头没到期就 pause 分区；或者消费者自己维护时间轮。</li>
+        <li>时间轮和堆：时间轮插入和取消 O(1)，堆是 O(log n)；适合定时器多、大量会被取消、精度到一个 tick 就够的场景。Kafka 的 DelayQueue（堆）只存非空的槽，用来推进时间轮。</li>
+      </ul>
+      <div class="aside-sub">Redis sorted set 方案</div>
+      <ul>
+        <li><code>ZADD due:{shard} &lt;exec_time&gt; &lt;execution_id&gt;</code>；Lua 原子执行"取出到期的 + 删除"；取消和改期直接 <code>ZREM</code> / <code>ZADD</code>。</li>
+        <li>主从复制是异步的，故障切换会丢最近的写入 → DB 是数据源，丢失的任务靠 reconciler 补回。</li>
+        <li>一个 zset 只落在一个节点上 → 按 shard 拆成多个 key。</li>
+        <li>没有 ack / visibility timeout → 用 <code>processing</code> zset（score = 租约到期时间）自己实现。</li>
+        <li>适用场景：频繁取消或改期、超过 15 分钟的任意延迟、按优先级或租户自定义取出顺序。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>扩展到 10k/s</h3>
+    <ul class="prose">
+      <li><b>Executions 写热点</b>：同一小时的写入全部落在同一个 time_bucket 分区上 → 改成 <code>time_bucket#shard</code>，Watcher 并行查 N 个分片。</li>
+      <li><b>状态查询移出主写链路</b>：Executions 不挂 user_id 的 GSI（每次状态更新都会写放大，GSI 写不过来时还会反压主表）；状态变更通过 change feed（Cosmos DB）/ Streams（DynamoDB）异步写入查询表。</li>
+      <li><b>Watcher 横向扩展</b>：每个实例按租约持有一部分 shard（etcd / ZooKeeper / DB 条件写），实例挂了，租约过期后由其他实例接管。</li>
+      <li><b>队列</b>：Service Bus 开分区，或按 shard 拆成多个队列。</li>
+      <li><b>Worker</b>：AKS + KEDA 按队列积压扩缩容。
+        <ul>
+          <li>保留最小副本数作为常驻余量，不缩到 0。</li>
+          <li>副本数 = max(当前积压 ÷ 单 Pod 目标值, Watcher 给出的未来 5 分钟到期数 ÷ 单 Pod 目标值)，提前应对整点峰值。</li>
+          <li>缩容时优雅退出：停止拉取，跑完当前任务再 ack；没跑完的靠重新投递和幂等兜底。</li>
+          <li>短任务可以用 serverless（Azure Functions）；长任务用容器 + 心跳。</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>至少执行一次</h3>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:900px">
+      <colgroup><col style="width:22%"><col style="width:78%"></colgroup>
+      <thead><tr><th>失败场景</th><th>处理</th></tr></thead>
+      <tbody>
+        <tr><td>任务报错</td><td>先分类：参数错误不重试；可重试错误指数退避 + 抖动，超过最大次数进 DLQ</td></tr>
+        <tr><td>Worker 崩溃</td><td>没 ack 的消息在 visibility timeout / lock duration 后重新可见，由其他 Worker 取走；超过 MaxDeliveryCount 进 DLQ</td></tr>
+        <tr><td>长任务被误判超时</td><td>心跳续期 lock</td></tr>
+        <tr><td>过期 Worker 回写</td><td>条件写带 epoch（fencing），被拒绝</td></tr>
+        <tr><td>重复消息</td><td>记录已经是终态就直接 ack，不再执行</td></tr>
+        <tr><td>Watcher 扫描后、投递前崩溃</td><td>投递后条件更新为 QUEUED；reconciler 扫描"已到期但长时间未进入终态"的记录并重新投递</td></tr>
+      </tbody></table></div>
+    <ul class="prose">
+      <li><b>幂等键</b>：execution_id，下游按它去重。</li>
+      <li><b>状态迁移</b>：PENDING → QUEUED → RUNNING → SUCCEEDED / FAILED，每一步都是条件写。</li>
+      <li>立即执行的任务可以用 transactional outbox：Execution 和待投递记录写在同一个事务里。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>周期任务</h3>
+    <ul class="prose">
+      <li>不预先生成所有未来的 Execution，只保留"下一次"；当前这次投递或完成时，按 cron 表达式算出下一次并写入。</li>
+      <li>时区和夏令时：按用户原始时区计算，存储用 UTC。</li>
+      <li>停机后错过的执行：补跑还是跳过由 Job 配置决定；补跑时限速，避免压垮下游。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>多租户公平性（可选）</h3>
+    <ul class="prose">
+      <li>按租户限制并发，防止一个大客户占满所有 Worker。</li>
+      <li>高优先级任务用单独的队列。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>面试讲述顺序</h3>
+    <ol class="prose">
+      <li>需求与估算：难点是准时 + 高吞吐 + 不丢不重。</li>
+      <li>主线：Job / Execution 分表 → Watcher 轮询 → 队列 → Worker。</li>
+      <li>深入：两层调度 → 分片和查询表 → at-least-once 和幂等 → 周期任务 → 多租户。</li>
+    </ol>
+    <p class="note">Hello Interview 这题的正文是付费内容，公开部分只有需求（10k/s、2s、at-least-once）和三个深入的标题。这份笔记的方案按这些设定自己整理，参考了其他公开资料和 SQS / Service Bus 的官方文档。</p>
+  </div>
+</section>
+
+</main>
+</div>
+</div>
+</body>
+</html>

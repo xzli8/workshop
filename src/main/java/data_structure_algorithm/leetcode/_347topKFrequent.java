@@ -162,11 +162,56 @@ public class _347topKFrequent {
     public static class Solution3 {
 
         /**
-         * 桶排序(数字范围有限): O(N), O(M)
+         * 桶排序: O(N), O(N)
          * Note:
+         * - 出现次数的范围是 [1, N]，所以可以按次数分桶：buckets[c] 存所有出现了 c 次的数
+         * - 从次数最大的桶往小的取，取够 k 个就返回
+         * - 和堆的对比：桶排序 O(N) 但要开 N + 1 个桶；堆 O(NlogK)，k 远小于 N 时更省空间
          * Ref: https://leetcode.cn/problems/top-k-frequent-elements/solutions/3655287/tong-pai-xu-on-xian-xing-zuo-fa-pythonja-oqq2/
          */
+        public int[] topKFrequent(int[] nums, int k) {
+            Map<Integer, Integer> num2Count = new HashMap<>();
+            for (int num : nums) {
+                num2Count.merge(num, 1, Integer::sum);
+            }
 
+            java.util.List<Integer>[] buckets = new java.util.List[nums.length + 1];
+            for (Map.Entry<Integer, Integer> e : num2Count.entrySet()) {
+                int c = e.getValue();
+                if (buckets[c] == null) buckets[c] = new java.util.ArrayList<>();
+                buckets[c].add(e.getKey());
+            }
+
+            int[] res = new int[k];
+            int i = 0;
+            for (int c = nums.length; c >= 1 && i < k; c--) {
+                if (buckets[c] == null) continue;
+                for (int num : buckets[c]) {
+                    if (i == k) break;
+                    res[i++] = num;
+                }
+            }
+            return res;
+        }
+
+    }
+
+
+    /**
+     追问：数据量很大、单机放不下，或是持续到来的流（比如统计 Top K 错误码）
+     - 离线大文件：按 hash(key) % M 拆成 M 个小文件（同一个 key 必然落在同一个文件）
+         - 每个小文件内部用哈希表计数 + 大小为 k 的小顶堆
+         - 再把 M 个局部 Top K 合并，求全局 Top K
+     - 分布式：MapReduce / Spark 先按 key 聚合计数，再每个分区求 Top K，最后汇总
+     - 实时流：滑动窗口计数
+         - 精确：按时间分桶（比如每分钟一个哈希表），窗口滑动时减去过期桶
+         - 近似（key 太多、内存不够）：Count-Min Sketch 估算次数 + 小顶堆维护 Top K；或 Space-Saving 算法
+     */
+
+    public static void main(String[] args) {
+        int[] nums = {1, 1, 1, 2, 2, 3};
+        System.out.println(java.util.Arrays.toString(new Solution1().topKFrequent(nums, 2)));   // [2, 1]（堆弹出顺序：次数小的先出）
+        System.out.println(java.util.Arrays.toString(new Solution3().topKFrequent(nums, 2)));   // [1, 2]
     }
 
 }

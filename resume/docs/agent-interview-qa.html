@@ -1,0 +1,1637 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent 面试题库</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F4F6F9; --surface:#FFFFFF; --text:#1A222D; --muted:#5B6673; --line:#D9DEE6;
+  --accent:#3949AB; --accent-soft:#E8EAF6; --warn:#B4541A; --warn-soft:#FBEEE4;
+  --ok:#2E7D57; --ok-soft:#E3F2EA; --code-bg:#EEF1F6; --shadow:0 1px 2px rgba(20,30,50,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10151C; --surface:#171E27; --text:#E6EAF0; --muted:#9AA6B4; --line:#2A3441;
+    --accent:#8C9CFF; --accent-soft:#232B4A; --warn:#E8955A; --warn-soft:#3A2618;
+    --ok:#6FCF97; --ok-soft:#173226; --code-bg:#1E2631; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10151C; --surface:#171E27; --text:#E6EAF0; --muted:#9AA6B4; --line:#2A3441;
+  --accent:#8C9CFF; --accent-soft:#232B4A; --warn:#E8955A; --warn-soft:#3A2618;
+  --ok:#6FCF97; --ok-soft:#173226; --code-bg:#1E2631; --shadow:none;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.75 "Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.layout{display:block;max-width:1200px;margin:0 auto;padding:40px 32px 96px}
+.toc{position:fixed;top:0;left:0;height:100vh;width:280px;padding:56px 16px 24px 20px;background:var(--surface);border-right:1px solid var(--line);box-shadow:0 0 24px rgba(20,30,50,.12);overflow:auto;transform:translateX(-100%);transition:transform .2s ease;z-index:40}
+body.toc-open .toc{transform:none}
+.toc-toggle{position:fixed;top:14px;left:14px;z-index:50;font:13px "Noto Sans SC",sans-serif;padding:6px 12px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer;box-shadow:var(--shadow)}
+.toc-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.toc-backdrop{position:fixed;inset:0;z-index:30;display:none}
+body.toc-open .toc-backdrop{display:block}
+@media (max-width:900px){.layout{padding:56px 16px 64px}}
+.toc{font-size:13px;line-height:1.6}
+.toc .kicker{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.toc a{display:block;color:var(--muted);padding:3px 0 3px 10px;border-left:2px solid transparent;margin-left:-1px}
+.toc a.sub{padding-left:22px;font-size:12.5px}
+.toc a.sub2{padding-left:34px;font-size:12px}
+.toc a.sub3{padding-left:46px;font-size:11.5px}
+.toc a.active{color:var(--accent);border-left-color:var(--accent)}
+main{max-width:1120px;min-width:0;margin:0 auto}
+h1,h2,h3,h4,h5,h6{font-family:"Noto Serif SC","Songti SC","STSong",serif;text-wrap:balance;line-height:1.3;margin:0}
+h1{font-size:30px;font-weight:700;margin-bottom:8px}
+h2{font-size:22px;font-weight:700;margin:56px 0 16px;padding-top:24px;border-top:1px solid var(--line)}
+h3{font-size:17px;font-weight:600;margin:32px 0 10px}
+h4{font-size:15px;font-weight:600;margin:20px 0 6px;font-family:"Noto Sans SC",sans-serif}
+h5{font-size:14px;font-weight:700;margin:22px 0 6px;font-family:"Noto Sans SC",sans-serif}
+h6{font-size:13.5px;font-weight:700;margin:16px 0 4px;font-family:"Noto Sans SC",sans-serif}
+.lede{color:var(--muted);font-size:15px;margin:0 0 20px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:22px}
+li{margin:4px 0}
+li>ul{margin-top:4px}
+strong{font-weight:700}
+code{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;background:var(--code-bg);padding:1px 5px;border-radius:3px}
+pre{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;line-height:1.6;background:var(--code-bg);border:1px solid var(--line);border-radius:6px;padding:14px 16px;overflow-x:auto;margin:10px 0 16px}
+pre code{background:none;padding:0;font-size:inherit}
+figure.arch{margin:12px 0 18px;padding:12px;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+figure.arch svg{width:100%;height:auto;display:block}
+.tbl{overflow-x:auto;margin:10px 0 18px}
+td ul{margin:4px 0 0;padding-left:18px}
+table.cmp{table-layout:fixed}
+table.cmp td{font-size:13px;line-height:1.55}
+td li{margin:2px 0}
+table.fc-nowrap th:first-child,table.fc-nowrap td:first-child{white-space:nowrap;width:1%}
+table{border-collapse:collapse;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:12.5px;letter-spacing:.02em;background:var(--surface)}
+tr:hover td{background:var(--surface)}
+.grid6{display:grid;grid-template-columns:110px 1fr;gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:12px 0 18px;background:var(--surface);box-shadow:var(--shadow)}
+.grid6>div{padding:10px 14px;border-bottom:1px solid var(--line)}
+.grid6>div:nth-last-child(-n+2){border-bottom:0}
+.grid6 .k{font-weight:600;color:var(--muted);font-size:13px;background:var(--bg)}
+.grid6 p:last-child,.grid6 ul:last-child{margin-bottom:0}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0 16px}
+.callout.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+.callout.ok{border-left-color:var(--ok);background:var(--ok-soft)}
+.callout .tag{display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:4px}
+.callout.warn .tag{color:var(--warn)}
+.callout .tag{color:var(--accent)}
+.callout.ok .tag{color:var(--ok)}
+.callout p:last-child{margin-bottom:0}
+.qa{border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0 18px;background:var(--surface);box-shadow:var(--shadow)}
+.qa h4{margin:0 0 8px;font-size:14px;color:var(--muted);letter-spacing:.04em}
+.qa dl{margin:0}
+.qa dt{font-weight:600;margin-top:10px}
+.qa dt:first-child{margin-top:0}
+.qa dd{margin:2px 0 0 0;color:var(--text)}
+.qa dd p{margin:6px 0}
+.qa dd .tbl{margin:8px 0}
+.qa dd pre{margin:8px 0}
+.check{list-style:none;padding:0;margin:0}
+.check li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line);margin:0}
+.check input{margin-top:6px;width:16px;height:16px;accent-color:var(--accent)}
+.check .n{color:var(--muted);font-size:12px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13px;color:var(--muted);margin-bottom:28px}
+.pill{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);vertical-align:middle;margin-left:4px}
+.pill.warn{border-color:var(--warn);color:var(--warn)}
+.tbd{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;padding:0 6px;border-radius:4px;background:var(--warn-soft);color:var(--warn);vertical-align:middle;margin-right:5px}
+.draft{border:1px dashed var(--line);border-radius:8px;padding:14px 16px;margin:10px 0 18px;background:var(--surface)}
+.draft .lang{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px}
+.small{font-size:13px;color:var(--muted)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+
+<div class="layout">
+<button class="toc-toggle" type="button" aria-controls="toc" aria-expanded="false">目录</button>
+<div class="toc-backdrop"></div>
+<nav class="toc" id="toc" aria-label="目录">
+  <div class="kicker">目录</div>
+  <a href="#n1">2.1 节点 1 LLM 基础</a>
+  <a href="#n2">2.2 节点 2 Prompt 工程与指令</a>
+  <a href="#n3">2.3 节点 3 结构化输出</a>
+  <a href="#n4">2.4 节点 4 工具调用、MCP、Skills、协议</a>
+  <a href="#n5">2.5 节点 5 Agent 循环、规划、Harness、框架</a>
+  <a href="#n6">2.6 节点 6 多 Agent</a>
+  <a href="#n7">2.7 节点 7 记忆与上下文工程</a>
+  <a href="#n8">2.8 节点 8 RAG</a>
+  <a href="#n9">2.9 节点 9 评测与可观测</a>
+  <a href="#n10">2.10 节点 10 可靠性、guardrail、安全、HITL</a>
+  <a href="#n11">2.11 节点 11 成本、延迟、生产工程</a>
+  <a href="#n12">2.12 节点 12 行为、产品感、AI 编程习惯</a>
+  <a href="#n13">6 应用岗八股</a>
+  <a href="#n14">4 系统设计压轴题</a>
+  <a href="#n15">5 项目深挖</a>
+  <a href="maya-agent-interview.html">← Agent 工程追问清单</a>
+</nav>
+
+<main>
+<h1>Agent 面试题库</h1>
+<p class="small">题目来自《Agent 工程师面试问题体系》；标签为 题型·频率。Maya 行链接到追问清单对应章节。</p>
+
+<h2 id="n1">2.1 节点 1 LLM 基础</h2>
+<div class="qa">
+<dl>
+  <dt><span class="pill">概念·高</span> Token、上下文窗口、上下文腐化是什么，怎么影响成本和效果；超出 context window 会坏什么、生产里怎么处理</dt>
+  <dd>
+  <ul>
+    <li><strong>概念</strong>：Token 是分词器切出的计费与计算单位；上下文窗口是单次调用输入加输出的 token 上限；上下文腐化（context rot）指输入越长、模型对其中信息的利用越不可靠，未满窗口就会发生（Chroma 2025 年对 18 个模型的测试）。</li>
+    <li><strong>影响</strong>：成本和首字延迟随输入 token 增长；超窗时请求直接报错或被框架静默截断，丢失早期约束与工具结果。</li>
+    <li><strong>处理</strong>：按 token 预算组装上下文（用 tokenizer 计数、整轮截断），窗口外内容压摘要并按需召回，工具返回分页或截断。</li>
+  </ul>
+  <p><strong>Maya</strong>：窗口 4000 token 预算 + 增量摘要 + 双路召回；长上下文评测仅窗口 9/30，开摘要和召回 30/30（<a href="maya-agent-interview.html#t6">笔记 6.1、6.8</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·高</span> 幻觉怎么产生、Agent 场景怎么缓解；模型在高风险场景给出自信但错误的答案，怎么排查和缓解</dt>
+  <dd>
+  <ul>
+    <li><strong>成因</strong>：模型按概率续写，缺知识时仍生成流畅答案；训练与评测奖励"猜"多于"弃答"，导致过度自信。Agent 中还有工具幻觉与"声称已执行"。</li>
+    <li><strong>排查</strong>：先建评测集量化 confident-wrong 率，再按根因分类：检索缺口、校准不足、Prompt 未允许弃答。</li>
+    <li><strong>缓解</strong>：事实只来自工具与检索并要求引用；缩小判断面（枚举、schema、词表）；允许"不知道"；输出前做规则或模型校验；高风险转人工。</li>
+  </ul>
+  <p><strong>Maya</strong>：Account 只报工具返回的事实，core 不可用时如实说查不到；FAQ 只保留真正给过模型的出处编号（<a href="maya-agent-interview.html#t9">笔记 9.3</a>、<a href="maya-agent-interview.html#t7">7.6</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> Temperature / Top-P / Top-K 各是什么、Agent 场景怎么调；Temperature=0 为什么同输入还不同输出</dt>
+  <dd>
+  <ul>
+    <li><strong>定义</strong>：Temperature 缩放 logits 改变分布尖锐程度；Top-K 只在概率最高的 K 个 token 中采样；Top-P（nucleus）只在累计概率达到 P 的最小集合中采样。</li>
+    <li><strong>Agent 调参</strong>：路由、工具决策、结构化抽取用低温度求稳定；创作类文案可适度提高；一般只调 Temperature 或 Top-P 之一，改动需过评测。</li>
+    <li><strong>T=0 不确定</strong>：主因是推理服务缺乏批不变性（batch invariance）：服务负载改变批大小，核函数的归约顺序随之改变，浮点非结合导致数值微差，贪心解码一旦翻转后续全变（Thinking Machines 2025）。seed 只是尽力而为，评测需重复运行。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> KV Cache 和 Prompt Caching 原理、怎么提高命中率（含 KV-cache 跨按键复用）</dt>
+  <dd>
+  <ul>
+    <li><strong>KV Cache</strong>：自回归解码时缓存每层已处理 token 的 Key/Value，新 token 只计算自身并与缓存做注意力，避免重复计算；代价是显存，vLLM 用 PagedAttention 分页管理。</li>
+    <li><strong>Prompt Caching</strong>：服务端跨请求复用相同前缀的 KV，必须精确前缀匹配；有最小长度（OpenAI 1024 token 起，Anthropic 按模型 512–4096）和分钟级 TTL（Anthropic 默认 5 分钟）；读价约为原价一折，Anthropic 写入为 1.25 倍。</li>
+    <li><strong>提高命中</strong>：不变在前、变化在后（tools → system → messages）；system 不放时间戳、用户 ID；历史只追加不改写；工具定义顺序固定；同前缀请求路由到同一缓存（OpenAI <code>prompt_cache_key</code>）。编辑器补全同理，文件前缀不变只追加光标后内容。</li>
+  </ul>
+  <p><strong>Maya</strong>：system 只放固定规则和词表做缓存前缀，历史逐轮重放不改写，前缀缓存命中率 85%（<a href="maya-agent-interview.html#t2">笔记 2.1</a>、<a href="maya-agent-interview.html#t10">10.8</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 为什么长上下文会 Lost in the Middle、窗口越大越好吗</dt>
+  <dd>
+  <ul>
+    <li><strong>现象</strong>：Liu et al.（2023，TACL 2024）在多文档问答和键值检索上发现，关键信息位于开头或结尾时效果最好、位于中间最差，呈 U 形；注意力存在首因与近因偏置。</li>
+    <li><strong>窗口不是越大越好</strong>：成本与延迟随输入增长，无关内容构成干扰，上下文腐化未满窗即出现。目标是能完成任务的最小高信号 token 集。</li>
+    <li><strong>对策</strong>：检索加重排只放少量高相关片段，关键指令与证据放首尾，长历史用摘要替代原文。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·低</span> 量化 INT8 / INT4 / AWQ / GPTQ 怎么选、vLLM / TGI / llama.cpp / SGLang 怎么选</dt>
+  <dd>
+  <ul>
+    <li><strong>量化</strong>：INT8（LLM.int8() 对离群值混合精度、SmoothQuant 做 W8A8）接近无损；INT4 仅权重量化，显存约为 FP16 的四分之一。GPTQ 逐层用二阶信息补偿量化误差；AWQ 按激活幅度识别少量显著权重通道并缩放保护，无需反向传播、泛化较好。质量敏感选 INT8/FP8，显存受限选 INT4（AWQ/GPTQ）。</li>
+    <li><strong>推理引擎</strong>：vLLM（PagedAttention + 连续批处理，生态最广）为通用默认；SGLang（RadixAttention 前缀复用）适合多轮、Agent 等共享前缀负载；llama.cpp（GGUF）面向 CPU 与端侧；TGI 已进入维护模式，官方建议迁往 vLLM 或 SGLang。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·低</span> Embedding 是什么、语义相似度怎么支撑检索</dt>
+  <dd>
+  <ul>
+    <li><strong>概念</strong>：将文本映射为定长稠密向量，经对比学习训练使语义相近的文本余弦相似度高。</li>
+    <li><strong>检索</strong>：离线切块编码写入 ANN 索引（如 HNSW），在线编码查询取 top-k。擅长同义改写，不擅长专名、数字、否定，需配关键词检索（BM25）混合；索引与查询必须同一模型，换模型全量重建。</li>
+  </ul>
+  <p><strong>Maya</strong>：text-embedding-3-small，写入与查询共用；embedding 失败降级为关键词单路（<a href="maya-agent-interview.html#t7">笔记 7.3</a>、<a href="maya-agent-interview.html#t9">9.4</a>）。</p>
+  </dd>
+</dl>
+</div>
+
+<h2 id="n2">2.2 节点 2 Prompt 工程与指令</h2>
+<div class="qa">
+<dl>
+  <dt><span class="pill">概念·高</span> Prompt / RAG / 微调怎么选、微调什么时候真的有用</dt>
+  <dd>
+  <ul>
+    <li><strong>按问题性质选</strong>：先 Prompt 起步；缺知识（会变化、需出处）用 RAG；行为、格式、风格不稳定，或要用小模型替代大模型降本降延迟，才考虑微调。</li>
+    <li><strong>微调适用</strong>：任务窄且高频、有足量标注数据、Prompt 与示例已到上限。不适合注入频繁变化的知识，且每次换基座都要重训重评。</li>
+  </ul>
+  <p><strong>Maya</strong>：行为规则靠 prompt，平台规则走 RAG；分类类任务示例堆多后的出路是小模型微调或 embedding 分类器（<a href="maya-agent-interview.html#t2">笔记 2.2</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·高</span> CoT 是什么、为什么有效、缺点和局限；self-consistency</dt>
+  <dd>
+  <ul>
+    <li><strong>机制</strong>：思维链（Chain-of-Thought，Wei et al. 2022）让模型先输出中间推理步骤再作答，把多步问题分解，并为计算提供更多 token，对算术、逻辑等多步推理提升明显。</li>
+    <li><strong>局限</strong>：增加 token 与延迟；推理文本不一定忠实反映模型实际依据；小模型收益有限；推理模型已内置思考，显式 CoT 边际收益下降。</li>
+    <li><strong>Self-consistency</strong>（Wang et al. 2022）：采样多条推理路径，对最终答案多数投票，以成本换准确率。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> System Prompt / Few-shot / CoT 各起什么作用；为什么同一件事换个说法效果差十倍；怎么写好 Prompt</dt>
+  <dd>
+  <ul>
+    <li><strong>作用</strong>：System Prompt 定角色、目标、规则与边界；Few-shot 用少量多样的典型示例校准输出分布；CoT 为复杂判断提供推理空间。</li>
+    <li><strong>敏感性</strong>：模型对措辞、顺序、格式敏感，取决于与训练分布的贴合度及指令是否有歧义。</li>
+    <li><strong>写法</strong>：指令处于"合适的高度"（介于硬编码逻辑与模糊指导之间），分节书写；输出形状交给 schema，工具说明写在工具定义上；zero-shot 起步，评测驱动补规则与示例。</li>
+  </ul>
+  <p><strong>Maya</strong>：正文只有角色、规则、可选示例三块，工具、输出形状、动态内容各走独立通道（<a href="maya-agent-interview.html#t2">笔记 2.1</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> Prompt 版本管理、Prompt A/B 怎么做</dt>
+  <dd>
+  <ul>
+    <li><strong>版本管理</strong>：Prompt 当代码管理：入版本库、走 PR、评测不过不合并；prompt、模型、schema、采样参数统一打版本号并写入 trace。</li>
+    <li><strong>A/B</strong>：先离线评测集对比，再按用户哈希分流灰度，看任务成功率、业务转化、延迟与成本，依据 trace 中的版本号归因。</li>
+  </ul>
+  <p><strong>Maya</strong>：prompt 进版本库、改动走 PR、评测不过不合并，换模型和采样参数同样过评测（<a href="maya-agent-interview.html#t2">笔记 2.2</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中·2026 新</span> Prompt Engineering、Context Engineering、Harness Engineering 三者的区别</dt>
+  <dd>
+  <ul>
+    <li><strong>Prompt Engineering</strong>：优化单次调用的指令文本。</li>
+    <li><strong>Context Engineering</strong>：管理每次调用进入窗口的全部 token（system、工具定义、记忆、检索、历史），在有限预算内选出最小的高信号集合。</li>
+    <li><strong>Harness Engineering</strong>：模型之外的运行框架：Agent 循环、工具执行与权限、状态持久化与恢复、重试与限步、验证与评测。</li>
+  </ul>
+  <p><strong>Maya</strong>：上下文由代码按层在 token 预算内重组；控制流、终态与写操作审批由 LangGraph 图承担（<a href="maya-agent-interview.html#t6">笔记 6.1</a>、<a href="maya-agent-interview.html#t5">5.4</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·低</span> Cursor / Claude Code 的 System Prompt 怎么写</dt>
+  <dd>
+  <ul>
+    <li><strong>构成</strong>：身份与运行环境（操作系统、工作目录、日期）；工具使用规则（优先专用工具、无依赖时并行调用）；工程规范（先读后改、遵循既有风格、不擅自提交）；安全边界（危险命令需确认）；输出风格（简洁）。</li>
+    <li><strong>分层</strong>：项目级指令通过 CLAUDE.md / AGENTS.md / 规则文件注入，按需能力以 Skill 渐进加载；稳定部分前置以命中缓存。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">Dbg·低</span> 模型不听指令、输出格式不稳怎么办</dt>
+  <dd>
+  <ul>
+    <li><strong>指令</strong>：排查规则冲突、关键指令埋在长上下文中段、示例与规则矛盾；规则分节写清，关键约束置于首尾，错误样本转为规则或示例后回归。</li>
+    <li><strong>格式</strong>：用结构化输出 strict 模式在解码阶段约束，应用侧再校验，失败带错误信息有界重试；必要时降低温度或更换模型。</li>
+  </ul>
+  <p><strong>Maya</strong>：首轮评测发现"what goes with wide leg jeans"把 Jeans 放进 must，补一条规则后回归（<a href="maya-agent-interview.html#t2">笔记 2.2</a>）。</p>
+  </dd>
+</dl>
+</div>
+
+<h2 id="n3">2.3 节点 3 结构化输出</h2>
+<div class="qa">
+<dl>
+  <dt><span class="pill">概念·中</span> Structured Output 和 Function Calling 的区别、各用在哪</dt>
+  <dd>
+  <ul>
+    <li><strong>相同</strong>：都以 JSON Schema 约束输出，strict 模式下在解码阶段保证合法。</li>
+    <li><strong>区别</strong>：Structured Output 约束模型给程序的最终结果（抽取、分类、判定），一次调用结束；Function Calling 是模型请求应用执行动作，结果回灌后继续生成，可多轮、可并行。</li>
+  </ul>
+  <p><strong>Maya</strong>：FAQ、Summarizer 用 with_structured_output；主 agent 以工具调用分派子 agent；Fashion 用提交工具交检索条件，代码校验后可拒收（<a href="maya-agent-interview.html#t1">笔记 1.2</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> JSON 解析失败怎么降级；Function Call 和"Prompt + 正则解析"的区别</dt>
+  <dd>
+  <ul>
+    <li><strong>降级链</strong>：首选原生 strict 模式根除语法错误；仍失败则宽松修复，再带错误信息有界重试，最后回退默认值、规则路径或固定文案；语义错误由 pydantic 校验拦截。</li>
+    <li><strong>区别</strong>：Function Calling 是模型经训练产出的结构化调用，由服务端解析并可约束解码、支持并行；Prompt + 正则依赖模型自觉遵守格式，转义、嵌套和格式漂移都会导致解析失败，没有 schema 保证。</li>
+  </ul>
+  <p><strong>Maya</strong>：校验不过退回模型修正；仍异常则转为 error 帧，流不断（<a href="maya-agent-interview.html#t1">笔记 1.2</a>、<a href="maya-agent-interview.html#t9">9.1</a>）。</p>
+  </dd>
+  <dt><span class="pill">设计·低</span> 把 LLM 放在可靠的应用契约后面（schema、校验、拒答与缺字段、超时与重试、版本、副作用前校验）</dt>
+  <dd>
+  <ul>
+    <li><strong>契约</strong>：pydantic 定义 schema，strict 解码加应用侧业务校验；显式处理拒答（refusal）与缺字段；每次调用设超时与有界重试。</li>
+    <li><strong>治理</strong>：prompt、模型、schema、参数一起打版本并过评测；产生副作用前由代码复核计算结果与权限，不信任模型输出。</li>
+  </ul>
+  <p><strong>Maya</strong>：pydantic 校验器保证 search 与 outcome 一致；写操作前人工审批并校验本人与状态（<a href="maya-agent-interview.html#t1">笔记 1.2</a>、<a href="maya-agent-interview.html#t5">5.4</a>）。</p>
+  </dd>
+</dl>
+</div>
+
+<h2 id="n4">2.4 节点 4 工具调用、MCP、Skills、协议</h2>
+<div class="qa">
+<dl>
+  <dt><span class="pill">概念·高</span> Function Calling 原理、LLM 怎么学会调外部工具、这个能力怎么训练出来的</dt>
+  <dd>
+  <ul>
+    <li><strong>流程</strong>：开发者提供工具 schema → 模型输出结构化调用（名称 + 参数）→ 应用执行 → 结果以 tool 消息回灌 → 模型生成最终回答。模型本身不执行任何工具。</li>
+    <li><strong>训练</strong>：在"工具描述 → 调用 → 结果 → 回答"格式的数据上做 SFT，使模型学会判断何时调用并按签名输出 JSON（OpenAI 2023 年发布时即说明模型为此微调）；Toolformer 以自监督方式插入 API 调用，按是否降低后续预测损失筛选样本；当前模型再用强化学习在多步工具任务上优化。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·高</span> MCP 和 Function Calling 的本质区别</dt>
+  <dd>
+  <ul>
+    <li><strong>层次不同</strong>：Function Calling 是模型 API 能力，解决模型怎么输出一次结构化调用；MCP 是应用与外部系统间的开放协议，解决工具怎么被发现、连接和跨进程调用，M×N 适配降为 M+N。</li>
+    <li><strong>协作</strong>：MCP 不替代 Function Calling：Server 暴露工具，Host 转成 function 交给模型，模型输出调用后 Host 经 MCP 执行。只给自己 Agent 用，Function Calling 足够。</li>
+  </ul>
+  <p><strong>Maya</strong>：图内工具为进程内 @tool；同一套 Account 工具另起 MCP Server 供 Claude Code 等 Host 接入（<a href="maya-agent-interview.html#t4">笔记 4.1</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·高·2026 新</span> MCP vs Skills vs Function Calling 三者区别；Skills 的渐进式披露、为什么省 Token、懒加载；Skill 和 Tool 的边界</dt>
+  <dd>
+  <ul>
+    <li><strong>定位</strong>：Function Calling 是模型调用接口；MCP 管能连上什么系统；Skill 是程序性知识包（SKILL.md + 可选脚本与参考文件），管拿到工具后按什么步骤做。</li>
+    <li><strong>渐进式披露</strong>：启动时只把每个 Skill 的 name 和 description 放进系统提示；判断相关才读入整份 SKILL.md；附带文件用到再读。平时每个 Skill 只占一行描述，而 MCP 工具定义默认全量加载。</li>
+    <li><strong>边界</strong>：Tool 是原子、确定执行的能力；Skill 是组合工具的流程知识。Skill 可带脚本即等于装代码，只装可信来源并审查。</li>
+  </ul>
+  <p><strong>Maya</strong>：未使用 Skill，各 agent 的 system prompt 短且每轮都用，全量放入更简单（<a href="maya-agent-interview.html#t4">笔记 4.6</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> A2A 是什么、和 MCP 的区别</dt>
+  <dd>
+  <ul>
+    <li><strong>A2A</strong>：Google 于 2025 年发起、后交由 Linux Foundation 体系治理的 Agent 间协议。Agent 发布 Agent Card 声明能力、端点与认证方式；以 Task 为工作单元，有 submitted、working、input-required、completed 等生命周期状态，产出 Artifact；支持 JSON-RPC、gRPC、HTTP+JSON 绑定，SSE 流式与 webhook 推送。</li>
+    <li><strong>区别</strong>：MCP 是 Agent 调工具，工具透明、调用短；A2A 是 Agent 委派 Agent，对方不透明、任务可长时运行并多轮交互。二者互补。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> MCP 用什么通信方式；WebSocket vs SSE 的区别和局限；WebRTC vs WebSocket 在对话流里的差异</dt>
+  <dd>
+  <ul>
+    <li><strong>MCP</strong>：数据层为 JSON-RPC 2.0；传输层为 stdio（Host 拉起的本地子进程）与 Streamable HTTP（单一端点 POST，响应为 JSON 或请求级 SSE 流，取代早期 HTTP+SSE 双端点方案）。</li>
+    <li><strong>SSE vs WebSocket</strong>：SSE 是单向的普通 HTTP 长响应，网关与中间件原样通过、浏览器原生重连，但原生 EventSource 仅支持 GET；WebSocket 全双工，需网关支持协议升级，重连自行实现。</li>
+    <li><strong>WebRTC</strong>：基于 UDP 的实时媒体传输，内置抗丢包与回声消除，适合实时语音与打断；WebSocket 基于 TCP，存在队头阻塞，适合文本与信令。</li>
+  </ul>
+  <p><strong>Maya</strong>：对话用 SSE，POST 带 JSON body、前端 fetch 读流；MCP Server 支持 stdio 与 Streamable HTTP 两种形态（<a href="maya-agent-interview.html#t10">笔记 10.4</a>、<a href="maya-agent-interview.html#t4">4.3</a>）。</p>
+  </dd>
+  <dt><span class="pill">设计·高</span> 注册 30 个工具后选工具准确率下降怎么办；Tool Routing 怎么做；工具多了提示词过长怎么办；工具返回过大超出窗口怎么办</dt>
+  <dd>
+  <ul>
+    <li><strong>选错工具</strong>：问题在重叠度而非数量（OpenAI）；合并多步操作为单工具，按命名空间分组，描述写清边界。</li>
+    <li><strong>路由与定义过长</strong>：先分类再只暴露子集，或按领域拆子 Agent；工具定义按需检索加载（tool search）。</li>
+    <li><strong>返回过大</strong>：分页、截断（Claude Code 单次工具返回上限 25,000 token）、只回必要字段；或让模型写代码在执行环境中过滤，只把结果交给模型。</li>
+  </ul>
+  <p><strong>Maya</strong>：Fashion 误调账户工具后按领域拆分；主 agent 只见三个子 agent 工具，各子 agent 只挂自身工具（<a href="maya-agent-interview.html#t4">笔记 4.5</a>、<a href="maya-agent-interview.html#t5">5.1</a>）。</p>
+  </dd>
+  <dt><span class="pill">Dbg·高</span> 工具调用格式非法、参数错、超时、返回部分结果时怎么容错</dt>
+  <dd>
+  <ul>
+    <li><strong>工程偶发</strong>（超时、429、5xx）：指数退避加抖动重试，仅限幂等调用；耗尽后回固定说明，令模型如实告知而非编造。</li>
+    <li><strong>模型用错</strong>（格式非法、参数错、工具不存在）：错误压成一条可执行的工具结果回灌，模型修正或换工具，限制轮数。</li>
+    <li><strong>部分结果与高风险</strong>：部分结果标明缺失项后降级作答；写操作执行前人工确认，超时与异常按调用隔离。</li>
+  </ul>
+  <p><strong>Maya</strong>：core 调用 tenacity 最多 3 次、单次超时 3 秒，耗尽回 CORE_UNAVAILABLE 且评测断言不编造；模型错误回灌受 MAX_TOOL_ROUNDS 限制（<a href="maya-agent-interview.html#t3">笔记 3.3</a>）。</p>
+  </dd>
+  <dt><span class="pill">Dbg·中</span> 工具幻觉：虚构工具能力、传错输入、没执行却声称完成（"任务幻觉"）</dt>
+  <dd>
+  <ul>
+    <li><strong>调用侧</strong>：每次调用对照注册表校验工具名与参数 schema（strict），不合法则回灌错误；描述写明能力边界。</li>
+    <li><strong>结果侧</strong>：终态由代码依据实际工具结果判定，不信模型自述；结果不确定时读回状态；评测断言回复中的动作在 trace 中有对应调用。</li>
+  </ul>
+  <p><strong>Maya</strong>：不存在的工具名压成 ToolMessage 回灌；写操作结果不确定时读回状态再答复（<a href="maya-agent-interview.html#t3">笔记 3.3</a>、<a href="maya-agent-interview.html#t9">9.3</a>）。</p>
+  </dd>
+  <dt><span class="pill">设计·中</span> 工具调用返回结构 / Tool Schema 怎么设计</dt>
+  <dd>
+  <ul>
+    <li><strong>Schema</strong>：描述写查什么、何时用；参数少而无歧义（user_id 而非 user），用枚举收窄取值；身份、权限、租户参数不暴露给模型，由代码注入。</li>
+    <li><strong>返回</strong>：返回可读名称而非 UUID，只给必要字段，支持分页与截断；错误信息说明原因与修正方法。</li>
+  </ul>
+  <p><strong>Maya</strong>：工具为 clients 函数的薄包装，返回 JSON 字符串；user_id 标 InjectedToolArg，从 state 注入（<a href="maya-agent-interview.html#t3">笔记 3.2</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> Agent 的 thinking 怎么决定调工具还是直接回复</dt>
+  <dd>
+  <ul>
+    <li><strong>机制</strong>：输出工具调用块还是文本，是同一次生成中的决策，依据 system 规则、工具描述和上下文，由训练习得；推理模型先思考再决定。</li>
+    <li><strong>工程控制</strong>：工具描述写清何时使用；用 tool_choice（auto / required / none / 指定工具）强制；轮数用完不再绑定工具以强制作答。</li>
+  </ul>
+  <p><strong>Maya</strong>：Account 无 tool_calls 即结束，轮数耗尽时不绑工具强制作答（<a href="maya-agent-interview.html#t5">笔记 5.2、5.3</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·低</span> 同时触发多个 Function Call 怎么处理；LLM 自己执行 Function Call 吗；Qwen 工具调用适配与空调用</dt>
+  <dd>
+  <ul>
+    <li><strong>并行调用</strong>：模型一次返回多个调用，应用并发执行，按 tool_call_id 回填结果后再调用模型；存在依赖时关闭并行或分轮。LLM 不执行，只输出调用意图。</li>
+    <li><strong>Qwen 适配</strong>：工具调用依赖 chat template 中的 Hermes 风格 <code>&lt;tool_call&gt;</code> 标签，vLLM 部署需开启对应 tool parser；空调用或参数为空时校验拦截并回灌错误重试，仍失败则回退。</li>
+  </ul>
+  <p><strong>Maya</strong>：Account 一条消息可并行调用多个工具，如一轮同时查扣费日期与箱内商品（<a href="maya-agent-interview.html#t5">笔记 5.2</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·低·2026 新</span> 接工具选 CLI 还是 MCP、为什么把工具执行封装成 CLI、代码执行沙箱怎么设计</dt>
+  <dd>
+  <ul>
+    <li><strong>CLI</strong>：模型训练数据中熟悉常见命令，可管道组合，不预占工具定义上下文，<code>--help</code> 即渐进披露；适合有 shell 的编码类 Agent。</li>
+    <li><strong>MCP</strong>：适合需要鉴权、跨 Host 分发、结构化 schema 或无 shell 环境的场景。</li>
+    <li><strong>沙箱</strong>：容器或 microVM（gVisor、Firecracker）隔离；文件系统与网络白名单；CPU、内存、时长配额；不注入凭证；输出截断后回给模型。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">手撕·中</span> 写一个 function calling handler / tool-use orchestrator</dt>
+  <dd>
+  <ul>
+    <li><strong>主循环</strong>：调用模型；无工具调用则返回文本；否则对每个调用查注册表、校验参数、并发执行无依赖调用，结果按 tool_call_id 追加为 tool 消息后继续循环。</li>
+    <li><strong>健壮性</strong>：单调用超时与幂等重试；异常转为 is_error 工具结果而非抛出；最大轮数与重复调用检测；身份参数注入；写操作前确认。</li>
+  </ul>
+  <p><strong>Maya</strong>：Account 的 tools 节点即此结构，MAX_TOOL_ROUNDS 限轮、user_id 注入、写操作前 interrupt（<a href="maya-agent-interview.html#t3">笔记 3.2、3.3</a>、<a href="maya-agent-interview.html#t5">5.4</a>）。</p>
+  </dd>
+</dl>
+</div>
+
+
+<h2 id="n5">2.5 节点 5 Agent 循环、规划、Harness、框架</h2>
+<div class="qa">
+<dl>
+  <dt><span class="pill">概念·高</span> LLM、Agent、Workflow、Tools 的区别；Agent 由哪些核心组件构成</dt>
+  <dd>
+  <ul>
+    <li><strong>区别</strong>：LLM 是无状态的生成函数；Tools 是模型可请求、由代码执行的外部能力；Workflow 由代码预定义路径，模型只在节点内工作；Agent 由模型在循环中依据工具结果决定下一步与何时结束（LangChain：模型在循环里调用工具直到任务完成）。</li>
+    <li><strong>组件</strong>：模型（决策）、工具（行动）、记忆与上下文（短期会话状态 + 长期记忆）、控制循环与规划（含停止条件），外加护栏与可观测。</li>
+  </ul>
+  <p><strong>Maya</strong>：FAQ 是固定的 prompt chaining（检索、rerank、作答），Fashion 与 Account 是 ReAct Agent，出口由代码把关（<a href="maya-agent-interview.html#t5">笔记 5.1</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·高</span> 详细解释 ReAct、由哪几部分组成、优缺点</dt>
+  <dd>
+  <ul>
+    <li><strong>机制</strong>：推理与行动交替的循环：Thought 决定下一步，Action 调用工具，Observation 将结果追加回上下文，直到模型不再请求动作或触发上限。</li>
+    <li><strong>组成</strong>：Thought、Action、Observation 与终止出口。原论文以文本格式 + 正则解析实现；现行实现用函数调用：类型化 tool_call，tool 消息按 id 配对，无 tool_calls 即结束，轮数上限兜底。</li>
+    <li><strong>优缺点</strong>：依据实时观察调整、可解释、无需预先规划；但为贪心逐步决策、缺乏全局规划，长任务易跑偏，每步一次模型调用，延迟与成本随步数线性增长。</li>
+  </ul>
+  <p><strong>Maya</strong>：Account 一轮可并行请求多个工具，无 tool_calls 即结束；Fashion 以提交工具为出口，0 件结果作为 Observation 退回由模型放宽条件（<a href="maya-agent-interview.html#t5">笔记 5.2</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·高</span> ReAct vs Plan-and-Execute vs Reflection 怎么选</dt>
+  <dd>
+  <ul>
+    <li><strong>ReAct</strong>：步骤少、下一步强依赖上一步结果的任务。</li>
+    <li><strong>Plan-and-Execute</strong>：步骤多的长流程；强模型规划一次，执行可用小模型，不易中途跑偏；前步失败时计划失效，须 re-plan。</li>
+    <li><strong>Reflection</strong>：质量要求高且评审标准可写明的产出，代价是额外的评审与修改轮次；ToT 每步多分支多次调用，成本最高，仅用于搜索型难题。</li>
+  </ul>
+  <p><strong>Maya</strong>：子 Agent 步骤少且依赖工具结果，均用 ReAct；路径固定的 FAQ 不用 Agent（<a href="maya-agent-interview.html#t5">笔记 5.1</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 赋予 LLM 规划能力的主流方法（CoT / ReAct / ToT / GoT / Plan-and-Execute / Reflexion）；反思机制是什么、怎么提升效果</dt>
+  <dd>
+  <ul>
+    <li><strong>方法</strong>：CoT 单次显式推理；ReAct 推理与行动交替；ToT 多分支搜索并评估、回溯；GoT 以图结构组织并合并思路；Plan-and-Execute 先计划后执行；Reflexion 在失败后生成文字反思存入记忆，供下次尝试使用。</li>
+    <li><strong>反思</strong>：对已有产出进行评审并据此修改。提升效果的关键是外部信号（测试结果、工具报错、规则校验、评测器）而非纯自评，评审标准明确，并限制反思轮次。</li>
+  </ul>
+  <p><strong>Maya</strong>：Fashion 检索 0 件时由代码将结果作为 Observation 退回，模型据此放宽条件，属于外部反馈驱动的修正（<a href="maya-agent-interview.html#t5">笔记 5.2</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 单次提示词 / Workflow / Agent 三种方案怎么选型；什么时候不该做 Agent</dt>
+  <dd>
+  <ul>
+    <li><strong>选型</strong>：从最简单的开始：单次调用能完成就不加链；步骤可预先写清用 Workflow；步骤数与工具选择事先无法确定时才用 Agent。</li>
+    <li><strong>不该用</strong>：要求确定性或可审计、延迟敏感、错误代价高且不可回滚、缺少评测兜底。</li>
+    <li><strong>用时配套</strong>：工具 schema、最小权限、停止条件、预算上限、写操作审批点。</li>
+  </ul>
+  <p><strong>Maya</strong>：单 Agent 起步，按误调工具、跨领域多跳等信号逐级演进到 routing 和 manager（<a href="maya-agent-interview.html#t5">笔记 5.1</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> Agent Loop 怎么决定停、停止条件、长任务 Early Stop</dt>
+  <dd>
+  <ul>
+    <li><strong>正常出口</strong>：模型不再请求工具，或调用显式的提交工具 / 给出约定的结构化输出。</li>
+    <li><strong>兜底出口</strong>：轮数、token、时长预算；到达后走确定路径（不绑工具强制作答或返回固定澄清），不抛异常。框架的 recursion_limit / max_turns 只是最后防线，触发即说明出口有遗漏。</li>
+    <li><strong>Early Stop</strong>：同一工具同参数重复调用检测、状态多步无进展检测、验证器通过即停。</li>
+  </ul>
+  <p><strong>Maya</strong>：Fashion 工具调用最多 4 轮，用完回固定文案转澄清；Account 最多 3 轮，用完不绑工具强制作答（<a href="maya-agent-interview.html#t5">笔记 5.3</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·高</span> Agent Harness 是什么、怎么设计一个完整的 Harness、Agent vs Harness、Harness 概念为什么近期走红</dt>
+  <dd>
+  <ul>
+    <li><strong>定义</strong>：Agent = Model + Harness（LangChain）。Harness 是模型之外的全部代码、配置与执行逻辑：system prompt、工具 / Skills / MCP、沙箱与文件系统、记忆、上下文管理（压缩、卸载、渐进披露）、编排、hooks、自我验证。</li>
+    <li><strong>设计</strong>：循环与停止条件；工具权限与沙箱、审批点；上下文管理；状态持久化与恢复；验证回路（测试结果回灌）；trace 与评测。Anthropic 长任务方案：initializer 生成 JSON 功能清单、进度文件与 init.sh，后续每个会话读进度与 git log 起步、一次只做一个功能、端到端测试后提交。</li>
+    <li><strong>走红原因</strong>：模型能力趋同后差距体现在 Harness；同一模型在不同 Harness 中表现差异显著，LangChain 仅改 Harness 就将编码 Agent 在 Terminal Bench 2.0 从 Top 30 提升到 Top 5。</li>
+  </ul>
+  <p><strong>Maya</strong>：Harness 即 LangGraph 图：循环与出口由代码控制，身份由代码注入，写操作 interrupt 人工审批，Postgres checkpointer 持久化，评测集回归验收（<a href="maya-agent-interview.html#t5">笔记 5.3–5.4</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> Claude Code 的上下文管理思路、数据流、防重复 Tool Call；为什么已有 Claude Code 还要自研 Coding Agent</dt>
+  <dd>
+  <ul>
+    <li><strong>上下文</strong>：CLAUDE.md 启动时载入，文件经 glob / grep 即时检索（just-in-time）；Skills 只列描述、使用时载入全文；MCP 工具 schema 默认延迟加载、经 tool search 按需获取；子 Agent 在独立上下文窗口工作，只回传精炼结果；接近上限时 compaction，保留架构决策、未解决的 bug 和实现细节，丢弃冗余工具输出，并保留最近访问的文件。</li>
+    <li><strong>数据流与防重复</strong>：输入 → 模型 → tool_use → 权限检查 → 执行 → tool_result 回灌，循环至不再调用工具；编辑前必须先读取文件，todo 清单记录进度，配合重复调用检测避免空转。</li>
+    <li><strong>自研理由</strong>：私有工具与数据接入、权限与合规、服务端多租户部署、模型与成本可选、评测与可观测可定制。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> 为什么有时手搓 Agent 而不用成熟框架；LangGraph vs 自研</dt>
+  <dd>
+  <ul>
+    <li><strong>手搓</strong>：控制流与上下文完全自有（12-Factor：own your control flow / own your context window），依赖少、调试透明，不受框架抽象频繁变动影响。</li>
+    <li><strong>LangGraph</strong>：提供 checkpoint 持久化、interrupt 人工审批、超步并行、流式与 time travel，自研需重造且难做对。</li>
+    <li><strong>取舍</strong>：简单循环手写；需持久化、HITL、并行与崩溃恢复时用 LangGraph，但 prompt 与上下文仍自行组装。</li>
+  </ul>
+  <p><strong>Maya</strong>：用 LangGraph 的 checkpointer、interrupt 与 Send，历史与上下文由代码自行组装（<a href="maya-agent-interview.html#t5">笔记 5.4、5.7</a>，<a href="maya-agent-interview.html#t6">6.1</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 框架题：用过哪些框架、怎么选；LangChain vs LangGraph；LangChain vs LlamaIndex；LangGraph 状态快照；Spring AI vs LangChain4j</dt>
+  <dd>
+  <ul>
+    <li><strong>LangChain vs LangGraph</strong>：LangChain 提供模型、工具、检索等组件与高层 Agent 接口（1.0 的 create_agent 运行在 LangGraph 之上）；LangGraph 是底层有状态图运行时：节点、边、带 reducer 的状态、checkpointer、interrupt。</li>
+    <li><strong>状态快照</strong>：每个超步写一个 checkpoint（StateSnapshot：values、next、config、metadata 等）；get_state / get_state_history 查看与回溯，update_state 后可从历史 checkpoint 分叉执行（time travel）。</li>
+    <li><strong>其他</strong>：LlamaIndex 侧重数据接入、索引与检索（RAG），LangChain 侧重编排与集成；Java 生态中 Spring AI 是 Spring 官方项目，依托 Boot 自动配置与 ChatClient，LangChain4j 不绑定框架，以 AI Services 声明式接口为核心。</li>
+  </ul>
+  <p><strong>Maya</strong>：LangGraph 编排、LangSmith 评测与 trace；子 Agent 以子图实现，结果经 reducer 合并（<a href="maya-agent-interview.html#t5">笔记 5.7</a>）。</p>
+  </dd>
+  <dt><span class="pill">Dbg·中</span> 长任务跑偏、跑了几小时后自信地做错事；跨天跨周的长任务状态怎么维护；中途崩溃能否恢复</dt>
+  <dd>
+  <ul>
+    <li><strong>跑偏</strong>：原始目标与约束以结构化形式钉在上下文中，压缩时保留；里程碑处用外部验证（测试、评测器）而非自评判定完成。</li>
+    <li><strong>跨天状态</strong>：外部持久化进度文件、JSON 功能清单（比 Markdown 更不易被误改）与 git 提交；新会话先读进度与日志再动手。</li>
+    <li><strong>崩溃恢复</strong>：按节点 / 超步 checkpoint（如 PostgresSaver），从断点恢复，已完成步骤不重跑；副作用幂等，结果不确定时读回状态。</li>
+  </ul>
+  <p><strong>Maya</strong>：Account 审批中断后从 checkpoint 恢复，同一超步已完成的 Fashion 分支不重跑（<a href="maya-agent-interview.html#t5">笔记 5.4、5.7</a>）。</p>
+  </dd>
+  <dt><span class="pill">手撕·中</span> 脱离框架手写最小 ReAct Agent / 带 step budget 的最小 agent loop</dt>
+  <dd>
+  <ul>
+    <li><strong>结构</strong>：messages = [system, user]；for step in range(max_steps) 调模型（绑定 tools），无 tool_calls 即返回；否则逐个执行工具，结果以 tool 消息按 id 回灌；超出预算时不绑工具再调一次强制作答。</li>
+    <li><strong>要点</strong>：用结构化函数调用而非正则解析文本；工具异常转成文本结果回灌，不中断循环；重复调用检测；可设显式 submit 工具作为唯一出口，防止模型无意中停止调用工具；记录每步 trace 与 token。</li>
+  </ul>
+  <p><strong>Maya</strong>：Account 即此结构，MAX_TOOL_ROUNDS = 3，用完不绑工具；Fashion 以提交工具为出口（<a href="maya-agent-interview.html#t5">笔记 5.2–5.3</a>）。</p>
+  </dd>
+</dl>
+</div>
+
+<h2 id="n6">2.6 节点 6 多 Agent</h2>
+<div class="qa">
+<dl>
+  <dt><span class="pill">设计·高</span> 主 Agent 与子 Agent 的通信链路怎么设计、异常怎么处理；子 Agent 超时、失联、并发修改同一文件怎么办；主 Agent 怎么判断子 Agent 完成并回收结果</dt>
+  <dd>
+  <ul>
+    <li><strong>通信</strong>：主 Agent 以工具调用委派子 Agent（agents as tools），子任务写明目标、输出格式、可用工具和边界；子 Agent 结果作为工具消息返回即完成信号，主 Agent 收齐当轮 tool_call 结果后合成。</li>
+    <li><strong>异常</strong>：每路独立超时，失败作为该路结果回传（部分失败降级），不拖垮整轮；按超步 checkpoint，恢复时已完成分支不重跑。</li>
+    <li><strong>并发写</strong>：按资源划定归属或加锁 / 乐观并发控制，写操作收敛到单一写者。</li>
+  </ul>
+  <p><strong>Maya</strong>：主 Agent 用 <code>Send</code> 并行分发三个子 Agent，单路超时降级（<a href="maya-agent-interview.html#t5">笔记 5.6–5.8</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·高</span> 多 Agent vs 单 Agent 的优势和复杂性、什么时候多 Agent 会崩</dt>
+  <dd>
+  <ul>
+    <li><strong>优势</strong>：上下文隔离、并行、各领域独立迭代与评测。</li>
+    <li><strong>代价</strong>：调用与 token 增加（Anthropic 研究系统约为对话的 15 倍）、协调与错误传播、调试困难。</li>
+    <li><strong>原则</strong>：先把单 Agent 做满，工具重叠、prompt 分支过多或任务可并行时才拆；需大量共享上下文或强顺序依赖的任务（如多数 coding）易崩。</li>
+  </ul>
+  <p><strong>Maya</strong>：工具误调后拆 routing，跨领域多跳增多后升 manager（<a href="maya-agent-interview.html#t5">笔记 5.1、5.5</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 任务拆分阶段的错误怎么防止逐级传播；Agent 之间上下文 / 权限 / 存储怎么隔离；子任务里冒出新任务怎么流转和审批</dt>
+  <dd>
+  <ul>
+    <li><strong>防传播</strong>：子任务以 schema 定义并校验输入输出；关键结论由 evaluator 复核；子 Agent 带证据（工具结果、出处）返回，便于主 Agent 核对。</li>
+    <li><strong>隔离</strong>：上下文按子任务裁剪；工具 allowlist 最小授权，身份由代码注入；存储按命名空间 / 线程隔离。</li>
+    <li><strong>新任务</strong>：子 Agent 不自行扩展范围，上报主 Agent 重新规划；写操作统一走人工审批（HITL）。</li>
+  </ul>
+  <p><strong>Maya</strong>：子查询由主 Agent 改写并消解指代，每个子 Agent 只挂本领域工具，user_id 由 state 注入；写操作 interrupt 审批（<a href="maya-agent-interview.html#t5">笔记 5.4、5.6</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> Subagent 幻觉、A2A 死循环、共享状态</dt>
+  <dd>
+  <ul>
+    <li><strong>Subagent 幻觉</strong>：子 Agent 只陈述工具返回的事实并附出处；主 Agent 合成时不新增事实；评测断言回复事实与工具结果一致。</li>
+    <li><strong>死循环</strong>：限制委派深度与轮数，禁止子 Agent 回调上游，检测重复调用。</li>
+    <li><strong>共享状态</strong>：单一写者；并行写入经 reducer 合并，避免相互覆盖。</li>
+  </ul>
+  <p><strong>Maya</strong>：每个领域每轮最多调用一次、最多两轮；并行结果经 reducer 合并；Account、FAQ 的事实在合成时保持不变（<a href="maya-agent-interview.html#t5">笔记 5.6–5.8</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 主 Agent 和子 Agent 是否该用同等规模的模型；多 Agent 是否真的提升效率、怎么评估</dt>
+  <dd>
+  <ul>
+    <li><strong>模型规模</strong>：按角色选：分解与合成需要较强推理，执行窄任务的子 Agent 可用较小模型；以评测结果定（Anthropic 研究系统为 Opus 4 主 Agent + Sonnet 4 子 Agent）。</li>
+    <li><strong>效率评估</strong>：与单 Agent 基线在同一评测集上比较成功率、延迟、成本；同时回归各单领域评测，确认不退化。收益常来自多花 token（Anthropic 在 BrowseComp 上观察到 token 用量解释约 80% 的性能方差），须按成本折算。</li>
+  </ul>
+  <p><strong>Maya</strong>：分派结果单独评测，各领域原有评测集同时回归；单领域请求直接透传，仍为 2 次模型调用（<a href="maya-agent-interview.html#t5">笔记 5.8</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 编排和路由怎么实现；混合路由和限流器在多 Agent 系统里为什么重要</dt>
+  <dd>
+  <ul>
+    <li><strong>路由</strong>：LLM 分类（准确、慢且贵）或 embedding 语义路由（快、依赖样例）；混合路由按成本逐级升级：规则 / 关键词 → embedding → LLM，低置信度才升级。</li>
+    <li><strong>编排</strong>：代码编排（确定、可测、省钱）与 LLM 编排（灵活、适合开放任务），OpenAI 建议混合使用。</li>
+    <li><strong>限流</strong>：扇出（fan-out）放大调用量，需全局并发上限、按租户的速率限制与单请求 token 预算，防止触发供应商 429 与成本失控。</li>
+  </ul>
+  <p><strong>Maya</strong>：routing 阶段先分类再交给领域 Agent（Router 评测 148/150）；manager 阶段由主 Agent 编排、代码约束委派次数与轮数（<a href="maya-agent-interview.html#t5">笔记 5.1、5.6</a>）。</p>
+  </dd>
+  <dt><span class="pill">设计·中</span> 现场设计一个多 Agent 系统并写各 Agent 的 Prompt；多个 Agent 协作产出带引用的研究报告</dt>
+  <dd>
+  <ul>
+    <li><strong>设计步骤</strong>：先论证必要性（单 Agent 为何不够）→ 拓扑（manager / handoff / 流水线）→ 各 Agent 的职责、工具、输出 schema → 停止条件、失败处理、评测。</li>
+    <li><strong>Prompt 结构</strong>：角色 + 目标 + 边界 + 工具使用规则 + 输出格式 + 示例。</li>
+    <li><strong>研究报告</strong>：主 Agent 拆子问题，子 Agent 并行检索并返回带来源的结论（大产物写外部存储、只回传引用）→ 主 Agent 合成 → 引用核验（Anthropic 设专门的 citation agent 定位引用），无出处的陈述删除或标注。</li>
+  </ul>
+  <p><strong>Maya</strong>：FAQ 回答带 sources，代码只保留实际给过模型的编号（<a href="maya-agent-interview.html#t7">笔记 7.6</a>）。</p>
+  </dd>
+  <dt><span class="pill">Dbg·低</span> 链路里一个模型挂了，整条多模型 pipeline 怎么处理</dt>
+  <dd>
+  <p>每个调用点独立超时与指数退避重试，配置供应商级 fallback 模型并加熔断；无替代的环节降级为部分结果并告知用户；用 trace 定位故障环节。</p>
+  <p><strong>Maya</strong>：区分核心与增强依赖，模型以外的依赖挂了均降级继续（<a href="maya-agent-interview.html#t9">笔记 9.4</a>）。</p>
+  </dd>
+</dl>
+</div>
+
+<h2 id="n7">2.7 节点 7 记忆与上下文工程</h2>
+<div class="qa">
+<dl>
+  <dt><span class="pill">设计·高</span> 短期 / 长期记忆怎么设计，记忆怎么存、粒度多大、怎么用、数据库怎么选（四种记忆类型怎么存）</dt>
+  <dd>
+  <ul>
+    <li><strong>短期</strong>：会话内状态，按会话重放；一行一轮，主键为会话 + 时间，窗口按 token 预算取整轮，窗口外靠摘要与召回。</li>
+    <li><strong>长期</strong>：跨会话，按用户命名空间存储，按需检索注入。粒度二选一：画像（单份结构化文档，视图完整但更新易错）或集合（多条细粒度记忆，召回高但去重与更新难）。</li>
+    <li><strong>四类与选型</strong>：工作记忆即上下文；语义（事实）进 KV / 文档库；情景（经历，常作 few-shot）进向量库；程序（规则）落在 system prompt。存储按访问模式选：历史用分区键 + 排序键，检索用向量 + 关键词。</li>
+  </ul>
+  <p><strong>Maya</strong>：turns 表主键 (session_id, created_at)，画像每轮从 Context Hub 拉取；历史、向量、全文同在一个 PostgreSQL（<a href="maya-agent-interview.html#t6">笔记 6.1、6.5、6.7</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·高</span> 当前对话上下文 vs 长期记忆；Context vs Memory；长期记忆和 RAG 的区别；RAG 算不算 Agent 记忆的一部分</dt>
+  <dd>
+  <ul>
+    <li><strong>Context vs Memory</strong>：Context 是本次调用实际送入模型的 token；Memory 是存于模型外、按需选取后进入 Context 的信息。</li>
+    <li><strong>长期记忆 vs RAG</strong>：检索注入机制相同；区别在读写：记忆由 Agent 从交互中写入、按用户隔离、会更新与遗忘；RAG 读外部只读知识库、多用户共享。</li>
+    <li><strong>结论</strong>：RAG 可视为记忆的检索手段，知识库是语义记忆的外部来源，但写入、更新与隔离策略不同，应分开建模。</li>
+  </ul>
+  <p><strong>Maya</strong>：会话内历史召回与 FAQ 检索复用同一套混合检索代码，但数据分开（<a href="maya-agent-interview.html#t6">笔记 6.3</a>）。</p>
+  </dd>
+  <dt><span class="pill">设计·高</span> 上下文超窗口怎么办：滑动窗口和动态摘要各有什么坑、压缩时保留什么、压缩后怎么不忘早先需求、压缩阈值怎么定、压缩放在链路哪一步、工具结果怎么卸载</dt>
+  <dd>
+  <ul>
+    <li><strong>两种坑</strong>：滑动窗口简单、利于缓存，但早期约束会被挤出；动态摘要有损、需额外调用，多次合并会漂移或丢失否定条件。</li>
+    <li><strong>保留与防遗忘</strong>：保留目标、约束、决策、未完成事项与关键实体，丢弃寒暄、已推翻内容与冗余工具输出；以摘要稳住约束、相关性召回找回原文、结构化笔记记录进度，三者互补。</li>
+    <li><strong>阈值、位置与卸载</strong>：按 token 而非轮数触发并为输出预留余量；在轮末压缩，不阻塞本轮；大工具结果写外部存储只回传引用，历史深处的旧工具结果直接清除（tool result clearing）。</li>
+  </ul>
+  <p><strong>Maya</strong>：窗口 4000 token，溢出累计超 1000 token 触发增量摘要；窗口 60 token 的评测中仅窗口 9/30，开摘要和召回 30/30（<a href="maya-agent-interview.html#t6">笔记 6.2、6.8</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 三级压缩 / 三层记忆 / 分层 Context</dt>
+  <dd>
+  <ul>
+    <li><strong>分层 Context</strong>：按稳定度自上而下：system 规则 → 长期记忆（画像）→ 会话摘要与召回 → 最近窗口原文 → 本轮输入；稳定层在前以命中前缀缓存。</li>
+    <li><strong>三级压缩</strong>：由轻到重：清除或卸载旧工具结果 → 摘要压缩历史（compaction）→ 结构化笔记或子 Agent 将工作移出主上下文。</li>
+    <li><strong>三层记忆</strong>：工作记忆（上下文）、会话记忆（thread 内 checkpoint）、长期记忆（跨 thread 的 store）。</li>
+  </ul>
+  <p><strong>Maya</strong>：prompt 按 System、画像、摘要 + 召回、窗口、本轮输入分层拼装（<a href="maya-agent-interview.html#t6">笔记 6.1</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 记忆管理和上下文压缩为什么可以交给小模型</dt>
+  <dd>
+  <ul>
+    <li><strong>任务性质</strong>：摘要、抽取、去重、相关性判断属窄任务，输出受 schema 约束，小模型可胜任。</li>
+    <li><strong>收益与前提</strong>：可离开主链路异步执行，降低成本与延迟；前提是以评测验证（如早期约束回带率），关键事实保留原文可召回。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">设计·中</span> 多轮对话状态怎么管理、怎么防跑偏并支持中断恢复；长对话摘要压缩怎么实现；对话历史感知改写怎么做</dt>
+  <dd>
+  <ul>
+    <li><strong>状态与恢复</strong>：结构化状态（意图、槽位、上一轮结构化结果）与消息历史分开持久化，按 thread 存 checkpoint，中断后从断点恢复。</li>
+    <li><strong>防跑偏与改写</strong>：每轮附上一轮结构化结果，prompt 规定追问在原条件上修改、无关请求重新开始；结合历史将当轮问题改写为独立查询（消解指代、补全省略）再检索或委派。</li>
+    <li><strong>摘要实现</strong>：增量合并（旧摘要 + 新溢出轮次 → 新摘要），结构化输出、长度上限，用游标记录已覆盖位置。</li>
+  </ul>
+  <p><strong>Maya</strong>：Fashion 重放时附上一轮检索条件，主 Agent 改写子查询；多轮评测 49/50（<a href="maya-agent-interview.html#t6">笔记 6.4、6.8</a>，<a href="maya-agent-interview.html#t5">5.6</a>）。</p>
+  </dd>
+  <dt><span class="pill">设计·低</span> 多用户 × 多角色记忆、跨周 Memory、Markdown Memory、Rules vs Memory</dt>
+  <dd>
+  <ul>
+    <li><strong>多用户多角色</strong>：命名空间按（用户、角色 / Agent、记忆类型）划分，身份由服务端验证后注入；共享知识与个人记忆分开存储。</li>
+    <li><strong>跨周</strong>：记忆带时间戳与来源，冲突以新覆盖旧，设过期与衰减，定期合并去重。</li>
+    <li><strong>Markdown 与 Rules</strong>：Markdown 记忆文件（如 CLAUDE.md、AGENTS.md）可读、可编辑、可版本管理；Rules 是人写的稳定约束（程序性），Memory 是从交互中习得、可变的事实，冲突时 Rules 优先。</li>
+  </ul>
+  <p><strong>Maya</strong>：会话键由服务端验证的身份决定，客户端传来的 id 只能选择不能证明身份（<a href="maya-agent-interview.html#t6">笔记 6.6</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 记忆类型 semantic / episodic / procedural，更新走 hot-path 还是后台</dt>
+  <dd>
+  <ul>
+    <li><strong>类型</strong>：semantic 存事实（用户画像或记忆集合）；episodic 存过往经历，常以 few-shot 示例实现；procedural 存执行规则，主要是 system prompt，可经反思更新。</li>
+    <li><strong>更新时机</strong>：hot path 即时可用、可告知用户，但增加延迟并分散主任务注意力；后台异步无额外延迟、逻辑解耦，但需确定触发频率，其他线程可能读到旧记忆。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">手撕·中</span> 实现对话记忆系统（滑动窗口 / 摘要 / buffer）；上下文压缩与滑动窗口摘要</dt>
+  <dd>
+  <ul>
+    <li><strong>结构</strong>：Buffer 全量追加；滑动窗口从最新往前按 token 计数取整轮；Summary Buffer 将溢出部分增量合并为摘要，按「摘要 + 窗口 + 本轮」拼入。</li>
+    <li><strong>要点</strong>：用 tokenizer 计数；不截半轮，tool_call 与 tool 结果成对保留；摘要游标记录覆盖位置，失败不推进；达到阈值才压缩。</li>
+  </ul>
+  <p><strong>Maya</strong>：summaries 表以 covers_until 为游标，失败下一轮重试；窗口用 tiktoken 计数取整轮（<a href="maya-agent-interview.html#t6">笔记 6.2、6.4</a>）。</p>
+  </dd>
+  <dt><span class="pill">手撕·低</span> Cursor：给定光标位置从代码库选最相关片段喂给 Prompt，比较 embedding 检索 vs 依赖图遍历 vs 最近编辑启发式，论证多少上下文值得它的延迟</dt>
+  <dd>
+  <ul>
+    <li><strong>对比</strong>：embedding 检索覆盖语义相关的远处代码，但需索引、对精确符号弱；依赖图（AST / LSP 定义与引用）精确可解释，抓不到隐式关联；最近编辑成本极低，与当前意图高度相关。</li>
+    <li><strong>组合与预算</strong>：光标邻域与最近编辑必选，依赖图补定义，embedding 补远处，按得分在 token 预算内截断；补全类延迟预算紧只用本地低延迟信号，对话 / Agent 场景可容忍检索；以离线评测（接受率、正确率）随上下文规模的边际收益确定预算点。</li>
+  </ul>
+  </dd>
+</dl>
+</div>
+
+
+<h2 id="n8">2.8 节点 8 RAG</h2>
+<div class="qa">
+<dl>
+  <dt><span class="pill">概念·高</span> RAG 完整流程；相比微调解决了什么问题、各自优劣（200 页 PDF + 一个问题，从提交到回答发生了什么；chunk 大小为什么、k 变大会坏什么、什么时候不该用检索）</dt>
+  <dd>
+  <ul>
+    <li><strong>流程</strong>：离线解析、切块、embedding、建向量与倒排索引；在线 query 改写、混合检索粗排、rerank 精排、把段落拼进 prompt、带引用生成，答不了就拒答。</li>
+    <li><strong>对比微调</strong>：RAG 解决知识时效、私有知识、可溯源和权限，更新只需重建索引；微调改的是行为、格式和风格，不适合灌入常变的事实。两者可以叠加。</li>
+    <li><strong>追问</strong>：chunk 太小语义不完整，太大一块混多件事、向量被平均；k 变大召回升但噪声多、token 与延迟上升，相关段落落在中段容易被忽略；知识已在参数里、需要全局推理或语料很小能整块放进上下文时，不该用检索。</li>
+  </ul>
+  <p><strong>Maya</strong>：FAQ 一条一块，pgvector 加 tsvector 双路各取 20，RRF 融合取 10，LLM 重排取前 5，结构化输出 reply 加 sources（<a href="maya-agent-interview.html#t7">笔记 7.1</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·高·2026 新</span> 上下文窗口这么大为什么还要 RAG；十篇以上文档或大代码仓库，RAG 和 Agent 自己 grep 各有什么优劣</dt>
+  <dd>
+  <ul>
+    <li><strong>仍要 RAG</strong>：成本和延迟随输入 token 增长；长上下文有中段信息被忽略（lost in the middle）的问题；语料总量远超窗口；还要做权限过滤和引用溯源。</li>
+    <li><strong>RAG 与 grep</strong>：RAG 适合自然语言、同义改写、语料大且稳定，代价是建索引、索引过期、切块会切断结构；Agent grep / 读文件适合代码这类有精确标识符、结构清晰、频繁变化的语料，没有索引滞后，代价是多轮调用、慢、依赖模型会搜。</li>
+    <li><strong>取舍</strong>：大代码仓库多用 grep 加符号索引；文档类知识库用混合检索；两者都可以做成工具让 Agent 选。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·高</span> 切块策略、粒度多大、怎么规避语义被切断；Markdown 没有标题怎么切；父子索引解决什么问题、父块子块多大为什么；项目里的 CSV 怎么解析</dt>
+  <dd>
+  <ul>
+    <li><strong>切块</strong>：先按结构切（标题、问答对、段落），一块讲一件事；超长再按 token 切，常见 200–800 token、10%–20% 重叠；块带元数据（来源、标题路径、更新时间）。没有标题的 Markdown 按段落、列表、代码块边界切，或按句子做语义切分（相邻句 embedding 相似度骤降处断开）。</li>
+    <li><strong>父子索引</strong>：小块（子块）用来检索，命中后返回所属的大块（父块）给模型。原因是小块向量更聚焦、召回准，大块上下文完整、不会断章取义；子块一般是句子到段落级，父块是章节级，按模型窗口和 k 定。</li>
+    <li><strong>CSV</strong>：不按字符切；每行转成"列名: 值"的文本作为一块，表头随每块重复，数值和枚举列存成元数据用于过滤；聚合统计类问题走 SQL 工具，不走向量检索。</li>
+  </ul>
+  <p><strong>Maya</strong>：FAQ 天然是问答对，一条一块，按编号 upsert（<a href="maya-agent-interview.html#t7">笔记 7.2</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> Embedding 模型怎么选怎么评、结构和输出维度；向量库对比选型、数据量级、性能瓶颈</dt>
+  <dd>
+  <ul>
+    <li><strong>Embedding</strong>：多为 Transformer 编码器加池化，输出固定维度向量。选型先看 MTEB 对应任务与语言的榜单，再用自己的 query–段落对测 hit@k；维度越大越准越贵，索引和查询必须同一模型，换模型全量重建。</li>
+    <li><strong>向量库</strong>：十万段量级用 pgvector，与业务数据同库、事务一致；千万到亿级用 Milvus 等专用库，支持分片和多种 ANN 索引；要 BM25、分词和混合检索时用 OpenSearch / ES。</li>
+    <li><strong>瓶颈</strong>：HNSW 内存占用、带过滤条件时召回下降、高并发写入时的索引构建，以及 embedding 调用本身的延迟。</li>
+  </ul>
+  <p><strong>Maya</strong>：text-embedding-3-small，写入和查询共用一个句柄；存储用 pgvector，与历史同库（<a href="maya-agent-interview.html#t7">笔记 7.3、7.9</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·高</span> 向量 + BM25 双路检索好处和权重怎么分；关键词检索和向量检索各自缺点；一两百字的 Chunk 和三五个字的 Query 怎么比；RRF 融合；Rerank 为什么要加、Rerank 变差怎么诊断、NDCG</dt>
+  <dd>
+  <ul>
+    <li><strong>双路</strong>：向量擅长同义改写，弱在专名、数字、否定；BM25 擅长精确词，弱在同义和口语。两路分数量纲不同，用 RRF 按名次融合：score(d) = Σ 1/(k + rank<sub>i</sub>(d))，原论文与主流实现取 k=60；要偏重某一路就给该路的项乘权重。短 Query 对长 Chunk 的不对称问题，用 query 改写、HyDE 或非对称 embedding 模型（query 与 passage 分别编码）解决。</li>
+    <li><strong>Rerank</strong>：粗排只看相似，看不出段落有没有回答问题；cross-encoder 或 LLM 读 query 与原文一起打分。粗排多取，精排只排候选。</li>
+    <li><strong>变差诊断</strong>：分别看粗排和精排后的 NDCG@k / MRR，确认是重排把相关段落压下去还是候选里本来就没有；再看截断长度、模型是否适合领域和语言。NDCG = DCG / IDCG，DCG@k = Σ rel<sub>i</sub> / log<sub>2</sub>(i+1)，名次越靠后折扣越大。</li>
+  </ul>
+  <p><strong>Maya</strong>：150 条问法前 3 命中，单路向量 134/150，混合检索加 LLM 重排 147/150；没过的 3 条是候选 10 条里就没有，问题在召回（<a href="maya-agent-interview.html#t7">笔记 7.4、7.5</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> Query 改写目的和做法；多跳检索怎么实现；长 Query 除了压缩还怎么处理</dt>
+  <dd>
+  <ul>
+    <li><strong>改写</strong>：用对话历史补全省略句和指代，规范同义词和拼写，或扩展成多个子 query 分别检索再融合；HyDE 先生成假设答案再用它检索。</li>
+    <li><strong>多跳</strong>：把问题分解为子问题顺序检索，用上一跳的结果构造下一跳 query；通常做成 agentic RAG，由模型判断信息是否足够。</li>
+    <li><strong>长 Query</strong>：抽取关键实体和约束做结构化过滤，拆成多个意图分别检索，或只用核心问句检索、完整原文留给生成阶段。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> 知识库持续更新旧向量怎么失效、不重建全量怎么办、不停机热更新；召回结果互相矛盾谁说了算、不同来源冲突信谁</dt>
+  <dd>
+  <ul>
+    <li><strong>增量更新</strong>：块用稳定 id 加内容哈希，文档变更时只删旧块、upsert 新块；删除用墓碑或软删除标记，检索时过滤。</li>
+    <li><strong>热更新</strong>：换 embedding 模型或切块策略时建新索引，双写或回填完成后用别名原子切换，旧索引留作回滚。</li>
+    <li><strong>冲突</strong>：模型负责解释证据，治理规则决定哪些证据合格。按来源权威度、生效时间和版本元数据过滤或排序，冲突无法消解时并列呈现、注明来源，而不是让模型自行取舍。</li>
+  </ul>
+  <p><strong>Maya</strong>：FAQ 按编号 upsert（<a href="maya-agent-interview.html#t7">笔记 7.2</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 文档访问控制怎么实现、ACL 先过滤还是后过滤；私人 RAG 为什么也要做访问控制；PII 脱敏是什么（设计一个尊重权限、给引用、该弃答时弃答的内部文档搜索 Agent）</dt>
+  <dd>
+  <ul>
+    <li><strong>前置过滤</strong>：入库时把 ACL（用户、组、租户）写进块的元数据，检索时由后端按调用者身份带过滤条件，相似度计算只在可见集合内进行。后过滤会使结果少于 k，且过滤代码一有 bug 就会越权泄露；授权在检索层做，不在 prompt 里做。</li>
+    <li><strong>私人 RAG</strong>：同一系统内也有多租户、共享文档和权限变更；引用和摘要本身就可能泄露无权访问的内容。</li>
+    <li><strong>PII 脱敏</strong>：识别姓名、电话、邮箱、证件号等个人身份信息，入库或出模型前替换为掩码或占位符，必要时可逆映射回填；检索不到合格证据时弃答。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·高</span> 怎么量化 RAG 效果：Recall@K / Precision@K 取舍、MRR、NDCG，检索和生成分开评，消融</dt>
+  <dd>
+  <ul>
+    <li><strong>检索</strong>：Recall@K = 前 K 中相关数 / 全部相关数，Precision@K = 前 K 中相关数 / K；K 越大召回升、精度降。MRR 是首个相关结果名次倒数的均值；NDCG 按分级相关度带位置折扣，再用理想排序归一化。</li>
+    <li><strong>生成</strong>：faithfulness（每句话能否在段落中找到依据）、答案正确性、引用覆盖率、知识库外拒答率；检索和生成分开评，才能区分"没找到"和"找到了没用对"。</li>
+    <li><strong>消融</strong>：固定样本，一次只改一个组件（单路与混合、有无 rerank、切块大小），比较各层指标。</li>
+  </ul>
+  <p><strong>Maya</strong>：检索和回答两个数据集，检索层不调对话模型，用于大量对比实验；单路向量 134/150，混合加重排 147/150（<a href="maya-agent-interview.html#t7">笔记 7.5、7.7</a>）。</p>
+  </dd>
+  <dt><span class="pill">Dbg·高</span> 召回不准怎么优化、幻觉怎么治理；文档明明在却答错怎么 debug；怎么发现剩余 1%–2% 的幻觉</dt>
+  <dd>
+  <ul>
+    <li><strong>逐段定位</strong>：按摄入、权限过滤、切块、检索、重排、拼装、生成拆开，trace 里记录各阶段 doc id 和分数，把失败归为"没索引 / 被过滤 / 排太低 / 被截断 / 没用上"，失败样本加入回归集，一次只改一个组件。</li>
+    <li><strong>优化</strong>：召回问题用混合检索、query 改写、调切块；排序问题加 rerank；生成问题用"只按段落作答、答不了拒答"的约束和引用校验。</li>
+    <li><strong>长尾幻觉</strong>：线上抽样 trace 跑 faithfulness judge，结合用户点踩和引用缺失告警，人工复核后进入回归集。</li>
+  </ul>
+  <p><strong>Maya</strong>：FAQ trace 里同时记录检索命中编号和模型引用编号，两者之差即检索噪音（<a href="maya-agent-interview.html#t8">笔记 8.6</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 更复杂的 RAG 范式：Agentic RAG 和传统 RAG 的区别；Graph RAG、什么场景用图数据库增强向量检索</dt>
+  <dd>
+  <ul>
+    <li><strong>Agentic RAG</strong>：检索做成工具，由模型决定何时检索、检索什么、是否改写重查、信息是否足够、查哪个数据源；适合多跳和多源问题，代价是多轮往返和行为不可预测。传统 RAG 每问固定检索一次，由代码调用。</li>
+    <li><strong>Graph RAG</strong>：抽取实体和关系建图（如 Microsoft GraphRAG 再做社区检测与社区摘要），适合需要跨文档关系推理或全局归纳的问题，如"某供应商关联的所有合同"；代价是建图成本高、需要随数据更新。</li>
+  </ul>
+  <p><strong>Maya</strong>：FAQ 一问一查，由代码调用（<a href="maya-agent-interview.html#t7">笔记 7.8</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·低</span> 引用与溯源怎么实现；metadata 过滤的作用</dt>
+  <dd>
+  <ul>
+    <li><strong>引用</strong>：段落带编号送入模型，结构化输出要求回答附出处编号，代码校验编号必须属于本次给出的段落，再映射回文档链接或位置。</li>
+    <li><strong>metadata 过滤</strong>：按权限、租户、时间、类别、语言缩小检索范围，同时服务于增量更新和引用展示。</li>
+  </ul>
+  <p><strong>Maya</strong>：结构化输出带 sources，代码只保留真正给过模型的编号（<a href="maya-agent-interview.html#t7">笔记 7.6</a>）。</p>
+  </dd>
+</dl>
+</div>
+
+<h2 id="n9">2.9 节点 9 评测与可观测</h2>
+<div class="qa">
+<dl>
+  <dt><span class="pill">设计·高</span> 怎么评估一个 Agent 好不好、评测集和指标怎么设计、评估体系怎么搭、非确定性系统怎么测（task completion rate、step efficiency、tool accuracy、用户满意度；SWE-bench / GAIA / τ-bench）</dt>
+  <dd>
+  <ul>
+    <li><strong>分层</strong>：单元级（一次调用的分类、抽取、工具选择）、链路级（检索加作答、多轮）、端到端（以用户看到的终态为准）；只有单元级会漏接线错误，只有端到端定位不到原因。</li>
+    <li><strong>指标与样本</strong>：任务完成率、工具调用正确率、步数与 token 效率、延迟、成本、用户满意度；样本从 20–50 条真实失败起步，正反例都有，难样本单独分组。</li>
+    <li><strong>非确定性</strong>：同一样本多次试验（trial），看 pass@k / pass^k；grader 优先用确定性代码，主观维度用 LLM judge 并与人工校准；公开基准（SWE-bench、GAIA、τ-bench）只作参考，业务以自建集为准。</li>
+  </ul>
+  <p><strong>Maya</strong>：单元、链路、端到端三层 10 个 LangSmith 数据集共 760 条，通过率 98%（<a href="maya-agent-interview.html#t8">笔记 8.1</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·高</span> 没有唯一正确答案的 LLM 功能怎么评；LLM-as-judge 能不能信、失败模式是什么</dt>
+  <dd>
+  <ul>
+    <li><strong>评法</strong>：把"好"拆成可判定的 rubric 条目（是否答到点上、是否有依据、语气），用通过与否或成对比较，先输出理由再给结论。</li>
+    <li><strong>失败模式</strong>：位置偏差（成对比较偏好先出现的）、冗长偏差（偏好长答案）、自我增强偏差（偏好自家模型输出），以及推理能力有限（Zheng et al. 2023, MT-Bench）。缓解：交换顺序各判一次、控制长度、换不同家族的 judge。</li>
+    <li><strong>可信度</strong>：先在人工标注集上测一致率，达到人与人之间的一致水平后再用于把关（题库锚点：75–90% 一致率后才让 judge 把关发布）。</li>
+  </ul>
+  <p><strong>Maya</strong>：当前全部用代码评测器，可复现、零成本（<a href="maya-agent-interview.html#t8">笔记 8.4</a>）。</p>
+  </dd>
+  <dt><span class="pill">设计·高</span> 改了 Prompt 或换了模型怎么抓回归、能不能发布（Decagon 追问"resolved"怎么定义）</dt>
+  <dd>
+  <ul>
+    <li><strong>回归集</strong>：任务来自需求、线上失败和高危场景；可验证的结果用确定性 grader，主观维度用 rubric 并与人工校准；固定样本、多次试验，按失败切片看分数，不只看总分。</li>
+    <li><strong>门禁</strong>：CI 对改 prompt、换模型、改路由的 PR 自动跑评测，低于阈值不合并，同时约束延迟、成本和安全指标；上线走 canary 或影子流量。</li>
+    <li><strong>resolved</strong>：以用户问题被解决定义（如后续无重复咨询、无转人工且无投诉），不能把"没转人工"直接算成解决。</li>
+  </ul>
+  <p><strong>Maya</strong>：改完同一评测跑多遍，再用改动前的代码跑对照，对照也挂的样本算波动（<a href="maya-agent-interview.html#t8">笔记 8.5、8.7</a>）。</p>
+  </dd>
+  <dt><span class="pill">深挖·高</span> 指标口径追问：幻觉率怎么定义怎么算；你说准确率提升，基线、样本量、统计窗口和归因是什么；效果提升用哪个测试集算；评测集过拟合</dt>
+  <dd>
+  <ul>
+    <li><strong>口径</strong>：幻觉率 = 含无依据陈述的回答数 / 总回答数（或无依据陈述 / 总陈述数），要说清分母和判定方式。准确率提升要给出基线版本、同一固定样本、样本量和重复次数；样本少只能看出大退步。</li>
+    <li><strong>归因</strong>：一次只改一个变量，实验名标记改动，用改动前代码跑对照排除波动。</li>
+    <li><strong>防过拟合</strong>：评测样本不原样进 prompt 当示例；保留不参与调优的留出集，并持续用线上新样本刷新。</li>
+  </ul>
+  <p><strong>Maya</strong>：数据集从 203 条扩到 760 条；跑完逐条复核，改了 4 条过严的标签，其余失败作为系统错保留（<a href="maya-agent-interview.html#t8">笔记 8.3</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 幻觉怎么检测度量、生产 RAG 里怎么量</dt>
+  <dd>
+  <ul>
+    <li><strong>离线</strong>：faithfulness 按 RAGAS 做法，把回答拆成原子陈述，逐条判断能否从段落推出，得分是有依据的比例；便宜的替代是 NLI 小模型；另配事实子串和引用校验。</li>
+    <li><strong>线上</strong>：按比例抽样 trace 跑同一评测器，监控引用缺失率、拒答率和用户点踩，异常样本进入人工复核和回归集。</li>
+  </ul>
+  <p><strong>Maya</strong>：评测检查事实子串、出处和知识库外拒答（<a href="maya-agent-interview.html#t7">笔记 7.6</a>）。</p>
+  </dd>
+  <dt><span class="pill">设计·中</span> 线上 Agent 延迟明显升高怎么用 Trace 定位；上线要什么可观测基础设施、要记哪些指标</dt>
+  <dd>
+  <ul>
+    <li><strong>定位</strong>：按分位数（P50/P99）看整体变化，再在 trace 树里按 span 耗时下钻：模型调用（首 token 时间、输出 token 数、重试次数）、工具调用、检索、排队；对比变更前后的步数，确认是否多了循环或重试。</li>
+    <li><strong>基础设施</strong>：每轮一棵 trace 树，记录各步输入输出、模型与参数、token 用量、延迟、工具调用与错误、版本 id；敏感数据脱敏，按比例采样并设留存期。</li>
+    <li><strong>指标</strong>：延迟分位数、错误率、限流次数、每轮 token 与成本、缓存命中率、步数分布、评测通过率随时间的漂移。</li>
+  </ul>
+  <p><strong>Maya</strong>：LangSmith 自动 trace，每个节点、子图、模型调用、工具调用都是一个 span；单轮 P99 约 5.7 秒（<a href="maya-agent-interview.html#t8">笔记 8.6</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 轨迹评估 vs 结果评估（exact match / in-order / precision-recall vs 终态 autorater）；pass@k vs pass^k；capability eval 起步低而 regression eval 保持 ~100%</dt>
+  <dd>
+  <ul>
+    <li><strong>轨迹与结果</strong>：轨迹评估比对工具调用序列（完全一致、按序包含、调用集合的精确率与召回率），可定位过程问题；结果评估只看终态是否正确。Anthropic 建议以评结果为主，不把步骤顺序钉死，以免惩罚合理的不同解法。</li>
+    <li><strong>pass@k 与 pass^k</strong>：pass@k 是 k 次试验中至少一次成功的概率，随 k 上升；pass^k 是 k 次全部成功的概率，随 k 下降，面向用户的 Agent 更看重后者。</li>
+    <li><strong>两类评测</strong>：capability eval 针对做不好的任务，起步通过率低，供持续爬坡；regression eval 保护已有能力，通过率应接近 100%，下降即说明有东西坏了；capability 任务做稳后可转入回归集。</li>
+  </ul>
+  <p><strong>Maya</strong>：写操作审批 40/40 三次重复全过，即按 pass^3 评（<a href="maya-agent-interview.html#t8">笔记 8.5</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·低</span> 多轮对话质量怎么评；持续评估怎么做；SWE-bench 通过率为什么会误导；代码补全是否有用怎么评</dt>
+  <dd>
+  <ul>
+    <li><strong>多轮</strong>：固定历史、只评最后一轮回复，或用模拟用户跑完整对话再评终态；关注指代消解、跨轮约束保持和是否重复提问。</li>
+    <li><strong>持续评估</strong>：线上抽样 trace 定期跑评测器，看指标漂移，失败样本回流数据集。</li>
+    <li><strong>SWE-bench 与补全</strong>：公开基准存在训练数据污染、任务分布与自家代码库不同、测试用例不完备等问题，分数不等于业务效果；补全有用性看留存类信号，如建议被接受后几分钟是否仍保留在文件里。</li>
+  </ul>
+  <p><strong>Maya</strong>：多轮数据集给定历史评最后一句；长上下文数据集真实写库后评压缩与召回（<a href="maya-agent-interview.html#t8">笔记 8.1</a>）。</p>
+  </dd>
+  <dt><span class="pill">设计·低·面试官提议</span> 40 分钟评测设计轮（给"客服工单分队列 + 置信度"的 spec，不碰 Prompt 设计评测）；生产 trace 回放轮（哪个评测扩展本可以抓到这个问题）</dt>
+  <dd>
+  <ul>
+    <li><strong>评测设计</strong>：先列 spec 未点名的失败模式（多意图工单、无法归类、语言混杂、置信度高但错）；rubric 写到两位 grader 会给出一致结论的程度；样本覆盖线上队列分布并定期刷新；置信度用校准曲线评估；judge 先与人工打分校准。</li>
+    <li><strong>trace 回放</strong>：从事故 trace 中找出失败环节，归入已有切片或新建切片，构造同类变体样本，说明哪一层评测（单元、链路、端到端）本应覆盖它。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">手撕·中</span> 评测类 take-home：一个 Prompt + 约 30 条输入输出对，建 faithfulness / relevance 自动评测并对齐给定人工标签；约 50 篇 Markdown 建 QA 系统 + 20 题评测集报 recall@5 和 faithfulness</dt>
+  <dd>
+  <ul>
+    <li><strong>评测器</strong>：能用代码判的先用确定性检查（exact match、正则、引用来源是否存在于给定文档），其余用 LLM judge；judge 输出理由加二元结论，用给定人工标签算一致率和混淆矩阵，逐条分析分歧后修订 rubric。</li>
+    <li><strong>QA 系统</strong>：按标题切块、混合检索加 rerank；20 题标注相关文档 id 算 recall@5，faithfulness 按原子陈述判定；报告附基线（如单路向量）和消融结果。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">手撕·中</span> 评测面试陷阱（generic metrics、composite scores、hill-climbing）与报告结构</dt>
+  <dd>
+  <ul>
+    <li><strong>陷阱</strong>：用通用指标代替针对本任务失败模式的指标；把多项指标合成一个总分掩盖具体问题；对着小评测集反复调参爬坡导致过拟合。</li>
+    <li><strong>报告结构</strong>：先挖数据里的问题和噪声，再做带基线的实验，给出结果与取舍，说明局限并有礼貌地对需求提出异议，最后列下一步。</li>
+  </ul>
+  </dd>
+</dl>
+</div>
+
+<h2 id="n10">2.10 节点 10 可靠性、guardrail、安全、HITL</h2>
+<div class="qa">
+<dl>
+  <dt><span class="pill">Dbg·高</span> Agent 陷入死循环怎么办（调了三个工具就死循环，异常处理写在哪；路径震荡、重复调用；防重复 Tool Call）</dt>
+  <dd>
+  <ul>
+    <li><strong>出口</strong>：正常出口是模型不再请求工具或给出约定的结构化输出；兜底是轮数上限（如 OpenAI Agents SDK 的 max_turns、LangGraph 的 recursion_limit），到上限走确定路径（不绑工具强制作答或回固定文案），不抛异常。</li>
+    <li><strong>检测</strong>：同一工具同样参数连续调用即中断；另设单请求超时和花费上限；工具错误压成工具消息回灌，模型改参数重试，计入轮数。</li>
+    <li><strong>排查</strong>：用多步 trace 看在哪两步之间震荡，常见原因是工具返回不明确或出口条件写漏；对固定用例回放，修复后加入回归集。</li>
+  </ul>
+  <p><strong>Maya</strong>：Fashion 工具调用最多 4 轮，Account MAX_TOOL_ROUNDS = 3，用完后不绑工具强制作答（<a href="maya-agent-interview.html#t5">笔记 5.3</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·高</span> Prompt Injection 是什么、直接 vs 间接注入、怎么防</dt>
+  <dd>
+  <ul>
+    <li><strong>定义</strong>：输入中夹带的指令改变了模型的预期行为。直接注入来自用户输入；间接注入藏在模型读取的外部内容里（网页、文件、检索段落、工具返回），用户看不到，更危险。</li>
+    <li><strong>防御（纵深）</strong>：外部内容一律视为不可信数据、与指令分隔并标注；授权在检索和动作执行时由代码做，prompt 指令不等于授权；工具 allowlist 与最小权限，敏感参数由代码注入；高危操作人工确认；输出按 schema 校验；输入层加注入检测分类器（参考 OWASP LLM01）。</li>
+    <li><strong>验证</strong>：评测集与红队覆盖间接注入、跨租户检索、数据外泄和不安全重试。</li>
+  </ul>
+  <p><strong>Maya</strong>：system 只放规则，检索段落放 user、工具结果是 tool 消息；user_id 由代码注入，被诱导也只能操作当前用户的数据；写操作必须用户点确认（<a href="maya-agent-interview.html#t9">笔记 9.2</a>）。</p>
+  </dd>
+  <dt><span class="pill">设计·高</span> 高危操作：Agent 操作数据库怎么保证不误删、不越权、不泄敏感数据；资金类操作怎么限制；什么情况下要人工确认；HITL 暂停与恢复；风险分级 / 熔断 / 沙箱 / 审计（跨境汇款流程里 Agent 超时 / 失败如何保证资金安全）</dt>
+  <dd>
+  <ul>
+    <li><strong>权限</strong>：工具按风险分级（只读还是写、能否撤销、是否涉及资金），默认只读账号；写操作走封装好的业务接口而不是任意 SQL，身份参数由代码注入；涉钱操作设额度与频率上限，生产写操作在沙箱或预演环境先跑。</li>
+    <li><strong>HITL</strong>：高风险、不可逆或超阈值的动作执行前暂停，展示代价预览后由人批准、修改或拒绝；状态持久化到 checkpoint，恢复时校验是本人且仍处于待确认状态。</li>
+    <li><strong>资金安全</strong>：超时不等于失败，先用幂等 key 查询结果状态再决定是否重试；全程审计日志，异常率超阈值触发熔断转人工。</li>
+  </ul>
+  <p><strong>Maya</strong>：Account 写工具执行前 interrupt，Postgres checkpointer 存档，用户点确认后从断点继续；取消订阅先预览会失去的 bonus credits，失败时读回订阅状态（<a href="maya-agent-interview.html#t5">笔记 5.4</a>）。</p>
+  </dd>
+  <dt><span class="pill">设计·高</span> 断点恢复与幂等：进程在第七步崩溃怎么从 Checkpoint 恢复而不重复副作用；Agent 失败或中断怎么处理、重试是否安全</dt>
+  <dd>
+  <ul>
+    <li><strong>恢复</strong>：每步结束持久化 checkpoint，崩溃后从最后一个完成的步骤继续，已完成步骤不重跑；但正在执行的那一步可能已产生副作用而结果未落盘，因此带副作用的步骤必须幂等。</li>
+    <li><strong>幂等</strong>：调用外部写接口时带幂等 key（由 run id 与步骤 id 派生，重启后不变），服务端对同一 key 返回首次结果；不支持幂等的接口，执行前先记意图、恢复时先查询外部状态再决定是否执行。</li>
+    <li><strong>重试</strong>：只读调用可放心重试，写操作只在幂等保证下重试；失败无法补救时走补偿或转人工。</li>
+  </ul>
+  <p><strong>Maya</strong>：interrupt 恢复时被中断节点从头重跑，因此中断前的代码要可重跑；写操作结果不确定时读回状态再回复（<a href="maya-agent-interview.html#t5">笔记 5.4</a>）。</p>
+  </dd>
+  <dt><span class="pill">设计·高</span> 幂等追问：可靠性重试和采样重试怎么区分；幂等 key 的粒度；写操作放在哪；saga 模式</dt>
+  <dd>
+  <ul>
+    <li><strong>两类重试</strong>：可靠性重试处理"工作做了但响应丢了"，用同一幂等 key 返回缓存结果；采样重试处理"输出没过校验"，用新 key，并把上次错误附进 prompt。</li>
+    <li><strong>粒度与顺序</strong>：幂等 key 按有外部副作用的逻辑单元划分，而不是每次推理；优先只读工具，写操作推到流程末尾；不可逆动作前先记录意图。</li>
+    <li><strong>saga</strong>：长流程拆成一串本地事务，每步配补偿动作，失败时逆序补偿；补偿本身也要幂等，并区分"跑过"和"成功"。题库锚点：事故期间重试风暴可占意外推理开销的 30–60%，重试要有退避和预算。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> 上下文漂移怎么解决、长任务怎么不偏离原始目标；"任务幻觉"没执行却声称完成</dt>
+  <dd>
+  <ul>
+    <li><strong>防漂移</strong>：原始目标和约束固定放在 system 或每轮重新注入；长任务维护显式的计划或待办状态，旧内容压成摘要而不是任意截断；每个阶段结束对照目标检查。</li>
+    <li><strong>任务幻觉</strong>：完成状态以工具返回为准，回复只报工具返回的事实；用显式 submit 工具或状态字段标记完成，代码校验确有对应的成功工具调用；结果不确定时读回状态。</li>
+  </ul>
+  <p><strong>Maya</strong>：Account 只报工具返回的事实，评测断言写操作的执行次数和不谎报（<a href="maya-agent-interview.html#t9">笔记 9.3</a>、<a href="maya-agent-interview.html#t8">8.1</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 工具调用的安全问题（Key 泄露、敏感信息暴露）；怎么确保 Agent 行为安全可控；信任边界、最小权限</dt>
+  <dd>
+  <ul>
+    <li><strong>信任边界</strong>：模型、用户输入和外部内容都在边界外；密钥和身份只存在于服务端代码，从不进入 prompt 或工具参数。</li>
+    <li><strong>最小权限</strong>：每个工具只拿完成任务所需的权限，读写分离，按用户身份做授权；工具返回先过滤敏感字段再给模型。</li>
+    <li><strong>可控</strong>：工具 allowlist、参数 schema 校验、高危动作人工确认、全量审计日志。</li>
+  </ul>
+  <p><strong>Maya</strong>：user_id 由 cookie 换取后代码注入工具，模型看不到也编不了；MCP Server 同样在服务端注入身份（<a href="maya-agent-interview.html#t9">笔记 9.1</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 输入 / 输出 / 工具三层 guardrail 怎么实现；写一个检查跑题和 PII 泄露的输出 guardrail</dt>
+  <dd>
+  <ul>
+    <li><strong>三层</strong>：输入层拦越界话题、注入和敏感信息（相关性分类器、注入检测、moderation）；输出层校验格式、编造和不当内容（结构化输出、规则校验、忠实度检查）；工具层拦越权和误操作（最小权限、风险分级、人工确认）。便宜的规则放前面，guardrail 可与主调用并行，命中即中断。</li>
+    <li><strong>输出 guardrail</strong>：先用正则检测邮箱、电话、卡号等 PII 并掩码；再用小模型按"是否与业务范围相关"做二分类；任一命中触发 tripwire，替换为固定回复或退回模型重写，并记录日志。</li>
+  </ul>
+  <p><strong>Maya</strong>：输出全部结构化，校验不过退回模型修改，词表外标签和未给过模型的出处编号由代码丢弃（<a href="maya-agent-interview.html#t9">笔记 9.1</a>）。</p>
+  </dd>
+  <dt><span class="pill">Dbg·中</span> 生产环境 Agent 踩过什么坑；四类典型故障；LLM API 失败怎么感知定位、限流之外的异常；非 AI fallback</dt>
+  <dd>
+  <ul>
+    <li><strong>典型故障</strong>：模型不调工具或乱调工具、调用格式错误、循环不停、编造工具没返回的结果。</li>
+    <li><strong>API 失败</strong>：区分超时、429、5xx（指数退避加抖动，只重试幂等调用）与内容类异常（安全拦截、输出被截断、schema 不合法、空响应），按类型打指标并告警。</li>
+    <li><strong>非 AI fallback</strong>：区分核心依赖与增强依赖，增强依赖挂了降级继续；模型不可用时返回固定文案、规则流程或转人工；流式响应中途出错发 error 事件后正常收尾。</li>
+  </ul>
+  <p><strong>Maya</strong>：只有模型是核心依赖，embedding 挂了走关键词一路、rerank 挂了用粗排顺序、core 不可用时如实说查不到；core 调用用 tenacity 最多 3 次（<a href="maya-agent-interview.html#t9">笔记 9.4</a>、<a href="maya-agent-interview.html#t3">3.3</a>）。</p>
+  </dd>
+  <dt><span class="pill">设计·低</span> 模型或 Prompt 改动后出事故怎么响应</dt>
+  <dd>
+  <ul>
+    <li><strong>止血</strong>：AI 事故可能没有 500 错误，需要 kill switch、限流和按版本快速回滚，必要时禁用功能或切人工审核。</li>
+    <li><strong>复盘</strong>：保留 trace 和 prompt / 模型版本 id，用准确配置复现，失败切片加入回归集；之后改动通过带中止阈值的 canary 发布。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">行为·低</span> Anthropic RSP（Responsible Scaling Policy）；Constitutional AI vs RLHF、reward hacking 这类实验室安全概念</dt>
+  <dd>
+  <ul>
+    <li><strong>RSP</strong>：Anthropic 自 2023 年起发布并持续修订的风险治理政策，按 AI 安全等级（ASL）设定能力阈值，模型达到阈值时须升级到相应的安全与部署防护标准（如 ASL-3）。</li>
+    <li><strong>Constitutional AI vs RLHF</strong>：RLHF 用人类偏好标注训练奖励模型；Constitutional AI 让模型依据一组成文原则自我批评和修订，再用 AI 反馈做强化学习（RLAIF），减少对有害性人工标注的依赖。</li>
+    <li><strong>reward hacking</strong>：模型利用奖励信号或评测器的漏洞拿高分，而没有完成真正目标；Agent 场景对应"改测试让其通过"之类行为，需要更鲁棒的 grader 和人工抽查。</li>
+  </ul>
+  </dd>
+</dl>
+</div>
+
+
+<h2 id="n11">2.11 节点 11 成本、延迟、生产工程</h2>
+<div class="qa">
+<dl>
+  <dt><span class="pill">Dbg·高</span> Agent Token 消耗很大怎么优化；一次对话花了 10 万 Token 怎么办；成本太高怎么降又不掉质量；多任务多 Agent 怎么权衡效率和准确性</dt>
+  <dd>
+  <ul>
+    <li><strong>先定位</strong>：按 trace 拆每次调用的输入 / 输出 token，找出大头（通常是历史重放、工具返回原文、检索段落过多、循环步数失控）。</li>
+    <li><strong>按收益降本</strong>：省掉不必要的调用（固定流程交给代码）→ 控输入（窗口按 token 预算截断、旧历史压摘要、工具结果裁剪）→ 稳定内容放前缀吃 prompt caching（读价约为输入价一折）→ 简单判断换小模型。</li>
+    <li><strong>不掉质量</strong>：每项优化在同一评测集上对照回归；多 Agent 只在可并行或需隔离上下文时用，单领域请求直接透传，不多一次合成调用。</li>
+  </ul>
+  <p><strong>Maya</strong>：窗口 4000 token 预算、摘要攒够 1000 token 才压一次、system 只放固定内容做缓存前缀，前缀缓存命中率 85%，单轮约 0.5 美分（<a href="maya-agent-interview.html#t10">笔记 10.8</a>、<a href="maya-agent-interview.html#t5">5.8</a>）。</p>
+  </dd>
+  <dt><span class="pill">设计·中</span> 长任务怎么管 Token；超预算怎么强制；按任务 token 预算与每完成一个 workflow 的成本（Anthropic 电面"token-budget allocator"，复杂任务 20–50 步）</dt>
+  <dd>
+  <ul>
+    <li><strong>预算分配</strong>：任务级总预算按阶段 / 子 Agent 切分（规划、执行、合成各自配额），每步调用前用 token 计数预估，记录累计消耗。</li>
+    <li><strong>强制手段</strong>：软阈值触发压缩（摘要历史、丢弃旧工具结果、只保留引用），硬阈值触发终止并返回部分结果或请求人工确认；同时限制最大步数和 max_tokens。</li>
+    <li><strong>核算单位</strong>：以「每完成一个任务的成本」而非单次请求成本衡量，失败重试的消耗计入。</li>
+  </ul>
+  <p><strong>Maya</strong>：每轮由代码在 token 预算内重组上下文，窗口外增量摘要加双路召回，超出窗口的历史不原样重放（<a href="maya-agent-interview.html#t6">笔记 6.1–6.4</a>）。</p>
+  </dd>
+  <dt><span class="pill">Dbg·中</span> Agent 太慢怎么提速；峰值延迟抖动怎么稳；延迟 vs 质量怎么设计；质量上去了但延迟成本不可接受怎么办</dt>
+  <dd>
+  <ul>
+    <li><strong>先度量</strong>：定延迟目标（P50 / P99、首 token 时间）和成本单位，按组件拆 trace 找尾延迟来源。</li>
+    <li><strong>手段</strong>：减少串行模型调用次数；独立调用并行（扇出 / 扇入）；路由、分类用小模型；语义缓存与前缀缓存；流式输出和进度事件降低感知延迟；控制输出长度。</li>
+    <li><strong>稳抖动与取舍</strong>：每路设超时与降级、供应商级 fallback；质量与延迟冲突时，在同一评测集上试最小干预（换小模型、减一步、缩上下文），按评测分数与 P99 一起决策。</li>
+  </ul>
+  <p><strong>Maya</strong>：单轮至少 2 次 LLM 调用，P99 约 5.7 秒；跨领域子 Agent 并行、单路超时降级，每步发进度帧（<a href="maya-agent-interview.html#t5">笔记 5.7</a>、<a href="maya-agent-interview.html#t10">10.5</a>）。</p>
+  </dd>
+  <dt><span class="pill">行为·低</span> 权衡题：高级模型高 3 分但 6 倍成本，决定前问什么、最小实验是什么；一次工具调用修掉 40% 失败但给语音产品加 800 ms</dt>
+  <dd>
+  <ul>
+    <li><strong>先问</strong>：3 分是否超出评测噪声（样本量、多次运行方差）；提升集中在哪类样本、是否是高价值请求；成本与延迟预算上限；失败的业务代价。</li>
+    <li><strong>最小实验</strong>：只把高级模型用在难样本或低置信请求上（按路由分流），同一评测集对比分数、成本、P99；工具调用可改为条件触发、并行预取或异步执行，并在线上 A/B 验证体验。</li>
+  </ul>
+  <p><strong>Maya</strong>：改动后同一评测集多跑几遍并用改动前代码对照，区分波动与退化；按任务选模型，看图评价用更便宜的模型（<a href="maya-agent-interview.html#t8">笔记 8.5</a>、<a href="maya-agent-interview.html#t11">附 多模态</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 大模型网关解决什么问题；统一模型服务架构与模型选型；模型路由；语义缓存、Prompt 压缩</dt>
+  <dd>
+  <ul>
+    <li><strong>网关</strong>：统一多供应商接口与密钥管理，集中做鉴权、限流配额、重试与 fallback、成本计量、日志与 trace、缓存；业务侧换模型不改代码。</li>
+    <li><strong>模型路由</strong>：常规请求走便宜模型，复杂或低置信请求升级大模型；路由规则要用评测集验证误路由率。</li>
+    <li><strong>语义缓存与压缩</strong>：语义缓存按 embedding 相似度复用答案，适合 FAQ 类，阈值过松会答非所问，个性化或时效性内容不缓存；Prompt 压缩删冗余上下文，需回归验证不掉质量。</li>
+  </ul>
+  <p><strong>Maya</strong>：按任务选模型：对话与主 Agent 用主力模型，看图评价用便宜模型，召回用 CLIP 向量不用大模型（<a href="maya-agent-interview.html#t11">附 多模态</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 为什么先用小模型做初步召回（车载场景）；自托管 vs API；十几万请求怎么扩容；QPS 压测</dt>
+  <dd>
+  <ul>
+    <li><strong>小模型召回</strong>：召回阶段候选多、只需粗筛，小模型或向量检索延迟低、成本低，可端侧运行；大模型只处理精排或生成。</li>
+    <li><strong>自托管 vs API</strong>：API 起步快、免运维、模型强；自托管适合数据合规、量大且稳定（GPU 利用率高才省钱）、需要定制或固定延迟的场景。</li>
+    <li><strong>扩容与压测</strong>：服务层无状态水平扩展，瓶颈通常在供应商速率限制（TPM / RPM），容量按 tokens/s 估；压测用真实 prompt 长度分布，看吞吐、P99 和 429 比例，配合排队与降级。</li>
+  </ul>
+  <p><strong>Maya</strong>：FastAPI + uvicorn，一个容器一个进程，扩容交给 ECS Fargate（<a href="maya-agent-interview.html#t10">笔记 10.1</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 推理服务：continuous batching 为什么取代 static batching、PagedAttention / vLLM、speculative decoding 什么时候不划算、Prefill / Decode、KV Cache 内存</dt>
+  <dd>
+  <ul>
+    <li><strong>Continuous batching</strong>：static batching 要等批内最长序列生成完，短请求空等、新请求排队；迭代级调度（Orca，OSDI 2022）每步解码后让完成的请求退出、新请求加入，吞吐与 GPU 利用率显著提升。</li>
+    <li><strong>PagedAttention / KV Cache</strong>：KV Cache 随序列长度线性增长，预分配连续显存造成碎片与浪费；vLLM 借鉴虚拟内存分页，按块分配 KV Cache，可跨请求共享前缀块，论文报告同延迟下吞吐提升 2–4 倍。Prefill 并行处理整段输入、计算密集，决定首 token 时间；Decode 逐 token 生成、受显存带宽约束。</li>
+    <li><strong>Speculative decoding</strong>：小模型起草多个 token、大模型一次并行验证，输出分布与原模型一致；草稿接受率低（领域不匹配）、批量已大到计算密集、草稿模型本身开销或显存占用高时不划算。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> 流式：SSE vs WebSocket 怎么选、断流怎么续、心跳与 backpressure、部分响应怎么记日志</dt>
+  <dd>
+  <ul>
+    <li><strong>选型</strong>：SSE 是普通 HTTP 长响应、单向，对代理 / CDN / 鉴权中间件友好，浏览器原生重连；需要双向实时控制（语音、打断生成）用 WebSocket。原生 EventSource 只支持 GET，POST 带 body 用 fetch 读流。</li>
+    <li><strong>续传与心跳</strong>：事件带 id，重连时 EventSource 携带 Last-Event-ID，服务端从断点补发（需缓存已生成事件）；定期发冒号开头的注释行防代理超时断开；backpressure 依靠异步 generator 由消费方拉动，慢客户端不在内存中无限堆积。</li>
+    <li><strong>日志</strong>：一轮共用一个消息 id，开始、进度、正文、错误、结束都挂在其上；落库和埋点放 finally 或后台任务，标记完整或中断。</li>
+  </ul>
+  <p><strong>Maya</strong>：SSE，POST + fetch 读流，响应头 X-Accel-Buffering: no；图内异常变 error 帧、end 帧照发，未跑完的轮次不落库（<a href="maya-agent-interview.html#t10">笔记 10.4–10.7</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 限流与速率限制怎么处理；admission control、按租户 / 模型等级 / 地区路由、过载时谁优先、什么时候拒收</dt>
+  <dd>
+  <ul>
+    <li><strong>出向</strong>：供应商 429 用指数退避加抖动（jitter）重试，只重试幂等调用；多 key / 多区域 / 备用模型分摊配额。</li>
+    <li><strong>入向</strong>：按租户、用户做令牌桶限流，按 token 而非请求计配额；admission control 依据队列长度与预计 token 量决定接收、排队或拒收（快速返回 429 优于超时）。</li>
+    <li><strong>优先级</strong>：过载时付费 / 交互式请求优先，批处理与后台任务降级或延后；增强功能先关，核心链路保留。</li>
+  </ul>
+  <p><strong>Maya</strong>：模型走 SDK 自带重试；后端接口用 tenacity 最多 3 次退避重试，耗尽返回固定说明，模型不编（<a href="maya-agent-interview.html#t3">笔记 3.3</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> Trace 要记什么：prompt hash（不记原文）、模型版本、检索元数据、工具 trace、安全决策、延迟、每请求成本；脱敏、留存、采样</dt>
+  <dd>
+  <ul>
+    <li><strong>内容</strong>：每步输入输出（或 prompt 版本 / hash）、模型与参数、token 用量与成本、延迟、检索命中与得分、工具调用与返回、guardrail 决策、错误；按一轮串成树，可从投诉下钻到具体调用。</li>
+    <li><strong>治理</strong>：PII 脱敏或只记哈希，按比例采样（错误与差评全量），设留存期与访问权限。</li>
+  </ul>
+  <p><strong>Maya</strong>：LangSmith 自动 trace，节点、子图、模型与工具调用各为一个节点；FAQ 额外记录检索命中与模型引用编号，两者之差即检索噪音（<a href="maya-agent-interview.html#t8">笔记 8.6</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·低</span> 协程 / 线程 / 进程；后端八股与 Agent 题各占一半</dt>
+  <dd>
+  <ul>
+    <li><strong>分工</strong>：进程利用多核（规避 GIL），内存不共享；线程把同步阻塞代码移出事件循环；协程在 IO 等待时切换，单线程承载大量连接。LLM 应用以 IO 等待为主，适合异步。</li>
+    <li><strong>常见事故</strong>：在 async 函数中调用同步 IO 导致所有连接一起阻塞，改用异步客户端或 asyncio.to_thread。</li>
+  </ul>
+  <p><strong>Maya</strong>：所有 IO 异步：httpx 异步客户端、psycopg 异步连接池、节点全为 async def、模型走 ainvoke（<a href="maya-agent-interview.html#t10">笔记 10.2</a>）。</p>
+  </dd>
+</dl>
+</div>
+
+<h2 id="n12">2.12 节点 12 行为、产品感、AI 编程习惯</h2>
+<div class="qa">
+<dl>
+  <dt><span class="pill">行为·高</span> 系统上线了吗、日均多少请求、有没有真实用户、为什么没上线、项目是不是自发做的、是否自学 AI</dt>
+  <dd>
+  <ul>
+    <li><strong>框架</strong>：直接回答状态 → 给出真实规模（请求量、用户数，没有就说没有）→ 上线后观察到的问题与改动 → 个人角色与学习路径。</li>
+    <li><strong>要点</strong>：数字口径要经得起追问（时间范围、统计来源）；未上线就讲清原因与已具备的上线条件（评测、护栏、监控）。</li>
+  </ul>
+  <p><strong>Maya</strong>：独立完成，三个月从 0 到上线；规模数字（日均请求、用户数）按实际数据填（<a href="maya-agent-interview.html#t-intro">项目介绍</a>）。</p>
+  </dd>
+  <dt><span class="pill">行为·高</span> 平时用什么 AI 工具、界面类 AI 产品用过哪些；常用 AI 编程工具及使用方式；现场演示自己搭的 Agent；walk through 你的 Claude Code 工作流；比较 Cursor / Windsurf / Zed / Claude Code / Copilot 各赢在哪</dt>
+  <dd>
+  <ul>
+    <li><strong>框架</strong>：工具清单与各自用途 → 一个具体任务的完整流程（上下文准备、计划、执行、验证、提交）→ 踩过的坑与对应约束（按你的实际情况填）。</li>
+    <li><strong>工作流要点</strong>：项目说明文件（如 CLAUDE.md）沉淀约定；先让 Agent 读代码出计划再改；小步改动、跑测试与 lint 验证；人工审查 diff 后再提交；常用流程固化为 Skill / 命令，外部系统经 MCP 接入。</li>
+    <li><strong>对比</strong>：IDE 内补全与内联编辑（Copilot、Cursor、Windsurf、Zed）适合局部改动和高频交互；终端 Agent（Claude Code）适合跨文件任务、脚本化与自动化流程。</li>
+  </ul>
+  <p><strong>Maya</strong>：演示可用 Maya 的 MCP Server：stdio 形态经 <code>claude mcp add</code> 接入 Claude Code 调用账户工具（<a href="maya-agent-interview.html#t4">笔记 4.3</a>）。</p>
+  </dd>
+  <dt><span class="pill">行为·中</span> Vibe Coding 和 Spec 驱动开发的区别；Coding Agent 怎么在大仓库定位代码；怎么审查看起来合理实际错误的 AI 代码；AI Coding 怎么避免改坏历史功能；Plan 模式与 Agent 模式区别；Skill 的使用与效果验证</dt>
+  <dd>
+  <ul>
+    <li><strong>Vibe vs Spec</strong>：Vibe Coding 以对话迭代、看结果调整，适合原型；Spec 驱动先写需求、接口与验收标准，再让 Agent 按 spec 实现与自测，适合生产代码。Plan 模式只读、产出方案供确认，Agent 模式直接执行修改。</li>
+    <li><strong>定位与审查</strong>：大仓库靠 grep / 符号搜索 / 目录说明文件逐步缩小范围，而非整仓塞上下文；审查重点看边界条件、错误处理、并发、与既有约定是否一致，以及测试是否真的覆盖改动。</li>
+    <li><strong>防回归与 Skill 验证</strong>：改动前补测试、改动后跑全量回归、小步提交便于回滚；Skill 用一组固定任务对比有无 Skill 的成功率与触发准确率。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">行为·中</span> 结合开发经历谈传统 Web 应用和 AI Agent 应用有什么不同</dt>
+  <dd>
+  <ul>
+    <li><strong>正确性</strong>：传统代码确定性、靠单测证明；LLM 概率性，只能靠评测集量错误率，并由代码兜底终态。</li>
+    <li><strong>接口与状态</strong>：输入输出是自然语言，中间决策需结构化输出加校验；模型无状态，上下文每轮由代码重建。</li>
+    <li><strong>性能与成本</strong>：单次调用秒级、按 token 计费，需流式推送、并行与缓存；安全面多了 prompt 注入和越权工具调用。</li>
+  </ul>
+  <p><strong>Maya</strong>：总纲即这四点：概率性用评测与代码兜底、自然语言用结构化输出、无状态由代码重建上下文、慢且贵靠少调模型与前缀缓存（<a href="maya-agent-interview.html#t1">笔记 1.1</a>）。</p>
+  </dd>
+  <dt><span class="pill">行为·中</span> 对框架与 Skill 概念快速迭代的看法；To C 和 To B 的 Agent 哪个先爆发；Agent 商业化成本走势；最近关注的论文或进展；未来一年关键的 GenAI 技能；"Will AGI kill us all"</dt>
+  <dd>
+  <ul>
+    <li><strong>框架</strong>：给明确立场 → 一两条依据（自己的实践或具体进展）→ 承认不确定性与反方观点；避免教科书式中立答案。</li>
+    <li><strong>可用论点</strong>：框架会变，不变的是评测、上下文管理、工具设计和可靠性工程；To B 有明确工作流与 ROI 更易先落地；单 token 价格下降但 Agent 多步调用使单任务消耗上升，成本工程仍重要。</li>
+    <li><strong>论文与技能</strong>：准备一两篇能讲清机制和自己看法的近期工作（按你的实际情况填）；技能侧强调评测设计与上下文工程。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">行为·中</span> Walk me through an AI system you shipped；客户说 bot "feels dumb" 先改什么；老板要上线但证据弱你怎么说</dt>
+  <dd>
+  <ul>
+    <li><strong>框架</strong>：用户问题 → 个人负责范围（与团队成果分开）→ 基线 → 架构决策及取舍 → 评测方法 → 上线护栏 → 真实反馈后的改动。</li>
+    <li><strong>"feels dumb"</strong>：先收集具体对话，归类失败模式，转化为可度量的评测样本，再按占比最高的类别改。</li>
+    <li><strong>证据弱</strong>：说明当前证据覆盖不到的风险，提出可控方案：灰度小流量、关键指标与回滚条件、补齐评测后再扩量。</li>
+  </ul>
+  <p><strong>Maya</strong>：按项目介绍 2–3 分钟版讲：背景、单 Agent → 评测 → 能力扩展 → Router → manager 的演进、760 条评测 98%（<a href="maya-agent-interview.html#t-intro">项目介绍</a>）。</p>
+  </dd>
+  <dt><span class="pill">行为·中·海外</span> Why Anthropic / Why Sierra；把技术话题讲给非技术受众；曾自信后发现错；做过与个人价值观冲突的东西；怎么直接和客户解决问题；怎么定义 AI 功能的成功指标；有没有端到端做过 Agent 系统</dt>
+  <dd>
+  <ul>
+    <li><strong>框架</strong>：STAR（情境、任务、行动、结果），结果带可度量数字和反思；Why 公司要落到具体产品、研究或使命与自身经历的连接。</li>
+    <li><strong>成功指标</strong>：分三层：任务完成率 / 解决率（业务）、质量指标（评测通过率、幻觉率）、体验与成本（延迟、单任务成本、转人工率）。</li>
+    <li><strong>认错类</strong>：讲清当时的判断依据、如何发现错误、之后建立的机制（如评测或复核流程）。</li>
+  </ul>
+  <p><strong>Maya</strong>：端到端 Agent 经历即 Maya：独立完成设计、实现、评测与上线（<a href="maya-agent-interview.html#t-intro">项目介绍</a>）。</p>
+  </dd>
+</dl>
+</div>
+
+<h2 id="n13">6 应用岗八股</h2>
+<div class="qa">
+<dl>
+  <dt><span class="pill">概念·中</span> Transformer / Attention 概述（QKV 是什么）</dt>
+  <dd>
+  <ul>
+    <li><strong>结构</strong>：词嵌入加位置信息，堆叠多层「多头自注意力 + 前馈网络」，每个子层带残差连接和归一化；当前 LLM 多为 decoder-only，用因果掩码自回归生成。</li>
+    <li><strong>Attention</strong>：输入经三组投影得到 Query、Key、Value，softmax(QK<sup>T</sup>/√d<sub>k</sub>)V；Q 与 K 的点积表示相关度，按权重加权 V。多头让模型在不同子空间关注不同关系。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> 为什么除以根号 d_k</dt>
+  <dd>
+  <p>q、k 各分量独立、方差为 1 时，点积方差为 d<sub>k</sub>；维度大时点积数值过大，softmax 进入饱和区、梯度极小。除以 √d<sub>k</sub> 把方差拉回 1，保持梯度稳定。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> LayerNorm vs BatchNorm</dt>
+  <dd>
+  <ul>
+    <li><strong>区别</strong>：BatchNorm 沿 batch 维统计，依赖 batch 大小，训练与推理统计量不同；LayerNorm 对单个 token 的特征维统计，与 batch 和序列长度无关。</li>
+    <li><strong>为何 NLP 用 LN</strong>：序列变长、batch 小、自回归推理逐 token 进行，BN 统计不稳定；LLM 普遍用 Pre-LN 提升训练稳定性，LLaMA 等改用更轻的 RMSNorm（只做缩放、不减均值）。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> 位置编码 sin/cos vs RoPE vs ALiBi</dt>
+  <dd>
+  <ul>
+    <li><strong>sin/cos</strong>：原始 Transformer 的绝对位置编码，按不同频率的正余弦生成并加到词嵌入上，外推到训练长度之外效果差。</li>
+    <li><strong>RoPE</strong>：对 Q、K 按位置做旋转，点积结果只依赖相对距离，以绝对编码的形式实现相对位置；LLaMA、Qwen 等主流模型采用，可通过插值类方法扩展上下文。</li>
+    <li><strong>ALiBi</strong>：不加位置嵌入，直接在注意力分数上加与距离成正比的线性惩罚，论文显示短序列训练可外推到更长输入。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> 分词器</dt>
+  <dd>
+  <ul>
+    <li><strong>算法</strong>：子词切分平衡词表大小与未登录词：BPE（按频率合并相邻符号，GPT 系用 byte-level BPE，无未登录词）、WordPiece（BERT）、Unigram（常经 SentencePiece 实现）。</li>
+    <li><strong>应用影响</strong>：计费、上下文长度都以 token 计；不同语言与分词器的 token 效率不同，估算预算要用对应模型的分词器；数字和字符级任务（计数、拼写）的错误常与切分有关。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> Scaling Law 与涌现</dt>
+  <dd>
+  <ul>
+    <li><strong>Scaling Law</strong>：损失随参数量、数据量、计算量按幂律下降（Kaplan 2020）；Chinchilla（Hoffmann 2022）指出计算最优时参数量与训练 token 应等比例扩展，此前大模型训练数据不足。</li>
+    <li><strong>涌现</strong>：某些能力在规模超过阈值后突然出现（Wei 2022）；也有研究认为这部分来自不连续的评测指标，换成连续指标后提升是平滑的（Schaeffer 2023）。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> 采样与解码：Temperature / Top-P / Top-K、贪心 / Beam / 采样</dt>
+  <dd>
+  <ul>
+    <li><strong>参数</strong>：Temperature 缩放 logits，越低越确定；Top-K 只在概率最高的 K 个 token 中采样；Top-P（nucleus）在累计概率达到 P 的最小集合中采样，候选数随分布自适应。</li>
+    <li><strong>策略</strong>：贪心每步取最大概率，确定但易重复；Beam Search 保留多条候选，适合翻译等有标准答案的任务，开放生成易产生平淡重复文本；采样提升多样性。</li>
+    <li><strong>应用</strong>：分类、抽取、工具调用用低温度；创意生成调高；换采样参数也要过评测。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> KV Cache / Prompt Caching</dt>
+  <dd>
+  <ul>
+    <li><strong>KV Cache</strong>：自回归生成时缓存已算过 token 的 K、V，每步只算新 token，避免重复计算；显存占用约为 2 × 层数 × KV 头数 × 头维度 × 序列长度 × 精度字节数，GQA / MQA 通过减少 KV 头降低占用。</li>
+    <li><strong>Prompt Caching</strong>：跨请求复用相同前缀的 KV；要求前缀逐字节一致，有最小长度门槛（OpenAI GPT-5.6 起 1024 token，Anthropic 按模型 512–4096 token），缓存读取价约为输入价的 0.1 倍。工程上把不变内容（工具定义、system）放前、可变内容放后。</li>
+  </ul>
+  <p><strong>Maya</strong>：system 只放固定规则和词表作缓存前缀，命中率 85%（<a href="maya-agent-interview.html#t10">笔记 10.8</a>）。</p>
+  </dd>
+  <dt><span class="pill">概念·中</span> 量化 INT8 / INT4 / AWQ / GPTQ 选型</dt>
+  <dd>
+  <ul>
+    <li><strong>收益</strong>：降低权重精度减少显存与带宽，Decode 受带宽约束，因此通常能提速；代价是精度损失，位宽越低越明显。</li>
+    <li><strong>方法</strong>：INT8 常见 LLM.int8()、SmoothQuant（权重和激活都量化）；INT4 多为只量化权重：GPTQ 用二阶信息逐层最小化量化误差，AWQ 依据激活幅度保护重要权重通道，二者都需少量校准数据。</li>
+    <li><strong>选型</strong>：显存够优先 INT8 / FP8；单卡放不下或追求成本用 4-bit；上线前在业务评测集上对比，确认推理框架支持对应格式。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> MoE 为什么（DeepSeek V3 / Qwen）</dt>
+  <dd>
+  <ul>
+    <li><strong>机制</strong>：把前馈层换成多个专家，路由器为每个 token 选 Top-K 个专家，总参数大但每 token 只激活一部分，以接近小模型的计算量获得大模型容量。DeepSeek-V3 总参数 671B、每 token 激活 37B，采用细粒度专家加共享专家。</li>
+    <li><strong>代价</strong>：全部专家仍需驻留显存，部署门槛高；需负载均衡防止专家冷热不均；分布式推理要专家并行与跨卡通信。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> vLLM / PagedAttention、部署方案选型</dt>
+  <dd>
+  <ul>
+    <li><strong>PagedAttention</strong>：KV Cache 按固定大小的块分配，逻辑块经块表映射到不连续的物理块，消除预分配造成的碎片和浪费，并支持前缀与并行采样间的块共享；配合 continuous batching，论文报告同延迟下吞吐比 FasterTransformer、Orca 高 2–4 倍。</li>
+    <li><strong>前缀缓存</strong>：vLLM 按块对「父块哈希 + 本块 token」做哈希，只缓存填满的块，LRU 淘汰。</li>
+    <li><strong>选型</strong>：调用 API 适合起步与通用场景；自托管常见 vLLM、SGLang、TensorRT-LLM，按模型支持、吞吐、运维成本选择。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> Prefill / Decode</dt>
+  <dd>
+  <ul>
+    <li><strong>两阶段</strong>：Prefill 一次性并行处理全部输入、写入 KV Cache，计算密集，决定首 token 时间（TTFT）；Decode 逐 token 生成，每步读取全部权重和 KV Cache，受显存带宽约束，决定每 token 延迟（TPOT）。</li>
+    <li><strong>优化</strong>：长 prompt 用 chunked prefill 避免阻塞正在解码的请求；大规模部署可做 PD 分离，两阶段分别部署在不同实例上独立扩缩；应用侧缩短输入、用前缀缓存降低 TTFT。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> LoRA 原理与优点、微调方案选型</dt>
+  <dd>
+  <ul>
+    <li><strong>原理</strong>：冻结预训练权重 W，旁路学习低秩增量 ΔW = BA（秩 r 远小于维度），只训练 A、B；推理时可合并回 W，不增加推理延迟。论文在 GPT-3 175B 上报告可训练参数减少约 10000 倍、显存需求降为约三分之一。</li>
+    <li><strong>优点</strong>：训练成本低，适配器文件小，可按任务切换多个 LoRA；QLoRA 在 4-bit 量化底座上训练 LoRA，进一步降显存。</li>
+    <li><strong>选型</strong>：先 prompt 与 RAG；需固定格式、风格或稳定工具调用行为且有标注数据时用 LoRA；数据与算力充足、需深度改变能力时才全参微调。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> SFT 之后的 Post-Training：RLHF / DPO / GRPO / 拒绝采样的关系；DPO vs PPO</dt>
+  <dd>
+  <ul>
+    <li><strong>RLHF</strong>：SFT 后用人类偏好数据训练奖励模型，再用 PPO 优化策略并加 KL 约束防止偏离参考模型；需同时维护策略、参考、奖励、价值四个模型，复杂且不稳定。</li>
+    <li><strong>DPO</strong>：从 RLHF 目标推导出闭式解，直接在偏好对上用分类式损失训练，不需显式奖励模型和强化学习采样，实现简单、稳定；代价是只能用离线偏好数据。</li>
+    <li><strong>GRPO 与拒绝采样</strong>：GRPO（DeepSeekMath）是 PPO 变体，去掉价值（critic）模型，同一问题采样一组输出、以组内奖励均值作基线计算优势，省显存，适合可验证奖励的推理任务；拒绝采样是采样多个回答、用奖励模型或规则挑最优再做 SFT。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> SFT 和 RLHF 哪个更适合快速迭代、基模越来越强时两者的破局点</dt>
+  <dd>
+  <ul>
+    <li><strong>快速迭代</strong>：SFT 更适合：数据构造直接、训练稳定、周期短，适合教格式与领域行为；RLHF 需偏好数据和奖励设计，迭代慢但能优化难以示范、只能比较的目标。</li>
+    <li><strong>基模变强后</strong>：很多 SFT 目标可由 prompt 与上下文工程替代；后训练价值转向可验证奖励的强化学习（如 GRPO 类方法）和 Agent 多步任务的奖励设计，数据与评测成为主要壁垒。</li>
+  </ul>
+  </dd>
+  <dt><span class="pill">概念·中</span> RAG vs 微调</dt>
+  <dd>
+  <ul>
+    <li><strong>分工</strong>：RAG 解决知识问题：知识更新频繁、需引用来源、需权限隔离；微调解决行为问题：输出格式、风格、领域任务模式、降低 prompt 长度与延迟。</li>
+    <li><strong>取舍</strong>：RAG 更新即时、可溯源，但增加检索延迟且受召回质量限制；微调知识更新需重训、易幻觉且难溯源。二者可组合：微调让模型更会用检索结果。</li>
+  </ul>
+  <p><strong>Maya</strong>：平台规则走 FAQ 混合检索加重排，回答只引用给过模型的编号；分类类任务示例堆多后才考虑换小模型微调或 embedding 分类器（<a href="maya-agent-interview.html#t7">笔记 7.1</a>、<a href="maya-agent-interview.html#t2">2.2</a>）。</p>
+  </dd>
+</dl>
+</div>
+
+
+<h2 id="n14">4 系统设计压轴题</h2>
+<div class="qa">
+<dl>
+  <dt><span class="pill">设计·高</span> 设计一个电商客服 Agent（调工具 + 升级人工）</dt>
+  <dd>
+  <table>
+    <tr><th>步骤</th><th>要点</th><th>Maya 落地</th></tr>
+    <tr><td>澄清</td><td>用户是谁（登录 / 匿名）；任务范围；source of truth；只能建议还是能改状态；不确定时拒答还是转人工；延迟、成本、隐私目标</td><td>三类对话（导购、订阅订单、平台规则）；事实只来自 core 接口与 FAQ 原文；写操作仅暂停 / 取消订阅，须用户确认</td></tr>
+    <tr><td>估算</td><td>每轮模型调用次数 × token × 单价；峰值并发 ≈ QPS × 单轮时长（决定连接与 worker 数）；语料规模决定索引选型</td><td>单轮至少 2 次 LLM 调用，P99 约 5.7s，约 0.5 美分 / 轮，前缀缓存命中 85%；FAQ 语料小，pgvector 足够</td></tr>
+    <tr><td>默认链路</td><td>鉴权 → 输入 guardrail → 编排器 → 工具 / 检索 → 输出校验 → 流式返回 → trace</td><td>cookie 换 user_id → 主 Agent（manager）并行调 Fashion / Account / FAQ → 结构化输出校验 → SSE（进度帧 + 终态）→ LangSmith</td></tr>
+    <tr><td>深挖 1：工具权限与升级</td><td>读写分开、身份代码注入、写操作人工审批；升级人工由代码规则触发（用户明确要求、轮数用完、核心依赖不可用、金额或风险超阈值），附会话摘要建工单，不让模型自由决定</td><td>user_id 为 InjectedToolArg；写工具前 <code>interrupt</code>，状态存 Postgres checkpointer，恢复前校验本人与待审批状态，执行存档中冻结的那次调用</td></tr>
+    <tr><td>深挖 2：RAG</td><td>混合检索 → 重排 → 按段落作答、带出处、答不了拒答</td><td>混合取 10、LLM 重排取前 5，只引用给过模型的编号；检索 147/150（单路向量 134/150）</td></tr>
+    <tr><td>取舍</td><td>延迟 vs 质量、调用次数 vs 灵活性、托管 vs 自建</td><td>manager 多一次调用，单领域透传省掉；LLM 重排只用在 FAQ；PostgreSQL 一库顶三件，切换信号明确</td></tr>
+    <tr><td>失败模式与可观测</td><td>幻觉、注入、供应商故障、embedding 漂移、循环、重复副作用，各配检测手段</td><td>只有模型是核心依赖，其余全部降级；轮数上限；FAQ trace 记检索命中与引用编号，差值即检索噪音</td></tr>
+    <tr><td>演进</td><td>评测门禁、反馈回流、prompt / 模型灰度、回滚</td><td>10 个数据集 760 条，改动后多次运行并与改动前代码对照；评测脚本接 CI 门禁</td></tr>
+  </table>
+  <ul>
+    <li><strong>边界</strong>：模型只决定调哪个工具、填哪些业务参数；身份不可见，写操作必须用户确认，步数有上限。</li>
+    <li><strong>闭环</strong>：模型答错时服务照样返回 200，质量信号靠 trace 抽样、用户反馈、评测集回归闭环。</li>
+    <li><strong>成本延迟真实感</strong>：每个模型调用点都报次数、P99 和单价；固定路径交给代码，减少调用。</li>
+    <li><strong>Failure honesty</strong>：主动列出依赖降级表与"查不到时如实说"的出口，不等追问。</li>
+  </ul>
+  <p><strong>Maya</strong>：项目全貌与演进见<a href="maya-agent-interview.html#t-intro">项目介绍</a>；审批见<a href="maya-agent-interview.html#t5">笔记 5.4</a>，降级表见<a href="maya-agent-interview.html#t9">笔记 9.4</a>。</p>
+  </dd>
+
+  <dt><span class="pill">设计·高</span> 企业 RAG / 知识库（权限 + 引用 + 弃答）</dt>
+  <dd>
+  <ul>
+    <li><strong>权限</strong>：摄入时 ACL 与租户作为元数据随块入索引，检索时按服务端身份前置过滤（pre-filter），不在生成后过滤；多租户分索引或强制 filter。</li>
+    <li><strong>链路</strong>：按结构切块 → 向量 + BM25 混合召回 → 重排 → 带编号生成；引用编号由代码校验，必须属于本次给模型的段落。</li>
+    <li><strong>弃答</strong>：重排分数阈值加 prompt 允许"不知道"；评测集放知识库外问题，单独统计拒答率。</li>
+    <li><strong>运维</strong>：文档增删改经 CDC 增量同步、换 embedding 模型全量重建；检索（hit@k、MRR）与生成（faithfulness）分开评；收紧 top-k、缓存、每请求 token 上限控成本。</li>
+  </ul>
+  </dd>
+
+  <dt><span class="pill">设计·中</span> Coding / Code Review Agent（多文件编辑带验证与回滚）</dt>
+  <dd>
+  <ul>
+    <li><strong>上下文</strong>：按需检索代码（grep、符号索引、文件树），不全量塞入；编辑以 diff / 补丁表达，便于审阅与回退。</li>
+    <li><strong>验证</strong>：每次编辑后跑 lint、类型检查、测试，结果作为 observation 回灌；设步数与时间上限。</li>
+    <li><strong>隔离与回滚</strong>：沙箱或容器执行，改动落在独立分支或 worktree，按检查点回滚；危险命令 allowlist 加人工审批。</li>
+    <li><strong>Review 变体</strong>：确定性工具（静态分析）出候选，LLM 编排与解释；只读权限，输出结构化评论定位到行；私有代码不出权限边界。</li>
+  </ul>
+  </dd>
+
+  <dt><span class="pill">设计·中</span> 推理服务 / LLM 网关（inference API）</dt>
+  <dd>
+  <ul>
+    <li><strong>调度</strong>：continuous batching、分页式 KV cache 管理、按序列长度分桶；动态 batching 设最大 batch 与最大等待窗。</li>
+    <li><strong>流式与指标</strong>：SSE 逐 token 推送；看 TTFT、每 token 耗时、吞吐（tokens/s）与 GPU 利用率。</li>
+    <li><strong>多租户</strong>：鉴权、按 tokens/min 的令牌桶限流与配额、按输入 / 输出 / 缓存 token 计费，租户间请求与日志隔离。</li>
+    <li><strong>网关</strong>：多供应商路由、fallback 模型与熔断、语义缓存；过载时排队加 backpressure，降级为短输出、小模型或关闭可选功能。</li>
+  </ul>
+  </dd>
+
+  <dt><span class="pill">设计·中</span> Agent Harness + 评测平台</dt>
+  <dd>
+  <ul>
+    <li><strong>Harness</strong>：工具沙箱执行、按风险分级授权、步数 / 时间 / 预算上限；checkpoint 持久化支持 HITL 中断与恢复；全量 trace。</li>
+    <li><strong>评测执行</strong>：实验 = 代码版本 × 数据集版本 × 评测器；异步批跑并控并发；重复运行看 pass^k。</li>
+    <li><strong>评测器</strong>：代码规则优先，LLM judge 经人工标注校准后使用，难判样本进人工标注队列；评终态与副作用，不钉死路径。</li>
+    <li><strong>平台</strong>：trace 摄入走消息队列加列式存储扛高写入；线上抽样评测看漂移；CI 门禁；prompt 版本与成本追踪。</li>
+  </ul>
+  <p><strong>Maya</strong>：三层 10 个数据集、全部代码评测器、外部依赖按"评决策用假数据、评质量打真实服务"切分（<a href="maya-agent-interview.html#t8">笔记 8.1–8.5</a>）。</p>
+  </dd>
+
+  <dt><span class="pill">追问·高</span> 评测：resolved 怎么定义、离线 vs 在线、judge 怎么校准、检索和生成怎么分开评、不看最终答案怎么评 Agent</dt>
+  <dd>
+  <ul>
+    <li><strong>resolved</strong>：按终态定义，工具副作用与目标状态一致（τ-bench 即比对终态数据库）、未转人工、一段时间内未复发；离线跑回归集，在线抽样 trace 加用户信号。</li>
+    <li><strong>judge</strong>：先理由后结论，与人工标注比一致率，达标再用；检索看 hit@k / MRR，生成看事实与 faithfulness。</li>
+    <li><strong>不看最终答案</strong>：评终态与副作用（执行次数、状态）和轨迹约束（禁止的调用），不钉死步骤顺序。</li>
+  </ul>
+  <p><strong>Maya</strong>：写操作数据集断言确认与执行次数，40/40 三次重复全过；终态完整性 50/50（<a href="maya-agent-interview.html#t8">笔记 8.1、8.4</a>）。</p>
+  </dd>
+
+  <dt><span class="pill">追问·高</span> 工具失败与循环：模型不调工具、调用格式错、永远循环；ReAct / function calling / 状态机怎么选</dt>
+  <dd>
+  <ul>
+    <li><strong>失败</strong>：格式错与工具异常压成一条工具结果回灌；工程偶发错误退避重试，耗尽回固定说明；该调不调靠显式 submit 工具作为唯一出口。</li>
+    <li><strong>循环</strong>：轮数上限后不绑工具强制作答，加同参数重复调用检测；框架 recursion_limit 只作最后一道。</li>
+    <li><strong>选型</strong>：路径可枚举用状态机（workflow），步数依赖结果用原生 function calling 的 ReAct；文本解析版 ReAct 只在模型不支持函数调用时用。</li>
+  </ul>
+  <p><strong>Maya</strong>：Fashion 以提交工具为出口、0 件退回放宽，最多 4 轮；Account <code>MAX_TOOL_ROUNDS = 3</code>（<a href="maya-agent-interview.html#t5">笔记 5.2–5.3</a>）。</p>
+  </dd>
+
+  <dt><span class="pill">追问·中</span> 成本：路由、语义缓存、Prompt 压缩、每任务预算；容量不够怎么降级</dt>
+  <dd>
+  <ul>
+    <li><strong>手段</strong>：先省调用（固定路径用代码），再控输入 token（预算截断、摘要），再吃前缀缓存，再按任务选模型；每任务设 token 与步数预算。</li>
+    <li><strong>容量</strong>：GPU 池按 tokens/s 估算；不够时降级为短输出、小模型、缓存命中、关闭可选功能。</li>
+  </ul>
+  <p><strong>Maya</strong>：单领域透传省合成调用，前缀缓存命中 85%，单轮约 0.5 美分（<a href="maya-agent-interview.html#t10">笔记 10.8</a>）。</p>
+  </dd>
+
+  <dt><span class="pill">追问·中</span> 幂等：超时重试会重复副作用（重复发消息、重复扣费）</dt>
+  <dd>
+  <ul>
+    <li><strong>原则</strong>：只自动重试幂等的读；写操作带幂等键，服务端去重；超时等于状态未知，先查询再决定。</li>
+    <li><strong>Agent 层</strong>：恢复从节点开头重放，副作用前的代码必须可重跑，执行前校验待执行状态。</li>
+  </ul>
+  <p><strong>Maya</strong>：core 重试只用于读接口；写操作恢复前校验本人与待审批状态，结果不确定时读回订阅状态（<a href="maya-agent-interview.html#t5">笔记 5.4</a>）。</p>
+  </dd>
+
+  <dt><span class="pill">追问·中</span> 流式：SSE vs WebSocket、断流续传、心跳、backpressure、部分响应归属</dt>
+  <dd>
+  <ul>
+    <li><strong>选型</strong>：一问一推用 SSE（普通 HTTP，网关原样通过）；双向实时（语音、打断）才上 WebSocket。</li>
+    <li><strong>稳定性</strong>：代理关缓冲、定期心跳防读超时；客户端断开要取消上游模型调用；断流续传靠事件 id 加服务端暂存。</li>
+    <li><strong>归属</strong>：一轮所有事件共用一个消息 id，中途出错发 error 事件再正常收尾，前端决定保留或回滚。</li>
+  </ul>
+  <p><strong>Maya</strong>：<code>X-Accel-Buffering: no</code>、每步发进度帧；图内异常变 error 帧，end 照发，未跑完的轮次不落库（<a href="maya-agent-interview.html#t10">笔记 10.4–10.7</a>）。</p>
+  </dd>
+
+  <dt><span class="pill">追问·高</span> 注入：检索内容当不可信、工具 allowlist、不可变 system prompt、输出校验、红队</dt>
+  <dd>
+  <ul>
+    <li><strong>数据与指令分离</strong>：指令只在 system，检索段落与工具结果作为 user / tool 数据；工具 allowlist、最小权限。</li>
+    <li><strong>限制爆炸半径</strong>：身份不由模型提供，高危操作人工确认，输出按 schema 与规则校验；评测集放注入样本做红队回归。</li>
+  </ul>
+  <p><strong>Maya</strong>：被诱导也只能动当前用户自己的数据，写操作必须用户点确认（<a href="maya-agent-interview.html#t9">笔记 9.2</a>）。</p>
+  </dd>
+
+  <dt><span class="pill">追问·中</span> 版本与发布：prompt / 模型 / 工具改动的静默回归、shadow / canary、回滚速度、托管模型 API 漂移</dt>
+  <dd>
+  <ul>
+    <li><strong>发布前</strong>：prompt、模型、采样参数都进版本库，PR 过评测门禁；多次运行并与旧版本对照，区分波动与退化。</li>
+    <li><strong>发布中</strong>：shadow 流量对比或 canary 小比例放量，看质量与成本指标；配置化切换，回滚不需发版。</li>
+    <li><strong>漂移</strong>：固定模型快照版本，定期跑回归集监测托管模型变化。</li>
+  </ul>
+  </dd>
+
+  <dt><span class="pill">追问·低</span> 2 秒 / 10 秒 / 90 秒三级缓存各对应什么（腾讯）</dt>
+  <dd>
+  <ul>
+    <li><strong>依据</strong>：TTL 按数据变化频率与业务对过期的容忍度分级：秒级给高频变化、需近实时的数据（库存、计数），十秒级给聚合结果，分钟级给低频变更的配置、榜单。</li>
+    <li><strong>配套</strong>：短 TTL 多放进程内缓存挡热点，长 TTL 放分布式缓存；TTL 加随机抖动防雪崩，关键数据变更时主动失效、TTL 兜底。</li>
+  </ul>
+  </dd>
+
+  <dt><span class="pill">追问·低</span> 管理五台服务器做负载均衡（腾讯）</dt>
+  <dd>
+  <ul>
+    <li><strong>接入</strong>：L4（LVS）或 L7（Nginx）；算法按场景选轮询 / 加权、最少连接，需会话粘性用一致性哈希。</li>
+    <li><strong>可用性</strong>：健康检查剔除故障节点、恢复后慢启动；服务无状态化，会话外置到 Redis；负载均衡器自身主备（keepalived + VIP）。</li>
+  </ul>
+  </dd>
+
+  <dt><span class="pill">追问·低</span> 支付接口超时的排查流程（字节、唯品会）</dt>
+  <dd>
+  <ul>
+    <li><strong>定界</strong>：影响面（单接口还是全量、时间点、是否刚发布）→ 按 trace 分段看耗时：网关、本服务、下游支付通道。</li>
+    <li><strong>定因</strong>：本侧查线程池 / 连接池耗尽、GC、慢 SQL、DNS / TLS；下游查通道状态与对端超时配置。</li>
+    <li><strong>处置</strong>：超时不等于失败，状态未知先查单、对账；重试必须带幂等键，防重复扣款。</li>
+  </ul>
+  </dd>
+</dl>
+</div>
+
+<h2 id="n15">5 项目深挖</h2>
+<div class="qa">
+<dl>
+  <dt><span class="pill">真实性·高</span> 上线了吗、有没有真实用户、日均多少请求</dt>
+  <dd>
+  <ul>
+    <li><strong>答法</strong>：一句话给状态，再给规模与口径：已上线，承接 Bnto 站内导购对话；日均对话轮数（按你掌握的口径填），口径说明按轮 / 会话 / UV；三类意图占比（按你掌握的口径填）。</li>
+    <li><strong>可直接报的</strong>：单轮 P99 约 5.7s，单轮约 0.5 美分，前缀缓存命中率 85%。</li>
+  </ul>
+  </dd>
+
+  <dt><span class="pill">真实性·高</span> 输入输出是什么</dt>
+  <dd>
+  <ul>
+    <li><strong>输入</strong>：用户一句话（可带图片），身份由 cookie 向 core 换取 userId，匿名用设备 id。</li>
+    <li><strong>输出</strong>：SSE 帧序列：processing 进度、正文、按钮（检索条件或写操作确认）、end / error；每轮必须以按钮或文本收尾。</li>
+  </ul>
+  <p><strong>Maya</strong>：<a href="maya-agent-interview.html#t10">笔记 10.3–10.7</a>、<a href="maya-agent-interview.html#t6">6.6</a>。</p>
+  </dd>
+
+  <dt><span class="pill">真实性·高</span> 个人代码边界在哪、是不是自发做的</dt>
+  <dd>
+  <ul>
+    <li><strong>本人</strong>：Maya 服务整体设计与实现独立完成：编排、工具、记忆、RAG、评测体系、MCP Server。</li>
+    <li><strong>依赖</strong>：订阅、订单、商品检索走 core 现有接口；前端渲染与接口归属（按你掌握的口径填）。项目缘起（按你掌握的口径填）。</li>
+  </ul>
+  </dd>
+
+  <dt><span class="pill">真实性·中</span> 模型有没有调过、样本从哪来</dt>
+  <dd>
+  <ul>
+    <li><strong>模型</strong>：未微调，API 模型 + prompt + 结构化输出；按任务选模型（对话与主 Agent 用大模型，看图用便宜模型）。</li>
+    <li><strong>样本</strong>：评测集手写起步，带反例与 hard 分组，标签对照词表、假数据、FAQ 原文自动校验；从 203 条扩到 760 条。</li>
+  </ul>
+  <p><strong>Maya</strong>：<a href="maya-agent-interview.html#t8">笔记 8.2–8.3</a>、<a href="maya-agent-interview.html#t11">附 多模态</a>。</p>
+  </dd>
+
+  <dt><span class="pill">失败路径·高</span> 工具超时或返回部分结果怎么办</dt>
+  <dd>
+  <ul>
+    <li><strong>单个工具</strong>：core 在 <code>_request</code> 收口用 tenacity，最多 3 次，退避 0.2s 起、上限 2s，单次超时 3s（全是读接口）；耗尽返回固定句 <code>CORE_UNAVAILABLE</code>，评测断言模型不编。</li>
+    <li><strong>子 Agent 一路</strong>：单路超时返回"该领域暂不可用"，其余照常合成，先答可答部分。</li>
+  </ul>
+  <p><strong>Maya</strong>：<a href="maya-agent-interview.html#t3">笔记 3.3</a>、<a href="maya-agent-interview.html#t5">5.7</a>。</p>
+  </dd>
+
+  <dt><span class="pill">失败路径·高</span> 重复调用、重复执行写操作怎么防</dt>
+  <dd>
+  <ul>
+    <li><strong>读</strong>：轮数上限（Fashion 4 轮、Account 3 轮），用完不绑工具强制作答或回固定文案。</li>
+    <li><strong>写</strong>：interrupt 恢复时执行存档中冻结的那次调用，恢复前校验本人与待审批状态，挡住重复点击与越权；审批数据集断言执行次数，40/40 三次重复全过。</li>
+  </ul>
+  </dd>
+
+  <dt><span class="pill">失败路径·高</span> 压缩会不会丢信息</dt>
+  <dd>
+  <ul>
+    <li><strong>机制</strong>：增量摘要只留事实（偏好、尺码、约束、搜过什么），150 词上限；摘要保"说过的约束"，召回按措辞找回具体旧轮，两者互补；摘要失败不推进游标，下一轮重试。</li>
+    <li><strong>证据</strong>：窗口压到 60 token 让早期约束真正掉出窗口，仅窗口 9/30（早期排除项 0/8 带回），开摘要与召回 30/30。</li>
+  </ul>
+  <p><strong>Maya</strong>：<a href="maya-agent-interview.html#t6">笔记 6.2、6.8</a>。</p>
+  </dd>
+
+  <dt><span class="pill">失败路径·中</span> 进程在中途崩溃，怎么从 checkpoint 恢复而不重复副作用</dt>
+  <dd>
+  <ul>
+    <li><strong>恢复粒度</strong>：Postgres checkpointer 按超步存档，恢复从节点开头重放；并行分支中已完成的写入作为 pending writes 保存，不重跑。</li>
+    <li><strong>副作用</strong>：写操作放在审批之后的节点里，执行前校验状态；执行结果不确定时读回订阅状态再回复。</li>
+  </ul>
+  <p><strong>Maya</strong>：<a href="maya-agent-interview.html#t5">笔记 5.4、5.7</a>。</p>
+  </dd>
+
+  <dt><span class="pill">失败路径·中</span> 依赖挂了怎么办</dt>
+  <dd>
+  <p>只有模型是核心依赖（图内异常变 error 帧，流不断）；历史库、摘要、embedding、rerank、core、天气全部降级：当没有历史、只走关键词一路、用粗排顺序、如实说查不到（<a href="maya-agent-interview.html#t9">笔记 9.4</a>）。</p>
+  </dd>
+
+  <dt><span class="pill">替代方案·高</span> 为什么不用 Workflow 或规则</dt>
+  <dd>
+  <ul>
+    <li><strong>能固定的已经是 workflow</strong>：FAQ 检索 → 重排 → 作答、Fashion 提交后计数、0 件退回，都由代码调。</li>
+    <li><strong>交给模型的只有组合不定的部分</strong>：Account 一句话查一个还是三个接口、要不要查天气；口语表达规则枚举不完。</li>
+  </ul>
+  <p><strong>Maya</strong>：<a href="maya-agent-interview.html#t3">笔记 3.1</a>。</p>
+  </dd>
+
+  <dt><span class="pill">替代方案·高</span> 为什么不用一次 API 调用或小模型</dt>
+  <dd>
+  <ul>
+    <li><strong>一次调用不够</strong>：需要先拿工具或检索结果再作答，单轮至少 2 次调用；只调一个子 Agent 时透传，跨领域才多一次合成。</li>
+    <li><strong>小模型</strong>：看图意见已用便宜模型；路由、重排这类判断可换小模型或微调分类器，以评测分数不降为切换条件。</li>
+  </ul>
+  </dd>
+
+  <dt><span class="pill">替代方案·高</span> RAG vs 长上下文 vs grep</dt>
+  <dd>
+  <ul>
+    <li><strong>长上下文</strong>：FAQ 体量全塞也放得下，但每轮成本与延迟上升、窗口越满召回越差，且检索与生成无法分开评；检索层不调对话模型，适合大量问法做对比实验。</li>
+    <li><strong>grep（纯关键词）</strong>：36 个问法只用关键词时 AND 找对 13 个、OR 27 个；口语问法与原文关键词重合少，需要向量路与重排。</li>
+  </ul>
+  <p><strong>Maya</strong>：<a href="maya-agent-interview.html#t7">笔记 7.4–7.5</a>。</p>
+  </dd>
+
+  <dt><span class="pill">替代方案·中</span> 为什么用 manager 多 Agent，不用单 Agent 或多意图路由</dt>
+  <dd>
+  <p>单 Agent 阶段 Fashion 开始误调账户工具，拆为 routing；跨领域多跳增多（"订阅暂停了吗，暂停了怎么恢复"需先查状态再查 FAQ），一次性分发处理不了，升级为 manager，代价是跨领域多一次调用（<a href="maya-agent-interview.html#t5">笔记 5.1、5.5</a>）。</p>
+  </dd>
+
+  <dt><span class="pill">替代方案·中</span> Permission vs Sandbox、为什么不微调</dt>
+  <dd>
+  <ul>
+    <li><strong>Permission</strong>：Maya 不执行任意代码，风险在越权与误写，用身份注入加写操作审批即可；执行模型生成代码的场景才需要沙箱。</li>
+    <li><strong>不微调</strong>：prompt 加结构化输出已过评测，且没有规模化标注数据；分类类样本堆到 prompt 过长时再换微调或 embedding 分类器。</li>
+  </ul>
+  </dd>
+
+  <dt><span class="pill">指标口径·高</span> 98% 通过率的口径是什么</dt>
+  <dd>
+  <ul>
+    <li><strong>口径</strong>：10 个 LangSmith 数据集共 760 条，通过 746 条；评测器全部代码实现、可复现；分单元、链路、端到端三层。</li>
+    <li><strong>局限</strong>：条数少只能识别大退步（15 条错 1 条差 6.7 分），所以改动后多次运行并与改动前代码对照，对照也挂的样本算波动。</li>
+  </ul>
+  <p><strong>Maya</strong>：<a href="maya-agent-interview.html#t8">笔记 8.3–8.5</a>。</p>
+  </dd>
+
+  <dt><span class="pill">指标口径·高</span> 准确率提升的基线、样本量、归因</dt>
+  <dd>
+  <ul>
+    <li><strong>例</strong>：FAQ 检索 150 条问法前 3 命中：单路向量 134/150（基线），混合 129/150，加 LLM 重排 147/150。</li>
+    <li><strong>归因</strong>：同一批样本，环境变量切换单一模式，不改代码；对比前先确认实验条件真的触发了被测机制。</li>
+    <li><strong>线上</strong>：统计窗口与线上质量指标（如点踩率、人工接手率）（按你掌握的口径填）。</li>
+  </ul>
+  </dd>
+
+  <dt><span class="pill">指标口径·中</span> 幻觉率怎么定义、用哪个测试集、评测集有没有过拟合</dt>
+  <dd>
+  <ul>
+    <li><strong>定义</strong>：回答中出现工具返回或检索段落之外的事实即算；Account 事实对照假数据（79/80），FAQ 查事实子串、出处与知识库外拒答（60 条含 15 条该拒答，56/60）。</li>
+    <li><strong>防过拟合</strong>：评测句不进 prompt 当示例；失败逐条反查，改了 4 条过严标签，14 条系统错保留不改。</li>
+  </ul>
+  </dd>
+
+  <dt><span class="pill">指标口径·高</span> 最难的 bad case 是哪个，确认根因的证据是什么</dt>
+  <dd>
+  <ul>
+    <li><strong>案例</strong>：加关键词路后 FAQ 检索反而从 134 降到 129，口语问法与原文关键词重合少，把融合排序拉偏。</li>
+    <li><strong>证据</strong>：trace 中每次记录检索命中编号与模型引用编号，对比单路、混合、加重排三组；加重排后剩下的 3 条失败在候选 10 条里就不存在，根因定位在召回而非排序。</li>
+  </ul>
+  <p><strong>Maya</strong>：<a href="maya-agent-interview.html#t7">笔记 7.5</a>、<a href="maya-agent-interview.html#t8">8.6</a>。</p>
+  </dd>
+
+  <dt><span class="pill">答辩·中</span> 海外 take-home 答辩固定问题：优先做哪两个 feature、为什么选这个架构、上线追踪什么指标；它真的能跑吗、有没有有意义的评测指标；每一行能否辩护</dt>
+  <dd>
+  <ul>
+    <li><strong>Feature（Sierra）</strong>：优先账户写操作带审批（价值高、风险高，能体现控制）和带引用、会拒答的政策问答（量大、可评）。</li>
+    <li><strong>架构与指标</strong>：按信号从单 Agent 演进到 manager；追踪解决率与人工接手率、工具错误率、拒答率、P99、单轮成本，配 trace 下钻。</li>
+    <li><strong>能跑与评测（PromptLayer / Cursor）</strong>：端到端评测直接打 FastAPI app 拆 SSE 帧；10 个数据集给出可复现分数；每条约束（身份注入、轮数上限、引用校验）都有对应评测样本作为辩护依据。</li>
+  </ul>
+  </dd>
+</dl>
+</div>
+
+
+</main>
+
+</div>
+<script>
+(function(){
+  // TOC scrollspy
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var map = {};
+  links.forEach(function(a){ var id = a.getAttribute('href').slice(1); var el = document.getElementById(id); if (el) map[id] = a; });
+  var targets = Object.keys(map).map(function(id){ return document.getElementById(id); });
+  function setActive(id){ links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + id); }); }
+  if ('IntersectionObserver' in window) {
+    var visible = {};
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ visible[e.target.id] = e.isIntersecting; });
+      for (var i = 0; i < targets.length; i++) { if (visible[targets[i].id]) { setActive(targets[i].id); return; } }
+    }, { rootMargin: '-10% 0px -70% 0px', threshold: 0 });
+    targets.forEach(function(t){ io.observe(t); });
+  }
+})();
+</script>
+
+<script>
+(function(){
+  var btn=document.querySelector('.toc-toggle'),bd=document.querySelector('.toc-backdrop');
+  function set(open){document.body.classList.toggle('toc-open',open);btn.setAttribute('aria-expanded',open?'true':'false');}
+  btn.addEventListener('click',function(){set(!document.body.classList.contains('toc-open'));});
+  bd.addEventListener('click',function(){set(false);});
+  document.querySelectorAll('.toc a').forEach(function(a){a.addEventListener('click',function(){set(false);});});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')set(false);});
+})();
+</script>
+</body>
+</html>
+

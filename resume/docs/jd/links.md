@@ -25,6 +25,11 @@
 | SWE II – Azure SRE Agent | 上海 | 75 | https://apply.careers.microsoft.com/careers?domain=microsoft.com&pid=1970393557046973 | 无 |
 | SWE II – Agentic Sandbox | 上海 | 65 | https://apply.careers.microsoft.com/careers?domain=microsoft.com&pid=1970393557046974 | 无 |
 
+## 亚马逊（2026-11-11 补充）
+| 职位 | 城市 | 匹配 | 链接 | 存档 |
+|---|---|---|---|---|
+| Data Engineer - AI/ML Products, AOP（不投） | 北京 | 45 | https://www.amazon.jobs/en/jobs/10572912/data-engineer-ai-ml-products-aop-analytics-operations-and-programs | amazon-data-engineer-aop-beijing.md |
+
 ## Coupang
 | 职位 | 城市 | 匹配 | 链接 | 存档 |
 |---|---|---|---|---|
@@ -56,6 +61,11 @@
 |---|---|---|---|---|
 | Backend Developer – AI & Agentic Applications | 上海 | 约 75 | https://jobs.sap.com/job/Shanghai-Backend-Developer-AI-&-Agentic-Applications-201203/1406688633/ | 无 |
 
+## Ocean AI Labs Beijing（2026-11-04 补充）
+| 职位 | 城市 | 匹配 | 链接 | 存档 |
+|---|---|---|---|---|
+| 岗位未知（收到 11-02 版笔试题） | 北京 | — | 无公开链接（提交邮箱 michael.wang@teohcapital.com） | ocean-ai-labs-beijing.md |
+
 ## BOSS 收藏的其他职位
 | 公司 | 职位 | 链接 | 存档 |
 |---|---|---|---|
@@ -72,7 +82,10 @@
 |---|---|---|---|---|
 | 电鸭 · 深圳某公司 | Agent 应用研发工程师 | 62 | https://eleduck.com/posts/W9fQBA | 15–25K×15，社保可能自缴 |
 | 电鸭 · 某出海 AIGC 公司 | 全职远程 AI 后端开发 | 55 | https://eleduck.com/posts/3EfRWG | 写明每周 60 小时 |
-| Canonical | Python and Kubernetes Software Engineer | 60 | https://job-boards.greenhouse.io/canonical/jobs/5703396 | 全球远程，看学业成绩，年出差 2–4 次 |
-| Canonical | Python Engineer | 60 | https://job-boards.greenhouse.io/canonical/jobs/5143074 | 同上 |
+| Canonical | Microservices Engineer | 72 | https://job-boards.greenhouse.io/canonical/jobs/5191982 | 存档 canonical-remote-python-go-backend.md；全球远程，看学业成绩，年出差 2 次 |
+| Canonical | Software Engineer - App Stores | 72 | https://job-boards.greenhouse.io/canonical/jobs/3159992 | 同上（Snap Store 后端，主要 Python） |
+| Canonical | Senior/Staff/Principal Engineer | 65 | https://job-boards.greenhouse.io/canonical/jobs/5142887 | 同上（高级别通用通道） |
+| Canonical | Python and Kubernetes Software Engineer | 60 | https://job-boards.greenhouse.io/canonical/jobs/5703396 | 同上（MLOps 基础设施） |
+| Canonical | Python Engineer | 60 | https://job-boards.greenhouse.io/canonical/jobs/5143074 | 同上（Python 通用通道） |
 | Bjak | Backend Engineer, AI Internal Systems | 62 | https://remowork.life/jobs/6a947aa6b0d4a380405c2394 | 聚合站转载，超过 60 天 |
 | Bjak | Backend Software Engineer – AI Finance Agent | 62 | https://jobs.ashbyhq.com/bjakcareer/0cac93ef-04d8-42c4-b698-efb4664cd91b | 远程、须在中国，7 月发布 |

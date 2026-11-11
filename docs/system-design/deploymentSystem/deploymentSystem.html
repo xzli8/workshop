@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Deployment System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F5F7FA; --surface:#FFFFFF; --surface-2:#EEF2F6;
+  --text:#1B2430; --muted:#5B6673; --border:#D8DEE6; --border-strong:#B9C2CE;
+  --accent:#0F6E7A; --accent-soft:#DCEFF1; --amber:#A8691A; --amber-soft:#F7ECD9;
+  --code-bg:#F0F3F7; --code-text:#1E2A36;
+  --shadow: 0 1px 2px rgba(20,30,40,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12161C; --surface:#1A2029; --surface-2:#212934;
+    --text:#E6EAF0; --muted:#98A4B4; --border:#2B343F; --border-strong:#3B4652;
+    --accent:#5FBDC8; --accent-soft:#16333A; --amber:#DDA755; --amber-soft:#2E2618;
+    --code-bg:#161C24; --code-text:#DCE3EB;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12161C; --surface:#1A2029; --surface-2:#212934;
+  --text:#E6EAF0; --muted:#98A4B4; --border:#2B343F; --border-strong:#3B4652;
+  --accent:#5FBDC8; --accent-soft:#16333A; --amber:#DDA755; --amber-soft:#2E2618;
+  --code-bg:#161C24; --code-text:#DCE3EB;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  font-size:15px; line-height:1.8;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+h1,h2,h3,h4{font-family:"Noto Serif SC","Songti SC","STSong",Georgia,serif; text-wrap:balance; line-height:1.3; margin:0}
+h1{font-size:2.1rem; font-weight:700; letter-spacing:.01em}
+h2{font-size:1.5rem; font-weight:700; padding-top:.4rem}
+h3{font-size:1.12rem; font-weight:600; color:var(--text)}
+h4{font-family:"Noto Sans SC",system-ui,sans-serif; font-size:.95rem; font-weight:700; color:var(--muted); letter-spacing:.02em}
+p{margin:0}
+ul,ol{margin:0; padding-left:1.4em}
+li{margin:.15em 0}
+li::marker{color:var(--muted)}
+strong{font-weight:700}
+code,pre{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+code{font-size:.86em; background:var(--code-bg); color:var(--code-text); padding:.1em .4em; border-radius:4px}
+pre{
+  margin:0; background:var(--code-bg); color:var(--code-text);
+  border:1px solid var(--border); border-radius:6px;
+  padding:.9rem 1.1rem; font-size:.8rem; line-height:1.55;
+  overflow-x:auto; white-space:pre; tab-size:4;
+}
+pre code{background:none; padding:0; font-size:inherit}
+
+.eyebrow{font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:500}
+.page{max-width:1360px; margin:0 auto; padding:0 1.25rem 4rem}
+
+header.top{padding:2.6rem 0 1.8rem; border-bottom:1px solid var(--border)}
+header.top .lead{max-width:66ch; color:var(--muted); margin-top:.9rem; font-size:1rem}
+.threads{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin-top:1.6rem}
+.thread{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1rem 1.1rem; box-shadow:var(--shadow)}
+.thread .num{font-family:"JetBrains Mono",monospace; font-size:.75rem; color:var(--accent); letter-spacing:.08em}
+.thread h3{margin-top:.25rem; font-size:1.05rem}
+.thread p{margin-top:.5rem; font-size:.88rem; color:var(--muted); line-height:1.65}
+.thread a{display:inline-block; margin-top:.6rem; font-size:.85rem}
+
+.layout{display:grid; grid-template-columns:minmax(0,1fr); gap:2rem; margin-top:1.5rem}
+bodybody
+main{min-width:0}
+section.part{padding:2.2rem 0 1rem}
+section.part + section.part{border-top:1px solid var(--border)}
+.part-head{display:flex; align-items:baseline; gap:.9rem; margin-bottom:.4rem}
+.part-head .num{font-family:"JetBrains Mono",monospace; color:var(--accent); font-size:.85rem; letter-spacing:.08em}
+.mainline{
+  margin:.9rem 0 1.4rem; padding:.85rem 1.1rem; background:var(--accent-soft);
+  border-radius:6px; font-size:.92rem; line-height:1.7;
+}
+.mainline b{color:var(--accent)}
+.block{display:grid; gap:.8rem; margin-top:1.6rem}
+.block > h3{padding-bottom:.3rem; border-bottom:1px dashed var(--border)}
+.prose{max-width:none}
+.two{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem}
+
+.tbl{overflow-x:auto; border:1px solid var(--border); border-radius:6px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:.86rem; line-height:1.55; min-width:560px}
+th,td{padding:.55rem .75rem; text-align:left; vertical-align:top; border-bottom:1px solid var(--border)}
+th{font-weight:700; color:var(--muted); font-size:.78rem; letter-spacing:.04em; background:var(--surface-2); white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:500; white-space:nowrap}
+table.wl td{white-space:normal; font-weight:400}
+td ul.pts{margin:0; padding-left:1.1em; white-space:normal}
+td ul.pts li{margin:.1em 0}
+table.wl td[rowspan]{font-weight:500}
+table.wl td[rowspan] b{display:block; font-size:1rem}
+.tbl.wide table{min-width:760px}
+.num-col{font-variant-numeric:tabular-nums}
+
+.aside{border:1px dashed var(--border-strong); border-radius:8px; padding:.8rem 1rem; background:var(--surface-2); color:var(--muted); font-size:.9rem; display:grid; gap:.5rem}
+.aside-title{font-weight:700; color:var(--text); font-size:.85rem; letter-spacing:.03em}
+.aside pre{margin:0}
+.aside-sub{font-weight:700; color:var(--text); font-size:.85rem; margin-top:.3rem}
+.aside ul{margin:0; padding-left:1.2em}
+.note{font-size:.88rem; color:var(--muted); padding-left:.9rem; border-left:2px solid var(--border-strong)}
+
+footer{margin-top:3rem; padding-top:1.2rem; border-top:1px solid var(--border); color:var(--muted); font-size:.8rem}
+.back{font-size:.8rem}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="top" id="top">
+  <h1>Deployment System（发布 + 健康检查 + 自愈）</h1>
+</header>
+
+<div class="layout">
+<main>
+
+<div class="aside" style="margin-top:1.6rem">
+  <div class="aside-title">题外话：通用法则（从这道题提炼）</div>
+  <div class="aside-sub">控制模型</div>
+  <ul>
+    <li>用户只写期望状态；Controller 不断比较期望状态和实际状态，有差异就处理（按差异驱动，不按事件驱动）。漏事件、重复执行、Controller 重启都天然容错。</li>
+    <li>期望状态强一致，作为唯一数据源；实际状态的上报可以最终一致。</li>
+  </ul>
+  <div class="aside-sub">变更安全</div>
+  <ul>
+    <li>先小范围再扩大（实例 → 可用区 → 区域），每一波观察一段时间再继续。</li>
+    <li>门禁看业务指标，并和同期的旧版本对比；回滚就是一次反方向的发布。</li>
+    <li>新旧版本会同时在线，接口和数据要兼容 N 和 N-1。</li>
+  </ul>
+  <div class="aside-sub">故障判断</div>
+  <ul>
+    <li>就绪探针只查自身，不查共享依赖，否则依赖一抖动，所有实例都会被摘掉。</li>
+    <li>大面积同时失联更可能是网络或控制面的问题，这时要降速甚至停止驱逐。</li>
+    <li>数据面不依赖控制面（静态稳定性）：控制面挂了，已运行的实例照常服务。</li>
+  </ul>
+</div>
+
+<section class="part" id="fr">
+  <div class="part-head"><span class="num">1</span><h2>功能需求</h2></div>
+  <div class="block">
+    <h3>核心</h3>
+    <ul class="prose">
+      <li><b>发布</b>：指定服务和版本（镜像 + 配置），按策略分批发布到所有实例，可以查看进度。</li>
+      <li><b>健康检查与自愈</b>：实例不健康时自动重启或替换；节点故障时把实例迁到其他节点。</li>
+      <li><b>回滚</b>：指标恶化时自动暂停并回滚；也支持手动暂停、继续、回滚。</li>
+    </ul>
+  </div>
+  <div class="block">
+    <h3>范围外</h3>
+    <ul class="prose">
+      <li>CI 构建、配置中心、数据库 schema 变更（时间够的话可以聊）。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="nfr">
+  <div class="part-head"><span class="num">2</span><h2>非功能需求与估算</h2></div>
+  <div class="block">
+    <h3>核心</h3>
+    <ul class="prose">
+      <li><b>安全</b>：发布过程中可用容量 ≥ 75%；坏版本的影响范围可控。</li>
+      <li><b>控制面和数据面解耦</b>：控制面挂了，已运行的实例照常服务。</li>
+      <li><b>收敛快</b>：实例故障 30s 内发现，2 分钟内替换完成。</li>
+      <li><b>规模</b>：1 万个节点、10 万个实例、1000 个服务，同时有上百个发布在进行。</li>
+      <li><b>一致性</b>：期望状态强一致，实际状态最终一致。</li>
+    </ul>
+  </div>
+  <div class="block">
+    <h3>估算</h3>
+    <ul class="prose">
+      <li><b>心跳</b>：1 万节点 × 每 10s 一次 ≈ 1k QPS。不能每次都上报全量状态，要把轻量心跳和状态上报分开。</li>
+      <li><b>镜像分发</b>：1GB × 1000 个节点 ≈ 1TB，全从中心仓库拉会打爆带宽 → 区域缓存 / P2P，发布前预拉。</li>
+      <li><b>核心难点</b>：<b>安全地变更</b>（分批、门禁、回滚）+ <b>准确地判断故障</b>（不误杀、不漏判）+ <b>控制面自身可靠</b>。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="entities">
+  <div class="part-head"><span class="num">3</span><h2>核心实体与 API</h2></div>
+  <div class="block">
+    <ul class="prose">
+      <li><b>Service</b>：一个服务，包含副本数和发布策略。</li>
+      <li><b>Release / Version</b>：镜像 + 配置，不可变。</li>
+      <li><b>Rollout</b>：一次发布，记录 from → to 版本、策略、当前批次、状态（RUNNING / PAUSED / SUCCEEDED / ROLLING_BACK / FAILED）。</li>
+      <li><b>Node</b>：一台机器，上面运行 Node Agent。</li>
+      <li><b>Instance</b>：一个运行中的实例，记录所在节点、版本、健康状态。</li>
+      <li>期望状态（Service、Rollout）和实际状态（Instance、Node 上报的状态）分开存储。</li>
+    </ul>
+    <pre>POST /services/{service_id}/rollouts
+  body: { version,
+          strategy: { type: ROLLING | CANARY | BLUE_GREEN, maxSurge, maxUnavailable, minReadySeconds, waves },
+          autoRollback: { maxErrorRate, maxP99Ms } }
+  → { rollout_id }
+
+GET  /rollouts/{rollout_id}                   → 当前批次、新旧版本实例数、健康数
+POST /rollouts/{rollout_id}/pause | resume | rollback
+
+（内部）Node Agent
+  WATCH /nodes/{node_id}/assignments          → 本节点应该运行哪些实例、什么版本
+  PUT   /nodes/{node_id}/lease                → 轻量心跳，每 10s 一次
+  PUT   /nodes/{node_id}/status               → 实例状态有变化时上报</pre>
+  </div>
+</section>
+
+<section class="part" id="hld">
+  <div class="part-head"><span class="num">4</span><h2>高层设计</h2></div>
+  <div class="block">
+    <pre>Client ──► API Server ──► 状态存储（etcd：Service / Rollout / Instance / Node lease）
+                               ▲ watch + 写回
+              Controllers（租约选主）：Rollout Controller / Scheduler / Node Controller
+                               │ watch 本节点的分配
+Node × 1万：Node Agent ──► 拉镜像（区域缓存 / P2P）──► 启动 ──► 探针 ──► 上报
+Instance ──► Metrics 系统 ──► Rollout Controller 的健康门禁
+负载均衡只把流量转给就绪的实例
+Global Rollout Orchestrator：按波次在各个 cell 发起 Rollout</pre>
+  </div>
+
+  <div class="block">
+    <h3>① 发布：Rollout Controller 按批推进</h3>
+    <ul class="prose">
+      <li>Client → API Server → 状态存储（强一致，支持 watch）。</li>
+      <li>Rollout Controller watch 到新的 Rollout，每次选一批实例改成新版本；这一批健康并稳定后再推进下一批，进度写回 Rollout。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>② 实例落地：Scheduler + Node Agent</h3>
+    <ul class="prose">
+      <li>Scheduler 按节点资源和反亲和规则（同一服务的实例分散到不同节点和可用区）选择节点。</li>
+      <li>Node Agent watch 本节点的分配，从区域镜像缓存拉镜像并启动，在本地缓存期望状态。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>③ 健康检查：Agent 在本地执行三种探针</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>探针</th><th>失败时</th><th>应对的问题</th></tr></thead>
+      <tbody>
+        <tr><td>启动探针</td><td>超过阈值才重启；成功之前暂停另外两种探针</td><td>慢启动的服务被误杀</td></tr>
+        <tr><td>存活探针</td><td>重启容器</td><td>进程卡死、死锁</td></tr>
+        <tr><td>就绪探针</td><td>从负载均衡摘掉，不重启</td><td>暂时没准备好、过载</td></tr>
+      </tbody></table></div>
+    <p class="note">连续 N 次成功或失败才改变状态，避免抖动。</p>
+  </div>
+
+  <div class="block">
+    <h3>④ 自愈：实例级 + 节点级</h3>
+    <ul class="prose">
+      <li><b>实例级</b>：Agent 重启失败的容器，指数退避（10s 起，每次翻倍，最长 5 分钟），避免重启风暴。</li>
+      <li><b>节点级</b>：心跳超时 → 标记 NotReady → 宽限期后驱逐上面的实例 → 副本数不足，在其他节点重建。</li>
+    </ul>
+  </div>
+</section>
+
+<section class="part" id="deep">
+  <div class="part-head"><span class="num">5</span><h2>深入</h2></div>
+
+  <div class="block">
+    <h3>安全发布</h3>
+    <ul class="prose">
+      <li><b>分批滚动</b>：maxSurge 是最多比期望副本数多出几个，maxUnavailable 是最多几个不可用。100 个副本、maxSurge=25、maxUnavailable=0 → 每次先起 25 个新版本，健康后再下掉 25 个旧版本，容量从不下降。</li>
+      <li><b>minReadySeconds</b>：新实例要持续健康一段时间才算可用，挡住"启动时健康、几十秒后崩溃"的版本。</li>
+      <li><b>分波次</b>：1 个实例（canary）→ 1 个可用区 → 1 个区域 → 全部；每一波观察一段时间（bake time）再继续；不同时发布互为灾备的两个区域。Azure 的 Safe Deployment Practices 也是这个思路。</li>
+      <li><b>健康门禁</b>：不只看探针，还要看错误率和 P99；新版本实例和同期的旧版本实例对比，排除流量波动的影响。</li>
+      <li><b>自动回滚</b>：门禁不通过 → 暂停 → 回滚。回滚就是一次反方向的发布，保留旧版本的镜像和记录，可以快速切回。K8s 的 progressDeadlineSeconds 超时只会标记失败、不会回滚，所以回滚逻辑放在我们自己的 Rollout Controller 里。</li>
+    </ul>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:800px">
+      <colgroup><col style="width:14%"><col style="width:36%"><col style="width:25%"><col style="width:25%"></colgroup>
+      <thead><tr><th>策略</th><th>做法</th><th>回滚速度</th><th>代价</th></tr></thead>
+      <tbody>
+        <tr><td>滚动</td><td>分批替换</td><td>慢，要再滚动一次</td><td>资源开销最小</td></tr>
+        <tr><td>金丝雀</td><td>先放一小部分流量，指标没问题再扩大</td><td>快，撤回金丝雀即可</td><td>需要流量切分和指标对比</td></tr>
+        <tr><td>蓝绿</td><td>整套新环境起好后切换流量</td><td>最快，切回旧环境</td><td>发布期间资源翻倍</td></tr>
+      </tbody></table></div>
+  </div>
+
+  <div class="block">
+    <h3>健康检查要准确</h3>
+    <ul class="prose">
+      <li><b>就绪探针不查共享依赖</b>：数据库一抖动，所有实例都会变成未就绪，整个服务被全部摘掉。依赖故障用降级和熔断处理。</li>
+      <li><b>本地检查 + 外部检查</b>：Agent 本地探针发现得快，但看不到网络问题；负载均衡的外部探测能发现网络和路由问题。</li>
+      <li><b>区分节点故障和网络分区</b>：心跳丢失不代表实例挂了。大量节点同时失联（比如一个可用区超过一半）时，更可能是网络或控制面出了问题 → 降低驱逐速度甚至停止驱逐，避免在别处大量重建、压垮剩下的集群（K8s 的 Node Controller 也这么做）。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>控制面自身的可靠性</h3>
+    <ul class="prose">
+      <li><b>Controller 多副本 + 租约选主</b>：主挂了，新主重新读状态存储继续推进；Rollout 每完成一批就持久化进度，能从断点继续。</li>
+      <li><b>静态稳定性</b>：控制面不可用时，Agent 按本地缓存的期望状态继续运行和重启实例；只是暂时不能发布、不能跨节点迁移。</li>
+      <li><b>防止同一实例运行两份</b>：节点失联后在别处重建，原节点恢复后会多出一份。无状态服务可以接受；有状态服务要等旧实例确认删除后再重建（StatefulSet 的做法），或者用 fencing。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>扩展到 1 万节点</h3>
+    <ul class="prose">
+      <li><b>按 cell 拆分</b>：每个集群或区域一套独立的控制面和状态存储，限制单个 etcd 的规模和故障范围；全局编排器只负责按波次在各个 cell 发起发布。</li>
+      <li><b>心跳和状态分开</b>：心跳只更新一个很小的 lease 对象，实例状态只在变化时上报。</li>
+      <li><b>镜像分发</b>：区域缓存 + P2P（Dragonfly、Kraken）；下一批开始前预拉镜像，把拉镜像从关键路径上移走。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>新旧版本兼容（可选）</h3>
+    <ul class="prose">
+      <li>滚动期间新旧版本同时在线，接口和消息格式要兼容 N 和 N-1。</li>
+      <li>数据库变更拆成"扩展 → 迁移 → 收缩"三次发布，每一步都可以回滚。</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>题外话：和 K8s 的对应关系</h3>
+    <div class="tbl wide"><table style="table-layout:fixed; min-width:760px">
+      <colgroup><col style="width:28%"><col style="width:72%"></colgroup>
+      <thead><tr><th>本设计</th><th>K8s</th></tr></thead>
+      <tbody>
+        <tr><td>状态存储</td><td>etcd</td></tr>
+        <tr><td>API Server</td><td>kube-apiserver</td></tr>
+        <tr><td>Rollout Controller</td><td>Deployment Controller（管理新旧两个 ReplicaSet）；自动回滚靠 Argo Rollouts / Flagger</td></tr>
+        <tr><td>Scheduler</td><td>kube-scheduler</td></tr>
+        <tr><td>Node Controller</td><td>node lifecycle controller（taint + 默认 300s 容忍后驱逐）</td></tr>
+        <tr><td>Node Agent</td><td>kubelet</td></tr>
+        <tr><td>心跳 lease</td><td><code>coordination.k8s.io</code> Lease</td></tr>
+        <tr><td>三种探针</td><td>startupProbe / livenessProbe / readinessProbe</td></tr>
+        <tr><td>负载均衡 / 服务发现</td><td>Service + EndpointSlice</td></tr>
+      </tbody></table></div>
+    <p class="note">K8s 默认值（maxSurge / maxUnavailable 各 25%、progressDeadlineSeconds 600s、重启退避最长 5 分钟、驱逐容忍 300s）来自官方文档；探针和 Node Controller 的部分细节凭记忆整理，面试前再核对一遍。</p>
+  </div>
+
+  <div class="block">
+    <h3>面试讲述顺序</h3>
+    <ol class="prose">
+      <li>需求与估算：难点是安全变更 + 准确判断故障 + 控制面可靠。</li>
+      <li>主线：期望状态 + 调和循环 → 分批发布 → 三种探针 → 实例级和节点级自愈。</li>
+      <li>深入：分波次和自动回滚 → 健康检查的误判 → 控制面故障和静态稳定性 → 按 cell 扩展。</li>
+    </ol>
+  </div>
+</section>
+
+</main>
+</div>
+</div>
+</body>
+</html>

@@ -115,6 +115,7 @@ tr:hover td{background:var(--surface)}
 <div class="toc-backdrop"></div>
 <nav class="toc" id="toc" aria-label="目录">
   <div class="kicker">目录</div>
+  <a href="#t-intro">项目介绍</a>
   <a href="#t0">总纲</a>
   <a href="#t1">1 模型基础与调用</a>
   <a href="#t2">2 Prompt 工程与指令</a>
@@ -133,6 +134,27 @@ tr:hover td{background:var(--surface)}
 
 <main>
 <h1>Agent 工程追问清单</h1>
+
+<div class="callout ok" id="t-intro">
+<div class="tag">项目介绍</div>
+<p><strong>1 分钟版</strong></p>
+<p>Maya 是 Bnto 的 AI 导购助手。Bnto 是美国的时尚租售电商，Maya 处理三类对话：找衣服和搭配、查订阅和订单、问平台规则。我一个人用三个月，基于 LangGraph 和 FastAPI 从 0 搭建。核心难点是把概率性的模型做成可靠的线上组件：<strong>流程控制和终态交给代码，模型只做决策；质量靠评测集量化回归。</strong>架构从单 Agent 起步，按领域拆成路由分流，跨领域问题多了以后升级为 manager 多 Agent 协作。10 个评测集共 760 条，通过率 98%，单轮 P99 约 5.7 秒，每轮成本约半美分。</p>
+<p><strong>2–3 分钟版</strong></p>
+<ul>
+  <li><strong>背景</strong>：Maya 是 Bnto（美国时尚租售电商）的 AI 导购助手，处理找衣服和搭配、查订阅和订单、问平台规则三类对话。我独立完成，三个月从 0 到上线，Python、FastAPI、LangGraph，评测用 LangSmith。</li>
+  <li><strong>核心问题</strong>：大模型概率性、无状态、输出自然语言、慢且贵。原则：控制流和终态不交给模型，每轮必须以按钮或文本收尾；输出结构化并校验；上下文由代码在 token 预算内重组；高风险操作人工审批。</li>
+  <li><strong>演进</strong>：单 Agent 搭最简骨架跑通，<strong>马上建评测</strong>，之后每加一个能力都用评测集验收；规则和工具变多、Fashion 开始误调账户工具，按领域拆成路由分流，prompt 和评测按领域隔离；跨领域和多跳问题变多（「下次扣费是哪天，顺便看看黑裙子」），<strong>升级为 manager</strong>，主 Agent 把三个子 Agent 当工具，并行调用再合成。</li>
+  <li><strong>关键设计</strong>（挑两三个）：工具调用模型决策、代码约束，身份由代码注入，写操作执行前 interrupt 挂起、<strong>人工审批</strong>后恢复，挡住越权和重复执行；窗口外增量摘要加向量、关键词双路召回，FAQ 混合检索加 LLM 重排；同一套工具封装为 MCP Server 供外部 Agent 复用。</li>
+  <li><strong>结果</strong>：单元、链路、端到端三层 10 个评测集共 760 条，通过率 98%（如 FAQ 检索 147/150，单路向量 134/150）；单轮 P99 约 5.7 秒，SSE 推送进度；前缀缓存命中率 85%，每轮约半美分。</li>
+</ul>
+<p><strong>讲法</strong></p>
+<ul>
+  <li>加粗处是钩子，对应 5.4–5.8 和第 8 节。</li>
+  <li>数字只报 760 条、98%、P99、半美分，细分数字等追问。</li>
+  <li>演进那段放慢讲，体现按信号加复杂度的判断。</li>
+  <li>收尾：「我觉得最有意思的是评测驱动和多 Agent 的演进，您想听哪块我可以展开。」</li>
+</ul>
+</div>
 
 <div class="callout" id="t0">
 <div class="tag">总纲</div>

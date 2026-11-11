@@ -17,8 +17,11 @@ BOSS 直聘「感兴趣」列表，2026-11-01 抓取（列表计数 10，可见 
 | tesla-software-engineer-cx-sales-delivery.md | 特斯拉中国 · Software Engineer, C#/Golang/Java, CX（销售交付，北京） | 未标 | 78 | 已投 11-01 | C# 可后补；K8s 缺；英语流利；加分项点名 ReAct Agent |
 | sg-ecommerce-agent-harness-engineer.md | 新加坡电商上市公司 · Agent harness 工程师 P6-P7 | 45-75K·15 | 78 | 准备后投 | 应用层 Agent 而非运行时；需讲透 Claude Code 等机制；计算机专业 |
 | duolingo-senior-backend-monetization.md | 多邻国 · 高级后端（Monetization） | 60-85K | 78 | 投 | CS 学士；算法面试；可观测栈 |
+| canonical-remote-python-go-backend.md | Canonical · Python / Go 后端（全球远程，多个通用通道） | 未标 | 72 | 投 | 书面面试问高中成绩；Go、K8s、开源贡献缺；中国雇佣方式待问 |
+| ocean-ai-labs-beijing.md | Ocean AI Labs Beijing · 岗位未知（笔试：多租户证书后台，1 小时 AI 辅助） | 未知 | — | 笔试中 | 公开查不到公司；提交邮箱是澳洲私募 Teoh Capital，签约主体待问 |
 | jerry-ai-senior-backend-remote.md | Jerry.ai · 外企 AI 远程高级后端 | 50-70K·15 | 75 | 投 | NodeJS、K8s 缺；计算机专业；核实代签主体 |
 | siemens-xagent-fde.md | 西门子中国 · XAgent FDE | 35-60K·13 | 70 | 先问地点 | 正文写深圳；工业领域与客户现场经验 |
+| amazon-data-engineer-aop-beijing.md | 亚马逊中国 · Data Engineer - AI/ML Products, AOP（北京，11-11 补充） | 未标 | 45 | 不投 | 数仓建模、Spark/Glue/Redshift 缺；无 DE 经历；方向偏离 Agent |
 | amazon-aws-technical-account-manager.md | 亚马逊中国 · 技术客户经理（AWS TAM） | 55-65K | 60 | 看方向 | 客户岗，不写代码 |
 | google-technical-account-manager.md | Google · Technical Account Manager | 40-70K | 25 | 不投 | 5 年客户岗 + 云服务咨询背景 |
 | zilly-backend-fullstack.md | 资利 Zilly · Backend Engineer (Full Stack) | 90-110K | 30 | 不投 | 8 年+、海外科技公司、英语母语、Go、K8s |

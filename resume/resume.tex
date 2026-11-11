@@ -16,14 +16,14 @@
     Email: xingzhongli8@gmail.com
 }
 
-\textbf{Professional Summary}: Senior backend engineer with 6 years of experience at Meituan, Amazon and Bnto. Built Bnto's AI-agent shopping assistant Maya and its recommendation serving platform from 0 to 1. Focused on making probabilistic components such as LLMs and ranking models reliable inside deterministic, observable and evaluable systems.\\
+\textbf{Professional Summary}: Senior backend engineer with 6 years of experience at Meituan, Amazon and Bnto. Built Bnto's AI-agent shopping assistant Maya and its recommendation serving platform from 0 to 1; at Amazon, core developer of Vendor360, an agent-driven system that turns noisy multi-source data into traceable vendor memory served to business teams and AI agents via API and MCP. Focused on making probabilistic components such as LLMs and ranking models reliable inside deterministic, observable and evaluable systems.\\
 
 
 \section{\faGraduationCap\ Education}
 \datedsubsection{\textbf{University of Science and Technology of China (USTC)}, Hefei, AnHui, China}{2017.09 -- 2020.07}
-\textit{Master}
+\textit{Master, Geophysics}
 \datedsubsection{\textbf{ChangAn University}, Xian, Shaanxi, China}{2013.09 -- 2017.07}
-\textit{Bachelor}
+\textit{Bachelor, Exploration Technology and Engineering}
 
 \section{\faUsers\ Experience}
 \datedsubsection{\textbf{Bnto} Beijing, China}{2026.05 -- Now}
@@ -73,6 +73,30 @@ Junior Backend Engineer, Campaign Marketing Team, Meituan Healthcare Instant Ret
     \item \textbf{Results: CTR +18\%, new cards live in 2 days.} The first A/B test (model ranking vs recall order) lifted product-card CTR by 18\% and add-to-cart rate by 11\%; first-page full-pipeline P99 about 200ms, paging P99 under 50ms, page success rate 99.99\%. In the first month after launch, three card types (brand, collection, survey) and three re-rank policies (brand/category scatter, source segmentation, drill-down path exclusion) shipped at about 2 days each.
 \end{itemize}
 
+\datedsubsection{\textbf{Amazon Vendor360 Vendor Context System}}{Core Developer}
+
+\textbf{Project Background}: Vendor360 is Amazon Retail's vendor context system. Vendor information is scattered across dozens of sources (Salesforce, Andes, SharePoint, meeting notes, external websites); the system distills it into traceable, trustworthy long-term memory per vendor and serves it through APIs and MCP to business applications and AI agents for JBP/QBR preparation and business analysis. The challenges: many multimodal sources (78 requested by the Japan business alone); noisy raw data (hallucinated meeting summaries, stale action items, contradicting documents) that must still yield trustworthy output (garbage in, gold out); inferences that follow business analysis frameworks and stay explainable; and scaling from the Japan pilot to hundreds of sources and 100k-level vendors worldwide. Built on Python + AWS Serverless (Lambda, SQS, EventBridge, S3, DynamoDB) + Bedrock AgentCore + CDK.\\
+
+\textbf{Key Responsibilities}: Core developer of data ingestion, agent orchestration and storage services for the Japan pilot; supported the rollout to North America and Europe.\\
+
+\begin{itemize}
+    \item \textbf{Data model: typed records, facts separated from inferences.} Modeled as Vendor $\rightarrow$ Slot $\rightarrow$ Record (Value / Metadata / Provenance): facts point to source evidence, inferences point to the facts they rest on; records are append-only, so any vendor view can be replayed as of a point in time (asOf). The read path calls no model: each slot declares a fold strategy (authority first, latest, union with dedup, conflict surfaced) that assembles the result deterministically, and every slot returns its own status (no data, forbidden, not generated, error). Evaluated and rejected a free-form document per vendor and pure RAG: the former has no structure, leaving conflicts to the model at read time with unstable results and no history; the latter retrieves by similarity, so it can neither guarantee the content belongs to the vendor nor pick the latest or most authoritative value.
+    \item \textbf{Trust boundary: models write artifacts, code gates the store.} Extraction and synthesis agents have no DynamoDB access; the orchestrator exports stored facts as a snapshot passed in the prompt. Agents write structured results only as immutable artifacts on S3, and a single Writer Lambda validates schema, grain, fid references and evidence gates before replacing each source's records as a whole. Artifacts are the only write path, so after a Writer fix they replay as-is without rerunning agents that take 10--40 minutes per run.
+    \item \textbf{Agent orchestration: async dispatch, event-driven.} Agent runs exceed Lambda's 15-minute limit, so dispatch returns 202 immediately and the flow advances on S3 artifact events; dirty / in-flight flags drive incremental scheduling under a global concurrency cap of 50, re-synthesizing only vendors whose data changed.
+    \item \textbf{Ingestion: abstracted by access pattern, onboarded by configuration.} Grouped the 78 Japan sources into five access patterns (Andes tables, S3, SharePoint, metrics APIs, web crawler), so a new source is one config entry; every unit goes through hash dedup $\rightarrow$ cleaning and multimodal-to-text conversion $\rightarrow$ vendor binding via the Vendor Entity Taxonomy $\rightarrow$ evidence stamping, then lands in an immutable, versioned Artifact Pool; failed units go to quarantine with a reason.
+    \item \textbf{Results: about 10x faster preparation, rolled out to North America and Europe.} JBP/QBR preparation for one vendor dropped from about a week to half a day; rolled out from an 11-vendor Japan pilot to North America and Europe (hundreds of vendors each), with a dozen-plus business teams and hundreds of agents integrated via API/MCP. Found and fixed several silent failures (deployed fine, no alarms, metrics unchanged): the owner field extracted from meeting notes was wrong 30\% of the time, now under 3\% by requiring positive evidence of a person; the run date leaked into the change-detection hash, re-running all 6,297 unchanged units daily with a backlog of about 42 hours per round, and restoring incremental skips saves about \$100k per month in model calls; 17 unsupported ``status closed'' changes, all now blocked by an evidence gate.
+\end{itemize}
+
+\datedsubsection{\textbf{Amazon Vendor Account Management System Global Expansion}}{Core Developer}
+
+\textbf{Project Background}: VAMOS is Amazon's vendor account management system, launched in Japan and then expanded to the EU, Brazil, Mexico and more. My team owned the platform: the multi-tenant service framework and core front-end interactions on which each marketplace's business team built its own logic.\\
+
+\begin{itemize}
+    \item \textbf{Performance: batch fetch, in-memory aggregation.} After the EU launch of the per-dimension summary view, the API timed out persistently. Logs, metrics and distributed tracing showed the EU had far more dimensions than Japan, and calling downstream once per dimension multiplied RPC volume and exhausted the thread pool. Enlarged the thread pool to keep the launch on schedule, then switched to a single batched RPC with in-memory aggregation, cutting downstream calls from dozens or hundreds to one and eliminating the timeouts; the approach became a framework capability reused by later marketplaces.
+    \item \textbf{Multi-tenancy: marketplace as tenant, isolated at three layers.} Data is sharded by marketplace into separate databases and tables, and configuration and deployment are independent per marketplace; business teams implement their own logic on one shared framework.
+    \item \textbf{Multi-marketplace front end: core first, iterate fast.} Built the marketplace filter widget; the PM/UX proposal with filter templates and search history was estimated at 10 person-days; shipped marketplace switching and precise filtering first with extension points reserved, in 4 person-days to keep the launch on schedule, and completed the full interaction within a week.
+\end{itemize}
+
 \datedsubsection{\textbf{Meituan Healthcare BFF Evolution: Hardcoded $\rightarrow$ DAG $\rightarrow$ GraphQL}}{Project Leader}
 
 \textbf{Project Background}: The Meituan Healthcare User API is the single entry point for all consumer-facing healthcare requests. It aggregates, orchestrates and shapes the capabilities of dozens of domain services for the front end (the BFF, Backend For Frontend, layer), deployed across 5 sets with 50 machines in total and serving peak traffic of about 5k QPS. Its original hardcoded implementation could no longer keep up as the business and its scenarios grew; this six-month project rebuilt it in three phases into a new architecture of Units, DAG scheduling and a GraphQL contract.\\
@@ -95,16 +119,6 @@ Junior Backend Engineer, Campaign Marketing Team, Meituan Healthcare Instant Ret
     \textbf{Solution}: introduce GraphQL with the schema as the front-end/back-end contract, moving the decision on response shape from design time to front-end request time; the schema owns shape, the DAG owns data fetching.\\
     \textbf{Actions}: implemented query analysis that maps selected fields to a Unit subgraph with transitive dependencies for the DAG engine, so unselected Units never run; fetchers read a request-scoped result store and Unit data flows only along dependency edges (indexed by producer, written once, read by dependency), eliminating shared-context bloat; parse, validation and query-analysis results are cached by query hash, with a persisted-query allow-list and depth/complexity limits. Rejected the DataLoader + level-dispatch route: it fixes only hanging loads, not barriers or cross-branch dependencies.\\
     \textbf{Result}: field changes, multi-client differences and new pages are all handled on the query side without backend releases, a further about 20\% gain in development efficiency; backend page configurations dropped to zero; performance unchanged.
-\end{itemize}
-
-\datedsubsection{\textbf{Amazon Vendor Account Management System Global Expansion}}{Core Developer}
-
-\textbf{Project Background}: VAMOS is Amazon's vendor account management system, launched in Japan and then expanded to the EU, Brazil, Mexico and more. My team owned the platform: the multi-tenant service framework and core front-end interactions on which each marketplace's business team built its own logic.\\
-
-\begin{itemize}
-    \item \textbf{Performance: batch fetch, in-memory aggregation.} After the EU launch of the per-dimension summary view, the API timed out persistently. Logs, metrics and distributed tracing showed the EU had far more dimensions than Japan, and calling downstream once per dimension multiplied RPC volume and exhausted the thread pool. Enlarged the thread pool to keep the launch on schedule, then switched to a single batched RPC with in-memory aggregation, cutting downstream calls from dozens or hundreds to one and eliminating the timeouts; the approach became a framework capability reused by later marketplaces.
-    \item \textbf{Multi-tenancy: marketplace as tenant, isolated at three layers.} Data is sharded by marketplace into separate databases and tables, and configuration and deployment are independent per marketplace; business teams implement their own logic on one shared framework.
-    \item \textbf{Multi-marketplace front end: core first, iterate fast.} Built the marketplace filter widget; the PM/UX proposal with filter templates and search history was estimated at 10 person-days; shipped marketplace switching and precise filtering first with extension points reserved, in 4 person-days to keep the launch on schedule, and completed the full interaction within a week.
 \end{itemize}
 
 \datedsubsection{\textbf{B2B SaaS for Rural Small-Business Material Management}}{Independent Developer}

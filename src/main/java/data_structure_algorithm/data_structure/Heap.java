@@ -53,7 +53,7 @@ public class Heap {
         while (i << 1 <= count) {
             // 找较大的子节点
             int child = i << 1;
-            if (child + 1 != count && nums[child + 1] > nums[child]) {
+            if (child + 1 <= count && nums[child + 1] > nums[child]) {
                 child++;
             }
 
